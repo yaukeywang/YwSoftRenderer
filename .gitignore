@@ -12,11 +12,17 @@
 *.pch
 *.ipch
 *.db
+*.idb
+*.pdb
+*.opendb
 
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
+*.log
+*.tlog
+*.aps
 
 # Fortran module files
 *.mod
@@ -36,3 +42,4 @@
 # Directories
 /.vs
 /ipch
+/Debug
