@@ -115,7 +115,7 @@ namespace yw
                 // 4 bytes per dword.  
 
                 int index = i * lockedRect.Pitch / 4 + j;
-                imagedata[index] = 0xff880000; // red  
+                imagedata[index] = 0xff66aa22; // green like  
             }
         }
 
