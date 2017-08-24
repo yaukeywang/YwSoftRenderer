@@ -52,7 +52,8 @@ namespace yw
 		m_nWidth(nWidth),
 		m_nHeight(nHeight),
 		m_pD3dObject(nullptr),
-		m_pD3dDevice(nullptr)
+		m_pD3dDevice(nullptr),
+        m_pD3dSurface(nullptr)
 	{
 		ZeroMemory(&m_cD3dPP, sizeof(m_cD3dPP));
 
@@ -80,6 +81,7 @@ namespace yw
 
 	AppBase::~AppBase()
 	{
+        TRF_SAFE_RELEASE(m_pD3dSurface);
 		TRF_SAFE_RELEASE(m_pD3dDevice);
 		TRF_SAFE_RELEASE(m_pD3dObject);
 
@@ -113,7 +115,7 @@ namespace yw
 
 		// Default to a window with a client area rectangle of m_nWidth x m_nHeight.
 		RECT R = {0, 0, m_nWidth, m_nHeight};
-		AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW, false);
+		//AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW, false);  // This will make MoveWindow have no effect when changing size if used "fixed" sytle.
 		m_hMainWnd = CreateWindow(_T("YW SoftRenderer Window Class"), m_strMainWndCaption.c_str(), /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW,
 			(GetSystemMetrics(SM_CXSCREEN) - R.right) / 2, (GetSystemMetrics(SM_CYSCREEN) - R.bottom) / 2, 
 			R.right, R.bottom, nullptr, nullptr, m_hAppInst, nullptr);
@@ -124,6 +126,17 @@ namespace yw
 			return false;
 		}
 
+        // Update client rect to m_nWidth x m_nHeight. (Windows client area is smaller.)
+        RECT realRect;
+        GetClientRect(m_hMainWnd, &realRect);
+
+        int realWidth = realRect.right - realRect.left;
+        int realHeight = realRect.bottom - realRect.top;
+        int createWidth = m_nWidth + (m_nWidth - realWidth);        // old width - new width = gap
+        int createHeight = m_nHeight + (m_nHeight - realHeight);
+        MoveWindow(m_hMainWnd, GetSystemMetrics(SM_CXSCREEN) / 2 - createWidth / 2, GetSystemMetrics(SM_CYSCREEN) / 2 - createHeight / 2, createWidth, createHeight, FALSE);
+
+        // Final update.
 		ShowWindow(m_hMainWnd, SW_SHOW);
 		UpdateWindow(m_hMainWnd);
 
@@ -175,8 +188,8 @@ namespace yw
 		//}
 
 		// Step 4: fill D3DPRESENT_PARAMETERS structures.
-		m_cD3dPP.BackBufferWidth            = 0;// m_nWidth
-		m_cD3dPP.BackBufferHeight           = 0;// m_nHeight
+		m_cD3dPP.BackBufferWidth            = m_nWidth;// 0;
+		m_cD3dPP.BackBufferHeight           = m_nHeight;// 0;
         m_cD3dPP.BackBufferFormat           = D3DFMT_X8R8G8B8;//(bpp 32 XRGB) // D3DFMT_UNKNOWN;
 		m_cD3dPP.BackBufferCount            = 1;
 		m_cD3dPP.MultiSampleType            = D3DMULTISAMPLE_NONE;
@@ -202,24 +215,22 @@ namespace yw
 
 		if (FAILED(hr))
 		{
-			// Try again using 16-bit depth buffer.
-			m_cD3dPP.AutoDepthStencilFormat = D3DFMT_D16;
-			hr = m_pD3dObject->CreateDevice(
-				D3DADAPTER_DEFAULT,
-				m_eDeviceType,
-				m_hMainWnd,
-                m_dwRequestVP,
-				&m_cD3dPP,
-				&m_pD3dDevice
-				);
-			if (FAILED(hr))
-			{
-				TRF_SAFE_RELEASE(m_pD3dObject);
-				MessageBox(nullptr, _T("CreateDevice() - FAILED"), nullptr, 0);
+            TRF_SAFE_RELEASE(m_pD3dObject);
+            MessageBox(nullptr, _T("CreateDevice() - FAILED"), nullptr, 0);
 
-				return false;
-			}
+            return false;
 		}
+
+        // Step 6: get back buffer surface.
+        hr = m_pD3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_pD3dSurface);
+        if (FAILED(hr))
+        {
+            TRF_SAFE_RELEASE(m_pD3dDevice);
+            TRF_SAFE_RELEASE(m_pD3dObject);
+            MessageBox(nullptr, _T("GetBackBuffer() - FAILED"), nullptr, 0);
+
+            return false;
+        }
 
 		return true;
 	}

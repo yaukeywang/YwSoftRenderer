@@ -93,12 +93,35 @@ namespace yw
 
 	void AppSoftRenderer::DrawScene()
 	{
-		HR(m_pD3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00000000, 1.0f, 0));
-		HR(m_pD3dDevice->BeginScene());
+		//HR(m_pD3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00000000, 1.0f, 0));
+		//HR(m_pD3dDevice->BeginScene());
 
 		// Your code below.
+        //D3DSURFACE_DESC surfacedesc;
+        //m_pD3dSurface->GetDesc(&surfacedesc);
 
-		HR(m_pD3dDevice->EndScene());
+        D3DLOCKED_RECT lockedRect;
+        memset(&lockedRect, 0, sizeof(lockedRect));
+        m_pD3dSurface->LockRect(&lockedRect, nullptr, D3DLOCK_DISCARD);
+
+        DWORD * imagedata = (DWORD *)lockedRect.pBits;
+
+        for (int i = 0; i < m_nHeight; i++)
+        {
+            for (int j = 0; j < m_nWidth; j++)
+            {
+                // index into texture, note we use the pitch and divide by  
+                // four since the pitch is given in bytes and there are  
+                // 4 bytes per dword.  
+
+                int index = i * lockedRect.Pitch / 4 + j;
+                imagedata[index] = 0xff880000; // red  
+            }
+        }
+
+        m_pD3dSurface->UnlockRect();
+
+		//HR(m_pD3dDevice->EndScene());
 		HR(m_pD3dDevice->Present(NULL, NULL, NULL, NULL));
 	}
 

@@ -157,6 +157,7 @@ namespace yw
 
 		IDirect3D9*           m_pD3dObject;		// The direct3d object.
 		IDirect3DDevice9*     m_pD3dDevice;		// The direct3d device.
+        IDirect3DSurface9*    m_pD3dSurface;    // The direct3d surface for backbuffer.
 		D3DPRESENT_PARAMETERS m_cD3dPP;			// The direct3d present parameters.
 	};
 
