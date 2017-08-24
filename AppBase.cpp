@@ -150,43 +150,43 @@ namespace yw
 		HR(m_pD3dObject->CheckDeviceType(D3DADAPTER_DEFAULT, m_eDeviceType, D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, false));
 
 		// Step 3: check for hardware vp.
-		D3DCAPS9 caps;
-		hr = m_pD3dObject->GetDeviceCaps(D3DADAPTER_DEFAULT, m_eDeviceType, &caps);
-		if (FAILED(hr))
-		{
-			MessageBox(nullptr, _T("GetDeviceCaps() - FAILED"), nullptr, 0);
-			return false;
-		}
+		//D3DCAPS9 caps;
+		//hr = m_pD3dObject->GetDeviceCaps(D3DADAPTER_DEFAULT, m_eDeviceType, &caps);
+		//if (FAILED(hr))
+		//{
+		//	MessageBox(nullptr, _T("GetDeviceCaps() - FAILED"), nullptr, 0);
+		//	return false;
+		//}
 
-		int vp = 0;
-		if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
-		{
-			vp |= m_dwRequestVP/*D3DCREATE_HARDWARE_VERTEXPROCESSING*/;
-		}
-		else
-		{
-			vp |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-		}
+		//int vp = 0;
+		//if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
+		//{
+		//	vp |= m_dwRequestVP/*D3DCREATE_HARDWARE_VERTEXPROCESSING*/;
+		//}
+		//else
+		//{
+		//	vp |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+		//}
 
 		// If pure device and HW T&L supported.
-		if ((caps.DevCaps & D3DDEVCAPS_PUREDEVICE) && (vp & D3DDEVCAPS_HWTRANSFORMANDLIGHT))
-		{
-			vp |= D3DCREATE_PUREDEVICE;
-		}
+		//if ((caps.DevCaps & D3DDEVCAPS_PUREDEVICE) && (vp & D3DDEVCAPS_HWTRANSFORMANDLIGHT))
+		//{
+		//	vp |= D3DCREATE_PUREDEVICE;
+		//}
 
 		// Step 4: fill D3DPRESENT_PARAMETERS structures.
-		m_cD3dPP.BackBufferWidth            = 0;
-		m_cD3dPP.BackBufferHeight           = 0;
-		m_cD3dPP.BackBufferFormat           = D3DFMT_UNKNOWN;
+		m_cD3dPP.BackBufferWidth            = 0;// m_nWidth
+		m_cD3dPP.BackBufferHeight           = 0;// m_nHeight
+        m_cD3dPP.BackBufferFormat           = D3DFMT_X8R8G8B8;//(bpp 32 XRGB) // D3DFMT_UNKNOWN;
 		m_cD3dPP.BackBufferCount            = 1;
 		m_cD3dPP.MultiSampleType            = D3DMULTISAMPLE_NONE;
 		m_cD3dPP.MultiSampleQuality         = 0;
 		m_cD3dPP.SwapEffect                 = D3DSWAPEFFECT_DISCARD;
 		m_cD3dPP.hDeviceWindow              = m_hMainWnd;
 		m_cD3dPP.Windowed                   = true;
-		m_cD3dPP.EnableAutoDepthStencil     = true;
-		m_cD3dPP.AutoDepthStencilFormat     = D3DFMT_D24S8;
-		m_cD3dPP.Flags                      = 0;
+        m_cD3dPP.EnableAutoDepthStencil     = false;// true;
+        m_cD3dPP.AutoDepthStencilFormat     = D3DFMT_D16;// D3DFMT_D24S8;
+		m_cD3dPP.Flags                      = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 		m_cD3dPP.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		m_cD3dPP.PresentationInterval       = D3DPRESENT_INTERVAL_IMMEDIATE;
 
@@ -195,7 +195,7 @@ namespace yw
 			D3DADAPTER_DEFAULT,			// primary adapter
 			m_eDeviceType,				// device type
 			m_hMainWnd,					// window associated with the device
-			vp,							// vertex processing
+			m_dwRequestVP,				// vertex processing
 			&m_cD3dPP,					// present parameters
 			&m_pD3dDevice				// return created device
 			);
@@ -208,7 +208,7 @@ namespace yw
 				D3DADAPTER_DEFAULT,
 				m_eDeviceType,
 				m_hMainWnd,
-				vp,
+                m_dwRequestVP,
 				&m_cD3dPP,
 				&m_pD3dDevice
 				);

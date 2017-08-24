@@ -10,7 +10,7 @@ namespace yw
 	AppSoftRenderer* AppSoftRenderer::s_pAppSoftRenderer = nullptr;
 
 	AppSoftRenderer::AppSoftRenderer(HINSTANCE hInstance) :
-		AppBase(hInstance, _T("YW Soft Renderer Application"), 800, 600, true, D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING),
+		AppBase(hInstance, _T("YW Soft Renderer Application"), 800, 600, true, D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING),
 		m_FrameCount(0.0f),
 		m_TimeElapsed(0.0f),
 		m_Fps(0.0f)
