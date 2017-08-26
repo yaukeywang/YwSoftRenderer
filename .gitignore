@@ -15,6 +15,7 @@
 *.idb
 *.pdb
 *.opendb
+*.TMP
 
 # Compiled Dynamic libraries
 *.so

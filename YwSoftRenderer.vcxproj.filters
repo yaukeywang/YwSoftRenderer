@@ -34,6 +34,12 @@
     <ClInclude Include="AppSoftRenderer.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererSoftDx9.h">
+      <Filter>Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,6 +53,9 @@
     </ClCompile>
     <ClCompile Include="AppSoftRenderer.cpp">
       <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererSoftDx9.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

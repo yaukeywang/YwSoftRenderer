@@ -10,19 +10,11 @@
 #include "stdafx.h"
 #include "Resource.h"
 #include "AppBase.h"
+#include "Renderer.h"
+#include "RendererSoftDx9.h"
 
 namespace yw
 {
-	//////////////////////////////////////////////////////////////////////////
-	// We do not want user to change the window size and maximize the window,
-	// we use WS_TRF_D3DAPP_FIXED_WINDOW instead of WS_OVERLAPPEDWINDOW.
-	#define WS_TRF_D3DAPP_FIXED_WINDOW (WS_OVERLAPPED     | \
-										WS_CAPTION        | \
-										WS_SYSMENU        | \
-										WS_MINIMIZEBOX)
-										//WS_THICKFRAME   (no sizing border)
-										//WS_MAXIMIZEBOX  (no maximize button)
-
 	//////////////////////////////////////////////////////////////////////////
 	// Windows callback function.
 	LRESULT CALLBACK WndAppProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -42,30 +34,33 @@ namespace yw
 	// Direct3d application base class.
 	AppBase* AppBase::s_pAppBase = nullptr;
 
-	AppBase::AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, D3DDEVTYPE devType, DWORD dwRequestedVP) :
+	AppBase::AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, IRenderer::RendererType rendererType) :
 		m_hAppInst(hInstance), 
 		m_strMainWndCaption(pCaption),
-		m_eDeviceType(devType),
-		m_dwRequestVP(dwRequestedVP),
 		m_hMainWnd(nullptr),
 		m_bAppPaused(false),
 		m_nWidth(nWidth),
 		m_nHeight(nHeight),
-		m_pD3dObject(nullptr),
-		m_pD3dDevice(nullptr),
-        m_pD3dSurface(nullptr)
+        m_Windowed(bWindowed)
 	{
-		ZeroMemory(&m_cD3dPP, sizeof(m_cD3dPP));
-
 		// Init window information.
 		if (!InitMainWindow())
 		{
 			PostQuitMessage(0);
 		}
 
-		// Init direct3d information.
-		if (!InitDirect3D())
+        // Create renderer.
+        m_Renderer = GetRendererByType(rendererType);
+        if (nullptr == m_Renderer)
+        {
+            MessageBox(nullptr, _T("AppBase::AppBase::CreateRenderer() - FAILED"), nullptr, 0);
+            PostQuitMessage(0);
+        }
+
+		// Init renderer information.
+		if (!InitRenderer())
 		{
+            MessageBox(nullptr, _T("AppBase::AppBase::InitRenderer() - FAILED"), nullptr, 0);
 			PostQuitMessage(0);
 		}
 
@@ -81,10 +76,7 @@ namespace yw
 
 	AppBase::~AppBase()
 	{
-        TRF_SAFE_RELEASE(m_pD3dSurface);
-		TRF_SAFE_RELEASE(m_pD3dDevice);
-		TRF_SAFE_RELEASE(m_pD3dObject);
-
+        YW_SAFE_RELEASE_DELETE(m_Renderer);
 		s_pAppBase = nullptr;
 	}
 
@@ -115,8 +107,8 @@ namespace yw
 
 		// Default to a window with a client area rectangle of m_nWidth x m_nHeight.
 		RECT R = {0, 0, m_nWidth, m_nHeight};
-		//AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW, false);  // This will make MoveWindow have no effect when changing size if used "fixed" sytle.
-		m_hMainWnd = CreateWindow(_T("YW SoftRenderer Window Class"), m_strMainWndCaption.c_str(), /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW,
+		//AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW, false);  // This will make MoveWindow have no effect when changing size if used "fixed" sytle.
+		m_hMainWnd = CreateWindow(_T("YW SoftRenderer Window Class"), m_strMainWndCaption.c_str(), /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW,
 			(GetSystemMetrics(SM_CXSCREEN) - R.right) / 2, (GetSystemMetrics(SM_CYSCREEN) - R.bottom) / 2, 
 			R.right, R.bottom, nullptr, nullptr, m_hAppInst, nullptr);
 
@@ -143,92 +135,15 @@ namespace yw
 		return true;
 	}
 
-	bool AppBase::InitDirect3D()
+	bool AppBase::InitRenderer()
 	{
-		// Create d3d9 object.
-		HRESULT hr = 0;
-
-		// Step 1: Create the IDirect3D9 object.
-		m_pD3dObject = Direct3DCreate9(D3D_SDK_VERSION);
-		if (nullptr == m_pD3dObject)
-		{
-			MessageBox(nullptr, _T("Direct3DCreate9() - FAILED"), nullptr, 0);
-			return false;
-		}
-
-		// Step 2: Verify hardware support for specified formats in windowed and full screen modes.
-		D3DDISPLAYMODE mode;
-		m_pD3dObject->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &mode);
-		HR(m_pD3dObject->CheckDeviceType(D3DADAPTER_DEFAULT, m_eDeviceType, mode.Format, mode.Format, true));
-		HR(m_pD3dObject->CheckDeviceType(D3DADAPTER_DEFAULT, m_eDeviceType, D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, false));
-
-		// Step 3: check for hardware vp.
-		//D3DCAPS9 caps;
-		//hr = m_pD3dObject->GetDeviceCaps(D3DADAPTER_DEFAULT, m_eDeviceType, &caps);
-		//if (FAILED(hr))
-		//{
-		//	MessageBox(nullptr, _T("GetDeviceCaps() - FAILED"), nullptr, 0);
-		//	return false;
-		//}
-
-		//int vp = 0;
-		//if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
-		//{
-		//	vp |= m_dwRequestVP/*D3DCREATE_HARDWARE_VERTEXPROCESSING*/;
-		//}
-		//else
-		//{
-		//	vp |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-		//}
-
-		// If pure device and HW T&L supported.
-		//if ((caps.DevCaps & D3DDEVCAPS_PUREDEVICE) && (vp & D3DDEVCAPS_HWTRANSFORMANDLIGHT))
-		//{
-		//	vp |= D3DCREATE_PUREDEVICE;
-		//}
-
-		// Step 4: fill D3DPRESENT_PARAMETERS structures.
-		m_cD3dPP.BackBufferWidth            = m_nWidth;// 0;
-		m_cD3dPP.BackBufferHeight           = m_nHeight;// 0;
-        m_cD3dPP.BackBufferFormat           = D3DFMT_X8R8G8B8;//(bpp 32 XRGB) // D3DFMT_UNKNOWN;
-		m_cD3dPP.BackBufferCount            = 1;
-		m_cD3dPP.MultiSampleType            = D3DMULTISAMPLE_NONE;
-		m_cD3dPP.MultiSampleQuality         = 0;
-		m_cD3dPP.SwapEffect                 = D3DSWAPEFFECT_DISCARD;
-		m_cD3dPP.hDeviceWindow              = m_hMainWnd;
-		m_cD3dPP.Windowed                   = true;
-        m_cD3dPP.EnableAutoDepthStencil     = false;// true;
-        m_cD3dPP.AutoDepthStencilFormat     = D3DFMT_D16;// D3DFMT_D24S8;
-		m_cD3dPP.Flags                      = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
-		m_cD3dPP.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-		m_cD3dPP.PresentationInterval       = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-		// Step 5: create the device.
-		hr = m_pD3dObject->CreateDevice(
-			D3DADAPTER_DEFAULT,			// primary adapter
-			m_eDeviceType,				// device type
-			m_hMainWnd,					// window associated with the device
-			m_dwRequestVP,				// vertex processing
-			&m_cD3dPP,					// present parameters
-			&m_pD3dDevice				// return created device
-			);
-
-		if (FAILED(hr))
-		{
-            TRF_SAFE_RELEASE(m_pD3dObject);
-            MessageBox(nullptr, _T("CreateDevice() - FAILED"), nullptr, 0);
-
-            return false;
-		}
-
-        // Step 6: get back buffer surface.
-        hr = m_pD3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_pD3dSurface);
-        if (FAILED(hr))
+        if (nullptr == m_Renderer)
         {
-            TRF_SAFE_RELEASE(m_pD3dDevice);
-            TRF_SAFE_RELEASE(m_pD3dObject);
-            MessageBox(nullptr, _T("GetBackBuffer() - FAILED"), nullptr, 0);
+            return false;
+        }
 
+        if (!m_Renderer->Initialize(nullptr, m_hMainWnd, m_nWidth, m_nHeight, m_Windowed))
+        {
             return false;
         }
 
@@ -476,114 +391,46 @@ namespace yw
 
 	void AppBase::EnableFullScreenMode(bool bEnable)
 	{
-		if (bEnable)
-		{
-			// switch to fullscreen mode
-
-			// we are already in fullscreen mode
-			if (!m_cD3dPP.Windowed)
-			{
-				return;
-			}
-
-			int nWidth  = GetSystemMetrics(SM_CXSCREEN);
-			int nHeight = GetSystemMetrics(SM_CYSCREEN);
-
-			m_cD3dPP.BackBufferWidth  = nWidth;
-			m_cD3dPP.BackBufferHeight = nHeight;
-			m_cD3dPP.BackBufferFormat = D3DFMT_X8R8G8B8;		
-			m_cD3dPP.Windowed         = false;
-
-			// Change the window style to a more fullscreen friendly style.
-			SetWindowLongPtr(m_hMainWnd, GWL_STYLE, WS_POPUP);
-
-			// If we call SetWindowLongPtr, MSDN states that we need to call
-			// SetWindowPos for the change to take effect.  In addition, we 
-			// need to call this function anyway to update the window dimensions.
-			SetWindowPos(m_hMainWnd, HWND_TOP, 0, 0, nWidth, nHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
-		}
-		else
-		{
-			// switch to window mode
-
-			// we are already in window mode
-			if (m_cD3dPP.Windowed)
-			{
-				return;
-			}
-
-			RECT R = {0, 0, m_nWidth, m_nHeight};
-			AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW, false);
-
-			m_cD3dPP.BackBufferWidth  = 0;
-			m_cD3dPP.BackBufferHeight = 0;
-			m_cD3dPP.BackBufferFormat = D3DFMT_UNKNOWN;
-			m_cD3dPP.Windowed         = true;
-
-			// Change the window style to a more windowed friendly style.
-			SetWindowLongPtr(m_hMainWnd, GWL_STYLE, /*WS_OVERLAPPEDWINDOW*/ WS_TRF_D3DAPP_FIXED_WINDOW);
-
-			// If we call SetWindowLongPtr, MSDN states that we need to call
-			// SetWindowPos for the change to take effect.  In addition, we 
-			// need to call this function anyway to update the window dimensions.
-			SetWindowPos(m_hMainWnd, /*HWND_TOP*/ HWND_NOTOPMOST, (GetSystemMetrics(SM_CXSCREEN) - R.right) / 2, (GetSystemMetrics(SM_CYSCREEN) - R.bottom) / 2, R.right, R.bottom, /*SWP_NOZORDER |*/ SWP_SHOWWINDOW);
-		}
-
-		// Reset the device with the changes.
-		OnLostDevice();
-		HR(m_pD3dDevice->Reset(&m_cD3dPP));
-		OnResetDevice();
+        if (nullptr != m_Renderer)
+        {
+            m_Renderer->EnableFullScreenMode(bEnable);
+        }
 	}
 
 	bool AppBase::IsDeviceLost()
 	{
-		// Get the state of the graphics device.
-		HRESULT hr = m_pD3dDevice->TestCooperativeLevel();
+        if (nullptr != m_Renderer)
+        {
+            return m_Renderer->IsDeviceLost();
+        }
 
-		if (D3DERR_DEVICELOST == hr)
-		{
-			// If the device is lost and cannot be reset yet then
-			// sleep for a bit and we'll try again on the next 
-			// message loop cycle.
-			Sleep(20);
-			return true;
-		}
-		else if (D3DERR_DRIVERINTERNALERROR == hr)
-		{
-			// Driver error, exit.
-			MessageBox(nullptr, _T("Internal Driver Error...Exiting"), nullptr, 0);
-			PostQuitMessage(0);
-
-			return true;
-		}
-		else if (D3DERR_DEVICENOTRESET == hr)
-		{
-			// The device is lost but we can reset and restore it.
-			OnLostDevice();
-			HR(m_pD3dDevice->Reset(&m_cD3dPP));
-			OnResetDevice();
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+        return false;
 	}
 
 	bool AppBase::CheckDeviceType() 
 	{
-		return true;
+        if (nullptr != m_Renderer)
+        {
+            return m_Renderer->CheckDeviceType();
+        }
+
+		return false;
 	}
 
 	void AppBase::OnLostDevice() 
 	{
-		
+        if (nullptr != m_Renderer)
+        {
+            m_Renderer->OnLostDevice();
+        }
 	}
 
 	void AppBase::OnResetDevice() 
 	{
-		
+        if (nullptr != m_Renderer)
+        {
+            m_Renderer->OnResetDevice();
+        }
 	}
 
 	void AppBase::UpdateScene(float fTimeDelta) 
@@ -682,4 +529,24 @@ namespace yw
 	{
 		
 	}
+
+    IRenderer* AppBase::GetRendererByType(IRenderer::RendererType rendererType)
+    {
+        if ((rendererType <= IRenderer::RendererType::INVALID) || (rendererType >= IRenderer::RendererType::END))
+        {
+            return nullptr;
+        }
+
+        IRenderer* renderer = nullptr;
+        switch (rendererType)
+        {
+        case IRenderer::RT_SOFT_D3D9:
+            renderer = new RendererSoftDx9();
+            break;
+        default:
+            break;
+        }
+
+        return renderer;
+    }
 }

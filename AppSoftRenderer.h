@@ -13,7 +13,7 @@ namespace yw
 	{
 	public:
 		AppSoftRenderer(HINSTANCE hInstance);
-		AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, D3DDEVTYPE devType, DWORD dwRequestedV, LPCTSTR pFontName, int nFontHeight);
+		AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight);
 		~AppSoftRenderer();
 
 	public:

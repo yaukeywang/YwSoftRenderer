@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "AppSoftRenderer.h"
+#include "Renderer.h"
 
 namespace yw
 {
@@ -10,7 +11,7 @@ namespace yw
 	AppSoftRenderer* AppSoftRenderer::s_pAppSoftRenderer = nullptr;
 
 	AppSoftRenderer::AppSoftRenderer(HINSTANCE hInstance) :
-		AppBase(hInstance, _T("YW Soft Renderer Application"), 800, 600, true, D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING),
+		AppBase(hInstance, _T("YW Soft Renderer Application"), 800, 600, true, IRenderer::RendererType::RT_SOFT_D3D9),
 		m_FrameCount(0.0f),
 		m_TimeElapsed(0.0f),
 		m_Fps(0.0f)
@@ -18,8 +19,8 @@ namespace yw
 
 	}
 
-	AppSoftRenderer::AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, D3DDEVTYPE devType, DWORD dwRequestedV, LPCTSTR pFontName, int nFontHeight) :
-		AppBase(hInstance, pCaption, nWidth, nHeight, bWindowed, devType, dwRequestedV),
+	AppSoftRenderer::AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight) :
+		AppBase(hInstance, pCaption, nWidth, nHeight, true, IRenderer::RendererType::RT_SOFT_D3D9),
 		m_FrameCount(0.0f),
 		m_TimeElapsed(0.0f),
 		m_Fps(0.0f)
@@ -93,36 +94,17 @@ namespace yw
 
 	void AppSoftRenderer::DrawScene()
 	{
-		//HR(m_pD3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00000000, 1.0f, 0));
-		//HR(m_pD3dDevice->BeginScene());
-
-		// Your code below.
-        //D3DSURFACE_DESC surfacedesc;
-        //m_pD3dSurface->GetDesc(&surfacedesc);
-
-        D3DLOCKED_RECT lockedRect;
-        memset(&lockedRect, 0, sizeof(lockedRect));
-        m_pD3dSurface->LockRect(&lockedRect, nullptr, D3DLOCK_DISCARD);
-
-        DWORD * imagedata = (DWORD *)lockedRect.pBits;
-
-        for (int i = 0; i < m_nHeight; i++)
+        if (nullptr == m_Renderer)
         {
-            for (int j = 0; j < m_nWidth; j++)
-            {
-                // index into texture, note we use the pitch and divide by  
-                // four since the pitch is given in bytes and there are  
-                // 4 bytes per dword.  
-
-                int index = i * lockedRect.Pitch / 4 + j;
-                imagedata[index] = 0xff66aa22; // green like  
-            }
+            return;
         }
 
-        m_pD3dSurface->UnlockRect();
+        m_Renderer->Clear();
+        m_Renderer->BeginScene();
 
-		//HR(m_pD3dDevice->EndScene());
-		HR(m_pD3dDevice->Present(NULL, NULL, NULL, NULL));
+        // Your code below.
+
+        m_Renderer->EndScene();
 	}
 
 	void AppSoftRenderer::OnMouseMove(DWORD dwKeyCode, int nXpos, int nYpos)

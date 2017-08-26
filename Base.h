@@ -6,8 +6,8 @@ author:		Yaukey
 purpose:	Some utility things.
 *********************************************************************/
 
-#ifndef _TRF_UTIL_H_
-#define _TRF_UTIL_H_
+#ifndef __UTIL_H__
+#define __UTIL_H__
 
 // Disable msvc secure warnings.
 #if defined(WIN32) && defined(_MSC_VER)
@@ -17,9 +17,9 @@ purpose:	Some utility things.
 #endif
 #endif
 
-#include <d3d9.h>
 #include <string>
-#include "tchar.h"
+#include <tchar.h>
+#include <stdint.h>
 
 //////////////////////////////////////////////////////////////////////////
 #ifndef ASSERT
@@ -35,16 +35,20 @@ purpose:	Some utility things.
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-#ifndef TRF_SAFE_DELETE
-#define TRF_SAFE_DELETE(p) {if (nullptr != (p)) {delete (p); (p) = nullptr;}}
+#ifndef YW_SAFE_DELETE
+#define YW_SAFE_DELETE(p) {if (nullptr != (p)) {delete (p); (p) = nullptr;}}
 #endif
 
-#ifndef TRF_SAFE_DELETE_ARRAY
-#define TRF_SAFE_DELETE_ARRAY(p) {if (NULL != (p)) {delete [] (p); (p) = nullptr;}}
+#ifndef YW_SAFE_DELETE_ARRAY
+#define YW_SAFE_DELETE_ARRAY(p) {if (NULL != (p)) {delete [] (p); (p) = nullptr;}}
 #endif
 
-#ifndef TRF_SAFE_RELEASE
-#define TRF_SAFE_RELEASE(p) {if (nullptr != (p)) {(p)->Release(); (p) = nullptr;}}
+#ifndef YW_SAFE_RELEASE
+#define YW_SAFE_RELEASE(p) {if (nullptr != (p)) {(p)->Release(); (p) = nullptr;}}
+#endif
+
+#ifndef YW_SAFE_RELEASE_DELETE
+#define YW_SAFE_RELEASE_DELETE(p) {if (nullptr != (p)) {(p)->Release(); delete (p); (p) = nullptr;}}
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,4 +83,14 @@ namespace yw
 #endif
 #endif
 
-#endif // _TRF_UTIL_H_
+//////////////////////////////////////////////////////////////////////////
+// We do not want user to change the window size and maximize the window,
+// we use WS_YW_RENDERER_FIXED_WINDOW instead of WS_OVERLAPPEDWINDOW.
+#define WS_YW_RENDERER_FIXED_WINDOW (WS_OVERLAPPED     | \
+                                     WS_CAPTION        | \
+                                     WS_SYSMENU        | \
+                                     WS_MINIMIZEBOX)
+                                     //WS_THICKFRAME   (no sizing border)
+                                     //WS_MAXIMIZEBOX  (no maximize button)
+
+#endif // __UTIL_H__

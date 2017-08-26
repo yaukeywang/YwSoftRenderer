@@ -11,6 +11,7 @@ purpose:	Application base class.
 #define _TRF_APPBASE_H_
 
 #include "Base.h"
+#include "Renderer.h"
 
 namespace yw
 {
@@ -19,7 +20,7 @@ namespace yw
 	class AppBase
 	{
 	public:
-		AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, D3DDEVTYPE devType, DWORD dwRequestedVP);
+		AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, IRenderer::RendererType rendererType);
 		virtual ~AppBase();
 
 	public:
@@ -29,8 +30,8 @@ namespace yw
 		// Initialize the main window.
 		virtual bool InitMainWindow();
 
-		// Initialize the d3d object and device.
-		virtual bool InitDirect3D();
+		// Initialize the renderer device.
+		virtual bool InitRenderer();
 
 		// Run the application circle.
 		virtual int Run();
@@ -128,37 +129,41 @@ namespace yw
 			return m_hMainWnd;
 		}
 
-		// Get the current direct3d object
-		inline IDirect3D9* GetD3dObject()
-		{
-			return m_pD3dObject;
-		};
+        inline IRenderer* GetRenderer()
+        {
+            return m_Renderer;
+        }
 
-		// Get the current direct3d device.
-		inline IDirect3DDevice9* GetD3dDevice()
-		{
-			return m_pD3dDevice;
-		}
+    protected:
+        IRenderer* GetRendererByType(IRenderer::RendererType rendererType);
 
 	public:
 		static AppBase* s_pAppBase;
 
 	protected:
-		String     m_strMainWndCaption;			// Windows caption.
-		D3DDEVTYPE m_eDeviceType;				// D3d device type.
-		DWORD      m_dwRequestVP;				// Vertex process type
+        // Windows caption.
+		String m_strMainWndCaption;
 
-		HINSTANCE m_hAppInst;					// Application instance.
-		HWND      m_hMainWnd;					// Main window handle.
-		bool      m_bAppPaused;					// Is application paused or not.
+        // Application instance.
+		HINSTANCE m_hAppInst;
 
-		int m_nWidth;							// Width of the client area.
-		int m_nHeight;							// Height of the client area.
+        // Main window handle.
+		HWND m_hMainWnd;
 
-		IDirect3D9*           m_pD3dObject;		// The direct3d object.
-		IDirect3DDevice9*     m_pD3dDevice;		// The direct3d device.
-        IDirect3DSurface9*    m_pD3dSurface;    // The direct3d surface for backbuffer.
-		D3DPRESENT_PARAMETERS m_cD3dPP;			// The direct3d present parameters.
+        // Is application paused or not.
+		bool m_bAppPaused;
+
+        // Width of the client area.
+		int m_nWidth;
+
+        // Height of the client area.
+		int m_nHeight;
+
+        // Windowed or not.
+        bool m_Windowed;
+
+        // The renderer of this app.
+        IRenderer* m_Renderer;
 	};
 
 	//////////////////////////////////////////////////////////////////////////
