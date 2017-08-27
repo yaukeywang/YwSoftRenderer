@@ -148,16 +148,19 @@
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppSoftRenderer.h" />
     <ClInclude Include="Base.h" />
+    <ClInclude Include="GlobalMgr.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RendererSoftDx9.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppBase.cpp" />
     <ClCompile Include="AppSoftRenderer.cpp" />
+    <ClCompile Include="GlobalMgr.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RendererSoftDx9.cpp" />
@@ -167,6 +170,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="YwSoftRenderer.rc" />

@@ -48,7 +48,7 @@ namespace yw
         OutputLog(1, message);
     }
 
-    void Logger::LogFormatInformation(LPCTSTR format, ...)
+    void Logger::LogInformationFormat(LPCTSTR format, ...)
     {
         va_list args;
         va_start(args, format);

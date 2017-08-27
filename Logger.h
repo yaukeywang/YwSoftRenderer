@@ -17,7 +17,7 @@ namespace yw
         virtual void LogFormat(LPCTSTR format, ...) = 0;
 
         virtual void LogInformation(LPCTSTR message) = 0;
-        virtual void LogFormatInformation(LPCTSTR format, ...) = 0;
+        virtual void LogInformationFormat(LPCTSTR format, ...) = 0;
 
         virtual void LogWarning(LPCTSTR message) = 0;
         virtual void LogWarningFormat(LPCTSTR format, ...) = 0;
@@ -27,7 +27,7 @@ namespace yw
     };
 
     // Logger class.
-    class Logger
+    class Logger : public ILogger
     {
     public:
         Logger();
@@ -38,7 +38,7 @@ namespace yw
         virtual void LogFormat(LPCTSTR format, ...);
 
         virtual void LogInformation(LPCTSTR message);
-        virtual void LogFormatInformation(LPCTSTR format, ...);
+        virtual void LogInformationFormat(LPCTSTR format, ...);
 
         virtual void LogWarning(LPCTSTR message);
         virtual void LogWarningFormat(LPCTSTR format, ...);

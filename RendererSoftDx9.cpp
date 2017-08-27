@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "RendererSoftDx9.h"
+#include "Utility.h"
 
 namespace yw
 {
@@ -31,6 +32,8 @@ namespace yw
 
     bool RendererSoftDx9::Initialize(LPCTSTR name, HWND hWnd, int32_t width, int32_t height, bool windowed)
     {
+        LogI(_T("Initializing soft renderer with DirectX 9..."));
+
         // Init name.
         if ((nullptr == name) || (String(name).length() == 0))
         {
@@ -62,6 +65,8 @@ namespace yw
         if (nullptr == m_D3dObject)
         {
             MessageBox(nullptr, _T("RendererSoftDx9::InitRenderer::Direct3DCreate9() - FAILED"), nullptr, 0);
+            LogE(_T("Initializing  soft renderer with DirectX 9 failed: RendererSoftDx9::InitRenderer::Direct3DCreate9() - FAILED!"));
+
             return false;
         }
 
@@ -126,6 +131,7 @@ namespace yw
         {
             YW_SAFE_RELEASE(m_D3dObject);
             MessageBox(nullptr, _T("RendererSoftDx9::InitRenderer::CreateDevice() - FAILED"), nullptr, 0);
+            LogE(_T("Initializing  soft renderer with DirectX 9 failed: RendererSoftDx9::InitRenderer::CreateDevice() - FAILED!"));
 
             return false;
         }
@@ -137,9 +143,12 @@ namespace yw
             YW_SAFE_RELEASE(m_D3dDevice);
             YW_SAFE_RELEASE(m_D3dObject);
             MessageBox(nullptr, _T("RendererSoftDx9::InitRenderer::GetBackBuffer() - FAILED"), nullptr, 0);
+            LogE(_T("Initializing  soft renderer with DirectX 9 failed: RendererSoftDx9::InitRenderer::GetBackBuffer() - FAILED!"));
 
             return false;
         }
+
+        LogI(_T("Initializing soft renderer with DirectX 9 finished."));
 
         return true;
     }
