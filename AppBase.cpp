@@ -107,7 +107,7 @@ namespace yw
 
 		// Default to a window with a client area rectangle of m_nWidth x m_nHeight.
 		RECT R = {0, 0, m_nWidth, m_nHeight};
-		//AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW, false);  // This will make MoveWindow have no effect when changing size if used "fixed" sytle.
+		//AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW, false); // This will make MoveWindow have no effect when changing size if used "fixed" sytle.
 		m_hMainWnd = CreateWindow(_T("YW SoftRenderer Window Class"), m_strMainWndCaption.c_str(), /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW,
 			(GetSystemMetrics(SM_CXSCREEN) - R.right) / 2, (GetSystemMetrics(SM_CYSCREEN) - R.bottom) / 2, 
 			R.right, R.bottom, nullptr, nullptr, m_hAppInst, nullptr);

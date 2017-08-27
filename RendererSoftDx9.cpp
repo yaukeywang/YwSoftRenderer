@@ -9,8 +9,12 @@ namespace yw
     RendererSoftDx9::RendererSoftDx9() :
         m_DeviceType(D3DDEVTYPE_REF),
         m_RequestVP(D3DCREATE_SOFTWARE_VERTEXPROCESSING),
-        m_Width(800),
-        m_Height(600),
+        m_Width(0),
+        m_Height(0),
+        m_WindowWidth(0),
+        m_WindowHeight(0),
+        m_FullScreenWidth(0),
+        m_FullScreenHeight(0),
         m_D3dObject(nullptr),
         m_D3dDevice(nullptr),
         m_D3dSurface(nullptr)
@@ -39,6 +43,16 @@ namespace yw
 
         // Init handler.
         m_hMainWnd = hWnd;
+
+        // Init client area size.
+        m_Width = width;
+        m_Height = height;
+
+        // Get the actual window create size.
+        RECT windowRect;
+        GetWindowRect(m_hMainWnd, &windowRect);
+        m_WindowWidth = windowRect.right - windowRect.left;        // old width - new width = gap
+        m_WindowHeight = windowRect.bottom - windowRect.top;
 
         // Create d3d9 object.
         HRESULT hr = 0;
@@ -186,12 +200,12 @@ namespace yw
                 return;
             }
 
-            int nWidth = GetSystemMetrics(SM_CXSCREEN);
-            int nHeight = GetSystemMetrics(SM_CYSCREEN);
+            m_FullScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+            m_FullScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-            m_D3dPP.BackBufferWidth = nWidth;
-            m_D3dPP.BackBufferHeight = nHeight;
-            m_D3dPP.BackBufferFormat = D3DFMT_X8R8G8B8;
+            m_D3dPP.BackBufferWidth = m_FullScreenWidth;
+            m_D3dPP.BackBufferHeight = m_FullScreenHeight;
+            //m_D3dPP.BackBufferFormat = D3DFMT_X8R8G8B8;
             m_D3dPP.Windowed = false;
 
             // Change the window style to a more fullscreen friendly style.
@@ -200,7 +214,7 @@ namespace yw
             // If we call SetWindowLongPtr, MSDN states that we need to call
             // SetWindowPos for the change to take effect.  In addition, we 
             // need to call this function anyway to update the window dimensions.
-            SetWindowPos(m_hMainWnd, HWND_TOP, 0, 0, nWidth, nHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
+            SetWindowPos(m_hMainWnd, HWND_TOP, 0, 0, m_FullScreenWidth, m_FullScreenHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
         }
         else
         {
@@ -212,12 +226,12 @@ namespace yw
                 return;
             }
 
-            RECT R = { 0, 0, m_Width, m_Height };
-            AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW, false);
+            RECT R = { 0, 0, m_WindowWidth, m_WindowHeight };
+            //AdjustWindowRect(&R, /*WS_OVERLAPPEDWINDOW*/ WS_YW_RENDERER_FIXED_WINDOW, false); // This will lead a wrong window client area size when changing size if used "fixed" sytle.
 
-            m_D3dPP.BackBufferWidth = 0;
-            m_D3dPP.BackBufferHeight = 0;
-            m_D3dPP.BackBufferFormat = D3DFMT_UNKNOWN;
+            m_D3dPP.BackBufferWidth = m_Width;
+            m_D3dPP.BackBufferHeight = m_Height;
+            //m_D3dPP.BackBufferFormat = D3DFMT_X8R8G8B8;
             m_D3dPP.Windowed = true;
 
             // Change the window style to a more windowed friendly style.
@@ -288,7 +302,14 @@ namespace yw
 
     void RendererSoftDx9::ResetDevice()
     {
+        // Release old surface first.
+        YW_SAFE_RELEASE(m_D3dSurface);
+
+        // Reset device.
         HR(m_D3dDevice->Reset(&m_D3dPP));
+
+        // Get the new surface agein.
+        m_D3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_D3dSurface);
     }
 
     void RendererSoftDx9::Clear()
@@ -309,9 +330,11 @@ namespace yw
 
         DWORD * imagedata = (DWORD *)lockedRect.pBits;
 
-        for (int i = 0; i < m_Height; i++)
+        int32_t width = m_D3dPP.Windowed ? m_Width : m_FullScreenWidth;
+        int32_t height = m_D3dPP.Windowed ? m_Height : m_FullScreenHeight;
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < m_Width; j++)
+            for (int j = 0; j < width; j++)
             {
                 // index into texture, note we use the pitch and divide by  
                 // four since the pitch is given in bytes and there are  

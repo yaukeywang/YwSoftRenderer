@@ -75,6 +75,18 @@ namespace yw
         // Height of the client area.
         int m_Height;
 
+        // Width of the created window area.(Greater than client area width)
+        int m_WindowWidth;
+
+        // Height of the created window area.(Greater than client area height)
+        int m_WindowHeight;
+
+        // Width of full screen.
+        int m_FullScreenWidth;
+
+        // Height of full screen.
+        int m_FullScreenHeight;
+
         // D3d device type.
         D3DDEVTYPE m_DeviceType;
 

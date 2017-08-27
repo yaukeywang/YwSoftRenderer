@@ -11,6 +11,9 @@
     <Filter Include="App">
       <UniqueIdentifier>{ce9db043-2f39-43c2-8a5b-1807d39eeaa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{3dce1149-79ee-4884-b2e4-4d6745093ab0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -38,13 +41,10 @@
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="RendererSoftDx9.h">
-      <Filter>Base</Filter>
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Base</Filter>
     </ClCompile>
@@ -54,8 +54,11 @@
     <ClCompile Include="AppSoftRenderer.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
     <ClCompile Include="RendererSoftDx9.cpp">
-      <Filter>Base</Filter>
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
