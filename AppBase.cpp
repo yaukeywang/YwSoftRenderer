@@ -34,7 +34,7 @@ namespace yw
 	// Direct3d application base class.
 	AppBase* AppBase::s_pAppBase = nullptr;
 
-	AppBase::AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, IRenderer::RendererType rendererType) :
+	AppBase::AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int32_t nWidth, int32_t nHeight, bool bWindowed, IRenderer::RendererType rendererType) :
 		m_hAppInst(hInstance), 
 		m_strMainWndCaption(pCaption),
 		m_hMainWnd(nullptr),
@@ -122,10 +122,10 @@ namespace yw
         RECT realRect;
         GetClientRect(m_hMainWnd, &realRect);
 
-        int realWidth = realRect.right - realRect.left;
-        int realHeight = realRect.bottom - realRect.top;
-        int createWidth = m_nWidth + (m_nWidth - realWidth);        // old width - new width = gap
-        int createHeight = m_nHeight + (m_nHeight - realHeight);
+        int32_t realWidth = realRect.right - realRect.left;
+        int32_t realHeight = realRect.bottom - realRect.top;
+        int32_t createWidth = m_nWidth + (m_nWidth - realWidth);        // old width - new width = gap
+        int32_t createHeight = m_nHeight + (m_nHeight - realHeight);
         MoveWindow(m_hMainWnd, GetSystemMetrics(SM_CXSCREEN) / 2 - createWidth / 2, GetSystemMetrics(SM_CYSCREEN) / 2 - createHeight / 2, createWidth, createHeight, FALSE);
 
         // Final update.
@@ -150,7 +150,7 @@ namespace yw
 		return true;
 	}
 
-	int AppBase::Run()
+	int32_t AppBase::Run()
 	{
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -197,7 +197,7 @@ namespace yw
 			}
 		}
 
-		return (int)msg.wParam;
+		return (int32_t)msg.wParam;
 	}
 
 	LRESULT AppBase::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -342,47 +342,47 @@ namespace yw
 			return 0;
 
 		case WM_MOUSEMOVE:
-			OnMouseMove((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnMouseMove((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_LBUTTONDOWN:
-			OnLButtonDown((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnLButtonDown((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_LBUTTONUP:
-			OnLButtonUp((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnLButtonUp((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_LBUTTONDBLCLK:
-			OnLButtonDBClick((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnLButtonDBClick((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_RBUTTONDOWN:
-			OnRButtonDown((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnRButtonDown((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_RBUTTONUP:
-			OnRButtonUp((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnRButtonUp((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_RBUTTONDBLCLK:
-			OnRButtonDBClick((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnRButtonDBClick((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_MBUTTONDOWN:
-			OnMButtonDwon((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnMButtonDwon((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_MBUTTONUP:
-			OnMButtonUp((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnMButtonUp((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_MBUTTONDBLCLK:
-			OnMButtonDBClick((DWORD)wParam, (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnMButtonDBClick((DWORD)wParam, (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 
 		case WM_MOUSEWHEEL:
-			OnMouseWheel(LOWORD(wParam), (short)HIWORD(wParam), (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+			OnMouseWheel(LOWORD(wParam), (int16_t)HIWORD(wParam), (int32_t)(int16_t)LOWORD(lParam), (int32_t)(int16_t)HIWORD(lParam));
 			return 0;
 		}
 
@@ -475,57 +475,57 @@ namespace yw
 		
 	}
 
-	void AppBase::OnMouseMove(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnMouseMove(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnLButtonDown(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnLButtonDown(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnLButtonUp(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnLButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnLButtonDBClick(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnLButtonDBClick(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnRButtonDown(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnRButtonDown(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnRButtonUp(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnRButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnRButtonDBClick(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnRButtonDBClick(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnMButtonDwon(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnMButtonDwon(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnMButtonUp(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnMButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnMButtonDBClick(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppBase::OnMButtonDBClick(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}
 
-	void AppBase::OnMouseWheel(DWORD dwKeyCode, short sDelta, int nXpos, int nYpos)
+	void AppBase::OnMouseWheel(DWORD dwKeyCode, int16_t sDelta, int32_t nXpos, int32_t nYpos)
 	{
 		
 	}

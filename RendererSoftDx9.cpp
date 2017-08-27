@@ -29,7 +29,7 @@ namespace yw
         YW_SAFE_RELEASE(m_D3dObject);
     }
 
-    bool RendererSoftDx9::Initialize(LPCTSTR name, HWND hWnd, int width, int height, bool windowed)
+    bool RendererSoftDx9::Initialize(LPCTSTR name, HWND hWnd, int32_t width, int32_t height, bool windowed)
     {
         // Init name.
         if ((nullptr == name) || (String(name).length() == 0))
@@ -80,7 +80,7 @@ namespace yw
         //	return false;
         //}
 
-        //int vp = 0;
+        //int32_t vp = 0;
         //if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
         //{
         //	vp |= m_RequestVP/*D3DCREATE_HARDWARE_VERTEXPROCESSING*/;
@@ -328,19 +328,19 @@ namespace yw
         memset(&lockedRect, 0, sizeof(lockedRect));
         m_D3dSurface->LockRect(&lockedRect, nullptr, D3DLOCK_DISCARD);
 
-        DWORD * imagedata = (DWORD *)lockedRect.pBits;
+        DWORD * imagedata = (DWORD*)lockedRect.pBits;
 
         int32_t width = m_D3dPP.Windowed ? m_Width : m_FullScreenWidth;
         int32_t height = m_D3dPP.Windowed ? m_Height : m_FullScreenHeight;
-        for (int i = 0; i < height; i++)
+        for (int32_t i = 0; i < height; i++)
         {
-            for (int j = 0; j < width; j++)
+            for (int32_t j = 0; j < width; j++)
             {
                 // index into texture, note we use the pitch and divide by  
                 // four since the pitch is given in bytes and there are  
                 // 4 bytes per dword.  
 
-                int index = i * lockedRect.Pitch / 4 + j;
+                int32_t index = i * lockedRect.Pitch / 4 + j;
                 imagedata[index] = 0xff06704A; // green like
             }
         }

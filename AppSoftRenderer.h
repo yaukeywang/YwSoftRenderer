@@ -13,7 +13,7 @@ namespace yw
 	{
 	public:
 		AppSoftRenderer(HINSTANCE hInstance);
-		AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight);
+		AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int32_t nWidth, int32_t nHeight);
 		~AppSoftRenderer();
 
 	public:
@@ -37,13 +37,13 @@ namespace yw
 		virtual void DrawScene();
 
 		// Mouse move event.
-		virtual void OnMouseMove(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnMouseMove(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse left button down.
-		virtual void OnLButtonDown(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnLButtonDown(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse left button up.
-		virtual void OnLButtonUp(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnLButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 	protected:
 		void UpdateFrameCount(float fTimeDelta);

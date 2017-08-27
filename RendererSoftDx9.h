@@ -16,7 +16,7 @@ namespace yw
         virtual ~RendererSoftDx9();
 
     public:
-        virtual bool Initialize(LPCTSTR name, HWND hWnd, int width, int height, bool windowed);
+        virtual bool Initialize(LPCTSTR name, HWND hWnd, int32_t width, int32_t height, bool windowed);
         virtual bool Release();
 
         virtual LPCTSTR GetName() const;
@@ -70,22 +70,22 @@ namespace yw
         HWND m_hMainWnd;
 
         // Width of the client area.
-        int m_Width;
+        int32_t m_Width;
 
         // Height of the client area.
-        int m_Height;
+        int32_t m_Height;
 
         // Width of the created window area.(Greater than client area width)
-        int m_WindowWidth;
+        int32_t m_WindowWidth;
 
         // Height of the created window area.(Greater than client area height)
-        int m_WindowHeight;
+        int32_t m_WindowHeight;
 
         // Width of full screen.
-        int m_FullScreenWidth;
+        int32_t m_FullScreenWidth;
 
         // Height of full screen.
-        int m_FullScreenHeight;
+        int32_t m_FullScreenHeight;
 
         // D3d device type.
         D3DDEVTYPE m_DeviceType;

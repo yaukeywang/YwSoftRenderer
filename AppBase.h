@@ -20,7 +20,7 @@ namespace yw
 	class AppBase
 	{
 	public:
-		AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight, bool bWindowed, IRenderer::RendererType rendererType);
+		AppBase(HINSTANCE hInstance, LPCTSTR pCaption, int32_t nWidth, int32_t nHeight, bool bWindowed, IRenderer::RendererType rendererType);
 		virtual ~AppBase();
 
 	public:
@@ -34,7 +34,7 @@ namespace yw
 		virtual bool InitRenderer();
 
 		// Run the application circle.
-		virtual int Run();
+		virtual int32_t Run();
 
 		// Windows msg proc.
 		virtual LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -82,37 +82,37 @@ namespace yw
 		virtual void OnKeyUp(DWORD dwKeyCode, DWORD dwExtraParam);
 
 		// Mouse move event.
-		virtual void OnMouseMove(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnMouseMove(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse left button down.
-		virtual void OnLButtonDown(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnLButtonDown(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse left button up.
-		virtual void OnLButtonUp(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnLButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse left button double click.
-		virtual void OnLButtonDBClick(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnLButtonDBClick(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse right button down.
-		virtual void OnRButtonDown(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnRButtonDown(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse right button up.
-		virtual void OnRButtonUp(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnRButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse right button double click.
-		virtual void OnRButtonDBClick(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnRButtonDBClick(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse middle button down.
-		virtual void OnMButtonDwon(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnMButtonDwon(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse middle button up.
-		virtual void OnMButtonUp(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnMButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse middle double click.
-		virtual void OnMButtonDBClick(DWORD dwKeyCode, int nXpos, int nYpos);
+		virtual void OnMButtonDBClick(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos);
 
 		// Mouse wheel is rotated.
-		virtual void OnMouseWheel(DWORD dwKeyCode, short sDelta, int nXpos, int nYpos);
+		virtual void OnMouseWheel(DWORD dwKeyCode, int16_t sDelta, int32_t nXpos, int32_t nYpos);
 
 		//////////////////////////////////////////////////////////////////////////
 		// Some "get" method.
@@ -154,10 +154,10 @@ namespace yw
 		bool m_bAppPaused;
 
         // Width of the client area.
-		int m_nWidth;
+		int32_t m_nWidth;
 
         // Height of the client area.
-		int m_nHeight;
+		int32_t m_nHeight;
 
         // Windowed or not.
         bool m_Windowed;

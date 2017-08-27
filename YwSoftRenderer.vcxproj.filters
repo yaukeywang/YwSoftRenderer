@@ -43,6 +43,9 @@
     <ClInclude Include="RendererSoftDx9.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -59,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="RendererSoftDx9.cpp">
       <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

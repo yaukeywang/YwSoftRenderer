@@ -19,7 +19,7 @@ namespace yw
 
 	}
 
-	AppSoftRenderer::AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int nWidth, int nHeight) :
+	AppSoftRenderer::AppSoftRenderer(HINSTANCE hInstance, LPCTSTR pCaption, int32_t nWidth, int32_t nHeight) :
 		AppBase(hInstance, pCaption, nWidth, nHeight, true, IRenderer::RendererType::RT_SOFT_D3D9),
 		m_FrameCount(0.0f),
 		m_TimeElapsed(0.0f),
@@ -107,17 +107,17 @@ namespace yw
         m_Renderer->EndScene();
 	}
 
-	void AppSoftRenderer::OnMouseMove(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppSoftRenderer::OnMouseMove(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 
 	}
 
-	void AppSoftRenderer::OnLButtonDown(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppSoftRenderer::OnLButtonDown(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 
 	}
 
-	void AppSoftRenderer::OnLButtonUp(DWORD dwKeyCode, int nXpos, int nYpos)
+	void AppSoftRenderer::OnLButtonUp(DWORD dwKeyCode, int32_t nXpos, int32_t nYpos)
 	{
 
 	}

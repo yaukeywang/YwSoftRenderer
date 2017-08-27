@@ -9,16 +9,17 @@ purpose:	Some utility things.
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-// Disable msvc secure warnings.
-#if defined(WIN32) && defined(_MSC_VER)
-#if !defined(_CRT_SECURE_NO_WARNINGS) && (_MSC_VER >= 1200)
-#define _CRT_SECURE_NO_WARNINGS
-//#pragma warning(disable:4996)
-#endif
-#endif
+//// Disable msvc secure warnings.
+//#if defined(WIN32) && defined(_MSC_VER)
+//#if !defined(_CRT_SECURE_NO_WARNINGS) && (_MSC_VER >= 1200)
+//#define _CRT_SECURE_NO_WARNINGS
+////#pragma warning(disable:4996)
+//#endif
+//#endif
 
 #include <string>
 #include <tchar.h>
+#include <wtypes.h>
 #include <stdint.h>
 
 //////////////////////////////////////////////////////////////////////////
