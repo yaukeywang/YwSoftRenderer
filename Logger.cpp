@@ -108,6 +108,9 @@ namespace yw
         case 3:
             SetConsoleTextAttribute(m_ConsoleWnd, FOREGROUND_RED | FOREGROUND_INTENSITY);
             break;
+        default:
+            SetConsoleTextAttribute(m_ConsoleWnd, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE);
+            break;
         }
 
         wsprintf(buffer, _T("[%04d-%02d-%02d %02d:%02d] %s \r\n"), time.wYear, time.wMonth, time.wDay, (time.wHour + 8) % 24, time.wMinute, message);
