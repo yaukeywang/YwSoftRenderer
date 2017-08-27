@@ -46,7 +46,7 @@ namespace yw
 		// Check device type.
 		if (!CheckDeviceType())
 		{
-			MessageBox(nullptr, _T("CheckDeviceCaps() Failed"), nullptr, 0);
+			MessageBox(nullptr, _T("AppSoftRenderer::CreateD3dEnvironment::CheckDeviceType() Failed!"), nullptr, 0);
 			return false;
 		}
 

@@ -460,14 +460,14 @@ namespace yw
 
 	void AppBase::OnKeyDown(DWORD dwKeyCode, DWORD dwExtraParam)
 	{
-		if (VK_ESCAPE == dwKeyCode)
-		{
-			EnableFullScreenMode(false);
-		}
-		else if ('F' == dwKeyCode)
-		{
-			EnableFullScreenMode(true);
-		}
+		//if (VK_ESCAPE == dwKeyCode)
+		//{
+		//	EnableFullScreenMode(false);
+		//}
+		//else if ('F' == dwKeyCode)
+		//{
+		//	EnableFullScreenMode(true);
+		//}
 	}
 
 	void AppBase::OnKeyUp(DWORD dwKeyCode, DWORD dwExtraParam)
