@@ -188,31 +188,29 @@ namespace yw
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-			else
-			{
-				// Otherwise, do animation/game stuff.
 
-				// If the application is paused then free some CPU
-				// cycles to other applications and then continue on
-				// to the next frame.
-				if (m_bAppPaused)
-				{
-					Sleep(20);
-					continue;
-				}
+            // Do animation/game stuff.
 
-				if (!IsDeviceLost())
-				{
-					__int64 n64CurPerformanceCounter = 0;
-					QueryPerformanceCounter((LARGE_INTEGER*)&n64CurPerformanceCounter);
-					
-					float fTimeDelta = (float)(n64CurPerformanceCounter - n64PrePerformanceCounter) * fSecondsPerCount;
-					n64PrePerformanceCounter = n64CurPerformanceCounter;
+            // If the application is paused then free some CPU
+            // cycles to other applications and then continue on
+            // to the next frame.
+            if (m_bAppPaused)
+            {
+                Sleep(20);
+                continue;
+            }
 
-					UpdateScene(fTimeDelta);
-					DrawScene();
-				}
-			}
+            if (!IsDeviceLost())
+            {
+                __int64 n64CurPerformanceCounter = 0;
+                QueryPerformanceCounter((LARGE_INTEGER*)&n64CurPerformanceCounter);
+
+                float fTimeDelta = (float)(n64CurPerformanceCounter - n64PrePerformanceCounter) * fSecondsPerCount;
+                n64PrePerformanceCounter = n64CurPerformanceCounter;
+
+                UpdateScene(fTimeDelta);
+                DrawScene();
+            }
 		}
 
 		return (int32_t)msg.wParam;
