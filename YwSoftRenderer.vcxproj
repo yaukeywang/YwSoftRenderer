@@ -148,7 +148,8 @@
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppSoftRenderer.h" />
     <ClInclude Include="Base.h" />
-    <ClInclude Include="GlobalMgr.h" />
+    <ClInclude Include="GlobalManager.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RendererSoftDx9.h" />
@@ -160,7 +161,8 @@
   <ItemGroup>
     <ClCompile Include="AppBase.cpp" />
     <ClCompile Include="AppSoftRenderer.cpp" />
-    <ClCompile Include="GlobalMgr.cpp" />
+    <ClCompile Include="GlobalManager.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RendererSoftDx9.cpp" />

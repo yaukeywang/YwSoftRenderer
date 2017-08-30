@@ -6,19 +6,19 @@
 
 #include "Base.h"
 #include "Logger.h"
-#include "GlobalMgr.h"
+#include "GlobalManager.h"
 
 namespace yw
 {
     // Log utilties.
-    #define Log(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->Log((msg))
-    #define LogF(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogFormat(msg)
-    #define LogI(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogInformation(msg)
-    #define LogIF(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogInformationFormat(msg)
-    #define LogW(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogWarning(msg)
-    #define LogWF(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogWarningFormat(msg)
-    #define LogE(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogError(msg)
-    #define LogEF(msg) GlobalMgr::GetGlobalMgr()->GetLogger()->LogErrorFormat(msg)
+    #define Log(msg) GlobalManager::GetGlobalManager()->GetLogger()->Log((msg))
+    #define LogF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogFormat(msg)
+    #define LogI(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogInformation(msg)
+    #define LogIF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogInformationFormat(msg)
+    #define LogW(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogWarning(msg)
+    #define LogWF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogWarningFormat(msg)
+    #define LogE(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogError(msg)
+    #define LogEF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogErrorFormat(msg)
 }
 
 #endif // __UTILITY_H__

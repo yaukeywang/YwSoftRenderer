@@ -8,13 +8,13 @@ namespace yw
 {
     class ILogger;
 
-    class GlobalMgr
+    class GlobalManager
     {
     private:
-        GlobalMgr();
+        GlobalManager();
 
     public:
-        virtual ~GlobalMgr();
+        virtual ~GlobalManager();
 
     public:
         void Initialize();
@@ -22,10 +22,10 @@ namespace yw
         ILogger* GetLogger();
 
     public:
-        static GlobalMgr* GetGlobalMgr();
+        static GlobalManager* GetGlobalManager();
 
     private:
-        static GlobalMgr* s_GlobalMgr;
+        static GlobalManager* s_GlobalManager;
 
     private:
         ILogger* m_Logger;

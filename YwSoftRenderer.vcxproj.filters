@@ -17,6 +17,9 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{d3c887c6-fee9-4945-a532-35fcb5b397ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{e2081e95-0008-46da-80df-b225bccce8e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -49,11 +52,14 @@
     <ClInclude Include="Logger.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalMgr.h">
-      <Filter>Base</Filter>
-    </ClInclude>
     <ClInclude Include="Utility.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,11 +81,14 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Base</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalMgr.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
     <ClCompile Include="Utility.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalManager.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
