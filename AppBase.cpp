@@ -44,7 +44,7 @@ namespace yw
 		m_nHeight(nHeight),
         m_Windowed(bWindowed)
 	{
-        LogI(_T("Starting soft renderer application..."));
+        LOGI(_T("Starting soft renderer application..."));
 
 		// Init window information.
 		if (!InitMainWindow())
@@ -76,7 +76,7 @@ namespace yw
 		// Set itself pointer.
 		s_pAppBase = this;
 
-        LogI(_T("Soft renderer application has already started!"));
+        LOGI(_T("Soft renderer application has already started!"));
 	}
 
 	AppBase::~AppBase()
@@ -87,7 +87,7 @@ namespace yw
 
 	bool AppBase::InitMainWindow()
 	{
-        Log(_T("Initializing main window..."));
+        LOG(_T("Initializing main window..."));
 
 		// Create the main application window.
 		WNDCLASSEX wcex;
@@ -109,7 +109,7 @@ namespace yw
 		if (!RegisterClassEx(&wcex))
 		{
 			MessageBox(nullptr, _T("RegisterClass() - FAILED"), nullptr, 0);
-            LogE(_T("Initializing main window: RegisterClass() - FAILED!"));
+            LOGE(_T("Initializing main window: RegisterClass() - FAILED!"));
 
 			return false;
 		}
@@ -124,7 +124,7 @@ namespace yw
 		if (nullptr == m_hMainWnd)
 		{
 			MessageBox(nullptr, _T("CreateWindow() - FAILED"), nullptr, 0);
-            LogE(_T("Initializing main window: CreateWindow() - FAILED!"));
+            LOGE(_T("Initializing main window: CreateWindow() - FAILED!"));
 
 			return false;
 		}
@@ -143,14 +143,14 @@ namespace yw
 		ShowWindow(m_hMainWnd, SW_SHOW);
 		UpdateWindow(m_hMainWnd);
 
-        Log(_T("Initializing main window finished."));
+        LOG(_T("Initializing main window finished."));
 
 		return true;
 	}
 
 	bool AppBase::InitRenderer()
 	{
-        Log(_T("Initializing renderer..."));
+        LOG(_T("Initializing renderer..."));
 
         if (nullptr == m_Renderer)
         {
@@ -159,11 +159,11 @@ namespace yw
 
         if (!m_Renderer->Initialize(nullptr, m_hMainWnd, m_nWidth, m_nHeight, m_Windowed))
         {
-            LogE(_T("Initializing renderer failed."));
+            LOGE(_T("Initializing renderer failed."));
             return false;
         }
 
-        Log(_T("Initializing renderer finished."));
+        LOG(_T("Initializing renderer finished."));
 
 		return true;
 	}
