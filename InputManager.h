@@ -19,9 +19,12 @@ namespace yw
     public:
         bool Initialize(HWND mainWindow);
         void Release();
-        
+
         void Update();
         void Dispatch();
+
+        HWND GetMainWindowHandle() const { return m_MainWindow; }
+        LPDIRECTINPUT8 GetDirectInput() const { return m_DirectInput; }
 
     private:
         // The handle of the main window.
