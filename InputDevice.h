@@ -31,6 +31,7 @@ namespace yw
 
         virtual bool Initialize() = 0;
         virtual void Release() = 0;
+        virtual void Update() = 0;
 
     protected:
         // The input manager belongs to.

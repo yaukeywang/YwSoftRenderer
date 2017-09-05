@@ -64,6 +64,9 @@
     <ClInclude Include="InputDevice.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="InputDeviceMouse.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -94,6 +97,9 @@
       <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="InputDevice.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="InputDeviceMouse.cpp">
       <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
