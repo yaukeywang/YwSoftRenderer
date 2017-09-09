@@ -6,7 +6,9 @@
 
 namespace yw
 {
+    class AppBase;
     class ILogger;
+    class InputManager;
 
     class GlobalManager
     {
@@ -17,18 +19,23 @@ namespace yw
         virtual ~GlobalManager();
 
     public:
-        void Initialize();
+        bool Initialize(AppBase* app);
         void Release();
-        ILogger* GetLogger();
+
+        // Get modules.
+        ILogger* GetLogger() { return m_Logger; }
+        InputManager* GetInputManager() { return m_InputManager; }
 
     public:
         static GlobalManager* GetGlobalManager();
+        static void ReleaseGlobalManager();
 
     private:
         static GlobalManager* s_GlobalManager;
 
     private:
         ILogger* m_Logger;
+        InputManager* m_InputManager;
     };
 }
 

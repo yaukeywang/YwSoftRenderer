@@ -13,6 +13,10 @@ namespace yw
         virtual ~ILogger() {}
 
     public:
+        virtual bool Initialize() { return true; }
+        virtual void Release() {}
+
+    public:
         virtual void Log(LPCTSTR message) = 0;
         virtual void LogFormat(LPCTSTR format, ...) = 0;
 

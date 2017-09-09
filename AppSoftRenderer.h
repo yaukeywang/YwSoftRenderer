@@ -18,9 +18,15 @@ namespace yw
 
 	public:
 		// Init all d3d settings.
-		bool CreateD3dEnvironment();
+		bool CreateEnvironment();
 
 	public:
+        // The entry of the initialize.
+        virtual bool Initialize();
+
+        // The release function.
+        virtual void Release();
+
 		// Check d3d device type.
 		virtual bool CheckDeviceType();
 

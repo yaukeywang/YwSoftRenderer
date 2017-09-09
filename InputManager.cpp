@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include "InputManager.h"
+#include "InputDevice.h"
+#include "InputDeviceMouse.h"
 #include "Utility.h"
 
 namespace yw
@@ -16,6 +18,7 @@ namespace yw
 
     InputManager::~InputManager()
     {
+        Release();
     }
 
     bool InputManager::Initialize(HWND mainWindow)
@@ -31,21 +34,53 @@ namespace yw
             return false;
         }
 
+        // Add input devices.
+
+        // Add mouse.
+        InputDevice* deviceMouse = new InputDeviceMouse(this);
+        deviceMouse->Initialize();
+        m_InputDevices.push_back(deviceMouse);
+
         return true;
     }
 
     void InputManager::Release()
     {
+        for (InputDeviceList::iterator it = m_InputDevices.begin(); it != m_InputDevices.end(); ++it)
+        {
+            YW_SAFE_RELEASE_DELETE(*it);
+        }
+
+        m_InputDevices.clear();
+
         m_MainWindow = nullptr;
         YW_SAFE_RELEASE(m_DirectInput);
     }
 
     void InputManager::Update()
     {
-
+        for (InputDeviceList::const_iterator it = m_InputDevices.begin(); it != m_InputDevices.end(); ++it)
+        {
+            (*it)->Update();
+        }
     }
 
     void InputManager::Dispatch()
+    {
+
+    }
+
+    void InputManager::AddInputDevice(InputDevice* inputDevice)
+    {
+        if (nullptr == inputDevice)
+        {
+            return;
+        }
+
+        m_InputDevices.push_back(inputDevice);
+    }
+
+    void InputManager::OnInputKey(const InputKey* inputKey)
     {
 
     }

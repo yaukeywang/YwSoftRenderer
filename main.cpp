@@ -12,5 +12,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 
 	yw::AppSoftRenderer app(hInstance);
-	return app.Run();
+    app.Initialize();
+	app.Run();
+    app.Release();
+
+    return 0;
 }

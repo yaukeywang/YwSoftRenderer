@@ -19,6 +19,17 @@ namespace yw
         virtual bool Initialize();
         virtual void Release();
         virtual void Update();
+
+    protected:
+        void BuildMouseId();
+        void ProcessClientEvent(InputKey* inputKey, InputKeyState newState);
+        void ProcessMoveEvent(InputKey* inputKey, int32_t newValueX, int32_t newValueY);
+        void ProcessWheelEvent(InputKey* inputKey, int32_t newValueZ);
+
+    protected:
+        int32_t m_X;
+        int32_t m_Y;
+        std::vector<InputKey> m_MouseStates;
     };
 }
 

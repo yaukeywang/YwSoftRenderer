@@ -11,14 +11,14 @@
 namespace yw
 {
     // Log utilties.
-    #define LOG(msg) GlobalManager::GetGlobalManager()->GetLogger()->Log((msg))
-    #define LOGF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogFormat(msg)
-    #define LOGI(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogInformation(msg)
-    #define LOGIF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogInformationFormat(msg)
-    #define LOGW(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogWarning(msg)
-    #define LOGWF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogWarningFormat(msg)
-    #define LOGE(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogError(msg)
-    #define LOGEF(msg) GlobalManager::GetGlobalManager()->GetLogger()->LogErrorFormat(msg)
+    #define LOG GlobalManager::GetGlobalManager()->GetLogger()->Log
+    #define LOGF GlobalManager::GetGlobalManager()->GetLogger()->LogFormat
+    #define LOGI GlobalManager::GetGlobalManager()->GetLogger()->LogInformation
+    #define LOGIF GlobalManager::GetGlobalManager()->GetLogger()->LogInformationFormat
+    #define LOGW GlobalManager::GetGlobalManager()->GetLogger()->LogWarning
+    #define LOGWF GlobalManager::GetGlobalManager()->GetLogger()->LogWarningFormat
+    #define LOGE GlobalManager::GetGlobalManager()->GetLogger()->LogError
+    #define LOGEF GlobalManager::GetGlobalManager()->GetLogger()->LogErrorFormat
 }
 
 #endif // __UTILITY_H__

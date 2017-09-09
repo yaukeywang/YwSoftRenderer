@@ -74,7 +74,7 @@ namespace yw
         }
 
         HRESULT hr = m_Device->Acquire();
-        if (FAILED(hr))
+        if (DIERR_INPUTLOST == hr)
         {
             LOGE(_T("Acquire input device failed: Acquire failed!"));
             return false;

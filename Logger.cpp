@@ -38,8 +38,16 @@ namespace yw
         va_list args;
         va_start(args, format);
 
-        TCHAR buffer[512];
-        wvsprintf(buffer, format, args);
+        TCHAR buffer[1024];
+#ifdef UNICODE
+        vswprintf(buffer, format, args);
+#else
+        vsprintf(buffer, format, args);
+#endif
+
+        va_end(args);
+
+        // Output result.
         OutputLog(0, buffer);
     }
 
@@ -53,8 +61,16 @@ namespace yw
         va_list args;
         va_start(args, format);
 
-        TCHAR buffer[512];
-        wvsprintf(buffer, format, args);
+        TCHAR buffer[1024];
+#ifdef UNICODE
+        vswprintf(buffer, format, args);
+#else
+        vsprintf(buffer, format, args);
+#endif
+
+        va_end(args);
+
+        // Output result.
         OutputLog(1, buffer);
     }
 
@@ -68,8 +84,16 @@ namespace yw
         va_list args;
         va_start(args, format);
 
-        TCHAR buffer[512];
-        wvsprintf(buffer, format, args);
+        TCHAR buffer[1024];
+#ifdef UNICODE
+        vswprintf(buffer, format, args);
+#else
+        vsprintf(buffer, format, args);
+#endif
+
+        va_end(args);
+
+        // Output result.
         OutputLog(2, buffer);
     }
 
@@ -83,8 +107,16 @@ namespace yw
         va_list args;
         va_start(args, format);
 
-        TCHAR buffer[512];
-        wvsprintf(buffer, format, args);
+        TCHAR buffer[1024];
+#ifdef UNICODE
+        vswprintf(buffer, format, args);
+#else
+        vsprintf(buffer, format, args);
+#endif
+
+        va_end(args);
+
+        // Output result.
         OutputLog(3, buffer);
     }
 
@@ -93,7 +125,7 @@ namespace yw
         SYSTEMTIME time;
         GetSystemTime(&time);
 
-        TCHAR buffer[512];
+        TCHAR buffer[1024];
         switch (level)
         {
         case 0:
@@ -113,11 +145,11 @@ namespace yw
             break;
         }
 
-        wsprintf(buffer, _T("[%04d-%02d-%02d %02d:%02d] %s \r\n"), time.wYear, time.wMonth, time.wDay, (time.wHour + 8) % 24, time.wMinute, message);
-
 #ifdef UNICODE
+        swprintf(buffer, _T("[%04d-%02d-%02d %02d:%02d] %s \r\n"), time.wYear, time.wMonth, time.wDay, (time.wHour + 8) % 24, time.wMinute, message);
         std::wcout << buffer;
 #else
+        sprintf(buffer, _T("[%04d-%02d-%02d %02d:%02d] %s \r\n"), time.wYear, time.wMonth, time.wDay, (time.wHour + 8) % 24, time.wMinute, message);
         std::cout << buffer;
 #endif
     }

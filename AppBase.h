@@ -27,6 +27,12 @@ namespace yw
 		//////////////////////////////////////////////////////////////////////////
 		// Base method.
 
+        // The entry of the initialize.
+        virtual bool Initialize();
+
+        // The release function.
+        virtual void Release();
+
 		// Initialize the main window.
 		virtual bool InitMainWindow();
 
@@ -161,6 +167,9 @@ namespace yw
 
         // Windowed or not.
         bool m_Windowed;
+
+        // The type of the renderer.
+        IRenderer::RendererType m_RendererType;
 
         // The renderer of this app.
         IRenderer* m_Renderer;

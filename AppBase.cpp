@@ -10,6 +10,8 @@
 #include "stdafx.h"
 #include "Resource.h"
 #include "AppBase.h"
+#include "GlobalManager.h"
+#include "InputManager.h"
 #include "Renderer.h"
 #include "RendererSoftDx9.h"
 #include "Utility.h"
@@ -42,48 +44,75 @@ namespace yw
 		m_bAppPaused(false),
 		m_nWidth(nWidth),
 		m_nHeight(nHeight),
-        m_Windowed(bWindowed)
+        m_Windowed(bWindowed),
+        m_RendererType(rendererType),
+        m_Renderer(nullptr)
 	{
+        
+	}
+
+	AppBase::~AppBase()
+	{
+		
+	}
+
+    bool AppBase::Initialize()
+    {
         LOGI(_T("Starting soft renderer application..."));
 
-		// Init window information.
-		if (!InitMainWindow())
-		{
-			PostQuitMessage(0);
-		}
+        // Init window information.
+        if (!InitMainWindow())
+        {
+            PostQuitMessage(0);
+        }
 
         // Create renderer.
-        m_Renderer = GetRendererByType(rendererType);
+        m_Renderer = GetRendererByType(m_RendererType);
         if (nullptr == m_Renderer)
         {
             MessageBox(nullptr, _T("AppBase::AppBase::CreateRenderer() - FAILED"), nullptr, 0);
             PostQuitMessage(0);
         }
 
-		// Init renderer information.
-		if (!InitRenderer())
-		{
+        // Init renderer information.
+        if (!InitRenderer())
+        {
             MessageBox(nullptr, _T("AppBase::AppBase::InitRenderer() - FAILED"), nullptr, 0);
-			PostQuitMessage(0);
-		}
+            PostQuitMessage(0);
+        }
 
-		// Full screen or not.
-		if (!bWindowed)
-		{
-			EnableFullScreenMode(true);
-		}
+        // Full screen or not.
+        if (!m_Windowed)
+        {
+            EnableFullScreenMode(true);
+        }
 
-		// Set itself pointer.
-		s_pAppBase = this;
+        // Init input device.
+        GlobalManager::GetGlobalManager()->Initialize(this);
 
+        // Set itself pointer.
+        s_pAppBase = this;
+
+        // Log ok.
         LOGI(_T("Soft renderer application has already started!"));
-	}
 
-	AppBase::~AppBase()
-	{
+        return true;
+    }
+
+    void AppBase::Release()
+    {
+        // Global manager release.
+        GlobalManager::GetGlobalManager()->Release();
+
+        // Renderer release.
         YW_SAFE_RELEASE_DELETE(m_Renderer);
-		s_pAppBase = nullptr;
-	}
+
+        // Release global manager.
+        GlobalManager::ReleaseGlobalManager();
+
+        // Set itself pointer.
+        s_pAppBase = nullptr;
+    }
 
 	bool AppBase::InitMainWindow()
 	{
@@ -451,7 +480,8 @@ namespace yw
 
 	void AppBase::UpdateScene(float fTimeDelta) 
 	{
-		
+        // Input manager logic update.
+        GlobalManager::GetGlobalManager()->GetInputManager()->Update();
 	}
 
 	void AppBase::DrawScene() 

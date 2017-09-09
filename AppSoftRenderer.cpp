@@ -25,12 +25,6 @@ namespace yw
 		m_TimeElapsed(0.0f),
 		m_Fps(0.0f)
 	{
-		// Create d3d environment.
-		if (!CreateD3dEnvironment())
-		{
-			PostQuitMessage(0);
-		}
-
 		s_pAppSoftRenderer = this;
 	}
 
@@ -41,7 +35,7 @@ namespace yw
 		s_pAppSoftRenderer = nullptr;
 	}
 
-	bool AppSoftRenderer::CreateD3dEnvironment()
+	bool AppSoftRenderer::CreateEnvironment()
 	{
 		// Check device type.
 		if (!CheckDeviceType())
@@ -54,6 +48,26 @@ namespace yw
 
 		return true;
 	}
+
+    bool AppSoftRenderer::Initialize()
+    {
+        // Base initialize first.
+        AppBase::Initialize();
+
+        // Create d3d environment.
+        if (!CreateEnvironment())
+        {
+            PostQuitMessage(0);
+        }
+
+        return true;
+    }
+
+    void AppSoftRenderer::Release()
+    {
+        // Base release last.
+        AppBase::Release();
+    }
 
 	bool AppSoftRenderer::CheckDeviceType()
 	{

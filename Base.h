@@ -22,6 +22,9 @@ purpose:	Some utility things.
 #include <wtypes.h>
 #include <stdint.h>
 
+#include <vector>
+#include <list>
+
 //////////////////////////////////////////////////////////////////////////
 #ifndef ASSERT
 #include <assert.h>

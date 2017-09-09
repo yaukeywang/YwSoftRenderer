@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "GlobalManager.h"
 #include "Logger.h"
+#include "InputManager.h"
+#include "AppBase.h"
 
 namespace yw
 {
@@ -17,30 +19,26 @@ namespace yw
 
         // Init modules.
         m_Logger = new Logger();
+        m_InputManager = new InputManager();
     }
 
     GlobalManager::~GlobalManager()
     {
-        // Clear global manager.
-        s_GlobalManager = nullptr;
-
-        // Delete logger.
-        YW_SAFE_DELETE(m_Logger);
+        Release();
     }
 
-    void GlobalManager::Initialize()
+    bool GlobalManager::Initialize(AppBase* app)
     {
+        m_Logger->Initialize();
+        m_InputManager->Initialize(app->GetMainWnd());
 
+        return true;
     }
 
     void GlobalManager::Release()
     {
-
-    }
-
-    ILogger* GlobalManager::GetLogger()
-    {
-        return m_Logger;
+        YW_SAFE_RELEASE_DELETE(m_Logger);
+        YW_SAFE_RELEASE_DELETE(m_InputManager);
     }
 
     GlobalManager* GlobalManager::GetGlobalManager()
@@ -51,5 +49,10 @@ namespace yw
         }
 
         return s_GlobalManager;
+    }
+
+    void GlobalManager::ReleaseGlobalManager()
+    {
+        YW_SAFE_DELETE(s_GlobalManager);
     }
 }

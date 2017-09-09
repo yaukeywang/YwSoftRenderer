@@ -25,9 +25,7 @@ namespace yw
 
     RendererSoftDx9::~RendererSoftDx9()
     {
-        YW_SAFE_RELEASE(m_D3dSurface);
-        YW_SAFE_RELEASE(m_D3dDevice);
-        YW_SAFE_RELEASE(m_D3dObject);
+        Release();
     }
 
     bool RendererSoftDx9::Initialize(LPCTSTR name, HWND hWnd, int32_t width, int32_t height, bool windowed)
