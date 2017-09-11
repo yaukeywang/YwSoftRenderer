@@ -6,7 +6,7 @@
 #pragma once
 
 // Disable msvc secure warnings.
-#if defined(WIN32) && defined(_MSC_VER)
+#if defined(_WINDOWS) && defined(_MSC_VER)
 #if !defined(_CRT_SECURE_NO_WARNINGS) && (_MSC_VER >= 1200)
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRT_NON_CONFORMING_SWPRINTFS
