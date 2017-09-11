@@ -21,6 +21,7 @@ namespace yw
     public:
         bool Initialize(AppBase* app);
         void Release();
+        void Update();
 
         // Get modules.
         inline ILogger* GetLogger() { return m_Logger; }

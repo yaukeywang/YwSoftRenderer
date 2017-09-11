@@ -481,7 +481,7 @@ namespace yw
 	void AppBase::UpdateScene(float fTimeDelta) 
 	{
         // Input manager logic update.
-        GlobalManager::GetGlobalManager()->GetInputManager()->Update();
+        GlobalManager::GetGlobalManager()->Update();
 	}
 
 	void AppBase::DrawScene() 

@@ -41,6 +41,19 @@ namespace yw
         YW_SAFE_RELEASE_DELETE(m_InputManager);
     }
 
+    void GlobalManager::Update()
+    {
+        //
+        // Logger is no update.
+        //
+
+        // Input manager update.
+        if (nullptr != m_InputManager)
+        {
+            m_InputManager->Update();
+        }
+    }
+
     void GlobalManager::ReleaseGlobalManager()
     {
         YW_SAFE_DELETE(s_GlobalManager);
