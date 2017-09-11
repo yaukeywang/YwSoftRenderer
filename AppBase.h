@@ -176,7 +176,7 @@ namespace yw
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Get trf appbase instance.
+	// Get appbase instance.
 	inline AppBase* GetAppBase()
 	{
 		//ASSERT(NULL!= AppBase::s_pAppBase);

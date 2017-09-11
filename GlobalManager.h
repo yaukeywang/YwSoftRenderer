@@ -23,11 +23,20 @@ namespace yw
         void Release();
 
         // Get modules.
-        ILogger* GetLogger() { return m_Logger; }
-        InputManager* GetInputManager() { return m_InputManager; }
+        inline ILogger* GetLogger() { return m_Logger; }
+        inline InputManager* GetInputManager() { return m_InputManager; }
 
     public:
-        static GlobalManager* GetGlobalManager();
+        inline static GlobalManager* GetGlobalManager()
+        {
+            if (nullptr == s_GlobalManager)
+            {
+                new GlobalManager();
+            }
+
+            return s_GlobalManager;
+        }
+        
         static void ReleaseGlobalManager();
 
     private:

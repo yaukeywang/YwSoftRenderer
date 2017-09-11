@@ -41,16 +41,6 @@ namespace yw
         YW_SAFE_RELEASE_DELETE(m_InputManager);
     }
 
-    GlobalManager* GlobalManager::GetGlobalManager()
-    {
-        if (nullptr == s_GlobalManager)
-        {
-            new GlobalManager();
-        }
-
-        return s_GlobalManager;
-    }
-
     void GlobalManager::ReleaseGlobalManager()
     {
         YW_SAFE_DELETE(s_GlobalManager);
