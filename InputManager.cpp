@@ -5,6 +5,7 @@
 #include "InputManager.h"
 #include "InputDevice.h"
 #include "InputDeviceMouse.h"
+#include "InputDevicekeyboard.h"
 #include "Utility.h"
 
 namespace yw
@@ -35,11 +36,17 @@ namespace yw
         }
 
         // Add input devices.
+        m_InputDevices.clear();
 
         // Add mouse.
         InputDevice* deviceMouse = new InputDeviceMouse(this);
         deviceMouse->Initialize();
         m_InputDevices.push_back(deviceMouse);
+
+        // Add keyboard.
+        InputDevice* deviceKeyboard = new InputDevicekeyboard(this);
+        deviceKeyboard->Initialize();
+        m_InputDevices.push_back(deviceKeyboard);
 
         return true;
     }

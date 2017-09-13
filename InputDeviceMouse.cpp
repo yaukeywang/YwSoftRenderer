@@ -12,12 +12,10 @@ namespace yw
         m_X(0),
         m_Y(0)
     {
-
     }
 
     InputDeviceMouse::~InputDeviceMouse()
     {
-
     }
 
     bool InputDeviceMouse::Initialize()
@@ -93,7 +91,8 @@ namespace yw
             for (int8_t i = 0; i < 8; i++)
             {
                 InputKeyState newState = (dims.rgbButtons[i] & 0x80) ? IPKS_PRESSED : IPKS_RELEASED;
-                ProcessClientEvent(&(m_MouseStates[i]), newState);
+                void ProcessClickEvent(InputKey* inputKey, InputKeyState newState);
+                (&(m_MouseStates[i]), newState);
             }
 
             ProcessMoveEvent(&(m_MouseStates[8]), deltaX, deltaY);
@@ -118,7 +117,7 @@ namespace yw
         m_MouseStates[9] = InputKey(IPKI_MOUSE_MOVE_WHEEL);
     }
 
-    void InputDeviceMouse::ProcessClientEvent(InputKey* inputKey, InputKeyState newState)
+    void InputDeviceMouse::ProcessClickEvent(InputKey* inputKey, InputKeyState newState)
     {
         if (newState == inputKey->m_State)
         {
@@ -134,14 +133,15 @@ namespace yw
         inputKey->m_Z = 0;
         inputManager->OnInputKey(inputKey);
 
-        if (IPKS_PRESSED == newState)
-        {
-            LOGF(_T("Mouse Button %d is Pressed."), inputKey->m_Id);
-        }
-        else if(IPKS_RELEASED == newState)
-        {
-            LOGF(_T("Mouse Button %d is Released."), inputKey->m_Id);
-        }
+        // Debug test.
+        //if (IPKS_PRESSED == newState)
+        //{
+        //    LOGF(_T("Mouse Button %d is Pressed."), inputKey->m_Id);
+        //}
+        //else if(IPKS_RELEASED == newState)
+        //{
+        //    LOGF(_T("Mouse Button %d is Released."), inputKey->m_Id);
+        //}
     }
 
     void InputDeviceMouse::ProcessMoveEvent(InputKey* inputKey, int32_t newValueX, int32_t newValueY)
@@ -160,7 +160,8 @@ namespace yw
         inputKey->m_Z = 0;
         inputManager->OnInputKey(inputKey);
 
-        LOGF(_T("Mouse Moving: (%d, %d)."), m_X, m_Y);
+        // Debug test.
+        //LOGF(_T("Mouse Moving: (%d, %d)."), m_X, m_Y);
     }
 
     void InputDeviceMouse::ProcessWheelEvent(InputKey* inputKey, int32_t newValueZ)
@@ -176,7 +177,8 @@ namespace yw
             inputKey->m_Z = newValueZ;
             inputManager->OnInputKey(inputKey);
 
-            LOGF(_T("Mouse Wheel: %d."), (int)newValueZ);
+            // Debug test.
+            //LOGF(_T("Mouse Wheel: %d."), (int)newValueZ);
         }
     }
 }

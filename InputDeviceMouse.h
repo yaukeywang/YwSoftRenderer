@@ -22,7 +22,7 @@ namespace yw
 
     protected:
         void BuildMouseId();
-        void ProcessClientEvent(InputKey* inputKey, InputKeyState newState);
+        void ProcessClickEvent(InputKey* inputKey, InputKeyState newState);
         void ProcessMoveEvent(InputKey* inputKey, int32_t newValueX, int32_t newValueY);
         void ProcessWheelEvent(InputKey* inputKey, int32_t newValueZ);
 
