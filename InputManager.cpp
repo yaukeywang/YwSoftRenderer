@@ -72,11 +72,6 @@ namespace yw
         }
     }
 
-    void InputManager::Dispatch()
-    {
-
-    }
-
     void InputManager::AddInputDevice(InputDevice* inputDevice)
     {
         if (nullptr == inputDevice)
@@ -89,6 +84,6 @@ namespace yw
 
     void InputManager::OnInputKey(const InputKey* inputKey)
     {
-
+        // Any input key event will come here, you can dispatch it by your own needs.
     }
 }
