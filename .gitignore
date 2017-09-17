@@ -40,8 +40,14 @@
 *.out
 *.app
 
+# Other File Types
+*.suo
+
 # Directories
 /.vs
 /ipch
 /Debug
 /x64
+/Code/.vs
+/Code/ipch
+/Bin

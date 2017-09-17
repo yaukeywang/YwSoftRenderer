@@ -20,93 +20,93 @@
     <Filter Include="Input">
       <UniqueIdentifier>{e2081e95-0008-46da-80df-b225bccce8e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{64edd657-358d-45b2-aaff-8bfd9f7a04b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Base.h">
+    <ClInclude Include="App\AppSoftRenderer.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\AppBase.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Base.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\GlobalManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Logger.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputDevice.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputDevicekeyboard.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputDeviceMouse.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RendererSoftDx9.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Utility.h">
+      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Base</Filter>
+      <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Base</Filter>
+      <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="AppBase.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="AppSoftRenderer.h">
-      <Filter>App</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="RendererSoftDx9.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalManager.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputDevice.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputDeviceMouse.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputDevicekeyboard.h">
-      <Filter>Input</Filter>
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="AppBase.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="AppSoftRenderer.cpp">
+    <ClCompile Include="App\AppSoftRenderer.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>App</Filter>
+    <ClCompile Include="Base\AppBase.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
-    <ClCompile Include="RendererSoftDx9.cpp">
+    <ClCompile Include="Base\GlobalManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Logger.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputDevice.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputDevicekeyboard.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputDeviceMouse.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputManager.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RendererSoftDx9.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility.cpp">
+    <ClCompile Include="Utility\Utility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Input</Filter>
+    <ClCompile Include="main.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalManager.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="InputDevice.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="InputDeviceMouse.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="InputDevicekeyboard.cpp">
-      <Filter>Input</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,5 +121,10 @@
     <Image Include="YwSoftRenderer.ico">
       <Filter>Resources</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>Main</Filter>
+    </Text>
   </ItemGroup>
 </Project>
