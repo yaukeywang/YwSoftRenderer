@@ -5,9 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Base">
-      <UniqueIdentifier>{693ddd39-8b9b-4963-8c6d-23dfb2c24b25}</UniqueIdentifier>
-    </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{ce9db043-2f39-43c2-8a5b-1807d39eeaa7}</UniqueIdentifier>
     </Filter>
@@ -23,22 +20,13 @@
     <Filter Include="Main">
       <UniqueIdentifier>{64edd657-358d-45b2-aaff-8bfd9f7a04b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{693ddd39-8b9b-4963-8c6d-23dfb2c24b25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppSoftRenderer.h">
       <Filter>App</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\AppBase.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\Base.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\GlobalManager.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\Logger.h">
-      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Input\InputDevice.h">
       <Filter>Input</Filter>
@@ -70,19 +58,22 @@
     <ClInclude Include="targetver.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="Core\AppBase.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Base.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GlobalManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Logger.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\AppSoftRenderer.cpp">
       <Filter>App</Filter>
-    </ClCompile>
-    <ClCompile Include="Base\AppBase.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Base\GlobalManager.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Base\Logger.cpp">
-      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="Input\InputDevice.cpp">
       <Filter>Input</Filter>
@@ -107,6 +98,15 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AppBase.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GlobalManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Logger.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

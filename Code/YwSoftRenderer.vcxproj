@@ -97,7 +97,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Base;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,7 +111,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Base;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +127,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Base;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +145,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Base;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,10 +160,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppSoftRenderer.h" />
-    <ClInclude Include="Base\AppBase.h" />
-    <ClInclude Include="Base\Base.h" />
-    <ClInclude Include="Base\GlobalManager.h" />
-    <ClInclude Include="Base\Logger.h" />
+    <ClInclude Include="Core\AppBase.h" />
+    <ClInclude Include="Core\Base.h" />
+    <ClInclude Include="Core\GlobalManager.h" />
+    <ClInclude Include="Core\Logger.h" />
     <ClInclude Include="Input\InputDevice.h" />
     <ClInclude Include="Input\InputDevicekeyboard.h" />
     <ClInclude Include="Input\InputDeviceMouse.h" />
@@ -177,9 +177,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\AppSoftRenderer.cpp" />
-    <ClCompile Include="Base\AppBase.cpp" />
-    <ClCompile Include="Base\GlobalManager.cpp" />
-    <ClCompile Include="Base\Logger.cpp" />
+    <ClCompile Include="Core\AppBase.cpp" />
+    <ClCompile Include="Core\GlobalManager.cpp" />
+    <ClCompile Include="Core\Logger.cpp" />
     <ClCompile Include="Input\InputDevice.cpp" />
     <ClCompile Include="Input\InputDevicekeyboard.cpp" />
     <ClCompile Include="Input\InputDeviceMouse.cpp" />
