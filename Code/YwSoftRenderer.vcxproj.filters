@@ -23,6 +23,9 @@
     <Filter Include="Core">
       <UniqueIdentifier>{693ddd39-8b9b-4963-8c6d-23dfb2c24b25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{86958caf-17d5-4ae7-a3a4-0a089e7558c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppSoftRenderer.h">
@@ -69,6 +72,12 @@
     </ClInclude>
     <ClInclude Include="Core\Logger.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathUtility.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
