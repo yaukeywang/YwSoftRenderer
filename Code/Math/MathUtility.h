@@ -4,6 +4,9 @@
 #ifndef __MATH_UTILITY_H__
 #define __MATH_UTILITY_H__
 
+#include <math.h>
+
+// Float compare precision.
 #define YW_FLOAT_PRECISION 0.0001f
 
 #endif // !__MATH_UTILITY_H__
