@@ -103,13 +103,13 @@ namespace yw
         GetInputManager()->OnInputKey(inputKey);
 
         // Debug test.
-        if (IPKS_PRESSED == newState)
-        {
-            LOGF(_T("Keyboard %d is Pressed."), inputKey->m_Id);
-        }
-        else if (IPKS_RELEASED == newState)
-        {
-            LOGF(_T("Keyboard %d is Released."), inputKey->m_Id);
-        }
+        //if (IPKS_PRESSED == newState)
+        //{
+        //    LOGF(_T("Keyboard %d is Pressed."), inputKey->m_Id);
+        //}
+        //else if (IPKS_RELEASED == newState)
+        //{
+        //    LOGF(_T("Keyboard %d is Released."), inputKey->m_Id);
+        //}
     }
 }

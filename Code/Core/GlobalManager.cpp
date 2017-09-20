@@ -11,7 +11,9 @@ namespace yw
 {
     GlobalManager* GlobalManager::s_GlobalManager = nullptr;
 
-    GlobalManager::GlobalManager()
+    GlobalManager::GlobalManager() : 
+        m_Logger(nullptr),
+        m_InputManager(nullptr)
     {
         // Init global instance.
         ASSERT(nullptr == s_GlobalManager);
@@ -19,7 +21,7 @@ namespace yw
 
         // Init modules.
         m_Logger = new Logger();
-        m_InputManager = new InputManager();
+        //m_InputManager = new InputManager();  // Currently we use windows message for keyboard and mouse input, although InputManager has already shipped with mouse and keyboard input support, see: https://msdn.microsoft.com/en-us/library/windows/desktop/ee416842(v=vs.85).aspx.
     }
 
     GlobalManager::~GlobalManager()
@@ -29,8 +31,17 @@ namespace yw
 
     bool GlobalManager::Initialize(AppBase* app)
     {
-        m_Logger->Initialize();
-        m_InputManager->Initialize(app->GetMainWnd());
+        // Initialize logger.
+        if (nullptr != m_Logger)
+        {
+            m_Logger->Initialize();
+        }
+
+        // Initialize input manager.
+        if (nullptr != m_InputManager)
+        {
+            m_InputManager->Initialize(app->GetMainWnd());
+        }
 
         return true;
     }
