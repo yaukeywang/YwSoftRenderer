@@ -31,6 +31,10 @@ namespace yw
         {
         }
 
+        Vector2(const Vector3& o) : x(o.x), y(o.y)
+        {
+        }
+
     public:
         // Member functions.
 
@@ -151,6 +155,12 @@ namespace yw
             return *this;
         }
 
+        inline operator Vector3()
+        {
+            Vector3 value(x, y, 0.0f);
+            return value;
+        }
+
         inline void Reset()
         {
             x = y = 0.0f;
@@ -216,6 +226,30 @@ namespace yw
         {
             Vector2 one(1.0f, 1.0f);
             return one;
+        }
+
+        static inline Vector2 Left()
+        {
+            Vector2 left(-1.0f, 0.0f);
+            return left;
+        }
+
+        static inline Vector2 Right()
+        {
+            Vector2 right(1.0f, 0.0f);
+            return right;
+        }
+
+        static inline Vector2 Down()
+        {
+            Vector2 down(0.0f, -1.0f);
+            return down;
+        }
+
+        static inline Vector2 Up()
+        {
+            Vector2 up(0.0f, 1.0f);
+            return up;
         }
     };
 
@@ -392,6 +426,12 @@ namespace yw
             return *this;
         }
 
+        inline operator Vector2()
+        {
+            Vector2 value(x, y);
+            return value;
+        }
+
         inline void Reset()
         {
             x = y = z = 0.0f;
@@ -464,6 +504,42 @@ namespace yw
         {
             Vector3 one(1.0f, 1.0f, 1.0f);
             return one;
+        }
+
+        static inline Vector3 Left()
+        {
+            Vector3 left(-1.0f, 0.0f, 0.0f);
+            return left;
+        }
+
+        static inline Vector3 Right()
+        {
+            Vector3 right(1.0f, 0.0f, 0.0f);
+            return right;
+        }
+
+        static inline Vector3 Down()
+        {
+            Vector3 down(0.0f, -1.0f, 0.0f);
+            return down;
+        }
+
+        static inline Vector3 Up()
+        {
+            Vector3 up(0.0f, 1.0f, 0.0f);
+            return up;
+        }
+
+        static inline Vector3 Back()
+        {
+            Vector3 back(0.0f, 0.0f, -1.0f);
+            return back;
+        }
+
+        static inline Vector3 Forward()
+        {
+            Vector3 forward(0.0f, 0.0f, 1.0f);
+            return forward;
         }
     };
 
