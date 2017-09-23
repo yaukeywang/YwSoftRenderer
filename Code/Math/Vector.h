@@ -550,6 +550,283 @@ namespace yw
         Vector3 value(n * v.x, n * v.y, n * v.z);
         return value;
     }
+
+    // Vector 4 class.
+    struct Vector4
+    {
+    public:
+        union
+        {
+            float m[4];
+            struct { float x; float y; float z; float w; };
+        };
+
+    public:
+        Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
+        {
+        }
+
+        Vector4(const Vector4& o) : x(o.x), y(o.y), z(o.z), w(o.w)
+        {
+        }
+
+        Vector4(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
+        {
+        }
+
+        Vector4(const Vector2& o) : x(o.x), y(o.y), z(0.0f), w(0.0f)
+        {
+        }
+
+        Vector4(const Vector3& o) : x(o.x), y(o.y), z(o.z), w(0.0f)
+        {
+        }
+
+    public:
+        // Member functions.
+
+        inline Vector4& operator =(const Vector4& o)
+        {
+            x = o.x;
+            y = o.y;
+            z = o.z;
+            w = o.w;
+        }
+
+        inline bool operator ==(const Vector4& o) const
+        {
+            float deltaX = x - o.x;
+            if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
+            {
+                return false;
+            }
+
+            float deltaY = y - o.y;
+            if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
+            {
+                return false;
+            }
+
+            float deltaZ = z - o.z;
+            if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
+            {
+                return false;
+            }
+
+            float deltaW = w - o.w;
+            if (deltaW > YW_FLOAT_PRECISION || deltaW < -YW_FLOAT_PRECISION)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        inline bool operator !=(const Vector4& o) const
+        {
+            float deltaX = x - o.x;
+            if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
+            {
+                return true;
+            }
+
+            float deltaY = y - o.y;
+            if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
+            {
+                return true;
+            }
+
+            float deltaZ = z - o.z;
+            if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
+            {
+                return true;
+            }
+
+            float deltaW = w - o.w;
+            if (deltaW > YW_FLOAT_PRECISION || deltaW < -YW_FLOAT_PRECISION)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        inline Vector4 operator -() const
+        {
+            Vector4 value(-x, -y, -z, -w);
+            return value;
+        }
+
+        inline Vector4 operator +(const Vector4& o) const
+        {
+            Vector4 value(x + o.x, y + o.y, z + o.z, w + o.w);
+            return value;
+        }
+
+        inline Vector4 operator -(const Vector4& o) const
+        {
+            Vector4 value(x - o.x, y - o.y, z - o.z, w - o.w);
+            return value;
+        }
+
+        inline Vector4 operator *(const Vector4& o) const
+        {
+            Vector4 value(x * o.x, y * o.y, z * o.z, w * o.w);
+            return value;
+        }
+
+        inline Vector4 operator *(float o) const
+        {
+            Vector4 value(x * o, y * o, z * o, w * o);
+            return value;
+        }
+
+        inline Vector4 operator /(float o) const
+        {
+            float oneOverO = 1.0f / o;
+            Vector4 value(x * oneOverO, y * oneOverO, z * oneOverO, w * oneOverO);
+        }
+
+        inline Vector4& operator +=(const Vector4& o)
+        {
+            x += o.x;
+            y += o.y;
+            z += o.z;
+            w += o.w;
+
+            return *this;
+        }
+
+        inline Vector4& operator -=(const Vector4& o)
+        {
+            x -= o.x;
+            y -= o.y;
+            z -= o.z;
+            w -= o.w;
+
+            return *this;
+        }
+
+        inline Vector4& operator *=(const Vector4& o)
+        {
+            x *= o.x;
+            y *= o.y;
+            z *= o.z;
+            w *= o.w;
+
+            return *this;
+        }
+
+        inline Vector4& operator *=(float o)
+        {
+            x *= o;
+            y *= o;
+            z *= o;
+            w *= o;
+
+            return *this;
+        }
+
+        inline Vector4& operator /=(float o)
+        {
+            float oneOverO = 1.0f / o;
+            x *= oneOverO;
+            y *= oneOverO;
+            z *= oneOverO;
+            w *= oneOverO;
+
+            return *this;
+        }
+
+        inline operator Vector2()
+        {
+            Vector2 value(x, y);
+            return value;
+        }
+
+        inline operator Vector3()
+        {
+            Vector3 value(x, y, z);
+            return value;
+        }
+
+        inline void Reset()
+        {
+            x = y = z = w = 0.0f;
+        }
+
+        inline float Length() const
+        {
+            float value = sqrt(x * x + y * y + z * z + w * w);
+            return value;
+        }
+
+        inline float SquaredLength() const
+        {
+            float value = x * x + y * y + z * z + w * w;
+            return value;
+        }
+
+        inline Vector4& Normalize()
+        {
+            float length = Length();
+            *this /= length;
+
+            return *this;
+        }
+
+        // Static functions.
+
+        static inline float Dot(const Vector4& left, const Vector4& right)
+        {
+            float dot = left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+            return dot;
+        }
+
+        static inline Vector4 Cross(const Vector4& left, const Vector4& right)
+        {
+            Vector4 cross(
+                left.y * right.z - left.z * right.y,
+                left.z * right.x - left.x * right.z,
+                left.x * right.y - left.y * right.x,
+                0.0f
+            );
+
+            return cross;
+        }
+
+        static inline float Distance(const Vector4& left, const Vector4& right)
+        {
+            float deltaX = left.x - right.x;
+            float deltaY = left.y - right.y;
+            float deltaZ = left.z - right.z;
+            float deltaW = left.w - right.w;
+            float distance = sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ + deltaW * deltaW);
+            return distance;
+        }
+
+        static inline float SquaredDistance(const Vector4& left, const Vector4& right)
+        {
+            float deltaX = left.x - right.x;
+            float deltaY = left.y - right.y;
+            float deltaZ = left.z - right.z;
+            float deltaW = left.w - right.w;
+            float distance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ + deltaW * deltaW;
+            return distance;
+        }
+
+        static inline Vector4 Zero()
+        {
+            Vector4 zero(0.0f, 0.0f, 0.0f, 0.0f);
+            return zero;
+        }
+
+        static inline Vector4 One()
+        {
+            Vector4 one(1.0f, 1.0f, 1.0f, 1.0f);
+            return one;
+        }
+    };
 }
 
 #endif // !__VECTOR_H__
