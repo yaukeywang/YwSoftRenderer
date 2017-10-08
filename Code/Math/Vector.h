@@ -830,4 +830,3 @@ namespace yw
 }
 
 #endif // !__VECTOR_H__
-

@@ -79,6 +79,9 @@
     <ClInclude Include="Math\MathUtility.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Math\Quaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\AppSoftRenderer.cpp">
