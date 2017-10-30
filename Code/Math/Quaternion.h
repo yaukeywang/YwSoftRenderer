@@ -4,6 +4,8 @@
 #ifndef __QUATERNION_H__
 #define __QUATERNION_H__
 
+#include "MathUtility.h"
+
 namespace yw
 {
     // Vector 2 class.
@@ -135,6 +137,125 @@ namespace yw
             w *= oneOverO;
 
             return *this;
+        }
+
+        inline float Length() const
+        {
+            float value = sqrt(x * x + y * y + z * z + w * w);
+            return value;
+        }
+
+        inline float SquaredLength() const
+        {
+            float value = x * x + y * y + z * z + w * w;
+            return value;
+        }
+
+        inline Quaternion& Normalize()
+        {
+            float length = Length();
+            *this /= length;
+
+            return *this;
+        }
+
+        inline void SetIdentity()
+        {
+            x = 0.0f;
+            y = 0.0f;
+            z = 0.0f;
+            w = 1.0f;
+        }
+
+        inline void SetRotationX(float theta)
+        {
+            float halfTheta = theta * 0.5f;
+            float s = sin(halfTheta);
+            float c = cos(halfTheta);
+
+            x = s;
+            y = 0.0f;
+            z = 0.0f;
+            w = c;
+        }
+
+        inline void SetRotationY(float theta)
+        {
+            float halfTheta = theta * 0.5f;
+            float s = sin(halfTheta);
+            float c = cos(halfTheta);
+
+            x = 0.0f;
+            y = s;
+            z = 0.0f;
+            w = c;
+        }
+
+        inline void SetRotationZ(float theta)
+        {
+            float halfTheta = theta * 0.5f;
+            float s = sin(halfTheta);
+            float c = cos(halfTheta);
+
+            x = 0.0f;
+            y = 0.0f;
+            z = s;
+            w = c;
+        }
+
+        // Static functions.
+        static inline Quaternion Identity()
+        {
+            Quaternion value(0.0f, 0.0f, 0.0f, 1.0f);
+            return value;
+        }
+
+        static inline float Dot(const Quaternion& left, const Quaternion& right)
+        {
+            float value = left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+            return value;
+        }
+
+        static inline Quaternion Cross(const Quaternion& left, const Quaternion& right)
+        {
+            Quaternion value(
+                left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
+                left.w * right.y - left.x * right.z + left.y * right.w + left.z * right.x,
+                left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w,
+                left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z
+            );
+
+            return value;
+        }
+
+        static inline Quaternion Conjugate(const Quaternion& o)
+        {
+            Quaternion value = Quaternion(-o.x, -o.y, -o.z, o.w);
+            return value;
+        }
+
+        static inline Quaternion CreateRotationX(float theta)
+        {
+            Quaternion value;
+            value.SetRotationX(theta);
+
+            return value;
+        }
+
+        static inline Quaternion CreateRotationY(float theta)
+        {
+            Quaternion value;
+            value.SetRotationY(theta);
+
+            return value;
+        }
+
+        static inline Quaternion CreateRotationZ(float theta)
+        {
+            Quaternion value;
+            value.SetRotationZ(theta);
+
+            return value;
         }
     };
 }
