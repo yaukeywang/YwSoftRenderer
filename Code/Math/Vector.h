@@ -777,13 +777,13 @@ namespace yw
 
         // Static functions.
 
-        static inline float Dot(const Vector4& left, const Vector4& right)
+        inline static float Dot(const Vector4& left, const Vector4& right)
         {
             float dot = left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
             return dot;
         }
 
-        static inline Vector4 Cross(const Vector4& left, const Vector4& right)
+        inline static Vector4 Cross(const Vector4& left, const Vector4& right)
         {
             Vector4 cross(
                 left.y * right.z - left.z * right.y,
@@ -795,7 +795,7 @@ namespace yw
             return cross;
         }
 
-        static inline float Distance(const Vector4& left, const Vector4& right)
+        inline static float Distance(const Vector4& left, const Vector4& right)
         {
             float deltaX = left.x - right.x;
             float deltaY = left.y - right.y;
@@ -805,7 +805,7 @@ namespace yw
             return distance;
         }
 
-        static inline float SquaredDistance(const Vector4& left, const Vector4& right)
+        inline static float SquaredDistance(const Vector4& left, const Vector4& right)
         {
             float deltaX = left.x - right.x;
             float deltaY = left.y - right.y;
@@ -815,13 +815,13 @@ namespace yw
             return distance;
         }
 
-        static inline Vector4 Zero()
+        inline static Vector4 Zero()
         {
             Vector4 zero(0.0f, 0.0f, 0.0f, 0.0f);
             return zero;
         }
 
-        static inline Vector4 One()
+        inline static Vector4 One()
         {
             Vector4 one(1.0f, 1.0f, 1.0f, 1.0f);
             return one;

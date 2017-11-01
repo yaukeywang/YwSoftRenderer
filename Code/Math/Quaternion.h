@@ -205,23 +205,38 @@ namespace yw
 
         inline void SetRotationXYZ(float thetaX, float thetaY, float thetaZ)
         {
-            
+            float halfThetaX = thetaX * 0.5f;
+            float sinHTX = sin(halfThetaX);
+            float cosHTX = cos(halfThetaX);
+
+            float halfThetaY = thetaY * 0.5f;
+            float sinHTY = sin(halfThetaY);
+            float cosHTY = cos(halfThetaY);
+
+            float halfThetaZ = thetaZ * 0.5f;
+            float sinHTZ = sin(halfThetaZ);
+            float cosHTZ = cos(halfThetaZ);
+
+            x = cosHTZ * cosHTY * sinHTX - sinHTZ * sinHTY * cosHTX;
+            y = cosHTZ * sinHTY * cosHTX + sinHTZ * cosHTY * sinHTX;
+            z = sinHTZ * cosHTY * cosHTX - cosHTZ * sinHTY * sinHTX;
+            w = cosHTZ * cosHTY * cosHTX + sinHTZ * sinHTY * sinHTX;
         }
 
         // Static functions.
-        static inline Quaternion Identity()
+        inline static Quaternion Identity()
         {
             Quaternion value(0.0f, 0.0f, 0.0f, 1.0f);
             return value;
         }
 
-        static inline float Dot(const Quaternion& left, const Quaternion& right)
+        inline static float Dot(const Quaternion& left, const Quaternion& right)
         {
             float value = left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
             return value;
         }
 
-        static inline Quaternion Cross(const Quaternion& left, const Quaternion& right)
+        inline static Quaternion Cross(const Quaternion& left, const Quaternion& right)
         {
             Quaternion value(
                 left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
@@ -233,13 +248,13 @@ namespace yw
             return value;
         }
 
-        static inline Quaternion Conjugate(const Quaternion& o)
+        inline static Quaternion Conjugate(const Quaternion& o)
         {
             Quaternion value = Quaternion(-o.x, -o.y, -o.z, o.w);
             return value;
         }
 
-        static inline Quaternion Inverse(const Quaternion& o)
+        inline static Quaternion Inverse(const Quaternion& o)
         {
             Quaternion conjugate = Conjugate(o);
             Quaternion value = conjugate / o.SquaredLength();
@@ -247,7 +262,7 @@ namespace yw
             return value;
         }
 
-        static inline Quaternion Difference(const Quaternion& left, const Quaternion& right)
+        inline static Quaternion Difference(const Quaternion& left, const Quaternion& right)
         {
             Quaternion inverse = Inverse(left);
             Quaternion difference = Cross(inverse, right);
@@ -255,7 +270,7 @@ namespace yw
             return difference;
         }
 
-        static inline Quaternion CreateRotationX(float theta)
+        inline static Quaternion CreateRotationX(float theta)
         {
             Quaternion value;
             value.SetRotationX(theta);
@@ -263,7 +278,7 @@ namespace yw
             return value;
         }
 
-        static inline Quaternion CreateRotationY(float theta)
+        inline static Quaternion CreateRotationY(float theta)
         {
             Quaternion value;
             value.SetRotationY(theta);
@@ -271,10 +286,18 @@ namespace yw
             return value;
         }
 
-        static inline Quaternion CreateRotationZ(float theta)
+        inline static Quaternion CreateRotationZ(float theta)
         {
             Quaternion value;
             value.SetRotationZ(theta);
+
+            return value;
+        }
+
+        inline static Quaternion CreateRotationXYZ(float thetaX, float thetaY, float thetaZ)
+        {
+            Quaternion value;
+            value.SetRotationXYZ(thetaX, thetaY, thetaZ);
 
             return value;
         }
