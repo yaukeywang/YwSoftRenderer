@@ -270,6 +270,107 @@ namespace yw
             return difference;
         }
 
+        inline static Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
+        {
+            // q0 if t is less equal smaller border 0.
+            if (t <= 0.0f)
+            {
+                return q0;
+            }
+
+            // q1 if t is greater equal bigger border 1.
+            if (t >= 1.0f)
+            {
+                return q1;
+            }
+
+            // Get the temp quaternion.
+            float x1 = 0.0f;
+            float y1 = 0.0f;
+            float z1 = 0.0f;
+            float w1 = 0.0f;
+
+            // Get cos omega by dot product.
+            float cosOmega = Dot(q0, q1);
+
+            // If dot product is negative, adjust signs in order to choose the shortest path between q0 and q1.
+            if (cosOmega < 0.0f)
+            {
+                x1 = -q1.x;
+                y1 = -q1.y;
+                z1 = -q1.z;
+                w1 = -q1.w;
+            }
+            else
+            {
+                x1 = q1.x;
+                y1 = q1.y;
+                z1 = q1.z;
+                w1 = q1.w;
+            }
+
+            // Check if the angle between q0 and q1 is almost 0.
+            float k0 = 0.0f;
+            float k1 = 0.0f;
+            if (cosOmega > 0.9999f)
+            {
+                // Linear lerp.
+                k0 = 1.0f - t;
+                k1 = t;
+            }
+            else
+            {
+                float omega = acosf(cosOmega);
+                float oneOverSinOmega = 1.0f / sinf(omega);
+                k0 = sinf((1.0f - t) * omega) * oneOverSinOmega;
+                k1 = sinf(t * omega) * oneOverSinOmega;
+            }
+
+            // Combine new quaternion by qt = q0 * k0 + q1 * k1;
+            Quaternion value(
+                q0.x * k0 + x1 * k1,
+                q0.y * k0 + y1 * k1,
+                q0.z * k0 + z1 * k1,
+                q0.w * k0 + w1 * k1
+            );
+
+            return value;
+        }
+
+        inline static Quaternion Pow(const Quaternion& q, float exponent)
+        {
+            // Check normalized quaternion.
+            if (q.w > 0.9999f)
+            {
+                return q;
+            }
+
+            // Get alpha (alpha = theta / 2).
+            float alpha = acosf(q.w);
+
+            // Get new alpha.
+            float newAlpha = alpha * exponent;
+
+            // Get new w component.
+            float w = cosf(newAlpha);
+
+            // Get multiply.
+            // [x, y, z, w] => [sin(alpha) * n, cos(alpha)]
+            // newAlpha = alpha * exponent.
+            // n = [x, y, z] / sin(alpha), multiply = sin(newAlpha) / sin(alpha), n' = (sin(alpha) * n) * multiply.
+            float multiply = sinf(newAlpha) / sinf(alpha);
+
+            // Get new sin(t * alpha) * n.
+            float x = q.x * multiply;
+            float y = q.y * multiply;
+            float z = q.z * multiply;
+
+            // Combine a new quaternion.
+            Quaternion value(x, y, z, w);
+
+            return value;
+        }
+
         inline static Quaternion CreateRotationX(float theta)
         {
             Quaternion value;
