@@ -57,18 +57,18 @@ namespace yw
             return Quaternion(x + q.x, y + q.y, z + q.z, w + q.w);
         }
 
-        inline Quaternion operator -(const Quaternion &o) const
+        inline Quaternion operator -(const Quaternion& q) const
         {
-            return Quaternion(x - o.x, y - o.y, z - o.z, w - o.w);
+            return Quaternion(x - q.x, y - q.y, z - q.z, w - q.w);
         }
 
-        inline Quaternion operator *(const Quaternion &o) const
+        inline Quaternion operator *(const Quaternion& q) const
         {
             Quaternion value;
-            value.x = w * o.x + x * o.w + y * o.z - z * o.y;
-            value.y = w * o.y - x * o.z + y * o.w + z * o.x;
-            value.z = w * o.z + x * o.y - y * o.x + z * o.w;
-            value.w = w * o.w - x * o.x - y * o.y - z * o.z;
+            value.x = w * q.x + x * q.w + y * q.z - z * q.y;
+            value.y = w * q.y - x * q.z + y * q.w + z * q.x;
+            value.z = w * q.z + x * q.y - y * q.x + z * q.w;
+            value.w = w * q.w - x * q.x - y * q.y - z * q.z;
 
             return value;
         }
@@ -87,51 +87,51 @@ namespace yw
             return value;
         }
 
-        inline Quaternion& operator +=(const Quaternion &o)
+        inline Quaternion& operator +=(const Quaternion& q)
         {
-            x += o.x;
-            y += o.y;
-            z += o.z;
-            w += o.w;
+            x += q.x;
+            y += q.y;
+            z += q.z;
+            w += q.w;
 
             return *this;
         }
 
-        inline Quaternion& operator -=(const Quaternion &o)
+        inline Quaternion& operator -=(const Quaternion& q)
         {
-            x -= o.x;
-            y -= o.y;
-            z -= o.z;
-            w -= o.w;
+            x -= q.x;
+            y -= q.y;
+            z -= q.z;
+            w -= q.w;
 
             return *this;
         }
 
-        inline Quaternion& operator *=(const Quaternion &o)
+        inline Quaternion& operator *=(const Quaternion& q)
         {
             Quaternion value;
-            value.x = w * o.x + x * o.w + y * o.z - z * o.y;
-            value.y = w * o.y - x * o.z + y * o.w + z * o.x;
-            value.z = w * o.z + x * o.y - y * o.x + z * o.w;
-            value.w = w * o.w - x * o.x - y * o.y - z * o.z;
+            value.x = w * q.x + x * q.w + y * q.z - z * q.y;
+            value.y = w * q.y - x * q.z + y * q.w + z * q.x;
+            value.z = w * q.z + x * q.y - y * q.x + z * q.w;
+            value.w = w * q.w - x * q.x - y * q.y - z * q.z;
             *this = value;
 
             return *this;
         }
 
-        inline Quaternion& operator *=(const float o)
+        inline Quaternion& operator *=(const float q)
         {
-            x *= o;
-            y *= o;
-            z *= o;
-            w *= o;
+            x *= q;
+            y *= q;
+            z *= q;
+            w *= q;
 
             return *this;
         }
 
-        inline Quaternion& operator /=(const float o)
+        inline Quaternion& operator /=(const float q)
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / q;
             x *= oneOverO;
             y *= oneOverO;
             z *= oneOverO;
@@ -251,16 +251,16 @@ namespace yw
             return value;
         }
 
-        inline static Quaternion Conjugate(const Quaternion& o)
+        inline static Quaternion Conjugate(const Quaternion& q)
         {
-            Quaternion value = Quaternion(-o.x, -o.y, -o.z, o.w);
+            Quaternion value = Quaternion(-q.x, -q.y, -q.z, q.w);
             return value;
         }
 
-        inline static Quaternion Inverse(const Quaternion& o)
+        inline static Quaternion Inverse(const Quaternion& q)
         {
-            Quaternion conjugate = Conjugate(o);
-            Quaternion value = conjugate / o.SquaredLength();
+            Quaternion conjugate = Conjugate(q);
+            Quaternion value = conjugate / q.SquaredLength();
 
             return value;
         }
