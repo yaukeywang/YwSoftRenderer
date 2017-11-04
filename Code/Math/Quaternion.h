@@ -409,6 +409,8 @@ namespace yw
         // ZYX euler order conversion.
         inline static bool ToEuler(Vector3& out, const Quaternion& q)
         {
+            // Use Quaternion->Matrix->Euler later.
+
             // from http://www.geometrictools.com/Documentation/EulerAngles.pdf.
             // ZYX order.
 
