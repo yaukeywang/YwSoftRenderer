@@ -9,5 +9,8 @@
 // Float compare precision.
 #define YW_FLOAT_PRECISION 0.0001f
 
+// Math pi.
+#define YW_PI 3.1415926f
+
 #endif // !__MATH_UTILITY_H__
 

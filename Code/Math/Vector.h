@@ -31,9 +31,9 @@ namespace yw
         {
         }
 
-        Vector2(const Vector3& o) : x(o.x), y(o.y)
-        {
-        }
+        //Vector2(const Vector3& o) : x(o.x), y(o.y)
+        //{
+        //}
 
     public:
         // Member functions.
@@ -155,11 +155,11 @@ namespace yw
             return *this;
         }
 
-        inline operator Vector3()
-        {
-            Vector3 value(x, y, 0.0f);
-            return value;
-        }
+        //inline operator Vector3()
+        //{
+        //    Vector3 value(x, y, 0.0f);
+        //    return value;
+        //}
 
         inline void Reset()
         {

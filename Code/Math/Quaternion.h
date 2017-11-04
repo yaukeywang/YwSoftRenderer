@@ -1,10 +1,11 @@
-// Add by yaukey at 2017-10-07.
+﻿// Add by yaukey at 2017-10-07.
 // Quaternion class.
 
 #ifndef __QUATERNION_H__
 #define __QUATERNION_H__
 
 #include "MathUtility.h"
+#include "Vector.h"
 
 namespace yw
 {
@@ -26,19 +27,19 @@ namespace yw
         {
         }
 
-        Quaternion(const Quaternion& o) : x(o.x), y(o.y), z(o.z)
+        Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z)
         {
         }
 
     public:
         // Member functions.
 
-        inline Quaternion& operator =(const Quaternion& o)
+        inline Quaternion& operator =(const Quaternion& q)
         {
-            x = o.x;
-            y = o.y;
-            z = o.z;
-            w = o.w;
+            x = q.x;
+            y = q.y;
+            z = q.z;
+            w = q.w;
         }
 
         inline Quaternion operator +() const
@@ -51,9 +52,9 @@ namespace yw
             return Quaternion(-x, -y, -z, -w);
         }
 
-        inline Quaternion operator +(const Quaternion &o) const
+        inline Quaternion operator +(const Quaternion& q) const
         {
-            return Quaternion(x + o.x, y + o.y, z + o.z, w + o.w);
+            return Quaternion(x + q.x, y + q.y, z + q.z, w + q.w);
         }
 
         inline Quaternion operator -(const Quaternion &o) const
@@ -167,7 +168,7 @@ namespace yw
             w = 1.0f;
         }
 
-        inline void SetRotationX(float theta)
+        inline void SetEulerX(float theta)
         {
             float halfTheta = theta * 0.5f;
             float s = sin(halfTheta);
@@ -179,7 +180,7 @@ namespace yw
             w = c;
         }
 
-        inline void SetRotationY(float theta)
+        inline void SetEulerY(float theta)
         {
             float halfTheta = theta * 0.5f;
             float s = sin(halfTheta);
@@ -191,7 +192,7 @@ namespace yw
             w = c;
         }
 
-        inline void SetRotationZ(float theta)
+        inline void SetEulerZ(float theta)
         {
             float halfTheta = theta * 0.5f;
             float s = sin(halfTheta);
@@ -203,8 +204,10 @@ namespace yw
             w = c;
         }
 
-        inline void SetRotationXYZ(float thetaX, float thetaY, float thetaZ)
+        inline void SetEulerXYZ(float thetaX, float thetaY, float thetaZ)
         {
+            // Use ZYX order.
+
             float halfThetaX = thetaX * 0.5f;
             float sinHTX = sin(halfThetaX);
             float cosHTX = cos(halfThetaX);
@@ -371,36 +374,74 @@ namespace yw
             return value;
         }
 
-        inline static Quaternion CreateRotationX(float theta)
+        inline static Quaternion FromEulerX(float theta)
         {
             Quaternion value;
-            value.SetRotationX(theta);
+            value.SetEulerX(theta);
 
             return value;
         }
 
-        inline static Quaternion CreateRotationY(float theta)
+        inline static Quaternion FromEulerY(float theta)
         {
             Quaternion value;
-            value.SetRotationY(theta);
+            value.SetEulerY(theta);
 
             return value;
         }
 
-        inline static Quaternion CreateRotationZ(float theta)
+        inline static Quaternion FromEulerZ(float theta)
         {
             Quaternion value;
-            value.SetRotationZ(theta);
+            value.SetEulerZ(theta);
 
             return value;
         }
 
-        inline static Quaternion CreateRotationXYZ(float thetaX, float thetaY, float thetaZ)
+        inline static Quaternion FromEuler(float thetaX, float thetaY, float thetaZ)
         {
             Quaternion value;
-            value.SetRotationXYZ(thetaX, thetaY, thetaZ);
+            value.SetEulerXYZ(thetaX, thetaY, thetaZ);
 
             return value;
+        }
+
+        // ZYX euler order conversion.
+        inline static bool ToEuler(Vector3& out, const Quaternion& q)
+        {
+            // from http://www.geometrictools.com/Documentation/EulerAngles.pdf.
+            // ZYX order.
+
+            float col20 = 2.0f * (q.x * q.z + q.y * q.w);
+            if (col20 < 0.9999f)
+            {
+                if (col20 > -0.9999f)
+                {
+                    out.y = asin(-col20);
+                    out.z = atan2(2.0f * (q.x * q.y - q.z * q.w), 1.0f - 2.0f * (q.y * q.y + q.z * q.z));
+                    out.x = atan2(2.0f * (q.y * q.z - q.x * q.w), 1.0f - 2.0f * (q.x * q.x + q.y * q.y));
+
+                    return true;
+                }
+                else // r20 = −1
+                {
+                    // Not a unique solution : thetaX − thetaZ = atan2(−r12 , r11).
+                    out.y = YW_PI * 0.5f;
+                    out.z = -atan2(-2.0f * (q.y * q.z + q.x * q.w), 1.0f - 2.0f * (q.x * q.x + q.z * q.z));
+                    out.x = 0.0f;
+
+                    return false;
+                }
+            }
+            else // r20 = +1
+            {
+                // Not a unique solution : thetaX + thetaZ = atan2(−r12 , r11).
+                out.y = -YW_PI * 0.5f;
+                out.z = atan2(-2.0f * (q.y * q.z + q.x * q.w), 1.0f - 2.0f * (q.x * q.x + q.z * q.z));
+                out.x = 0.0f;
+
+                return false;
+            }
         }
     };
 }
