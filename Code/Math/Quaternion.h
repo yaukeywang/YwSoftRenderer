@@ -140,6 +140,22 @@ namespace yw
             return *this;
         }
 
+        inline void Set(float nx, float ny, float nz, float nw)
+        {
+            x = nx;
+            y = ny;
+            z = nz;
+            w = nw;
+        }
+
+        inline void Set(const Quaternion& q)
+        {
+            x = q.x;
+            y = q.y;
+            z = q.z;
+            w = q.w;
+        }
+
         inline float Length() const
         {
             float value = sqrt(x * x + y * y + z * z + w * w);
@@ -273,18 +289,20 @@ namespace yw
             return difference;
         }
 
-        inline static Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
+        inline static Quaternion& Slerp(Quaternion& out, const Quaternion& q0, const Quaternion& q1, float t)
         {
             // q0 if t is less equal smaller border 0.
             if (t <= 0.0f)
             {
-                return q0;
+                out.Set(q0);
+                return out;
             }
 
             // q1 if t is greater equal bigger border 1.
             if (t >= 1.0f)
             {
-                return q1;
+                out.Set(q1);
+                return out;
             }
 
             // Get the temp quaternion.
@@ -330,22 +348,23 @@ namespace yw
             }
 
             // Combine new quaternion by qt = q0 * k0 + q1 * k1;
-            Quaternion value(
+            out.Set(
                 q0.x * k0 + x1 * k1,
                 q0.y * k0 + y1 * k1,
                 q0.z * k0 + z1 * k1,
                 q0.w * k0 + w1 * k1
             );
 
-            return value;
+            return out;
         }
 
-        inline static Quaternion Pow(const Quaternion& q, float exponent)
+        inline static Quaternion& Pow(Quaternion& out, const Quaternion& q, float exponent)
         {
             // Check normalized quaternion.
             if (q.w > 0.9999f)
             {
-                return q;
+                out.Set(q);
+                return out;
             }
 
             // Get alpha (alpha = theta / 2).
@@ -369,45 +388,37 @@ namespace yw
             float z = q.z * multiply;
 
             // Combine a new quaternion.
-            Quaternion value(x, y, z, w);
+            out.Set(x, y, z, w);
 
-            return value;
+            return out;
         }
 
-        inline static Quaternion FromEulerX(float theta)
+        inline static Quaternion& FromEulerX(Quaternion& out, float theta)
         {
-            Quaternion value;
-            value.SetEulerX(theta);
-
-            return value;
+            out.SetEulerX(theta);
+            return out;
         }
 
-        inline static Quaternion FromEulerY(float theta)
+        inline static Quaternion& FromEulerY(Quaternion& out, float theta)
         {
-            Quaternion value;
-            value.SetEulerY(theta);
-
-            return value;
+            out.SetEulerY(theta);
+            return out;
         }
 
-        inline static Quaternion FromEulerZ(float theta)
+        inline static Quaternion& FromEulerZ(Quaternion& out, float theta)
         {
-            Quaternion value;
-            value.SetEulerZ(theta);
-
-            return value;
+            out.SetEulerZ(theta);
+            return out;
         }
 
-        inline static Quaternion FromEuler(float thetaX, float thetaY, float thetaZ)
+        inline static Quaternion FromEuler(Quaternion& out, float thetaX, float thetaY, float thetaZ)
         {
-            Quaternion value;
-            value.SetEulerXYZ(thetaX, thetaY, thetaZ);
-
-            return value;
+            out.SetEulerXYZ(thetaX, thetaY, thetaZ);
+            return out;
         }
 
         // ZYX euler order conversion.
-        inline static bool ToEuler(Vector3& out, const Quaternion& q)
+        inline static Vector3& ToEuler(Vector3& out, const Quaternion& q)
         {
             // Use Quaternion->Matrix->Euler later.
 
@@ -419,33 +430,40 @@ namespace yw
             {
                 if (col20 > -0.9999f)
                 {
+                    // true
                     out.y = asin(-col20);
                     out.z = atan2(2.0f * (q.x * q.y - q.z * q.w), 1.0f - 2.0f * (q.y * q.y + q.z * q.z));
                     out.x = atan2(2.0f * (q.y * q.z - q.x * q.w), 1.0f - 2.0f * (q.x * q.x + q.y * q.y));
-
-                    return true;
                 }
                 else // r20 = −1
                 {
+                    // false
                     // Not a unique solution : thetaX − thetaZ = atan2(−r12 , r11).
                     out.y = YW_PI * 0.5f;
                     out.z = -atan2(-2.0f * (q.y * q.z + q.x * q.w), 1.0f - 2.0f * (q.x * q.x + q.z * q.z));
                     out.x = 0.0f;
-
-                    return false;
                 }
             }
             else // r20 = +1
             {
+                // false
                 // Not a unique solution : thetaX + thetaZ = atan2(−r12 , r11).
                 out.y = -YW_PI * 0.5f;
                 out.z = atan2(-2.0f * (q.y * q.z + q.x * q.w), 1.0f - 2.0f * (q.x * q.x + q.z * q.z));
                 out.x = 0.0f;
-
-                return false;
             }
+
+            return out;
         }
     };
+
+    // Quaternion nonmember functions.
+
+    inline Quaternion operator *(float n, const Quaternion& q)
+    {
+        Quaternion value(n * q.x, n * q.y, n * q.z, n * q.w);
+        return value;
+    }
 }
 
 #endif // !__QUATERNION_H__

@@ -23,7 +23,7 @@ namespace yw
         {
         }
 
-        Vector2(const Vector2& o) : x(o.x), y(o.y)
+        Vector2(const Vector2& v) : x(v.x), y(v.y)
         {
         }
 
@@ -31,28 +31,28 @@ namespace yw
         {
         }
 
-        //Vector2(const Vector3& o) : x(o.x), y(o.y)
+        //Vector2(const Vector3& v) : x(v.x), y(v.y)
         //{
         //}
 
     public:
         // Member functions.
 
-        inline Vector2& operator =(const Vector2& o)
+        inline Vector2& operator =(const Vector2& v)
         {
-            x = o.x;
-            y = o.y;
+            x = v.x;
+            y = v.y;
         }
 
-        inline bool operator ==(const Vector2& o) const
+        inline bool operator ==(const Vector2& v) const
         {
-            float deltaX = x - o.x;
+            float deltaX = x - v.x;
             if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
             {
                 return false;
             }
 
-            float deltaY = y - o.y;
+            float deltaY = y - v.y;
             if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
             {
                 return false;
@@ -61,15 +61,15 @@ namespace yw
             return true;
         }
 
-        inline bool operator !=(const Vector2& o) const
+        inline bool operator !=(const Vector2& v) const
         {
-            float deltaX = x - o.x;
+            float deltaX = x - v.x;
             if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
             {
                 return true;
             }
 
-            float deltaY = y - o.y;
+            float deltaY = y - v.y;
             if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
             {
                 return true;
@@ -84,71 +84,71 @@ namespace yw
             return value;
         }
 
-        inline Vector2 operator +(const Vector2& o) const
+        inline Vector2 operator +(const Vector2& v) const
         {
-            Vector2 value(x + o.x, y + o.y);
+            Vector2 value(x + v.x, y + v.y);
             return value;
         }
 
-        inline Vector2 operator -(const Vector2& o) const
+        inline Vector2 operator -(const Vector2& v) const
         {
-            Vector2 value(x - o.x, y - o.y);
+            Vector2 value(x - v.x, y - v.y);
             return value;
         }
 
-        inline Vector2 operator *(const Vector2& o) const
+        inline Vector2 operator *(const Vector2& v) const
         {
-            Vector2 value(x * o.x, y * o.y);
+            Vector2 value(x * v.x, y * v.y);
             return value;
         }
 
-        inline Vector2 operator *(float o) const
+        inline Vector2 operator *(float n) const
         {
-            Vector2 value(x * o, y * o);
+            Vector2 value(x * n, y * n);
             return value;
         }
 
-        inline Vector2 operator /(float o) const
+        inline Vector2 operator /(float n) const
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             Vector2 value(x * oneOverO, y * oneOverO);
         }
 
-        inline Vector2& operator +=(const Vector2& o)
+        inline Vector2& operator +=(const Vector2& v)
         {
-            x += o.x;
-            y += o.y;
+            x += v.x;
+            y += v.y;
 
             return *this;
         }
 
-        inline Vector2& operator -=(const Vector2& o)
+        inline Vector2& operator -=(const Vector2& v)
         {
-            x -= o.x;
-            y -= o.y;
+            x -= v.x;
+            y -= v.y;
 
             return *this;
         }
 
-        inline Vector2& operator *=(const Vector2& o)
+        inline Vector2& operator *=(const Vector2& v)
         {
-            x *= o.x;
-            y *= o.y;
+            x *= v.x;
+            y *= v.y;
 
             return *this;
         }
 
-        inline Vector2& operator *=(float o)
+        inline Vector2& operator *=(float n)
         {
-            x *= o;
-            y *= o;
+            x *= n;
+            y *= n;
 
             return *this;
         }
 
-        inline Vector2& operator /=(float o)
+        inline Vector2& operator /=(float n)
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             x *= oneOverO;
             y *= oneOverO;
 
@@ -160,6 +160,18 @@ namespace yw
         //    Vector3 value(x, y, 0.0f);
         //    return value;
         //}
+
+        inline void Set(float nx, float ny)
+        {
+            x = nx;
+            y = ny;
+        }
+
+        inline void Set(const Vector2& v)
+        {
+            x = v.x;
+            y = v.y;
+        }
 
         inline void Reset()
         {
@@ -276,7 +288,7 @@ namespace yw
         {
         }
 
-        Vector3(const Vector3& o) : x(o.x), y(o.y), z(o.z)
+        Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z)
         {
         }
 
@@ -284,35 +296,35 @@ namespace yw
         {
         }
 
-        Vector3(const Vector2& o) : x(o.x), y(o.y), z(0.0f)
+        Vector3(const Vector2& v) : x(v.x), y(v.y), z(0.0f)
         {
         }
 
     public:
         // Member functions.
 
-        inline Vector3& operator =(const Vector3& o)
+        inline Vector3& operator =(const Vector3& v)
         {
-            x = o.x;
-            y = o.y;
-            z = o.z;
+            x = v.x;
+            y = v.y;
+            z = v.z;
         }
 
-        inline bool operator ==(const Vector3& o) const
+        inline bool operator ==(const Vector3& v) const
         {
-            float deltaX = x - o.x;
+            float deltaX = x - v.x;
             if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
             {
                 return false;
             }
 
-            float deltaY = y - o.y;
+            float deltaY = y - v.y;
             if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
             {
                 return false;
             }
 
-            float deltaZ = z - o.z;
+            float deltaZ = z - v.z;
             if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
             {
                 return false;
@@ -321,21 +333,21 @@ namespace yw
             return true;
         }
 
-        inline bool operator !=(const Vector3& o) const
+        inline bool operator !=(const Vector3& v) const
         {
-            float deltaX = x - o.x;
+            float deltaX = x - v.x;
             if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
             {
                 return true;
             }
 
-            float deltaY = y - o.y;
+            float deltaY = y - v.y;
             if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
             {
                 return true;
             }
 
-            float deltaZ = z - o.z;
+            float deltaZ = z - v.z;
             if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
             {
                 return true;
@@ -350,75 +362,75 @@ namespace yw
             return value;
         }
 
-        inline Vector3 operator +(const Vector3& o) const
+        inline Vector3 operator +(const Vector3& v) const
         {
-            Vector3 value(x + o.x, y + o.y, z + o.z);
+            Vector3 value(x + v.x, y + v.y, z + v.z);
             return value;
         }
 
-        inline Vector3 operator -(const Vector3& o) const
+        inline Vector3 operator -(const Vector3& v) const
         {
-            Vector3 value(x - o.x, y - o.y, z - o.z);
+            Vector3 value(x - v.x, y - v.y, z - v.z);
             return value;
         }
 
-        inline Vector3 operator *(const Vector3& o) const
+        inline Vector3 operator *(const Vector3& v) const
         {
-            Vector3 value(x * o.x, y * o.y, z * o.z);
+            Vector3 value(x * v.x, y * v.y, z * v.z);
             return value;
         }
 
-        inline Vector3 operator *(float o) const
+        inline Vector3 operator *(float n) const
         {
-            Vector3 value(x * o, y * o, z * o);
+            Vector3 value(x * n, y * n, z * n);
             return value;
         }
 
-        inline Vector3 operator /(float o) const
+        inline Vector3 operator /(float n) const
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             Vector3 value(x * oneOverO, y * oneOverO, z * oneOverO);
         }
 
-        inline Vector3& operator +=(const Vector3& o)
+        inline Vector3& operator +=(const Vector3& v)
         {
-            x += o.x;
-            y += o.y;
-            z += o.z;
+            x += v.x;
+            y += v.y;
+            z += v.z;
 
             return *this;
         }
 
-        inline Vector3& operator -=(const Vector3& o)
+        inline Vector3& operator -=(const Vector3& v)
         {
-            x -= o.x;
-            y -= o.y;
-            z -= o.z;
+            x -= v.x;
+            y -= v.y;
+            z -= v.z;
 
             return *this;
         }
 
-        inline Vector3& operator *=(const Vector3& o)
+        inline Vector3& operator *=(const Vector3& v)
         {
-            x *= o.x;
-            y *= o.y;
-            z *= o.z;
+            x *= v.x;
+            y *= v.y;
+            z *= v.z;
 
             return *this;
         }
 
-        inline Vector3& operator *=(float o)
+        inline Vector3& operator *=(float n)
         {
-            x *= o;
-            y *= o;
-            z *= o;
+            x *= n;
+            y *= n;
+            z *= n;
 
             return *this;
         }
 
-        inline Vector3& operator /=(float o)
+        inline Vector3& operator /=(float n)
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             x *= oneOverO;
             y *= oneOverO;
             z *= oneOverO;
@@ -430,6 +442,20 @@ namespace yw
         {
             Vector2 value(x, y);
             return value;
+        }
+
+        inline void Set(float nx, float ny, float nz)
+        {
+            x = nx;
+            y = ny;
+            z = nz;
+        }
+
+        inline void Set(const Vector3& v)
+        {
+            x = v.x;
+            y = v.y;
+            z = v.z;
         }
 
         inline void Reset()
@@ -465,15 +491,15 @@ namespace yw
             return dot;
         }
 
-        static inline Vector3 Cross(const Vector3& left, const Vector3& right)
+        static inline Vector3& Cross(Vector3& out, const Vector3& left, const Vector3& right)
         {
-            Vector3 cross(
+            out.Set(
                 left.y * right.z - left.z * right.y,
                 left.z * right.x - left.x * right.z,
                 left.x * right.y - left.y * right.x
             );
 
-            return cross;
+            return out;
         }
 
         static inline float Distance(const Vector3& left, const Vector3& right)
@@ -566,7 +592,7 @@ namespace yw
         {
         }
 
-        Vector4(const Vector4& o) : x(o.x), y(o.y), z(o.z), w(o.w)
+        Vector4(const Vector4& v) : x(v.x), y(v.y), z(v.z), w(v.w)
         {
         }
 
@@ -574,46 +600,46 @@ namespace yw
         {
         }
 
-        Vector4(const Vector2& o) : x(o.x), y(o.y), z(0.0f), w(0.0f)
+        Vector4(const Vector2& v) : x(v.x), y(v.y), z(0.0f), w(0.0f)
         {
         }
 
-        Vector4(const Vector3& o) : x(o.x), y(o.y), z(o.z), w(0.0f)
+        Vector4(const Vector3& v) : x(v.x), y(v.y), z(v.z), w(0.0f)
         {
         }
 
     public:
         // Member functions.
 
-        inline Vector4& operator =(const Vector4& o)
+        inline Vector4& operator =(const Vector4& v)
         {
-            x = o.x;
-            y = o.y;
-            z = o.z;
-            w = o.w;
+            x = v.x;
+            y = v.y;
+            z = v.z;
+            w = v.w;
         }
 
-        inline bool operator ==(const Vector4& o) const
+        inline bool operator ==(const Vector4& v) const
         {
-            float deltaX = x - o.x;
+            float deltaX = x - v.x;
             if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
             {
                 return false;
             }
 
-            float deltaY = y - o.y;
+            float deltaY = y - v.y;
             if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
             {
                 return false;
             }
 
-            float deltaZ = z - o.z;
+            float deltaZ = z - v.z;
             if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
             {
                 return false;
             }
 
-            float deltaW = w - o.w;
+            float deltaW = w - v.w;
             if (deltaW > YW_FLOAT_PRECISION || deltaW < -YW_FLOAT_PRECISION)
             {
                 return false;
@@ -622,27 +648,27 @@ namespace yw
             return true;
         }
 
-        inline bool operator !=(const Vector4& o) const
+        inline bool operator !=(const Vector4& v) const
         {
-            float deltaX = x - o.x;
+            float deltaX = x - v.x;
             if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
             {
                 return true;
             }
 
-            float deltaY = y - o.y;
+            float deltaY = y - v.y;
             if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
             {
                 return true;
             }
 
-            float deltaZ = z - o.z;
+            float deltaZ = z - v.z;
             if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
             {
                 return true;
             }
 
-            float deltaW = w - o.w;
+            float deltaW = w - v.w;
             if (deltaW > YW_FLOAT_PRECISION || deltaW < -YW_FLOAT_PRECISION)
             {
                 return true;
@@ -657,79 +683,79 @@ namespace yw
             return value;
         }
 
-        inline Vector4 operator +(const Vector4& o) const
+        inline Vector4 operator +(const Vector4& v) const
         {
-            Vector4 value(x + o.x, y + o.y, z + o.z, w + o.w);
+            Vector4 value(x + v.x, y + v.y, z + v.z, w + v.w);
             return value;
         }
 
-        inline Vector4 operator -(const Vector4& o) const
+        inline Vector4 operator -(const Vector4& v) const
         {
-            Vector4 value(x - o.x, y - o.y, z - o.z, w - o.w);
+            Vector4 value(x - v.x, y - v.y, z - v.z, w - v.w);
             return value;
         }
 
-        inline Vector4 operator *(const Vector4& o) const
+        inline Vector4 operator *(const Vector4& v) const
         {
-            Vector4 value(x * o.x, y * o.y, z * o.z, w * o.w);
+            Vector4 value(x * v.x, y * v.y, z * v.z, w * v.w);
             return value;
         }
 
-        inline Vector4 operator *(float o) const
+        inline Vector4 operator *(float n) const
         {
-            Vector4 value(x * o, y * o, z * o, w * o);
+            Vector4 value(x * n, y * n, z * n, w * n);
             return value;
         }
 
-        inline Vector4 operator /(float o) const
+        inline Vector4 operator /(float n) const
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             Vector4 value(x * oneOverO, y * oneOverO, z * oneOverO, w * oneOverO);
         }
 
-        inline Vector4& operator +=(const Vector4& o)
+        inline Vector4& operator +=(const Vector4& n)
         {
-            x += o.x;
-            y += o.y;
-            z += o.z;
-            w += o.w;
+            x += n.x;
+            y += n.y;
+            z += n.z;
+            w += n.w;
 
             return *this;
         }
 
-        inline Vector4& operator -=(const Vector4& o)
+        inline Vector4& operator -=(const Vector4& n)
         {
-            x -= o.x;
-            y -= o.y;
-            z -= o.z;
-            w -= o.w;
+            x -= n.x;
+            y -= n.y;
+            z -= n.z;
+            w -= n.w;
 
             return *this;
         }
 
-        inline Vector4& operator *=(const Vector4& o)
+        inline Vector4& operator *=(const Vector4& n)
         {
-            x *= o.x;
-            y *= o.y;
-            z *= o.z;
-            w *= o.w;
+            x *= n.x;
+            y *= n.y;
+            z *= n.z;
+            w *= n.w;
 
             return *this;
         }
 
-        inline Vector4& operator *=(float o)
+        inline Vector4& operator *=(float n)
         {
-            x *= o;
-            y *= o;
-            z *= o;
-            w *= o;
+            x *= n;
+            y *= n;
+            z *= n;
+            w *= n;
 
             return *this;
         }
 
-        inline Vector4& operator /=(float o)
+        inline Vector4& operator /=(float n)
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             x *= oneOverO;
             y *= oneOverO;
             z *= oneOverO;
@@ -748,6 +774,22 @@ namespace yw
         {
             Vector3 value(x, y, z);
             return value;
+        }
+
+        inline void Set(float nx, float ny, float nz, float nw)
+        {
+            x = nx;
+            y = ny;
+            z = nz;
+            w = nw;
+        }
+
+        inline void Set(const Vector4& v)
+        {
+            x = v.x;
+            y = v.y;
+            z = v.z;
+            w = v.w;
         }
 
         inline void Reset()
@@ -783,16 +825,15 @@ namespace yw
             return dot;
         }
 
-        inline static Vector4 Cross(const Vector4& left, const Vector4& right)
+        inline static Vector4& Cross(Vector4& out, const Vector4& left, const Vector4& right)
         {
-            Vector4 cross(
+            out.Set(
                 left.y * right.z - left.z * right.y,
                 left.z * right.x - left.x * right.z,
                 left.x * right.y - left.y * right.x,
                 0.0f
             );
-
-            return cross;
+            return out;
         }
 
         inline static float Distance(const Vector4& left, const Vector4& right)
@@ -827,6 +868,14 @@ namespace yw
             return one;
         }
     };
+
+    // Vector4 nonmember functions.
+
+    inline Vector4 operator *(float n, const Vector4& v)
+    {
+        Vector4 value(n * v.x, n * v.y, n * v.z, n * v.w);
+        return value;
+    }
 }
 
 #endif // !__VECTOR_H__
