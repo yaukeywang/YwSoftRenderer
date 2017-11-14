@@ -97,7 +97,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Math;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,7 +111,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Math;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +127,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Math;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +145,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./App;./Core;./Input;./Math;./Renderer;./Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,44 +159,44 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App\AppSoftRenderer.h" />
-    <ClInclude Include="Core\AppBase.h" />
-    <ClInclude Include="Core\Base.h" />
-    <ClInclude Include="Core\GlobalManager.h" />
-    <ClInclude Include="Core\Logger.h" />
-    <ClInclude Include="Input\InputDevice.h" />
-    <ClInclude Include="Input\InputDevicekeyboard.h" />
-    <ClInclude Include="Input\InputDeviceMouse.h" />
-    <ClInclude Include="Input\InputManager.h" />
-    <ClInclude Include="Math\MathUtility.h" />
-    <ClInclude Include="Math\Matrix.h" />
-    <ClInclude Include="Math\Quaternion.h" />
-    <ClInclude Include="Math\Vector.h" />
-    <ClInclude Include="Renderer\Renderer.h" />
-    <ClInclude Include="Renderer\RendererSoftDx9.h" />
+    <ClInclude Include="Driven\Math\MathUtility.h" />
+    <ClInclude Include="Driven\Math\Matrix.h" />
+    <ClInclude Include="Driven\Math\Quaternion.h" />
+    <ClInclude Include="Driven\Math\Vector.h" />
+    <ClInclude Include="Driven\Renderer\Renderer.h" />
+    <ClInclude Include="Driven\Renderer\RendererSoftDx9.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="System\App\AppSoftRenderer.h" />
+    <ClInclude Include="System\Input\InputDevice.h" />
+    <ClInclude Include="System\Input\InputDevicekeyboard.h" />
+    <ClInclude Include="System\Input\InputDeviceMouse.h" />
+    <ClInclude Include="System\Input\InputManager.h" />
+    <ClInclude Include="System\Support\AppBase.h" />
+    <ClInclude Include="System\Support\Base.h" />
+    <ClInclude Include="System\Support\GlobalManager.h" />
+    <ClInclude Include="System\Support\Logger.h" />
+    <ClInclude Include="System\Support\Utility.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App\AppSoftRenderer.cpp" />
-    <ClCompile Include="Core\AppBase.cpp" />
-    <ClCompile Include="Core\GlobalManager.cpp" />
-    <ClCompile Include="Core\Logger.cpp" />
-    <ClCompile Include="Input\InputDevice.cpp" />
-    <ClCompile Include="Input\InputDevicekeyboard.cpp" />
-    <ClCompile Include="Input\InputDeviceMouse.cpp" />
-    <ClCompile Include="Input\InputManager.cpp" />
+    <ClCompile Include="Driven\Renderer\RendererSoftDx9.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Renderer\RendererSoftDx9.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Utility\Utility.cpp" />
+    <ClCompile Include="System\App\AppSoftRenderer.cpp" />
+    <ClCompile Include="System\Input\InputDevice.cpp" />
+    <ClCompile Include="System\Input\InputDevicekeyboard.cpp" />
+    <ClCompile Include="System\Input\InputDeviceMouse.cpp" />
+    <ClCompile Include="System\Input\InputManager.cpp" />
+    <ClCompile Include="System\Support\AppBase.cpp" />
+    <ClCompile Include="System\Support\GlobalManager.cpp" />
+    <ClCompile Include="System\Support\Logger.cpp" />
+    <ClCompile Include="System\Support\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="YwSoftRenderer.rc" />

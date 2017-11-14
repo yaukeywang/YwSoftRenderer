@@ -2,7 +2,7 @@
 // App main entry.
 
 #include "stdafx.h"
-#include "AppSoftRenderer.h"
+#include "System/App/AppSoftRenderer.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {

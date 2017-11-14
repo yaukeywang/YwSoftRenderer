@@ -34,21 +34,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App\AppSoftRenderer.h">
-      <Filter>System\App</Filter>
-    </ClInclude>
-    <ClInclude Include="Input\InputDevice.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Input\InputDevicekeyboard.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Input\InputDeviceMouse.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Input\InputManager.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Main</Filter>
     </ClInclude>
@@ -58,75 +43,90 @@
     <ClInclude Include="targetver.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Vector.h">
+    <ClInclude Include="Driven\Math\MathUtility.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Math\MathUtility.h">
+    <ClInclude Include="Driven\Math\Matrix.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Quaternion.h">
+    <ClInclude Include="Driven\Math\Quaternion.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Matrix.h">
+    <ClInclude Include="Driven\Math\Vector.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Core\AppBase.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Base.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\GlobalManager.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Logger.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Renderer.h">
+    <ClInclude Include="Driven\Renderer\Renderer.h">
       <Filter>Driven\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\RendererSoftDx9.h">
+    <ClInclude Include="Driven\Renderer\RendererSoftDx9.h">
       <Filter>Driven\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\Utility.h">
+    <ClInclude Include="System\App\AppSoftRenderer.h">
+      <Filter>System\App</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Input\InputDevice.h">
+      <Filter>System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Input\InputDevicekeyboard.h">
+      <Filter>System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Input\InputDeviceMouse.h">
+      <Filter>System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Input\InputManager.h">
+      <Filter>System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\AppBase.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\Base.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\GlobalManager.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\Logger.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\Utility.h">
       <Filter>System\Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App\AppSoftRenderer.cpp">
-      <Filter>System\App</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\InputDevice.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\InputDevicekeyboard.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\InputDeviceMouse.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\InputManager.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Core\AppBase.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\GlobalManager.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Logger.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\RendererSoftDx9.cpp">
+    <ClCompile Include="Driven\Renderer\RendererSoftDx9.cpp">
       <Filter>Driven\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\Utility.cpp">
+    <ClCompile Include="System\App\AppSoftRenderer.cpp">
+      <Filter>System\App</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\InputDevice.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\InputDevicekeyboard.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\InputDeviceMouse.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\InputManager.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\AppBase.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\GlobalManager.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\Logger.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\Utility.cpp">
       <Filter>System\Support</Filter>
     </ClCompile>
   </ItemGroup>
