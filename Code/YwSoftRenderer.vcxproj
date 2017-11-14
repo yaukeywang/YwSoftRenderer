@@ -169,6 +169,7 @@
     <ClInclude Include="Input\InputDeviceMouse.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Math\MathUtility.h" />
+    <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Math\Vector.h" />
     <ClInclude Include="Renderer\Renderer.h" />

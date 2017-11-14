@@ -19,15 +19,15 @@ namespace yw
         };
 
     public:
-        Vector2() : x(0.0f), y(0.0f)
+        inline Vector2() : x(0.0f), y(0.0f)
         {
         }
 
-        Vector2(const Vector2& v) : x(v.x), y(v.y)
+        inline Vector2(const Vector2& v) : x(v.x), y(v.y)
         {
         }
 
-        Vector2(float nx, float ny) : x(nx), y(ny)
+        inline Vector2(float nx, float ny) : x(nx), y(ny)
         {
         }
 
@@ -42,6 +42,8 @@ namespace yw
         {
             x = v.x;
             y = v.y;
+
+            return *this;
         }
 
         inline bool operator ==(const Vector2& v) const
@@ -284,19 +286,19 @@ namespace yw
         };
 
     public:
-        Vector3() : x(0.0f), y(0.0f), z(0.0f)
+        inline Vector3() : x(0.0f), y(0.0f), z(0.0f)
         {
         }
 
-        Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z)
+        inline Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z)
         {
         }
 
-        Vector3(float nx, float ny, float nz) : x(nx), y(ny), z(nz)
+        inline Vector3(float nx, float ny, float nz) : x(nx), y(ny), z(nz)
         {
         }
 
-        Vector3(const Vector2& v) : x(v.x), y(v.y), z(0.0f)
+        inline Vector3(const Vector2& v) : x(v.x), y(v.y), z(0.0f)
         {
         }
 
@@ -308,6 +310,8 @@ namespace yw
             x = v.x;
             y = v.y;
             z = v.z;
+
+            return *this;
         }
 
         inline bool operator ==(const Vector3& v) const
@@ -588,23 +592,23 @@ namespace yw
         };
 
     public:
-        Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
+        inline Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
         {
         }
 
-        Vector4(const Vector4& v) : x(v.x), y(v.y), z(v.z), w(v.w)
+        inline Vector4(const Vector4& v) : x(v.x), y(v.y), z(v.z), w(v.w)
         {
         }
 
-        Vector4(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
+        inline Vector4(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
         {
         }
 
-        Vector4(const Vector2& v) : x(v.x), y(v.y), z(0.0f), w(0.0f)
+        inline Vector4(const Vector2& v) : x(v.x), y(v.y), z(0.0f), w(0.0f)
         {
         }
 
-        Vector4(const Vector3& v) : x(v.x), y(v.y), z(v.z), w(0.0f)
+        inline Vector4(const Vector3& v) : x(v.x), y(v.y), z(v.z), w(0.0f)
         {
         }
 
@@ -617,6 +621,8 @@ namespace yw
             y = v.y;
             z = v.z;
             w = v.w;
+
+            return *this;
         }
 
         inline bool operator ==(const Vector4& v) const
@@ -701,13 +707,13 @@ namespace yw
             return value;
         }
 
-        inline Vector4 operator *(float n) const
+        inline Vector4 operator *(const float n) const
         {
             Vector4 value(x * n, y * n, z * n, w * n);
             return value;
         }
 
-        inline Vector4 operator /(float n) const
+        inline Vector4 operator /(const float n) const
         {
             float oneOverO = 1.0f / n;
             Vector4 value(x * oneOverO, y * oneOverO, z * oneOverO, w * oneOverO);
@@ -743,7 +749,7 @@ namespace yw
             return *this;
         }
 
-        inline Vector4& operator *=(float n)
+        inline Vector4& operator *=(const float n)
         {
             x *= n;
             y *= n;
@@ -753,7 +759,7 @@ namespace yw
             return *this;
         }
 
-        inline Vector4& operator /=(float n)
+        inline Vector4& operator /=(const float n)
         {
             float oneOverO = 1.0f / n;
             x *= oneOverO;
@@ -871,7 +877,7 @@ namespace yw
 
     // Vector4 nonmember functions.
 
-    inline Vector4 operator *(float n, const Vector4& v)
+    inline Vector4 operator *(const float n, const Vector4& v)
     {
         Vector4 value(n * v.x, n * v.y, n * v.z, n * v.w);
         return value;

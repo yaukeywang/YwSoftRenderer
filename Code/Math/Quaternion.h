@@ -13,21 +13,22 @@ namespace yw
     struct Quaternion
     {
     public:
-        float x;
-        float y;
-        float z;
-        float w;
+        union
+        {
+            struct { float x; float y; float z; float w; };
+            struct { Vector3 v; float w; };
+        };
 
     public:
-        Quaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f)
+        inline Quaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f)
         {
         }
 
-        Quaternion(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
+        inline Quaternion(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
         {
         }
 
-        Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z)
+        inline Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z)
         {
         }
 
@@ -40,6 +41,8 @@ namespace yw
             y = q.y;
             z = q.z;
             w = q.w;
+
+            return *this;
         }
 
         inline Quaternion operator +() const
@@ -73,15 +76,15 @@ namespace yw
             return value;
         }
 
-        inline Quaternion operator *(const float o) const
+        inline Quaternion operator *(const float n) const
         {
-            Quaternion value(x * o, y * o, z * o, w * o);
+            Quaternion value(x * n, y * n, z * n, w * n);
             return value;
         }
 
-        inline Quaternion operator /(const float o) const
+        inline Quaternion operator /(const float n) const
         {
-            float oneOverO = 1.0f / o;
+            float oneOverO = 1.0f / n;
             Quaternion value(x * oneOverO, y * oneOverO, z * oneOverO, w * oneOverO);
 
             return value;
@@ -459,7 +462,7 @@ namespace yw
 
     // Quaternion nonmember functions.
 
-    inline Quaternion operator *(float n, const Quaternion& q)
+    inline Quaternion operator *(const float n, const Quaternion& q)
     {
         Quaternion value(n * q.x, n * q.y, n * q.z, n * q.w);
         return value;
