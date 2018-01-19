@@ -210,6 +210,8 @@ namespace yw
 
         static inline float Cross(const Vector2& left, const Vector2& right)
         {
+            // The area of quad formed by vector left and right.
+            // a*b*sina.
             float cross = left.x * right.y - left.y * right.x;
             return cross;
         }
