@@ -28,7 +28,7 @@ namespace yw
     public:
         inline Matrix44()
         {
-            Identity();
+            SetIdentity();
         }
 
         inline Matrix44(const Matrix44& m) :
@@ -76,7 +76,7 @@ namespace yw
         //< Returns the inverse of the matrix.
         inline Matrix44 operator -() const
         {
-
+            return GetInverse();
         }
 
         inline Matrix44& operator =(const Matrix44& m)
@@ -243,7 +243,7 @@ namespace yw
             return mat;
         }
 
-        inline void Identity()
+        inline void SetIdentity()
         {
             _11 = 1; _12 = 0; _13 = 0; _14 = 0;
             _21 = 0; _22 = 1; _23 = 0; _24 = 0;
@@ -254,6 +254,7 @@ namespace yw
     public:
         // Static functions.
 
+        // Get the determinant of matrix 2x2.
         inline static float Determinant2x2(
             const float a11, const float a12,
             const float a21, const float a22
@@ -262,6 +263,7 @@ namespace yw
             return a11 * a22 - a12 * a21;
         }
 
+        // Get the determinant of matrix 3x3.
         inline static float Determinant3x3(
             const float a11, const float a12, const float a13,
             const float a21, const float a22, const float a23,
@@ -271,6 +273,7 @@ namespace yw
             return a11 * Determinant2x2(a22, a23, a32, a33) - a12 * Determinant2x2(a21, a23, a31, a33) + a13 * Determinant2x2(a21, a22, a31, a32);
         }
 
+        // Get the determinant of matrix 4x4.
         inline static float Determinant4x4(
             const float a11, const float a12, const float a13, const float a14,
             const float a21, const float a22, const float a23, const float a24,
@@ -284,6 +287,7 @@ namespace yw
                 - a14 * Determinant3x3(a21, a22, a23, a31, a32, a33, a41, a42, a43);
         }
 
+        // Get the determinant of matrix 4x4.
         inline static float Determinant4x4(const Matrix44& mat)
         {
             return Determinant4x4(
@@ -294,6 +298,7 @@ namespace yw
             );
         }
 
+        // Get the determinant of matrix exclude row and col.
         inline static float MinorDeterminant(const Matrix44& mat, const int32_t row, const int32_t col)
         {
             float mat3x3[3][3];
@@ -326,6 +331,7 @@ namespace yw
             );
         }
 
+        // Get Adjoint of matrix.
         inline static Matrix44 Adjoint(const Matrix44& mat)
         {
             Matrix44 matAdjoint;
@@ -340,6 +346,7 @@ namespace yw
             return matAdjoint;
         }
 
+        // Get inverse of matrix.
         inline static bool Inverse(Matrix44& out, const Matrix44& mat)
         {
             const float determinant = Determinant4x4(mat);
@@ -350,6 +357,28 @@ namespace yw
 
             out = Adjoint(mat) / determinant;
             return true;
+        }
+
+        // Get transpose of matrix.
+        inline static Matrix44& Transpose(Matrix44& out, const Matrix44& mat)
+        {
+            out._11 = mat._11; out._12 = mat._21; out._13 = mat._31; out._14 = mat._41;
+            out._21 = mat._12; out._22 = mat._22; out._23 = mat._32; out._24 = mat._42;
+            out._31 = mat._13; out._32 = mat._23; out._33 = mat._33; out._34 = mat._43;
+            out._41 = mat._14; out._42 = mat._24; out._43 = mat._34; out._44 = mat._44;
+
+            return out;
+        }
+
+        // Get identity of matrix 4x4.
+        inline static Matrix44& Identity(Matrix44& out)
+        {
+            out._11 = 1; out._12 = 0; out._13 = 0; out._14 = 0;
+            out._21 = 0; out._22 = 1; out._23 = 0; out._24 = 0;
+            out._31 = 0; out._32 = 0; out._33 = 1; out._34 = 0;
+            out._41 = 0; out._42 = 0; out._43 = 0; out._44 = 1;
+
+            return out;
         }
     };
 }
