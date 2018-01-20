@@ -39,15 +39,15 @@ namespace yw
         }
 
         inline Matrix44(
-            const float i11, const float i12, const float i13, const float i14,
-            const float i21, const float i22, const float i23, const float i24,
-            const float i31, const float i32, const float i33, const float i34,
-            const float i41, const float i42, const float i43, const float i44
+            const float a11, const float a12, const float a13, const float a14,
+            const float a21, const float a22, const float a23, const float a24,
+            const float a31, const float a32, const float a33, const float a34,
+            const float a41, const float a42, const float a43, const float a44
         ):
-            _11(i11), _12(i12), _13(i13), _14(i14),
-            _21(i21), _22(i22), _23(i23), _24(i24),
-            _31(i31), _32(i32), _33(i33), _34(i34),
-            _41(i41), _42(i42), _43(i43), _44(i44)
+            _11(a11), _12(a12), _13(a13), _14(a14),
+            _21(a21), _22(a22), _23(a23), _24(a24),
+            _31(a31), _32(a32), _33(a33), _34(a34),
+            _41(a41), _42(a42), _43(a43), _44(a44)
         {
         }
 
@@ -223,6 +223,49 @@ namespace yw
             _41 *= oneOverN; _42 *= oneOverN; _43 *= oneOverN; _44 *= oneOverN;
 
             return *this;
+        }
+
+        inline float Determinant() const
+        {
+            return Determinant4x4(
+                _11, _12, _13, _14,
+                _21, _22, _23, _24,
+                _31, _32, _33, _34,
+                _41, _42, _43, _44
+            );
+        }
+
+    public:
+        // Static functions.
+
+        inline static float Determinant2x2(
+            float a11, float a12,
+            float a21, float a22
+        )
+        {
+            return a11 * a22 - a12 * a21;
+        }
+
+        inline static float Determinant3x3(
+            float a11, float a12, float a13,
+            float a21, float a22, float a23,
+            float a31, float a32, float a33
+        )
+        {
+            return a11 * Determinant2x2(a22, a23, a32, a33) - a12 * Determinant2x2(a21, a23, a31, a33) + a13 * Determinant2x2(a21, a22, a31, a32);
+        }
+
+        inline static float Determinant4x4(
+            float a11, float a12, float a13, float a14,
+            float a21, float a22, float a23, float a24,
+            float a31, float a32, float a33, float a34,
+            float a41, float a42, float a43, float a44
+        )
+        {
+            return a11 * Determinant3x3(a22, a23, a24, a32, a33, a34, a42, a43, a44)
+                - a12 * Determinant3x3(a21, a23, a24, a31, a33, a34, a41, a43, a44)
+                + a13 * Determinant3x3(a21, a22, a24, a31, a32, a34, a41, a42, a44)
+                - a14 * Determinant3x3(a21, a22, a23, a31, a32, a33, a41, a42, a43);
         }
     };
 }
