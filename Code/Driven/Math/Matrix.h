@@ -14,6 +14,8 @@ namespace yw
     public:
         union
         {
+            float mm[4][4];
+            float m[16];
             struct
             {
                 float _11, _12, _13, _14;
@@ -21,13 +23,12 @@ namespace yw
                 float _31, _32, _33, _34;
                 float _41, _42, _43, _44;
             };
-
-            float m[4][4];
         };
 
     public:
         inline Matrix44()
         {
+            Identity();
         }
 
         inline Matrix44(const Matrix44& m) :
@@ -64,7 +65,7 @@ namespace yw
 
         float operator()(int32_t row, int32_t col) const
         {
-            return m[row][col];
+            return mm[row][col];
         }
 
         inline Matrix44 operator +() const
@@ -225,47 +226,130 @@ namespace yw
             return *this;
         }
 
-        inline float Determinant() const
+        inline float GetDeterminant() const
         {
-            return Determinant4x4(
-                _11, _12, _13, _14,
-                _21, _22, _23, _24,
-                _31, _32, _33, _34,
-                _41, _42, _43, _44
-            );
+            return Determinant4x4(*this);
+        }
+
+        inline Matrix44 GetInverse() const
+        {
+            const float determinant = Determinant4x4(*this);
+            if (fabsf(determinant) < FLT_EPSILON)
+            {
+                return *this;
+            }
+
+            Matrix44 mat = Adjoint(*this) / determinant;
+            return mat;
+        }
+
+        inline void Identity()
+        {
+            _11 = 1; _12 = 0; _13 = 0; _14 = 0;
+            _21 = 0; _22 = 1; _23 = 0; _24 = 0;
+            _31 = 0; _32 = 0; _33 = 1; _34 = 0;
+            _41 = 0; _42 = 0; _43 = 0; _44 = 1;
         }
 
     public:
         // Static functions.
 
         inline static float Determinant2x2(
-            float a11, float a12,
-            float a21, float a22
+            const float a11, const float a12,
+            const float a21, const float a22
         )
         {
             return a11 * a22 - a12 * a21;
         }
 
         inline static float Determinant3x3(
-            float a11, float a12, float a13,
-            float a21, float a22, float a23,
-            float a31, float a32, float a33
+            const float a11, const float a12, const float a13,
+            const float a21, const float a22, const float a23,
+            const float a31, const float a32, const float a33
         )
         {
             return a11 * Determinant2x2(a22, a23, a32, a33) - a12 * Determinant2x2(a21, a23, a31, a33) + a13 * Determinant2x2(a21, a22, a31, a32);
         }
 
         inline static float Determinant4x4(
-            float a11, float a12, float a13, float a14,
-            float a21, float a22, float a23, float a24,
-            float a31, float a32, float a33, float a34,
-            float a41, float a42, float a43, float a44
+            const float a11, const float a12, const float a13, const float a14,
+            const float a21, const float a22, const float a23, const float a24,
+            const float a31, const float a32, const float a33, const float a34,
+            const float a41, const float a42, const float a43, const float a44
         )
         {
             return a11 * Determinant3x3(a22, a23, a24, a32, a33, a34, a42, a43, a44)
                 - a12 * Determinant3x3(a21, a23, a24, a31, a33, a34, a41, a43, a44)
                 + a13 * Determinant3x3(a21, a22, a24, a31, a32, a34, a41, a42, a44)
                 - a14 * Determinant3x3(a21, a22, a23, a31, a32, a33, a41, a42, a43);
+        }
+
+        inline static float Determinant4x4(const Matrix44& mat)
+        {
+            return Determinant4x4(
+                mat._11, mat._12, mat._13, mat._14,
+                mat._21, mat._22, mat._23, mat._24,
+                mat._31, mat._32, mat._33, mat._34,
+                mat._41, mat._42, mat._43, mat._44
+            );
+        }
+
+        inline static float MinorDeterminant(const Matrix44& mat, const int32_t row, const int32_t col)
+        {
+            float mat3x3[3][3];
+            for (int32_t r = 0, rn = 0; r < 4; r++)
+            {
+                if (row == r)
+                {
+                    continue;
+                }
+
+                for (int32_t c = 0, cn = 0; c < 4; c++)
+                {
+                    if (col == c)
+                    {
+                        continue;
+                    }
+
+                    mat3x3[rn][cn] = mat.mm[r][c];
+
+                    cn++;
+                }
+
+                rn++;
+            }
+
+            return Determinant3x3(
+                mat3x3[0][0], mat3x3[0][1], mat3x3[0][2],
+                mat3x3[1][0], mat3x3[1][1], mat3x3[1][2],
+                mat3x3[2][0], mat3x3[2][1], mat3x3[2][2]
+            );
+        }
+
+        inline static Matrix44 Adjoint(const Matrix44& mat)
+        {
+            Matrix44 matAdjoint;
+            for (int32_t r = 0; r < 4; r++)
+            {
+                for (int32_t c = 0; c < 4; c++)
+                {
+                    matAdjoint.mm[c][r] = (float)pow(-1, r + c) * MinorDeterminant(mat, r, c);
+                }
+            }
+
+            return matAdjoint;
+        }
+
+        inline static bool Inverse(Matrix44& out, const Matrix44& mat)
+        {
+            const float determinant = Determinant4x4(mat);
+            if (fabsf(determinant) < FLT_EPSILON)
+            {
+                return false;
+            }
+
+            out = Adjoint(mat) / determinant;
+            return true;
         }
     };
 }
