@@ -148,4 +148,9 @@
       <Filter>Main</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Driven\Math\Vector.inl">
+      <Filter>Driven\Math</Filter>
+    </None>
+  </ItemGroup>
 </Project>

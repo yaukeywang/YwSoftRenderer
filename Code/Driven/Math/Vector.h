@@ -8,6 +8,10 @@
 
 namespace yw
 {
+    // Predefine.
+    struct Vector3;
+    struct Vector4;
+
     // Vector 2 class.
     struct Vector2
     {
@@ -19,263 +23,56 @@ namespace yw
         };
 
     public:
-        inline Vector2() : x(0.0f), y(0.0f)
-        {
-        }
-
-        inline Vector2(const Vector2& v) : x(v.x), y(v.y)
-        {
-        }
-
-        inline Vector2(float nx, float ny) : x(nx), y(ny)
-        {
-        }
-
-        //Vector2(const Vector3& v) : x(v.x), y(v.y)
-        //{
-        //}
+        Vector2();
+        Vector2(const Vector2& v);
+        Vector2(float nx, float ny);
+        Vector2(const Vector3& v);
+        Vector2(const Vector4& v);
 
     public:
         // Member functions.
 
-        inline Vector2& operator =(const Vector2& v)
-        {
-            x = v.x;
-            y = v.y;
+        Vector2& operator =(const Vector2& v);
+        bool operator ==(const Vector2& v) const;
+        bool operator !=(const Vector2& v) const;
+        Vector2 operator -() const;
+        Vector2 operator +(const Vector2& v) const;
+        Vector2 operator -(const Vector2& v) const;
+        Vector2 operator *(const Vector2& v) const;
+        Vector2 operator *(float n) const;
+        Vector2 operator /(float n) const;
+        Vector2& operator +=(const Vector2& v);
+        Vector2& operator -=(const Vector2& v);
+        Vector2& operator *=(const Vector2& v);
+        Vector2& operator *=(float n);
+        Vector2& operator /=(float n);
+        operator Vector3();
+        operator Vector4();
 
-            return *this;
-        }
-
-        inline bool operator ==(const Vector2& v) const
-        {
-            float deltaX = x - v.x;
-            if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
-            {
-                return false;
-            }
-
-            float deltaY = y - v.y;
-            if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        inline bool operator !=(const Vector2& v) const
-        {
-            float deltaX = x - v.x;
-            if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
-            {
-                return true;
-            }
-
-            float deltaY = y - v.y;
-            if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        inline Vector2 operator -() const
-        {
-            Vector2 value(-x, -y);
-            return value;
-        }
-
-        inline Vector2 operator +(const Vector2& v) const
-        {
-            Vector2 value(x + v.x, y + v.y);
-            return value;
-        }
-
-        inline Vector2 operator -(const Vector2& v) const
-        {
-            Vector2 value(x - v.x, y - v.y);
-            return value;
-        }
-
-        inline Vector2 operator *(const Vector2& v) const
-        {
-            Vector2 value(x * v.x, y * v.y);
-            return value;
-        }
-
-        inline Vector2 operator *(float n) const
-        {
-            Vector2 value(x * n, y * n);
-            return value;
-        }
-
-        inline Vector2 operator /(float n) const
-        {
-            float oneOverO = 1.0f / n;
-            Vector2 value(x * oneOverO, y * oneOverO);
-        }
-
-        inline Vector2& operator +=(const Vector2& v)
-        {
-            x += v.x;
-            y += v.y;
-
-            return *this;
-        }
-
-        inline Vector2& operator -=(const Vector2& v)
-        {
-            x -= v.x;
-            y -= v.y;
-
-            return *this;
-        }
-
-        inline Vector2& operator *=(const Vector2& v)
-        {
-            x *= v.x;
-            y *= v.y;
-
-            return *this;
-        }
-
-        inline Vector2& operator *=(float n)
-        {
-            x *= n;
-            y *= n;
-
-            return *this;
-        }
-
-        inline Vector2& operator /=(float n)
-        {
-            float oneOverO = 1.0f / n;
-            x *= oneOverO;
-            y *= oneOverO;
-
-            return *this;
-        }
-
-        //inline operator Vector3()
-        //{
-        //    Vector3 value(x, y, 0.0f);
-        //    return value;
-        //}
-
-        inline void Set(float nx, float ny)
-        {
-            x = nx;
-            y = ny;
-        }
-
-        inline void Set(const Vector2& v)
-        {
-            x = v.x;
-            y = v.y;
-        }
-
-        inline void Reset()
-        {
-            x = y = 0.0f;
-        }
-
-        inline float Length() const
-        {
-            float value = sqrt(x * x + y * y);
-            return value;
-        }
-
-        inline float SquaredLength() const
-        {
-            float value = x * x + y * y;
-            return value;
-        }
-
-        inline Vector2& Normalize()
-        {
-            float length = Length();
-            *this /= length;
-
-            return *this;
-        }
+        void Set(float nx, float ny);
+        void Set(const Vector2& v);
+        void Reset();
+        float Length() const;
+        float SquaredLength() const;
+        Vector2& Normalize();
 
         // Static functions.
 
-        static inline float Dot(const Vector2& left, const Vector2& right)
-        {
-            float dot = left.x * right.x + left.y * right.y;
-            return dot;
-        }
-
-        static inline float Cross(const Vector2& left, const Vector2& right)
-        {
-            // The area of quad formed by vector left and right.
-            // a*b*sina.
-            float cross = left.x * right.y - left.y * right.x;
-            return cross;
-        }
-
-        static inline float Distance(const Vector2& left, const Vector2& right)
-        {
-            float deltaX = left.x - right.x;
-            float deltaY = left.y - right.y;
-            float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
-            return distance;
-        }
-
-        static inline float SquaredDistance(const Vector2& left, const Vector2& right)
-        {
-            float deltaX = left.x - right.x;
-            float deltaY = left.y - right.y;
-            float distance = deltaX * deltaX + deltaY * deltaY;
-            return distance;
-        }
-
-        static inline Vector2 Zero()
-        {
-            Vector2 zero(0.0f, 0.0f);
-            return zero;
-        }
-
-        static inline Vector2 One()
-        {
-            Vector2 one(1.0f, 1.0f);
-            return one;
-        }
-
-        static inline Vector2 Left()
-        {
-            Vector2 left(-1.0f, 0.0f);
-            return left;
-        }
-
-        static inline Vector2 Right()
-        {
-            Vector2 right(1.0f, 0.0f);
-            return right;
-        }
-
-        static inline Vector2 Down()
-        {
-            Vector2 down(0.0f, -1.0f);
-            return down;
-        }
-
-        static inline Vector2 Up()
-        {
-            Vector2 up(0.0f, 1.0f);
-            return up;
-        }
+        static Vector2 Zero();
+        static Vector2 One();
+        static Vector2 Left();
+        static Vector2 Right();
+        static Vector2 Down();
+        static Vector2 Up();
     };
 
     // Vector2 nonmember functions.
 
-    inline Vector2 operator *(float n, const Vector2& v)
-    {
-        Vector2 value(n * v.x, n * v.y);
-        return value;
-    }
+    Vector2 operator *(float n, const Vector2& v);
+    float Vector2Dot(const Vector2& left, const Vector2& right);
+    float Vector2Cross(const Vector2& left, const Vector2& right);
+    float Vector2Distance(const Vector2& left, const Vector2& right);
+    float Vector2SquaredDistance(const Vector2& left, const Vector2& right);
 
     // Vector 3 class.
     struct Vector3
@@ -288,206 +85,38 @@ namespace yw
         };
 
     public:
-        inline Vector3() : x(0.0f), y(0.0f), z(0.0f)
-        {
-        }
-
-        inline Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z)
-        {
-        }
-
-        inline Vector3(float nx, float ny, float nz) : x(nx), y(ny), z(nz)
-        {
-        }
-
-        inline Vector3(const Vector2& v) : x(v.x), y(v.y), z(0.0f)
-        {
-        }
+        Vector3();
+        Vector3(const Vector3& v);
+        Vector3(float nx, float ny, float nz);
+        Vector3(const Vector2& v);
+        Vector3(const Vector4& v);
 
     public:
         // Member functions.
 
-        inline Vector3& operator =(const Vector3& v)
-        {
-            x = v.x;
-            y = v.y;
-            z = v.z;
+        Vector3& operator =(const Vector3& v);
+        bool operator ==(const Vector3& v) const;
+        bool operator !=(const Vector3& v) const;
+        Vector3 operator -() const;
+        Vector3 operator +(const Vector3& v) const;
+        Vector3 operator -(const Vector3& v) const;
+        Vector3 operator *(const Vector3& v) const;
+        Vector3 operator *(float n) const;
+        Vector3 operator /(float n) const;
+        Vector3& operator +=(const Vector3& v);
+        Vector3& operator -=(const Vector3& v);
+        Vector3& operator *=(const Vector3& v);
+        Vector3& operator *=(float n);
+        Vector3& operator /=(float n);
+        operator Vector2();
+        operator Vector4();
 
-            return *this;
-        }
-
-        inline bool operator ==(const Vector3& v) const
-        {
-            float deltaX = x - v.x;
-            if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
-            {
-                return false;
-            }
-
-            float deltaY = y - v.y;
-            if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
-            {
-                return false;
-            }
-
-            float deltaZ = z - v.z;
-            if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        inline bool operator !=(const Vector3& v) const
-        {
-            float deltaX = x - v.x;
-            if (deltaX > YW_FLOAT_PRECISION || deltaX < -YW_FLOAT_PRECISION)
-            {
-                return true;
-            }
-
-            float deltaY = y - v.y;
-            if (deltaY > YW_FLOAT_PRECISION || deltaY < -YW_FLOAT_PRECISION)
-            {
-                return true;
-            }
-
-            float deltaZ = z - v.z;
-            if (deltaZ > YW_FLOAT_PRECISION || deltaZ < -YW_FLOAT_PRECISION)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        inline Vector3 operator -() const
-        {
-            Vector3 value(-x, -y, -z);
-            return value;
-        }
-
-        inline Vector3 operator +(const Vector3& v) const
-        {
-            Vector3 value(x + v.x, y + v.y, z + v.z);
-            return value;
-        }
-
-        inline Vector3 operator -(const Vector3& v) const
-        {
-            Vector3 value(x - v.x, y - v.y, z - v.z);
-            return value;
-        }
-
-        inline Vector3 operator *(const Vector3& v) const
-        {
-            Vector3 value(x * v.x, y * v.y, z * v.z);
-            return value;
-        }
-
-        inline Vector3 operator *(float n) const
-        {
-            Vector3 value(x * n, y * n, z * n);
-            return value;
-        }
-
-        inline Vector3 operator /(float n) const
-        {
-            float oneOverO = 1.0f / n;
-            Vector3 value(x * oneOverO, y * oneOverO, z * oneOverO);
-        }
-
-        inline Vector3& operator +=(const Vector3& v)
-        {
-            x += v.x;
-            y += v.y;
-            z += v.z;
-
-            return *this;
-        }
-
-        inline Vector3& operator -=(const Vector3& v)
-        {
-            x -= v.x;
-            y -= v.y;
-            z -= v.z;
-
-            return *this;
-        }
-
-        inline Vector3& operator *=(const Vector3& v)
-        {
-            x *= v.x;
-            y *= v.y;
-            z *= v.z;
-
-            return *this;
-        }
-
-        inline Vector3& operator *=(float n)
-        {
-            x *= n;
-            y *= n;
-            z *= n;
-
-            return *this;
-        }
-
-        inline Vector3& operator /=(float n)
-        {
-            float oneOverO = 1.0f / n;
-            x *= oneOverO;
-            y *= oneOverO;
-            z *= oneOverO;
-
-            return *this;
-        }
-
-        inline operator Vector2()
-        {
-            Vector2 value(x, y);
-            return value;
-        }
-
-        inline void Set(float nx, float ny, float nz)
-        {
-            x = nx;
-            y = ny;
-            z = nz;
-        }
-
-        inline void Set(const Vector3& v)
-        {
-            x = v.x;
-            y = v.y;
-            z = v.z;
-        }
-
-        inline void Reset()
-        {
-            x = y = z = 0.0f;
-        }
-
-        inline float Length() const
-        {
-            float value = sqrt(x * x + y * y + z * z);
-            return value;
-        }
-
-        inline float SquaredLength() const
-        {
-            float value = x * x + y * y + z * z;
-            return value;
-        }
-
-        inline Vector3& Normalize()
-        {
-            float length = Length();
-            *this /= length;
-
-            return *this;
-        }
+        void Set(float nx, float ny, float nz);
+        void Set(const Vector3& v);
+        void Reset();
+        float Length() const;
+        float SquaredLength() const;
+        Vector3& Normalize();
 
         // Static functions.
 
@@ -885,5 +514,7 @@ namespace yw
         return value;
     }
 }
+
+#include "Vector.inl"
 
 #endif // !__VECTOR_H__
