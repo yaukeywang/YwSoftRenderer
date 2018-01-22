@@ -58,6 +58,8 @@ namespace yw
         void SetIdentity();
     };
 
+    // Matrix44 nonmember functions.
+
     // Get the determinant of matrix 2x2.
     float Matrix22Determinant(
         const float a11, const float a12,

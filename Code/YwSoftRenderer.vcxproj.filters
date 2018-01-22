@@ -155,5 +155,8 @@
     <None Include="Driven\Math\Matrix.inl">
       <Filter>Driven\Math</Filter>
     </None>
+    <None Include="Driven\Math\Quaternion.inl">
+      <Filter>Driven\Math</Filter>
+    </None>
   </ItemGroup>
 </Project>

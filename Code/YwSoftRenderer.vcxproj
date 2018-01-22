@@ -207,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Driven\Math\Matrix.inl" />
+    <None Include="Driven\Math\Quaternion.inl" />
     <None Include="Driven\Math\Vector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
