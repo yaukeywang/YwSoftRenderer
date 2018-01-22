@@ -10,6 +10,325 @@
 namespace yw
 {
     //
+    // Matrix common functions.
+
+    // Get the determinant of matrix 2x2.
+    inline float Matrix22Determinant(
+        const float a11, const float a12,
+        const float a21, const float a22
+    )
+    {
+        return a11 * a22 - a12 * a21;
+    }
+
+    // Get the determinant of matrix 3x3.
+    inline float Matrix33Determinant(
+        const float a11, const float a12, const float a13,
+        const float a21, const float a22, const float a23,
+        const float a31, const float a32, const float a33
+    )
+    {
+        return a11 * Matrix22Determinant(a22, a23, a32, a33) - a12 * Matrix22Determinant(a21, a23, a31, a33) + a13 * Matrix22Determinant(a21, a22, a31, a32);
+    }
+
+    // Get the determinant of matrix 4x4.
+    inline float Matrix44Determinant(
+        const float a11, const float a12, const float a13, const float a14,
+        const float a21, const float a22, const float a23, const float a24,
+        const float a31, const float a32, const float a33, const float a34,
+        const float a41, const float a42, const float a43, const float a44
+    )
+    {
+        return a11 * Matrix33Determinant(a22, a23, a24, a32, a33, a34, a42, a43, a44)
+            - a12 * Matrix33Determinant(a21, a23, a24, a31, a33, a34, a41, a43, a44)
+            + a13 * Matrix33Determinant(a21, a22, a24, a31, a32, a34, a41, a42, a44)
+            - a14 * Matrix33Determinant(a21, a22, a23, a31, a32, a33, a41, a42, a43);
+    }
+
+    //
+    // For Matrix33 class.
+    inline Matrix33::Matrix33()
+    {
+        SetIdentity();
+    }
+
+    inline Matrix33::Matrix33(const Matrix33& m) :
+        _11(m._11), _12(m._12), _13(m._13),
+        _21(m._21), _22(m._22), _23(m._23),
+        _31(m._31), _32(m._32), _33(m._33)
+    {
+    }
+
+    inline Matrix33::Matrix33(
+        const float a11, const float a12, const float a13,
+        const float a21, const float a22, const float a23,
+        const float a31, const float a32, const float a33
+    ) :
+        _11(a11), _12(a12), _13(a13),
+        _21(a21), _22(a22), _23(a23),
+        _31(a31), _32(a32), _33(a33)
+    {
+    }
+
+    // Member functions.
+
+    inline Matrix33::operator float*()
+    {
+        return &_11;
+    }
+
+    inline Matrix33::operator const float*() const
+    {
+        return &_11;
+    }
+
+    inline float Matrix33::operator()(int32_t row, int32_t col) const
+    {
+        return mm[row][col];
+    }
+
+    Matrix33 Matrix33::operator +() const
+    {
+        return *this;
+    }
+
+    Matrix33 Matrix33::operator -() const
+    {
+        return GetInverse();
+    }
+
+    inline Matrix33& Matrix33::operator =(const Matrix33& m)
+    {
+        _11 = m._11; _12 = m._12; _13 = m._13;
+        _21 = m._21; _22 = m._22; _23 = m._23;
+        _31 = m._31; _32 = m._32; _33 = m._33;
+
+        return *this;
+    }
+
+    inline Matrix33 Matrix33::operator +(const Matrix33 &m) const
+    {
+        Matrix33 value(
+            _11 + m._11, _12 + m._12, _13 + m._13,
+            _21 + m._21, _22 + m._22, _23 + m._23,
+            _31 + m._31, _32 + m._32, _33 + m._33
+        );
+        return value;
+    }
+
+    inline Matrix33 Matrix33::operator -(const Matrix33 &m) const
+    {
+        Matrix33 value(
+            _11 - m._11, _12 - m._12, _13 - m._13,
+            _21 - m._21, _22 - m._22, _23 - m._23,
+            _31 - m._31, _32 - m._32, _33 - m._33
+        );
+        return value;
+    }
+
+    inline Matrix33 Matrix33::operator *(const Matrix33 &m) const
+    {
+        Matrix33 value(
+            _11 * m._11 + _12 * m._21 + _13 * m._31,
+            _11 * m._12 + _12 * m._22 + _13 * m._32,
+            _11 * m._13 + _12 * m._23 + _13 * m._33,
+            _21 * m._11 + _22 * m._21 + _23 * m._31,
+            _21 * m._12 + _22 * m._22 + _23 * m._32,
+            _21 * m._13 + _22 * m._23 + _23 * m._33,
+            _31 * m._11 + _32 * m._21 + _33 * m._31,
+            _31 * m._12 + _32 * m._22 + _33 * m._32,
+            _31 * m._13 + _32 * m._23 + _33 * m._33
+        );
+        return value;
+    }
+
+    inline Matrix33 Matrix33::operator *(const float n) const
+    {
+        Matrix33 value(
+            _11 * n, _12 * n, _13 * n,
+            _21 * n, _22 * n, _23 * n,
+            _31 * n, _32 * n, _33 * n
+        );
+        return value;
+    }
+
+    inline Matrix33 Matrix33::operator /(const float n) const
+    {
+        const float oneOverN = 1.0f / n;
+        Matrix33 value(
+            _11 * oneOverN, _12 * oneOverN, _13 * oneOverN,
+            _21 * oneOverN, _22 * oneOverN, _23 * oneOverN,
+            _31 * oneOverN, _32 * oneOverN, _33 * oneOverN
+        );
+
+        return value;
+    }
+
+    inline Matrix33& Matrix33::operator +=(const Matrix33& m)
+    {
+        _11 += m._11; _12 += m._12; _13 += m._13;
+        _21 += m._21; _22 += m._22; _23 += m._23;
+        _31 += m._31; _32 += m._32; _33 += m._33;
+
+        return *this;
+    }
+
+    inline Matrix33& Matrix33::operator -=(const Matrix33& m)
+    {
+        _11 -= m._11; _12 -= m._12; _13 -= m._13;
+        _21 -= m._21; _22 -= m._22; _23 -= m._23;
+        _31 -= m._31; _32 -= m._32; _33 -= m._33;
+
+        return *this;
+    }
+
+    inline Matrix33& Matrix33::operator *=(const Matrix33& m)
+    {
+        const float f11 = _11 * m._11 + _12 * m._21 + _13 * m._31;
+        const float f12 = _11 * m._12 + _12 * m._22 + _13 * m._32;
+        const float f13 = _11 * m._13 + _12 * m._23 + _13 * m._33;
+        const float f21 = _21 * m._11 + _22 * m._21 + _23 * m._31;
+        const float f22 = _21 * m._12 + _22 * m._22 + _23 * m._32;
+        const float f23 = _21 * m._13 + _22 * m._23 + _23 * m._33;
+        const float f31 = _31 * m._11 + _32 * m._21 + _33 * m._31;
+        const float f32 = _31 * m._12 + _32 * m._22 + _33 * m._32;
+        const float f33 = _31 * m._13 + _32 * m._23 + _33 * m._33;
+
+        _11 = f11; _12 = f12; _13 = f13;
+        _21 = f21; _22 = f22; _23 = f23;
+        _31 = f31; _32 = f32; _33 = f33;
+
+        return *this;
+    }
+
+    inline Matrix33& Matrix33::operator *=(const float n)
+    {
+        _11 *= n; _12 *= n; _13 *= n;
+        _21 *= n; _22 *= n; _23 *= n;
+        _31 *= n; _32 *= n; _33 *= n;
+
+        return *this;
+    }
+
+    inline Matrix33& Matrix33::operator /=(const float n)
+    {
+        const float oneOverN = 1.0f / n;
+        _11 *= oneOverN; _12 *= oneOverN; _13 *= oneOverN;
+        _21 *= oneOverN; _22 *= oneOverN; _23 *= oneOverN;
+        _31 *= oneOverN; _32 *= oneOverN; _33 *= oneOverN;
+
+        return *this;
+    }
+
+    inline float Matrix33::GetDeterminant() const
+    {
+        return Matrix33Determinant(*this);
+    }
+
+    inline Matrix33 Matrix33::GetInverse() const
+    {
+        Matrix33 out;
+        if (!Matrix33Inverse(out, *this))
+        {
+            return *this;
+        }
+
+        return out;
+    }
+
+    inline void Matrix33::SetIdentity()
+    {
+        Matrix33Identity(*this);
+    }
+
+    // Matrix33 nonmember functions.
+
+    // Get the determinant of matrix 4x4.
+    inline float Matrix33Determinant(const Matrix33& mat)
+    {
+        return Matrix33Determinant(
+            mat._11, mat._12, mat._13,
+            mat._21, mat._22, mat._23,
+            mat._31, mat._32, mat._33
+        );
+    }
+
+    inline float Matrix33MinorDeterminant(const Matrix33& mat, const int32_t row, const int32_t col)
+    {
+        float mat2x2[2][2];
+        for (int32_t r = 0, rn = 0; r < 3; r++)
+        {
+            if (row == r)
+            {
+                continue;
+            }
+
+            for (int32_t c = 0, cn = 0; c < 3; c++)
+            {
+                if (col == c)
+                {
+                    continue;
+                }
+
+                mat2x2[rn][cn] = mat.mm[r][c];
+
+                cn++;
+            }
+
+            rn++;
+        }
+
+        return Matrix22Determinant(
+            mat2x2[0][0], mat2x2[0][1],
+            mat2x2[1][0], mat2x2[1][1]
+        );
+    }
+
+    inline Matrix33 Matrix33Adjoint(const Matrix33& mat)
+    {
+        Matrix33 matAdjoint;
+        for (int32_t r = 0; r < 3; r++)
+        {
+            for (int32_t c = 0; c < 3; c++)
+            {
+                matAdjoint.mm[c][r] = (float)pow(-1, r + c) * Matrix33MinorDeterminant(mat, r, c);
+            }
+        }
+
+        return matAdjoint;
+    }
+
+    inline bool Matrix33Inverse(Matrix33& out, const Matrix33& mat)
+    {
+        const float determinant = Matrix33Determinant(mat);
+        if (fabsf(determinant) < FLT_EPSILON)
+        {
+            return false;
+        }
+
+        out = Matrix33Adjoint(mat) / determinant;
+        return true;
+    }
+
+    inline Matrix33& Matrix33Transpose(Matrix33& out, const Matrix33& mat)
+    {
+        out._11 = mat._11; out._12 = mat._21; out._13 = mat._31;
+        out._21 = mat._12; out._22 = mat._22; out._23 = mat._32;
+        out._31 = mat._13; out._32 = mat._23; out._33 = mat._33;
+
+        return out;
+    }
+
+    inline Matrix33& Matrix33Identity(Matrix33& out)
+    {
+        out._11 = 1; out._12 = 0; out._13 = 0;
+        out._21 = 0; out._22 = 1; out._23 = 0;
+        out._31 = 0; out._32 = 0; out._33 = 1;
+
+        return out;
+    }
+
+    //
     // For Matrix44 class.
 
     // Member functions.
@@ -220,58 +539,21 @@ namespace yw
 
     inline Matrix44 Matrix44::GetInverse() const
     {
-        const float determinant = Matrix44Determinant(*this);
-        if (fabsf(determinant) < FLT_EPSILON)
+        Matrix44 out;
+        if (!Matrix44Inverse(out, *this))
         {
             return *this;
         }
 
-        Matrix44 mat = Matrix44Adjoint(*this) / determinant;
-        return mat;
+        return out;
     }
 
     inline void Matrix44::SetIdentity()
     {
-        _11 = 1; _12 = 0; _13 = 0; _14 = 0;
-        _21 = 0; _22 = 1; _23 = 0; _24 = 0;
-        _31 = 0; _32 = 0; _33 = 1; _34 = 0;
-        _41 = 0; _42 = 0; _43 = 0; _44 = 1;
+        Matrix44Identity(*this);
     }
 
     // Nonmember functions.
-
-    // Get the determinant of matrix 2x2.
-    inline float Matrix22Determinant(
-        const float a11, const float a12,
-        const float a21, const float a22
-    )
-    {
-        return a11 * a22 - a12 * a21;
-    }
-
-    // Get the determinant of matrix 3x3.
-    inline float Matrix33Determinant(
-        const float a11, const float a12, const float a13,
-        const float a21, const float a22, const float a23,
-        const float a31, const float a32, const float a33
-    )
-    {
-        return a11 * Matrix22Determinant(a22, a23, a32, a33) - a12 * Matrix22Determinant(a21, a23, a31, a33) + a13 * Matrix22Determinant(a21, a22, a31, a32);
-    }
-
-    // Get the determinant of matrix 4x4.
-    inline float Matrix44Determinant(
-        const float a11, const float a12, const float a13, const float a14,
-        const float a21, const float a22, const float a23, const float a24,
-        const float a31, const float a32, const float a33, const float a34,
-        const float a41, const float a42, const float a43, const float a44
-    )
-    {
-        return a11 * Matrix33Determinant(a22, a23, a24, a32, a33, a34, a42, a43, a44)
-            - a12 * Matrix33Determinant(a21, a23, a24, a31, a33, a34, a41, a43, a44)
-            + a13 * Matrix33Determinant(a21, a22, a24, a31, a32, a34, a41, a42, a44)
-            - a14 * Matrix33Determinant(a21, a22, a23, a31, a32, a33, a41, a42, a43);
-    }
 
     // Get the determinant of matrix 4x4.
     inline float Matrix44Determinant(const Matrix44& mat)
@@ -285,7 +567,7 @@ namespace yw
     }
 
     // Get the determinant of matrix exclude row and col.
-    inline float MinorDeterminant(const Matrix44& mat, const int32_t row, const int32_t col)
+    inline float Matrix44MinorDeterminant(const Matrix44& mat, const int32_t row, const int32_t col)
     {
         float mat3x3[3][3];
         for (int32_t r = 0, rn = 0; r < 4; r++)
@@ -325,7 +607,7 @@ namespace yw
         {
             for (int32_t c = 0; c < 4; c++)
             {
-                matAdjoint.mm[c][r] = (float)pow(-1, r + c) * MinorDeterminant(mat, r, c);
+                matAdjoint.mm[c][r] = (float)pow(-1, r + c) * Matrix44MinorDeterminant(mat, r, c);
             }
         }
 
