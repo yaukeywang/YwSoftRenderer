@@ -6,6 +6,7 @@
 
 #include "MathUtility.h"
 #include "Quaternion.h"
+#include "Matrix.h"
 
 namespace yw
 {
@@ -454,6 +455,16 @@ namespace yw
             out.x = 0.0f;
         }
 
+        return out;
+    }
+
+    Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat)
+    {
+        return out;
+    }
+
+    Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat)
+    {
         return out;
     }
 }

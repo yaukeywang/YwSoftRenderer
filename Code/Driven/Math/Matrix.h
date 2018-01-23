@@ -9,6 +9,9 @@
 
 namespace yw
 {
+    // Predefine.
+    struct Quaternion;
+
     // Matrix common functions.
 
     // Get the determinant of matrix 2x2.
@@ -100,6 +103,9 @@ namespace yw
     // Get identity of matrix 4x4.
     Matrix33& Matrix33Identity(Matrix33& out);
 
+    // Get matrix from quaternion.
+    Matrix33& Matrix33FromQuaternion(Matrix33& out, const Quaternion& q);
+
     // Matrix 4x4 class.
     struct Matrix44
     {
@@ -169,6 +175,9 @@ namespace yw
 
     // Get identity of matrix 4x4.
     Matrix44& Matrix44Identity(Matrix44& out);
+
+    // Get matrix from quaternion.
+    Matrix44& Matrix44FromQuaternion(Matrix44& out, const Quaternion& q);
 }
 
 #include "Matrix.inl"

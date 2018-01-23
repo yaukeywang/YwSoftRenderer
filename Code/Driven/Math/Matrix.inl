@@ -6,6 +6,7 @@
 
 #include "MathUtility.h"
 #include "Matrix.h"
+#include "Quaternion.h"
 
 namespace yw
 {
@@ -132,9 +133,11 @@ namespace yw
             _11 * m._11 + _12 * m._21 + _13 * m._31,
             _11 * m._12 + _12 * m._22 + _13 * m._32,
             _11 * m._13 + _12 * m._23 + _13 * m._33,
+
             _21 * m._11 + _22 * m._21 + _23 * m._31,
             _21 * m._12 + _22 * m._22 + _23 * m._32,
             _21 * m._13 + _22 * m._23 + _23 * m._33,
+
             _31 * m._11 + _32 * m._21 + _33 * m._31,
             _31 * m._12 + _32 * m._22 + _33 * m._32,
             _31 * m._13 + _32 * m._23 + _33 * m._33
@@ -187,9 +190,11 @@ namespace yw
         const float f11 = _11 * m._11 + _12 * m._21 + _13 * m._31;
         const float f12 = _11 * m._12 + _12 * m._22 + _13 * m._32;
         const float f13 = _11 * m._13 + _12 * m._23 + _13 * m._33;
+
         const float f21 = _21 * m._11 + _22 * m._21 + _23 * m._31;
         const float f22 = _21 * m._12 + _22 * m._22 + _23 * m._32;
         const float f23 = _21 * m._13 + _22 * m._23 + _23 * m._33;
+
         const float f31 = _31 * m._11 + _32 * m._21 + _33 * m._31;
         const float f32 = _31 * m._12 + _32 * m._22 + _33 * m._32;
         const float f33 = _31 * m._13 + _32 * m._23 + _33 * m._33;
@@ -328,6 +333,27 @@ namespace yw
         return out;
     }
 
+    inline Matrix33& Matrix33FromQuaternion(Matrix33& out, const Quaternion& q)
+    {
+        const float SquaredX = q.x * q.x;
+        const float SquaredY = q.y * q.y;
+        const float SquaredZ = q.z * q.z;
+
+        out._11 = 1.0f - 2.0f * (SquaredY + SquaredZ);
+        out._12 = 2.0f * (q.x * q.y + q.z * q.w);
+        out._13 = 2.0f * (q.x * q.z - q.y * q.w);
+
+        out._21 = 2.0f * (q.x * q.y - q.z * q.w);
+        out._22 = 1.0f - 2.0f * (SquaredX + SquaredZ);
+        out._23 = 2.0f * (q.y * q.z + q.x * q.w);
+
+        out._31 = 2.0f * (q.x * q.z + q.y * q.w);
+        out._32 = 2.0f * (q.y * q.z - q.x * q.w);
+        out._33 = 1.0f - 2.0f * (SquaredX + SquaredY);
+
+        return out;
+    }
+
     //
     // For Matrix44 class.
 
@@ -424,14 +450,17 @@ namespace yw
             _11 * m._12 + _12 * m._22 + _13 * m._32 + _14 * m._42,
             _11 * m._13 + _12 * m._23 + _13 * m._33 + _14 * m._43,
             _11 * m._14 + _12 * m._24 + _13 * m._34 + _14 * m._44,
+
             _21 * m._11 + _22 * m._21 + _23 * m._31 + _24 * m._41,
             _21 * m._12 + _22 * m._22 + _23 * m._32 + _24 * m._42,
             _21 * m._13 + _22 * m._23 + _23 * m._33 + _24 * m._43,
             _21 * m._14 + _22 * m._24 + _23 * m._34 + _24 * m._44,
+
             _31 * m._11 + _32 * m._21 + _33 * m._31 + _34 * m._41,
             _31 * m._12 + _32 * m._22 + _33 * m._32 + _34 * m._42,
             _31 * m._13 + _32 * m._23 + _33 * m._33 + _34 * m._43,
             _31 * m._14 + _32 * m._24 + _33 * m._34 + _34 * m._44,
+
             _41 * m._11 + _42 * m._21 + _43 * m._31 + _44 * m._41,
             _41 * m._12 + _42 * m._22 + _43 * m._32 + _44 * m._42,
             _41 * m._13 + _42 * m._23 + _43 * m._33 + _44 * m._43,
@@ -490,14 +519,17 @@ namespace yw
         const float f12 = _11 * m._12 + _12 * m._22 + _13 * m._32 + _14 * m._42;
         const float f13 = _11 * m._13 + _12 * m._23 + _13 * m._33 + _14 * m._43;
         const float f14 = _11 * m._14 + _12 * m._24 + _13 * m._34 + _14 * m._44;
+
         const float f21 = _21 * m._11 + _22 * m._21 + _23 * m._31 + _24 * m._41;
         const float f22 = _21 * m._12 + _22 * m._22 + _23 * m._32 + _24 * m._42;
         const float f23 = _21 * m._13 + _22 * m._23 + _23 * m._33 + _24 * m._43;
         const float f24 = _21 * m._14 + _22 * m._24 + _23 * m._34 + _24 * m._44;
+
         const float f31 = _31 * m._11 + _32 * m._21 + _33 * m._31 + _34 * m._41;
         const float f32 = _31 * m._12 + _32 * m._22 + _33 * m._32 + _34 * m._42;
         const float f33 = _31 * m._13 + _32 * m._23 + _33 * m._33 + _34 * m._43;
         const float f34 = _31 * m._14 + _32 * m._24 + _33 * m._34 + _34 * m._44;
+
         const float f41 = _41 * m._11 + _42 * m._21 + _43 * m._31 + _44 * m._41;
         const float f42 = _41 * m._12 + _42 * m._22 + _43 * m._32 + _44 * m._42;
         const float f43 = _41 * m._13 + _42 * m._23 + _43 * m._33 + _44 * m._43;
@@ -645,6 +677,36 @@ namespace yw
         out._21 = 0; out._22 = 1; out._23 = 0; out._24 = 0;
         out._31 = 0; out._32 = 0; out._33 = 1; out._34 = 0;
         out._41 = 0; out._42 = 0; out._43 = 0; out._44 = 1;
+
+        return out;
+    }
+
+    Matrix44& Matrix44FromQuaternion(Matrix44& out, const Quaternion& q)
+    {
+        const float SquaredX = q.x * q.x;
+        const float SquaredY = q.y * q.y;
+        const float SquaredZ = q.z * q.z;
+        //const float SquaredW = q.w * q.w;
+
+        out._11 = 1.0f - 2.0f * (SquaredY + SquaredZ);
+        out._12 = 2.0f * (q.x * q.y + q.z * q.w);
+        out._13 = 2.0f * (q.x * q.z - q.y * q.w);
+        out._14 = 0.0f;
+
+        out._21 = 2.0f * (q.x * q.y - q.z * q.w);
+        out._22 = 1.0f - 2.0f * (SquaredX + SquaredZ);
+        out._23 = 2.0f * (q.y * q.z + q.x * q.w);
+        out._24 = 0.0f;
+
+        out._31 = 2.0f * (q.x * q.z + q.y * q.w);
+        out._32 = 2.0f * (q.y * q.z - q.x * q.w);
+        out._33 = 1.0f - 2.0f * (SquaredX + SquaredY);
+        out._34 = 0.0f;
+
+        out._41 = 0.0f;
+        out._42 = 0.0f;
+        out._43 = 0.0f;
+        out._44 = 1.0f; //SquaredX + SquaredY + SquaredZ + SquaredW;
 
         return out;
     }

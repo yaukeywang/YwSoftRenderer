@@ -9,6 +9,10 @@
 
 namespace yw
 {
+    // Predefine.
+    struct Matrix33;
+    struct Matrix44;
+
     // Vector 2 class.
     struct Quaternion
     {
@@ -69,6 +73,8 @@ namespace yw
     Quaternion& QuaternionFromEulerZ(Quaternion& out, float theta);
     Quaternion QuaternionFromEuler(Quaternion& out, float thetaX, float thetaY, float thetaZ);
     Vector3& QuaternionToEuler(Vector3& out, const Quaternion& q); // ZYX euler order conversion.
+    Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat);
+    Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat);
 }
 
 #include "Quaternion.inl"
