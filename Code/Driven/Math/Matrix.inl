@@ -53,10 +53,10 @@ namespace yw
         SetIdentity();
     }
 
-    inline Matrix33::Matrix33(const Matrix33& m) :
-        _11(m._11), _12(m._12), _13(m._13),
-        _21(m._21), _22(m._22), _23(m._23),
-        _31(m._31), _32(m._32), _33(m._33)
+    inline Matrix33::Matrix33(const Matrix33& mat) :
+        _11(mat._11), _12(mat._12), _13(mat._13),
+        _21(mat._21), _22(mat._22), _23(mat._23),
+        _31(mat._31), _32(mat._32), _33(mat._33)
     {
     }
 
@@ -98,49 +98,49 @@ namespace yw
         return GetInverse();
     }
 
-    inline Matrix33& Matrix33::operator =(const Matrix33& m)
+    inline Matrix33& Matrix33::operator =(const Matrix33& mat)
     {
-        _11 = m._11; _12 = m._12; _13 = m._13;
-        _21 = m._21; _22 = m._22; _23 = m._23;
-        _31 = m._31; _32 = m._32; _33 = m._33;
+        _11 = mat._11; _12 = mat._12; _13 = mat._13;
+        _21 = mat._21; _22 = mat._22; _23 = mat._23;
+        _31 = mat._31; _32 = mat._32; _33 = mat._33;
 
         return *this;
     }
 
-    inline Matrix33 Matrix33::operator +(const Matrix33 &m) const
+    inline Matrix33 Matrix33::operator +(const Matrix33 &mat) const
     {
         Matrix33 value(
-            _11 + m._11, _12 + m._12, _13 + m._13,
-            _21 + m._21, _22 + m._22, _23 + m._23,
-            _31 + m._31, _32 + m._32, _33 + m._33
+            _11 + mat._11, _12 + mat._12, _13 + mat._13,
+            _21 + mat._21, _22 + mat._22, _23 + mat._23,
+            _31 + mat._31, _32 + mat._32, _33 + mat._33
         );
         return value;
     }
 
-    inline Matrix33 Matrix33::operator -(const Matrix33 &m) const
+    inline Matrix33 Matrix33::operator -(const Matrix33 &mat) const
     {
         Matrix33 value(
-            _11 - m._11, _12 - m._12, _13 - m._13,
-            _21 - m._21, _22 - m._22, _23 - m._23,
-            _31 - m._31, _32 - m._32, _33 - m._33
+            _11 - mat._11, _12 - mat._12, _13 - mat._13,
+            _21 - mat._21, _22 - mat._22, _23 - mat._23,
+            _31 - mat._31, _32 - mat._32, _33 - mat._33
         );
         return value;
     }
 
-    inline Matrix33 Matrix33::operator *(const Matrix33 &m) const
+    inline Matrix33 Matrix33::operator *(const Matrix33 &mat) const
     {
         Matrix33 value(
-            _11 * m._11 + _12 * m._21 + _13 * m._31,
-            _11 * m._12 + _12 * m._22 + _13 * m._32,
-            _11 * m._13 + _12 * m._23 + _13 * m._33,
+            _11 * mat._11 + _12 * mat._21 + _13 * mat._31,
+            _11 * mat._12 + _12 * mat._22 + _13 * mat._32,
+            _11 * mat._13 + _12 * mat._23 + _13 * mat._33,
 
-            _21 * m._11 + _22 * m._21 + _23 * m._31,
-            _21 * m._12 + _22 * m._22 + _23 * m._32,
-            _21 * m._13 + _22 * m._23 + _23 * m._33,
+            _21 * mat._11 + _22 * mat._21 + _23 * mat._31,
+            _21 * mat._12 + _22 * mat._22 + _23 * mat._32,
+            _21 * mat._13 + _22 * mat._23 + _23 * mat._33,
 
-            _31 * m._11 + _32 * m._21 + _33 * m._31,
-            _31 * m._12 + _32 * m._22 + _33 * m._32,
-            _31 * m._13 + _32 * m._23 + _33 * m._33
+            _31 * mat._11 + _32 * mat._21 + _33 * mat._31,
+            _31 * mat._12 + _32 * mat._22 + _33 * mat._32,
+            _31 * mat._13 + _32 * mat._23 + _33 * mat._33
         );
         return value;
     }
@@ -167,37 +167,37 @@ namespace yw
         return value;
     }
 
-    inline Matrix33& Matrix33::operator +=(const Matrix33& m)
+    inline Matrix33& Matrix33::operator +=(const Matrix33& mat)
     {
-        _11 += m._11; _12 += m._12; _13 += m._13;
-        _21 += m._21; _22 += m._22; _23 += m._23;
-        _31 += m._31; _32 += m._32; _33 += m._33;
+        _11 += mat._11; _12 += mat._12; _13 += mat._13;
+        _21 += mat._21; _22 += mat._22; _23 += mat._23;
+        _31 += mat._31; _32 += mat._32; _33 += mat._33;
 
         return *this;
     }
 
-    inline Matrix33& Matrix33::operator -=(const Matrix33& m)
+    inline Matrix33& Matrix33::operator -=(const Matrix33& mat)
     {
-        _11 -= m._11; _12 -= m._12; _13 -= m._13;
-        _21 -= m._21; _22 -= m._22; _23 -= m._23;
-        _31 -= m._31; _32 -= m._32; _33 -= m._33;
+        _11 -= mat._11; _12 -= mat._12; _13 -= mat._13;
+        _21 -= mat._21; _22 -= mat._22; _23 -= mat._23;
+        _31 -= mat._31; _32 -= mat._32; _33 -= mat._33;
 
         return *this;
     }
 
-    inline Matrix33& Matrix33::operator *=(const Matrix33& m)
+    inline Matrix33& Matrix33::operator *=(const Matrix33& mat)
     {
-        const float f11 = _11 * m._11 + _12 * m._21 + _13 * m._31;
-        const float f12 = _11 * m._12 + _12 * m._22 + _13 * m._32;
-        const float f13 = _11 * m._13 + _12 * m._23 + _13 * m._33;
+        const float f11 = _11 * mat._11 + _12 * mat._21 + _13 * mat._31;
+        const float f12 = _11 * mat._12 + _12 * mat._22 + _13 * mat._32;
+        const float f13 = _11 * mat._13 + _12 * mat._23 + _13 * mat._33;
 
-        const float f21 = _21 * m._11 + _22 * m._21 + _23 * m._31;
-        const float f22 = _21 * m._12 + _22 * m._22 + _23 * m._32;
-        const float f23 = _21 * m._13 + _22 * m._23 + _23 * m._33;
+        const float f21 = _21 * mat._11 + _22 * mat._21 + _23 * mat._31;
+        const float f22 = _21 * mat._12 + _22 * mat._22 + _23 * mat._32;
+        const float f23 = _21 * mat._13 + _22 * mat._23 + _23 * mat._33;
 
-        const float f31 = _31 * m._11 + _32 * m._21 + _33 * m._31;
-        const float f32 = _31 * m._12 + _32 * m._22 + _33 * m._32;
-        const float f33 = _31 * m._13 + _32 * m._23 + _33 * m._33;
+        const float f31 = _31 * mat._11 + _32 * mat._21 + _33 * mat._31;
+        const float f32 = _31 * mat._12 + _32 * mat._22 + _33 * mat._32;
+        const float f33 = _31 * mat._13 + _32 * mat._23 + _33 * mat._33;
 
         _11 = f11; _12 = f12; _13 = f13;
         _21 = f21; _22 = f22; _23 = f23;
@@ -364,11 +364,11 @@ namespace yw
         SetIdentity();
     }
 
-    inline Matrix44::Matrix44(const Matrix44& m) :
-        _11(m._11), _12(m._12), _13(m._13), _14(m._14),
-        _21(m._21), _22(m._22), _23(m._23), _24(m._24),
-        _31(m._31), _32(m._32), _33(m._33), _34(m._34),
-        _41(m._41), _42(m._42), _43(m._43), _44(m._44)
+    inline Matrix44::Matrix44(const Matrix44& mat) :
+        _11(mat._11), _12(mat._12), _13(mat._13), _14(mat._14),
+        _21(mat._21), _22(mat._22), _23(mat._23), _24(mat._24),
+        _31(mat._31), _32(mat._32), _33(mat._33), _34(mat._34),
+        _41(mat._41), _42(mat._42), _43(mat._43), _44(mat._44)
     {
     }
 
@@ -411,60 +411,60 @@ namespace yw
         return GetInverse();
     }
 
-    inline Matrix44& Matrix44::operator =(const Matrix44& m)
+    inline Matrix44& Matrix44::operator =(const Matrix44& mat)
     {
-        _11 = m._11; _12 = m._12; _13 = m._13; _14 = m._14;
-        _21 = m._21; _22 = m._22; _23 = m._23; _24 = m._24;
-        _31 = m._31; _32 = m._32; _33 = m._33; _34 = m._34;
-        _41 = m._41; _42 = m._42; _43 = m._43; _44 = m._44;
+        _11 = mat._11; _12 = mat._12; _13 = mat._13; _14 = mat._14;
+        _21 = mat._21; _22 = mat._22; _23 = mat._23; _24 = mat._24;
+        _31 = mat._31; _32 = mat._32; _33 = mat._33; _34 = mat._34;
+        _41 = mat._41; _42 = mat._42; _43 = mat._43; _44 = mat._44;
 
         return *this;
     }
 
-    inline Matrix44 Matrix44::operator +(const Matrix44 &m) const
+    inline Matrix44 Matrix44::operator +(const Matrix44 &mat) const
     {
         Matrix44 value(
-            _11 + m._11, _12 + m._12, _13 + m._13, _14 + m._14,
-            _21 + m._21, _22 + m._22, _23 + m._23, _24 + m._24,
-            _31 + m._31, _32 + m._32, _33 + m._33, _34 + m._34,
-            _41 + m._41, _42 + m._42, _43 + m._43, _44 + m._44
+            _11 + mat._11, _12 + mat._12, _13 + mat._13, _14 + mat._14,
+            _21 + mat._21, _22 + mat._22, _23 + mat._23, _24 + mat._24,
+            _31 + mat._31, _32 + mat._32, _33 + mat._33, _34 + mat._34,
+            _41 + mat._41, _42 + mat._42, _43 + mat._43, _44 + mat._44
         );
         return value;
     }
 
-    inline Matrix44 Matrix44::operator -(const Matrix44 &m) const
+    inline Matrix44 Matrix44::operator -(const Matrix44 &mat) const
     {
         Matrix44 value(
-            _11 - m._11, _12 - m._12, _13 - m._13, _14 - m._14,
-            _21 - m._21, _22 - m._22, _23 - m._23, _24 - m._24,
-            _31 - m._31, _32 - m._32, _33 - m._33, _34 - m._34,
-            _41 - m._41, _42 - m._42, _43 - m._43, _44 - m._44
+            _11 - mat._11, _12 - mat._12, _13 - mat._13, _14 - mat._14,
+            _21 - mat._21, _22 - mat._22, _23 - mat._23, _24 - mat._24,
+            _31 - mat._31, _32 - mat._32, _33 - mat._33, _34 - mat._34,
+            _41 - mat._41, _42 - mat._42, _43 - mat._43, _44 - mat._44
         );
         return value;
     }
 
-    inline Matrix44 Matrix44::operator *(const Matrix44 &m) const
+    inline Matrix44 Matrix44::operator *(const Matrix44 &mat) const
     {
         Matrix44 value(
-            _11 * m._11 + _12 * m._21 + _13 * m._31 + _14 * m._41,
-            _11 * m._12 + _12 * m._22 + _13 * m._32 + _14 * m._42,
-            _11 * m._13 + _12 * m._23 + _13 * m._33 + _14 * m._43,
-            _11 * m._14 + _12 * m._24 + _13 * m._34 + _14 * m._44,
+            _11 * mat._11 + _12 * mat._21 + _13 * mat._31 + _14 * mat._41,
+            _11 * mat._12 + _12 * mat._22 + _13 * mat._32 + _14 * mat._42,
+            _11 * mat._13 + _12 * mat._23 + _13 * mat._33 + _14 * mat._43,
+            _11 * mat._14 + _12 * mat._24 + _13 * mat._34 + _14 * mat._44,
 
-            _21 * m._11 + _22 * m._21 + _23 * m._31 + _24 * m._41,
-            _21 * m._12 + _22 * m._22 + _23 * m._32 + _24 * m._42,
-            _21 * m._13 + _22 * m._23 + _23 * m._33 + _24 * m._43,
-            _21 * m._14 + _22 * m._24 + _23 * m._34 + _24 * m._44,
+            _21 * mat._11 + _22 * mat._21 + _23 * mat._31 + _24 * mat._41,
+            _21 * mat._12 + _22 * mat._22 + _23 * mat._32 + _24 * mat._42,
+            _21 * mat._13 + _22 * mat._23 + _23 * mat._33 + _24 * mat._43,
+            _21 * mat._14 + _22 * mat._24 + _23 * mat._34 + _24 * mat._44,
 
-            _31 * m._11 + _32 * m._21 + _33 * m._31 + _34 * m._41,
-            _31 * m._12 + _32 * m._22 + _33 * m._32 + _34 * m._42,
-            _31 * m._13 + _32 * m._23 + _33 * m._33 + _34 * m._43,
-            _31 * m._14 + _32 * m._24 + _33 * m._34 + _34 * m._44,
+            _31 * mat._11 + _32 * mat._21 + _33 * mat._31 + _34 * mat._41,
+            _31 * mat._12 + _32 * mat._22 + _33 * mat._32 + _34 * mat._42,
+            _31 * mat._13 + _32 * mat._23 + _33 * mat._33 + _34 * mat._43,
+            _31 * mat._14 + _32 * mat._24 + _33 * mat._34 + _34 * mat._44,
 
-            _41 * m._11 + _42 * m._21 + _43 * m._31 + _44 * m._41,
-            _41 * m._12 + _42 * m._22 + _43 * m._32 + _44 * m._42,
-            _41 * m._13 + _42 * m._23 + _43 * m._33 + _44 * m._43,
-            _41 * m._14 + _42 * m._24 + _43 * m._34 + _44 * m._44
+            _41 * mat._11 + _42 * mat._21 + _43 * mat._31 + _44 * mat._41,
+            _41 * mat._12 + _42 * mat._22 + _43 * mat._32 + _44 * mat._42,
+            _41 * mat._13 + _42 * mat._23 + _43 * mat._33 + _44 * mat._43,
+            _41 * mat._14 + _42 * mat._24 + _43 * mat._34 + _44 * mat._44
         );
         return value;
     }
@@ -493,47 +493,47 @@ namespace yw
         return value;
     }
 
-    inline Matrix44& Matrix44::operator +=(const Matrix44& m)
+    inline Matrix44& Matrix44::operator +=(const Matrix44& mat)
     {
-        _11 += m._11; _12 += m._12; _13 += m._13; _14 += m._14;
-        _21 += m._21; _22 += m._22; _23 += m._23; _24 += m._24;
-        _31 += m._31; _32 += m._32; _33 += m._33; _34 += m._34;
-        _41 += m._41; _42 += m._42; _43 += m._43; _44 += m._44;
+        _11 += mat._11; _12 += mat._12; _13 += mat._13; _14 += mat._14;
+        _21 += mat._21; _22 += mat._22; _23 += mat._23; _24 += mat._24;
+        _31 += mat._31; _32 += mat._32; _33 += mat._33; _34 += mat._34;
+        _41 += mat._41; _42 += mat._42; _43 += mat._43; _44 += mat._44;
 
         return *this;
     }
 
-    inline Matrix44& Matrix44::operator -=(const Matrix44& m)
+    inline Matrix44& Matrix44::operator -=(const Matrix44& mat)
     {
-        _11 -= m._11; _12 -= m._12; _13 -= m._13; _14 -= m._14;
-        _21 -= m._21; _22 -= m._22; _23 -= m._23; _24 -= m._24;
-        _31 -= m._31; _32 -= m._32; _33 -= m._33; _34 -= m._34;
-        _41 -= m._41; _42 -= m._42; _43 -= m._43; _44 -= m._44;
+        _11 -= mat._11; _12 -= mat._12; _13 -= mat._13; _14 -= mat._14;
+        _21 -= mat._21; _22 -= mat._22; _23 -= mat._23; _24 -= mat._24;
+        _31 -= mat._31; _32 -= mat._32; _33 -= mat._33; _34 -= mat._34;
+        _41 -= mat._41; _42 -= mat._42; _43 -= mat._43; _44 -= mat._44;
 
         return *this;
     }
 
-    inline Matrix44& Matrix44::operator *=(const Matrix44& m)
+    inline Matrix44& Matrix44::operator *=(const Matrix44& mat)
     {
-        const float f11 = _11 * m._11 + _12 * m._21 + _13 * m._31 + _14 * m._41;
-        const float f12 = _11 * m._12 + _12 * m._22 + _13 * m._32 + _14 * m._42;
-        const float f13 = _11 * m._13 + _12 * m._23 + _13 * m._33 + _14 * m._43;
-        const float f14 = _11 * m._14 + _12 * m._24 + _13 * m._34 + _14 * m._44;
+        const float f11 = _11 * mat._11 + _12 * mat._21 + _13 * mat._31 + _14 * mat._41;
+        const float f12 = _11 * mat._12 + _12 * mat._22 + _13 * mat._32 + _14 * mat._42;
+        const float f13 = _11 * mat._13 + _12 * mat._23 + _13 * mat._33 + _14 * mat._43;
+        const float f14 = _11 * mat._14 + _12 * mat._24 + _13 * mat._34 + _14 * mat._44;
 
-        const float f21 = _21 * m._11 + _22 * m._21 + _23 * m._31 + _24 * m._41;
-        const float f22 = _21 * m._12 + _22 * m._22 + _23 * m._32 + _24 * m._42;
-        const float f23 = _21 * m._13 + _22 * m._23 + _23 * m._33 + _24 * m._43;
-        const float f24 = _21 * m._14 + _22 * m._24 + _23 * m._34 + _24 * m._44;
+        const float f21 = _21 * mat._11 + _22 * mat._21 + _23 * mat._31 + _24 * mat._41;
+        const float f22 = _21 * mat._12 + _22 * mat._22 + _23 * mat._32 + _24 * mat._42;
+        const float f23 = _21 * mat._13 + _22 * mat._23 + _23 * mat._33 + _24 * mat._43;
+        const float f24 = _21 * mat._14 + _22 * mat._24 + _23 * mat._34 + _24 * mat._44;
 
-        const float f31 = _31 * m._11 + _32 * m._21 + _33 * m._31 + _34 * m._41;
-        const float f32 = _31 * m._12 + _32 * m._22 + _33 * m._32 + _34 * m._42;
-        const float f33 = _31 * m._13 + _32 * m._23 + _33 * m._33 + _34 * m._43;
-        const float f34 = _31 * m._14 + _32 * m._24 + _33 * m._34 + _34 * m._44;
+        const float f31 = _31 * mat._11 + _32 * mat._21 + _33 * mat._31 + _34 * mat._41;
+        const float f32 = _31 * mat._12 + _32 * mat._22 + _33 * mat._32 + _34 * mat._42;
+        const float f33 = _31 * mat._13 + _32 * mat._23 + _33 * mat._33 + _34 * mat._43;
+        const float f34 = _31 * mat._14 + _32 * mat._24 + _33 * mat._34 + _34 * mat._44;
 
-        const float f41 = _41 * m._11 + _42 * m._21 + _43 * m._31 + _44 * m._41;
-        const float f42 = _41 * m._12 + _42 * m._22 + _43 * m._32 + _44 * m._42;
-        const float f43 = _41 * m._13 + _42 * m._23 + _43 * m._33 + _44 * m._43;
-        const float f44 = _41 * m._14 + _42 * m._24 + _43 * m._34 + _44 * m._44;
+        const float f41 = _41 * mat._11 + _42 * mat._21 + _43 * mat._31 + _44 * mat._41;
+        const float f42 = _41 * mat._12 + _42 * mat._22 + _43 * mat._32 + _44 * mat._42;
+        const float f43 = _41 * mat._13 + _42 * mat._23 + _43 * mat._33 + _44 * mat._43;
+        const float f44 = _41 * mat._14 + _42 * mat._24 + _43 * mat._34 + _44 * mat._44;
 
         _11 = f11; _12 = f12; _13 = f13; _14 = f14;
         _21 = f21; _22 = f22; _23 = f23; _24 = f24;

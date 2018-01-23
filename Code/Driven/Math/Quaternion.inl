@@ -460,11 +460,143 @@ namespace yw
 
     Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat)
     {
+        // Calculate the four components.
+        float fourXSquaredMinusl = mat._11 - mat._22 - mat._33;
+        float fourYSquaredMinusl = mat._22 - mat._11 - mat._33;
+        float fourZSquaredMinusl = mat._33 - mat._11 - mat._22;
+        float fourWSquaredMinusl = mat._11 + mat._22 + mat._33;
+
+        int32_t biggestIndex = 0;
+        float fourBiggestSquaredMinusl = fourWSquaredMinusl;
+
+        if (fourXSquaredMinusl > fourBiggestSquaredMinusl)
+        {
+            fourBiggestSquaredMinusl = fourXSquaredMinusl;
+            biggestIndex = 1;
+        }
+
+        if (fourYSquaredMinusl > fourBiggestSquaredMinusl)
+        {
+            fourBiggestSquaredMinusl = fourYSquaredMinusl;
+            biggestIndex = 2;
+        }
+
+        if (fourZSquaredMinusl > fourBiggestSquaredMinusl)
+        {
+            fourBiggestSquaredMinusl = fourZSquaredMinusl;
+            biggestIndex = 3;
+        }
+
+        // Calculate squared root and division.
+        float biggestVal = sqrt(fourBiggestSquaredMinusl + 1.0f) * 0.5f;
+        float mult = 0.25f / biggestVal;
+
+        // Calculate quaternion.
+        switch (biggestIndex)
+        {
+        case 0:
+            out.x = (mat._23 - mat._32) * mult;
+            out.y = (mat._31 - mat._13) * mult;
+            out.z = (mat._12 - mat._21) * mult;
+            out.w = biggestVal;
+            break;
+        case 1:
+            out.x = biggestVal;
+            out.y = (mat._12 + mat._21) * mult;
+            out.z = (mat._31 + mat._13) * mult;
+            out.w = (mat._23 - mat._32) * mult;
+            break;
+        case 2:
+            out.x = (mat._12 + mat._21) * mult;
+            out.y = biggestVal;
+            out.z = (mat._23 + mat._32) * mult;
+            out.w = (mat._31 - mat._13) * mult;
+            break;
+        case 3:
+            out.x = (mat._31 + mat._13) * mult;
+            out.y = (mat._23 + mat._32) * mult;
+            out.z = biggestVal;
+            out.w = (mat._12 - mat._21) * mult;
+            break;
+        default:
+            out.x = 0.0f;
+            out.y = 0.0f;
+            out.z = 0.0f;
+            out.w = 1.0f;
+            break;
+        }
+
         return out;
     }
 
     Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat)
     {
+        // Calculate the four components.
+        float fourXSquaredMinusl = mat._11 - mat._22 - mat._33;
+        float fourYSquaredMinusl = mat._22 - mat._11 - mat._33;
+        float fourZSquaredMinusl = mat._33 - mat._11 - mat._22;
+        float fourWSquaredMinusl = mat._11 + mat._22 + mat._33;
+
+        int32_t biggestIndex = 0;
+        float fourBiggestSquaredMinusl = fourWSquaredMinusl;
+
+        if (fourXSquaredMinusl > fourBiggestSquaredMinusl)
+        {
+            fourBiggestSquaredMinusl = fourXSquaredMinusl;
+            biggestIndex = 1;
+        }
+
+        if (fourYSquaredMinusl > fourBiggestSquaredMinusl)
+        {
+            fourBiggestSquaredMinusl = fourYSquaredMinusl;
+            biggestIndex = 2;
+        }
+
+        if (fourZSquaredMinusl > fourBiggestSquaredMinusl)
+        {
+            fourBiggestSquaredMinusl = fourZSquaredMinusl;
+            biggestIndex = 3;
+        }
+
+        // Calculate squared root and division.
+        float biggestVal = sqrt(fourBiggestSquaredMinusl + 1.0f) * 0.5f;
+        float mult = 0.25f / biggestVal;
+
+        // Calculate quaternion.
+        switch (biggestIndex)
+        {
+        case 0:
+            out.x = (mat._23 - mat._32) * mult;
+            out.y = (mat._31 - mat._13) * mult;
+            out.z = (mat._12 - mat._21) * mult;
+            out.w = biggestVal;
+            break;
+        case 1:
+            out.x = biggestVal;
+            out.y = (mat._12 + mat._21) * mult;
+            out.z = (mat._31 + mat._13) * mult;
+            out.w = (mat._23 - mat._32) * mult;
+            break;
+        case 2:
+            out.x = (mat._12 + mat._21) * mult;
+            out.y = biggestVal;
+            out.z = (mat._23 + mat._32) * mult;
+            out.w = (mat._31 - mat._13) * mult;
+            break;
+        case 3:
+            out.x = (mat._31 + mat._13) * mult;
+            out.y = (mat._23 + mat._32) * mult;
+            out.z = biggestVal;
+            out.w = (mat._12 - mat._21) * mult;
+            break;
+        default:
+            out.x = 0.0f;
+            out.y = 0.0f;
+            out.z = 0.0f;
+            out.w = 1.0f;
+            break;
+        }
+
         return out;
     }
 }

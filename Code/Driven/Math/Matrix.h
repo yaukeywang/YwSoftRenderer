@@ -53,7 +53,7 @@ namespace yw
 
     public:
         Matrix33();
-        Matrix33(const Matrix33& m);
+        Matrix33(const Matrix33& mat);
         Matrix33(
             const float a11, const float a12, const float a13,
             const float a21, const float a22, const float a23,
@@ -66,15 +66,15 @@ namespace yw
         float operator()(int32_t row, int32_t col) const;
         Matrix33 operator +() const;
         Matrix33 operator -() const; //< Returns the inverse of the matrix.
-        Matrix33& operator =(const Matrix33& m);
-        Matrix33 operator +(const Matrix33 &m) const;
-        Matrix33 operator -(const Matrix33 &m) const;
-        Matrix33 operator *(const Matrix33 &m) const;
+        Matrix33& operator =(const Matrix33& mat);
+        Matrix33 operator +(const Matrix33 &mat) const;
+        Matrix33 operator -(const Matrix33 &mat) const;
+        Matrix33 operator *(const Matrix33 &mat) const;
         Matrix33 operator *(const float n) const;
         Matrix33 operator /(const float n) const;
-        Matrix33& operator +=(const Matrix33& m);
-        Matrix33& operator -=(const Matrix33& m);
-        Matrix33& operator *=(const Matrix33& m);
+        Matrix33& operator +=(const Matrix33& mat);
+        Matrix33& operator -=(const Matrix33& mat);
+        Matrix33& operator *=(const Matrix33& mat);
         Matrix33& operator *=(const float n);
         Matrix33& operator /=(const float n);
 
@@ -125,7 +125,7 @@ namespace yw
 
     public:
         Matrix44();
-        Matrix44(const Matrix44& m);
+        Matrix44(const Matrix44& mat);
         Matrix44(
             const float a11, const float a12, const float a13, const float a14,
             const float a21, const float a22, const float a23, const float a24,
@@ -139,15 +139,15 @@ namespace yw
         float operator()(int32_t row, int32_t col) const;
         Matrix44 operator +() const;
         Matrix44 operator -() const; //< Returns the inverse of the matrix.
-        Matrix44& operator =(const Matrix44& m);
-        Matrix44 operator +(const Matrix44 &m) const;
-        Matrix44 operator -(const Matrix44 &m) const;
-        Matrix44 operator *(const Matrix44 &m) const;
+        Matrix44& operator =(const Matrix44& mat);
+        Matrix44 operator +(const Matrix44 &mat) const;
+        Matrix44 operator -(const Matrix44 &mat) const;
+        Matrix44 operator *(const Matrix44 &mat) const;
         Matrix44 operator *(const float n) const;
         Matrix44 operator /(const float n) const;
-        Matrix44& operator +=(const Matrix44& m);
-        Matrix44& operator -=(const Matrix44& m);
-        Matrix44& operator *=(const Matrix44& m);
+        Matrix44& operator +=(const Matrix44& mat);
+        Matrix44& operator -=(const Matrix44& mat);
+        Matrix44& operator *=(const Matrix44& mat);
         Matrix44& operator *=(const float n);
         Matrix44& operator /=(const float n);
 
