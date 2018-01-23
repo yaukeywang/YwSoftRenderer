@@ -68,10 +68,19 @@ namespace yw
 
     // Vector2 nonmember functions.
 
+    // Vector2 multiply number.
     Vector2 operator *(float n, const Vector2& v);
+
+    // The result of two vector2 dot product.
     float Vector2Dot(const Vector2& left, const Vector2& right);
+
+    // The result of two vector2 cross product.
     float Vector2Cross(const Vector2& left, const Vector2& right);
+
+    // The result of two vector2 distance.
     float Vector2Distance(const Vector2& left, const Vector2& right);
+
+    // The result of two vector2 squared distance.
     float Vector2SquaredDistance(const Vector2& left, const Vector2& right);
 
     // Vector 3 class.
@@ -132,10 +141,19 @@ namespace yw
 
     // Vector3 nonmember functions.
 
+    // Vector3 multiply number.
     inline Vector3 operator *(float n, const Vector3& v);
+
+    // The result of two vector3 dot product.
     float Vector3Dot(const Vector3& left, const Vector3& right);
+
+    // The result of two vector3 cross product.
     Vector3& Vector3Cross(Vector3& out, const Vector3& left, const Vector3& right);
+
+    // The result of two vector3 distance.
     float Vector3Distance(const Vector3& left, const Vector3& right);
+
+    // The result of two vector3 squared distance.
     float Vector3SquaredDistance(const Vector3& left, const Vector3& right);
 
     // Vector 4 class.
@@ -190,10 +208,19 @@ namespace yw
 
     // Vector4 nonmember functions.
 
+    // Vector4 multiply number.
     Vector4 operator *(const float n, const Vector4& v);
+
+    // The result of two vector4 dot product.
     float Vector4Dot(const Vector4& left, const Vector4& right);
+
+    // The result of two vector4 cross product.
     Vector4& Vector4Cross(Vector4& out, const Vector4& left, const Vector4& right);
+
+    // The result of two vector4 distance.
     float Vector4Distance(const Vector4& left, const Vector4& right);
+
+    // The result of two vector4 squared distance.
     float Vector4SquaredDistance(const Vector4& left, const Vector4& right);
 }
 

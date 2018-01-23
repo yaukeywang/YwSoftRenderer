@@ -245,10 +245,10 @@ namespace yw
         return value;
     }
 
-    inline Quaternion QuaternionIdentity()
+    inline Quaternion& QuaternionIdentity(Quaternion& out)
     {
-        Quaternion value(0.0f, 0.0f, 0.0f, 1.0f);
-        return value;
+        out.Set(0.0f, 0.0f, 0.0f, 1.0f);
+        return out;
     }
 
     inline float QuaternionDot(const Quaternion& left, const Quaternion& right)
@@ -257,38 +257,38 @@ namespace yw
         return value;
     }
 
-    inline Quaternion QuaternionCross(const Quaternion& left, const Quaternion& right)
+    inline Quaternion& QuaternionCross(Quaternion& out, const Quaternion& left, const Quaternion& right)
     {
-        Quaternion value(
+        out.Set(
             left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
             left.w * right.y - left.x * right.z + left.y * right.w + left.z * right.x,
             left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w,
             left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z
         );
 
-        return value;
+        return out;
     }
 
-    inline Quaternion QuaternionConjugate(const Quaternion& q)
+    inline Quaternion& QuaternionConjugate(Quaternion& out, const Quaternion& q)
     {
-        Quaternion value = Quaternion(-q.x, -q.y, -q.z, q.w);
-        return value;
+        out.Set(-q.x, -q.y, -q.z, q.w);
+        return out;
     }
 
-    inline Quaternion QuaternionInverse(const Quaternion& q)
+    inline Quaternion& QuaternionInverse(Quaternion& out, const Quaternion& q)
     {
-        Quaternion conjugate = QuaternionConjugate(q);
-        Quaternion value = conjugate / q.SquaredLength();
+        QuaternionConjugate(out, q);
+        out /= q.SquaredLength();
 
-        return value;
+        return out;
     }
 
-    inline Quaternion QuaternionDifference(const Quaternion& left, const Quaternion& right)
+    inline Quaternion& QuaternionDifference(Quaternion& out, const Quaternion& left, const Quaternion& right)
     {
-        Quaternion inverse = QuaternionInverse(left);
-        Quaternion difference = QuaternionCross(inverse, right);
+        Quaternion inverse = QuaternionInverse(out, left);
+        QuaternionCross(out, inverse, right);
 
-        return difference;
+        return out;
     }
 
     inline Quaternion& QuaternionSlerp(Quaternion& out, const Quaternion& q0, const Quaternion& q1, float t)
