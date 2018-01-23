@@ -10,6 +10,9 @@
 namespace yw
 {
     // Predefine.
+    struct Vector2;
+    struct Vector3;
+    struct Vector4;
     struct Quaternion;
 
     // Matrix common functions.
@@ -178,6 +181,30 @@ namespace yw
 
     // Get matrix from quaternion.
     Matrix44& Matrix44FromQuaternion(Matrix44& out, const Quaternion& q);
+
+    // Construct a matrix with translation.
+    Matrix44& Matrix44Translation(Matrix44& out, const float x, const float y, const float z);
+
+    // Construct a matrix with translation.
+    Matrix44& Matrix44Translation(Matrix44& out, const Vector3& translation);
+
+    // Construct a matrix scale with x, y and z.
+    Matrix44& Matrix44Scaling(Matrix44& out, const float x, const float y, const float z);
+
+    // Construct a matrix scale with x, y and z.
+    Matrix44& Matrix44Scaling(Matrix44& out, const Vector3& scale);
+
+    // Construct a matrix rotate with x axis with euler theta.
+    Matrix44& Matrix44RotationX(Matrix44& out, const float thetaX);
+
+    // Construct a matrix rotate with y axis with euler theta.
+    Matrix44& Matrix44RotationY(Matrix44& out, const float thetaY);
+
+    // Construct a matrix rotate with z axis with euler theta.
+    Matrix44& Matrix44RotationZ(Matrix44& out, const float thetaZ);
+
+    // Construct a matrix rotate with x, y and axis with euler theta.
+    Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const float yaw, const float pitch, const float roll);
 }
 
 #include "Matrix.inl"

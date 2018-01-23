@@ -7,6 +7,7 @@
 #include "MathUtility.h"
 #include "Matrix.h"
 #include "Quaternion.h"
+#include "Vector.h"
 
 namespace yw
 {
@@ -88,12 +89,12 @@ namespace yw
         return mm[row][col];
     }
 
-    Matrix33 Matrix33::operator +() const
+    inline Matrix33 Matrix33::operator +() const
     {
         return *this;
     }
 
-    Matrix33 Matrix33::operator -() const
+    inline Matrix33 Matrix33::operator -() const
     {
         return GetInverse();
     }
@@ -681,7 +682,7 @@ namespace yw
         return out;
     }
 
-    Matrix44& Matrix44FromQuaternion(Matrix44& out, const Quaternion& q)
+    inline Matrix44& Matrix44FromQuaternion(Matrix44& out, const Quaternion& q)
     {
         const float SquaredX = q.x * q.x;
         const float SquaredY = q.y * q.y;
@@ -708,6 +709,89 @@ namespace yw
         out._43 = 0.0f;
         out._44 = 1.0f; //SquaredX + SquaredY + SquaredZ + SquaredW;
 
+        return out;
+    }
+
+    inline Matrix44& Matrix44Translation(Matrix44& out, const float x, const float y, const float z)
+    {
+        out._11 = 1.0f; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 1.0f; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = 1.0f; out._34 = 0.0f;
+        out._41 = x; out._42 = y; out._43 = z; out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44Translation(Matrix44& out, const Vector3& translation)
+    {
+        return Matrix44Translation(out, translation.x, translation.y, translation.z);
+    }
+
+    inline Matrix44& Matrix44Scaling(Matrix44& out, const float x, const float y, const float z)
+    {
+        out._11 = x; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = y; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = z; out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = 0.0f; out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44Scaling(Matrix44& out, const Vector3& scale)
+    {
+        return Matrix44Scaling(out, scale.x, scale.y, scale.z);
+    }
+
+    inline Matrix44& Matrix44RotationX(Matrix44& out, const float thetaX)
+    {
+        const float fSin = sinf(thetaX);
+        const float fCos = cosf(thetaX);
+
+        out._11 = 1.0f; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = fCos; out._23 = fSin; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = -fSin; out._33 = fCos; out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = 0.0f; out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44RotationY(Matrix44& out, const float thetaY)
+    {
+        const float fSin = sinf(thetaY);
+        const float fCos = cosf(thetaY);
+
+        out._11 = fCos; out._12 = 0.0f; out._13 = -fSin; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 1.0f; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = fSin; out._32 = 0.0f; out._33 = fCos; out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = 0.0f; out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44RotationZ(Matrix44& out, const float thetaZ)
+    {
+        const float fSin = sinf(thetaZ);
+        const float fCos = cosf(thetaZ);
+
+        out._11 = fCos; out._12 = fSin; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = -fSin; out._22 = fCos; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = 1.0f; out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = 0.0f; out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const float yaw, const float pitch, const float roll)
+    {
+        Matrix44 matYaw;
+        Matrix44 matPitch;
+        Matrix44 matRoll;
+
+        Matrix44RotationY(matYaw, yaw);
+        Matrix44RotationX(matPitch, pitch);
+        Matrix44RotationZ(matRoll, roll);
+
+        out = matRoll * matPitch * matYaw;
         return out;
     }
 }
