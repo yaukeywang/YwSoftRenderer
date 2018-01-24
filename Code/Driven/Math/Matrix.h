@@ -210,7 +210,7 @@ namespace yw
     Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const Vector3& rotation);
 
     // Construct a world transform matrix formed by position, rotation and scale.
-    Matrix44& Matrix44Transform(Matrix44& out, const Vector3& scale, const Quaternion& rotation, const Vector3& position);
+    Matrix44& Matrix44Transformation(Matrix44& out, const Vector3& scaling, const Quaternion& rotation, const Vector3& translation);
 }
 
 #include "Matrix.inl"

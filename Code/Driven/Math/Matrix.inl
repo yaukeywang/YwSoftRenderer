@@ -800,14 +800,14 @@ namespace yw
         return Matrix44RotationYawPitchRoll(out, rotation.y, rotation.x, rotation.z);
     }
 
-    inline Matrix44& Matrix44Transform(Matrix44& out, const Vector3& scale, const Quaternion& rotation, const Vector3& position)
+    inline Matrix44& Matrix44Transformation(Matrix44& out, const Vector3& scaling, const Quaternion& rotation, const Vector3& translation)
     {
         Matrix44FromQuaternion(out, rotation);
 
-        out._11 *= scale.x; out._12 *= scale.x; out._13 *= scale.x;
-        out._21 *= scale.y; out._22 *= scale.y; out._23 *= scale.z;
-        out._31 *= scale.z; out._32 *= scale.z; out._33 *= scale.z;
-        out._41 = position.x; out._42 = position.y; out._43 = position.z;
+        out._11 *= scaling.x; out._12 *= scaling.x; out._13 *= scaling.x;
+        out._21 *= scaling.y; out._22 *= scaling.y; out._23 *= scaling.z;
+        out._31 *= scaling.z; out._32 *= scaling.z; out._33 *= scaling.z;
+        out._41 = translation.x; out._42 = translation.y; out._43 = translation.z;
 
         return out;
     }
