@@ -249,6 +249,14 @@ namespace yw
         return value;
     }
 
+    inline Vector2& Vector2Normalize(Vector2& out, const Vector2& v)
+    {
+        float length = v.Length();
+        out = v / length;
+
+        return out;
+    }
+
     inline float Vector2Dot(const Vector2& left, const Vector2& right)
     {
         float dot = left.x * right.x + left.y * right.y;
@@ -550,6 +558,14 @@ namespace yw
         return value;
     }
 
+    inline Vector3& Vector3Normalize(Vector3& out, const Vector3& v)
+    {
+        float length = v.Length();
+        out = v / length;
+
+        return out;
+    }
+
     inline float Vector3Dot(const Vector3& left, const Vector3& right)
     {
         float dot = left.x * right.x + left.y * right.y + left.z * right.z;
@@ -838,6 +854,14 @@ namespace yw
     {
         Vector4 value(n * v.x, n * v.y, n * v.z, n * v.w);
         return value;
+    }
+
+    inline Vector4& Vector4Normalize(Vector4& out, const Vector4& v)
+    {
+        float length = v.Length();
+        out = v / length;
+
+        return out;
     }
 
     inline float Vector4Dot(const Vector4& left, const Vector4& right)

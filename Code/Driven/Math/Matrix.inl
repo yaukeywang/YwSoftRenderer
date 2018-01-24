@@ -811,6 +811,42 @@ namespace yw
 
         return out;
     }
+
+    inline Matrix44& Matrix44LookAtLH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up)
+    {
+        Vector3 zAxis = (at - eye).Normalize();
+
+        Vector3 xAxis;
+        Vector3Cross(xAxis, up, zAxis).Normalize();
+
+        Vector3 yAxis;
+        Vector3Cross(yAxis, zAxis, xAxis);
+
+        out._11 = xAxis.x; out._12 = yAxis.x; out._13 = zAxis.x; out._14 = 0.0f;
+        out._21 = xAxis.y; out._22 = yAxis.y; out._23 = zAxis.y; out._24 = 0.0f;
+        out._31 = xAxis.z; out._32 = yAxis.z; out._33 = zAxis.z; out._34 = 0.0f;
+        out._41 = -Vector3Dot(xAxis, eye); out._42 = -Vector3Dot(yAxis, eye); out._43 = -Vector3Dot(zAxis, eye); out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44LookAtRH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up)
+    {
+        Vector3 zAxis = (eye - at).Normalize();
+
+        Vector3 xAxis;
+        Vector3Cross(xAxis, up, zAxis).Normalize();
+
+        Vector3 yAxis;
+        Vector3Cross(yAxis, zAxis, xAxis);
+
+        out._11 = xAxis.x; out._12 = yAxis.x; out._13 = zAxis.x; out._14 = 0.0f;
+        out._21 = xAxis.y; out._22 = yAxis.y; out._23 = zAxis.y; out._24 = 0.0f;
+        out._31 = xAxis.z; out._32 = yAxis.z; out._33 = zAxis.z; out._34 = 0.0f;
+        out._41 = Vector3Dot(xAxis, eye); out._42 = Vector3Dot(yAxis, eye); out._43 = Vector3Dot(zAxis, eye); out._44 = 1.0f;
+
+        return out;
+    }
 }
 
 #endif // !__MATRIX_INL__

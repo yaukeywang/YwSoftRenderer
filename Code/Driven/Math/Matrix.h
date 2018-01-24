@@ -211,6 +211,12 @@ namespace yw
 
     // Construct a world transform matrix formed by position, rotation and scale.
     Matrix44& Matrix44Transformation(Matrix44& out, const Vector3& scaling, const Quaternion& rotation, const Vector3& translation);
+
+    // Construct a look at matrix at left hand axis.
+    Matrix44& Matrix44LookAtLH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up);
+
+    // Construct a look at matrix at right hand axis.
+    Matrix44& Matrix44LookAtRH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up);
 }
 
 #include "Matrix.inl"

@@ -71,6 +71,9 @@ namespace yw
     // Vector2 multiply number.
     Vector2 operator *(float n, const Vector2& v);
 
+    // Normalize a vector.
+    Vector2& Vector2Normalize(Vector2& out, const Vector2& v);
+
     // The result of two vector2 dot product.
     float Vector2Dot(const Vector2& left, const Vector2& right);
 
@@ -144,6 +147,9 @@ namespace yw
     // Vector3 multiply number.
     inline Vector3 operator *(float n, const Vector3& v);
 
+    // Normalize a vector.
+    Vector3& Vector3Normalize(Vector3& out, const Vector3& v);
+
     // The result of two vector3 dot product.
     float Vector3Dot(const Vector3& left, const Vector3& right);
 
@@ -210,6 +216,9 @@ namespace yw
 
     // Vector4 multiply number.
     Vector4 operator *(const float n, const Vector4& v);
+
+    // Normalize a vector.
+    Vector4& Vector4Normalize(Vector4& out, const Vector4& v);
 
     // The result of two vector4 dot product.
     float Vector4Dot(const Vector4& left, const Vector4& right);
