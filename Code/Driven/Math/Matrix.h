@@ -217,6 +217,12 @@ namespace yw
 
     // Construct a look at matrix at right hand axis.
     Matrix44& Matrix44LookAtRH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up);
+
+    // Construct perspective matrix at left hand axis.
+    Matrix44& Matrix44PerspectiveFovLH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf);
+
+    // Construct perspective matrix at right hand axis.
+    Matrix44& Matrix44PerspectiveFovRH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf);
 }
 
 #include "Matrix.inl"
