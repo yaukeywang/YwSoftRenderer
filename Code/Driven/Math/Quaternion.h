@@ -51,10 +51,11 @@ namespace yw
         float SquaredLength() const;
         Quaternion& Normalize();
         void SetIdentity();
-        void SetEulerX(float theta);
-        void SetEulerY(float theta);
-        void SetEulerZ(float theta);
-        void SetEulerXYZ(float thetaX, float thetaY, float thetaZ);
+        void SetRotationAboutX(const float theta);
+        void SetRotationAboutY(const float theta);
+        void SetRotationAboutZ(const float theta);
+        void SetRotationAboutXYZ(const float thetaX, const float thetaY, const float thetaZ);
+        void SetRotationAboutAxis(const Vector3& axis, const float theta);
     };
 
     // Quaternion nonmember functions.
@@ -81,22 +82,25 @@ namespace yw
     Quaternion& QuaternionDifference(Quaternion& out, const Quaternion& left, const Quaternion& right);
 
     // Get slerp of quaternion.
-    Quaternion& QuaternionSlerp(Quaternion& out, const Quaternion& q0, const Quaternion& q1, float t);
+    Quaternion& QuaternionSlerp(Quaternion& out, const Quaternion& q0, const Quaternion& q1, const float t);
 
     // Get pow of quaternion.
-    Quaternion& QuaternionPow(Quaternion& out, const Quaternion& q, float exponent);
+    Quaternion& QuaternionPow(Quaternion& out, const Quaternion& q, const float exponent);
 
     // Get quaternion from x of euler.
-    Quaternion& QuaternionFromEulerX(Quaternion& out, float theta);
+    Quaternion& QuaternionFromRotationAboutX(Quaternion& out, const float theta);
 
     // Get quaternion from y of euler.
-    Quaternion& QuaternionFromEulerY(Quaternion& out, float theta);
+    Quaternion& QuaternionFromRotationAboutY(Quaternion& out, const float theta);
 
     // Get quaternion from z of euler.
-    Quaternion& QuaternionFromEulerZ(Quaternion& out, float theta);
+    Quaternion& QuaternionFromRotationAboutZ(Quaternion& out, const float theta);
+
+    // Get quaternion from rotation about axis with theta.
+    Quaternion& QuaternionFromRotationAboutAxis(Quaternion& out, const Vector3& axis, const float theta);
 
     // Get quaternion from x, y and z of euler.
-    Quaternion QuaternionFromEuler(Quaternion& out, float thetaX, float thetaY, float thetaZ);
+    Quaternion QuaternionFromEuler(Quaternion& out, const float thetaX, const float thetaY, const float thetaZ);
 
     // Get x, y and z of euler from quaternion.
     Vector3& QuaternionToEuler(Vector3& out, const Quaternion& q); // ZYX euler order conversion.

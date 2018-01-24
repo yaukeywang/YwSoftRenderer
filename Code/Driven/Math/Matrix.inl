@@ -794,6 +794,23 @@ namespace yw
         out = matRoll * matPitch * matYaw;
         return out;
     }
+
+    inline Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const Vector3& rotation)
+    {
+        return Matrix44RotationYawPitchRoll(out, rotation.y, rotation.x, rotation.z);
+    }
+
+    inline Matrix44& Matrix44Transform(Matrix44& out, const Vector3& scale, const Quaternion& rotation, const Vector3& position)
+    {
+        Matrix44FromQuaternion(out, rotation);
+
+        out._11 *= scale.x; out._12 *= scale.x; out._13 *= scale.x;
+        out._21 *= scale.y; out._22 *= scale.y; out._23 *= scale.z;
+        out._31 *= scale.z; out._32 *= scale.z; out._33 *= scale.z;
+        out._41 = position.x; out._42 = position.y; out._43 = position.z;
+
+        return out;
+    }
 }
 
 #endif // !__MATRIX_INL__

@@ -179,7 +179,7 @@ namespace yw
         w = 1.0f;
     }
 
-    inline void Quaternion::SetEulerX(float theta)
+    inline void Quaternion::SetRotationAboutX(const float theta)
     {
         float halfTheta = theta * 0.5f;
         float s = sin(halfTheta);
@@ -191,7 +191,7 @@ namespace yw
         w = c;
     }
 
-    inline void Quaternion::SetEulerY(float theta)
+    inline void Quaternion::SetRotationAboutY(const float theta)
     {
         float halfTheta = theta * 0.5f;
         float s = sin(halfTheta);
@@ -203,7 +203,7 @@ namespace yw
         w = c;
     }
 
-    inline void Quaternion::SetEulerZ(float theta)
+    inline void Quaternion::SetRotationAboutZ(const float theta)
     {
         float halfTheta = theta * 0.5f;
         float s = sin(halfTheta);
@@ -215,7 +215,7 @@ namespace yw
         w = c;
     }
 
-    inline void Quaternion::SetEulerXYZ(float thetaX, float thetaY, float thetaZ)
+    inline void Quaternion::SetRotationAboutXYZ(const float thetaX, const float thetaY, const float thetaZ)
     {
         // Use ZYX order.
 
@@ -235,6 +235,19 @@ namespace yw
         y = cosHTZ * sinHTY * cosHTX + sinHTZ * cosHTY * sinHTX;
         z = sinHTZ * cosHTY * cosHTX - cosHTZ * sinHTY * sinHTX;
         w = cosHTZ * cosHTY * cosHTX + sinHTZ * sinHTY * sinHTX;
+    }
+
+    inline void Quaternion::SetRotationAboutAxis(const Vector3& axis, const float theta)
+    {
+        assert(fabs(axis.Length() - 1.0f) < FLT_EPSILON);
+
+        float halfTheta = theta * 0.5f;
+        float s = sin(halfTheta);
+
+        x = axis.x * s;
+        y = axis.y * s;
+        z = axis.z * s;
+        w = cos(halfTheta);
     }
 
     // Nonmember functions.
@@ -291,7 +304,7 @@ namespace yw
         return out;
     }
 
-    inline Quaternion& QuaternionSlerp(Quaternion& out, const Quaternion& q0, const Quaternion& q1, float t)
+    inline Quaternion& QuaternionSlerp(Quaternion& out, const Quaternion& q0, const Quaternion& q1, const float t)
     {
         // q0 if t is less equal smaller border 0.
         if (t <= 0.0f)
@@ -360,7 +373,7 @@ namespace yw
         return out;
     }
 
-    inline Quaternion& QuaternionPow(Quaternion& out, const Quaternion& q, float exponent)
+    inline Quaternion& QuaternionPow(Quaternion& out, const Quaternion& q, const float exponent)
     {
         // Check normalized quaternion.
         if (q.w > 0.9999f)
@@ -395,27 +408,33 @@ namespace yw
         return out;
     }
 
-    inline Quaternion& QuaternionFromEulerX(Quaternion& out, float theta)
+    inline Quaternion& QuaternionFromRotationAboutX(Quaternion& out, const float theta)
     {
-        out.SetEulerX(theta);
+        out.SetRotationAboutX(theta);
         return out;
     }
 
-    inline Quaternion& QuaternionFromEulerY(Quaternion& out, float theta)
+    inline Quaternion& QuaternionFromRotationAboutY(Quaternion& out, const float theta)
     {
-        out.SetEulerY(theta);
+        out.SetRotationAboutY(theta);
         return out;
     }
 
-    inline Quaternion& QuaternionFromEulerZ(Quaternion& out, float theta)
+    inline Quaternion& QuaternionFromRotationAboutZ(Quaternion& out, const float theta)
     {
-        out.SetEulerZ(theta);
+        out.SetRotationAboutZ(theta);
         return out;
     }
 
-    inline Quaternion QuaternionFromEuler(Quaternion& out, float thetaX, float thetaY, float thetaZ)
+    inline Quaternion& QuaternionFromRotationAboutAxis(Quaternion& out, const Vector3& axis, const float theta)
     {
-        out.SetEulerXYZ(thetaX, thetaY, thetaZ);
+        out.SetRotationAboutAxis(axis, theta);
+        return out;
+    }
+
+    inline Quaternion QuaternionFromEuler(Quaternion& out, const float thetaX, const float thetaY, const float thetaZ)
+    {
+        out.SetRotationAboutXYZ(thetaX, thetaY, thetaZ);
         return out;
     }
 
