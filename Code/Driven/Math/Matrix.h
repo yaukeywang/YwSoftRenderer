@@ -219,6 +219,7 @@ namespace yw
     Matrix44& Matrix44LookAtRH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up);
 
     // Construct perspective matrix at left hand axis.
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ee418867(v=vs.85).aspx
     Matrix44& Matrix44PerspectiveFovLH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf);
 
     // Construct perspective matrix at right hand axis.
@@ -259,6 +260,10 @@ namespace yw
     // Matrix44OrthoOffCenterRH(out, -w/2, w/2, -h/2, h/2, zn, zf)
     // All the parameters of the Matrix44OrthoOffCenterRH function are distances in camera space. The parameters describe the dimensions of the view volume.
     Matrix44& Matrix44OrthoOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
+
+    // Builds a viewport transform matrix.
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/bb206341(v=vs.85).aspx
+    Matrix44& Matrix44Viewport(Matrix44& out, const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const float zn, const float zf);
 }
 
 #include "Matrix.inl"

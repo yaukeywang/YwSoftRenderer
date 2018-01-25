@@ -957,6 +957,16 @@ namespace yw
 
         return out;
     }
+
+    inline Matrix44& Matrix44Viewport(Matrix44& out, const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const float zn, const float zf)
+    {
+        out._11 = (float)width * 0.5f; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = (float)height * -0.5f; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = zf - zn; out._34 = 0.0f;
+        out._41 = x + (float)width * 0.5f; out._42 = y + (float)height * 0.5f; out._43 = zn; out._44 = 1.0f;
+
+        return out;
+    }
 }
 
 #endif // !__MATRIX_INL__
