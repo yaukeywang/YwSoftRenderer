@@ -230,6 +230,14 @@ namespace yw
     // Builds a right - handed orthographic projection matrix.
     Matrix44& Matrix44OrthoRH(Matrix44& out, const float w, const float h, const float zn, const float zf);
 
+    // Builds a left-handed perspective projection matrix
+    // All the parameters of the D3DXMatrixPerspectiveLH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    Matrix44& Matrix44PerspectiveLH(Matrix44& out, const float w, const float h, const float zn, const float zf);
+
+    // Builds a right-handed perspective projection matrix.
+    // All the parameters of the Matrix44PerspectiveRH function are distances in camera space.The parameters describe the dimensions of the view volume.
+    Matrix44& Matrix44PerspectiveRH(Matrix44& out, const float w, const float h, const float zn, const float zf);
+
     // Builds a customized, left-handed perspective projection matrix.
     // All the parameters of the Matrix44PerspectiveOffCenterLH function are distances in camera space. The parameters describe the dimensions of the view volume.
     Matrix44& Matrix44PerspectiveOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);

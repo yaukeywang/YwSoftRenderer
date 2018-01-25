@@ -898,6 +898,26 @@ namespace yw
         return out;
     }
 
+    inline Matrix44& Matrix44PerspectiveLH(Matrix44& out, const float w, const float h, const float zn, const float zf)
+    {
+        out._11 = 2.0f * zn / w; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f * zn / h; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = zf / (zf - zn); out._34 = 1.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = zn * zf / (zn - zf); out._44 = 0.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44PerspectiveRH(Matrix44& out, const float w, const float h, const float zn, const float zf)
+    {
+        out._11 = 2.0f * zn / w; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f * zn / h; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = zf / (zn - zf); out._34 = -1.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = zn * zf / (zn - zf); out._44 = 0.0f;
+
+        return out;
+    }
+
     inline Matrix44& Matrix44PerspectiveOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf)
     {
         out._11 = 2.0f * zn / (r - l); out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
