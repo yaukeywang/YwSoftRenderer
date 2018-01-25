@@ -848,7 +848,7 @@ namespace yw
         return out;
     }
 
-    Matrix44& Matrix44PerspectiveFovLH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf)
+    inline Matrix44& Matrix44PerspectiveFovLH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf)
     {
         const float yScale = 1.0f / tanf(fovy * 0.5f);
         const float xScale = yScale / aspect;
@@ -861,7 +861,7 @@ namespace yw
         return out;
     }
 
-    Matrix44& Matrix44PerspectiveFovRH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf)
+    inline Matrix44& Matrix44PerspectiveFovRH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf)
     {
         const float yScale = 1.0f / tanf(fovy * 0.5f);
         const float xScale = yScale / aspect;
@@ -870,6 +870,70 @@ namespace yw
         out._21 = 0.0f; out._22 = yScale; out._23 = 0.0f; out._24 = 0.0f;
         out._31 = 0.0f; out._32 = 0.0f; out._33 = zf / (zn - zf); out._34 = -1.0f;
         out._41 = 0.0f; out._42 = 0.0f; out._43 = zn * zf / (zn - zf); out._44 = 0.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44OrthoLH(Matrix44& out, const float w, const float h, const float zn, const float zf)
+    {
+        //return Matrix44OrthoOffCenterLH(out, -w / 2, w / 2, -h / 2, h / 2, zn, zf);
+
+        out._11 = 2.0f / w; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f / h; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = 1.0f / (zf - zn); out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = -zn / (zf - zn); out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44OrthoRH(Matrix44& out, const float w, const float h, const float zn, const float zf)
+    {
+        //return Matrix44OrthoOffCenterRH(out, -w / 2, w / 2, -h / 2, h / 2, zn, zf);
+
+        out._11 = 2.0f / w; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f / h; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = 1.0f / (zn - zf); out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = zn / (zn - zf); out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44PerspectiveOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf)
+    {
+        out._11 = 2.0f * zn / (r - l); out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f * zn / (t - b); out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = (l + r) / (l - r); out._32 = (t + b) / (b - t); out._33 = zf / (zf - zn); out._34 = 1.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = zn * zf / (zn - zf); out._44 = 0.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44PerspectiveOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf)
+    {
+        out._11 = 2.0f * zn / (r - l); out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f * zn / (t - b); out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = (l + r) / (r - l); out._32 = (t + b) / (t - b); out._33 = zf / (zn - zf); out._34 = -1.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = zn * zf / (zn - zf); out._44 = 0.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44OrthoOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf)
+    {
+        out._11 = 2.0f / (r - l); out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f / (t - b); out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = 1.0f / (zf - zn); out._34 = 0.0f;
+        out._41 = (l + r) / (l - r); out._42 = (t + b) / (b - t); out._43 = zn / (zn - zf); out._44 = 1.0f;
+
+        return out;
+    }
+
+    inline Matrix44& Matrix44OrthoOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf)
+    {
+        out._11 = 2.0f / (r - l); out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = 2.0f / (t - b); out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = 1.0f / (zn - zf); out._34 = 0.0f;
+        out._41 = (l + r) / (l - r); out._42 = (t + b) / (b - t); out._43 = zn / (zn - zf); out._44 = 1.0f;
 
         return out;
     }

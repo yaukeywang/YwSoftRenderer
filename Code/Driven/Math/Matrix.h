@@ -223,6 +223,34 @@ namespace yw
 
     // Construct perspective matrix at right hand axis.
     Matrix44& Matrix44PerspectiveFovRH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf);
+
+    // Builds a left-handed orthographic projection matrix.
+    Matrix44& Matrix44OrthoLH(Matrix44& out, const float w, const float h, const float zn, const float zf);
+
+    // Builds a right - handed orthographic projection matrix.
+    Matrix44& Matrix44OrthoRH(Matrix44& out, const float w, const float h, const float zn, const float zf);
+
+    // Builds a customized, left-handed perspective projection matrix.
+    // All the parameters of the Matrix44PerspectiveOffCenterLH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    Matrix44& Matrix44PerspectiveOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
+
+    // Builds a customized, right-handed perspective projection matrix.
+    // All the parameters of the Matrix44PerspectiveOffCenterRH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    Matrix44& Matrix44PerspectiveOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
+
+    // Builds a customized, left-handed orthographic projection matrix.
+    // The Matrix44OrthoLH function is a special case of the Matrix44OrthoOffCenterLH function. 
+    // To create the same projection using Matrix44OrthoOffCenterLH, use the following values: l = -w/2, r = w/2, b = -h/2, and t = h/2.
+    // Matrix44OrthoOffCenterLH(out, -w/2, w/2, -h/2, h/2, zn, zf)
+    // All the parameters of the Matrix44OrthoOffCenterLH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    Matrix44& Matrix44OrthoOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
+
+    // Builds a customized, right-handed orthographic projection matrix.
+    // The Matrix44OrthoRH function is a special case of the Matrix44OrthoOffCenterRH function. 
+    // To create the same projection using Matrix44OrthoOffCenterRH, use the following values: l = -w/2, r = w/2, b = -h/2, and t = h/2.
+    // Matrix44OrthoOffCenterRH(out, -w/2, w/2, -h/2, h/2, zn, zf)
+    // All the parameters of the Matrix44OrthoOffCenterRH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    Matrix44& Matrix44OrthoOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
 }
 
 #include "Matrix.inl"
