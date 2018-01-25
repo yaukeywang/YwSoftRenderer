@@ -856,13 +856,21 @@ namespace yw
         out._11 = xScale; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
         out._21 = 0.0f; out._22 = yScale; out._23 = 0.0f; out._24 = 0.0f;
         out._31 = 0.0f; out._32 = 0.0f; out._33 = zf / (zf - zn); out._34 = 1.0f;
-        out._41 = 0.0f; out._42 = 0.0f; out._43 = (zn * zf) / (zn - zf); out._44 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = -zn * zf / (zf - zn); out._44 = 0.0f;
 
         return out;
     }
 
     Matrix44& Matrix44PerspectiveFovRH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf)
     {
+        const float yScale = 1.0f / tanf(fovy * 0.5f);
+        const float xScale = yScale / aspect;
+
+        out._11 = xScale; out._12 = 0.0f; out._13 = 0.0f; out._14 = 0.0f;
+        out._21 = 0.0f; out._22 = yScale; out._23 = 0.0f; out._24 = 0.0f;
+        out._31 = 0.0f; out._32 = 0.0f; out._33 = zf / (zn - zf); out._34 = -1.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = zn * zf / (zn - zf); out._44 = 0.0f;
+
         return out;
     }
 }
