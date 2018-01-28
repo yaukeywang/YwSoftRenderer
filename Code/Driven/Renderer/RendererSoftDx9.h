@@ -5,6 +5,7 @@
 #define __RENDERER_SOFT_DX9_H__
 
 #include "Driven/Renderer/Renderer.h"
+#include "Driven/Math/MathCommon.h"
 #include <d3d9.h>
 
 namespace yw
@@ -36,6 +37,7 @@ namespace yw
         virtual bool BeginScene();
         virtual bool EndScene();
         virtual bool DrawLine(float from, float to);
+        virtual bool DrawLine(void* buffer, uint32_t pitch, uint32_t color, Vector2 from, Vector2 to);
 
     public:
         // Get the main window handle.

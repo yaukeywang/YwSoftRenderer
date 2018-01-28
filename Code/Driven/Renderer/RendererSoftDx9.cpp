@@ -335,7 +335,7 @@ namespace yw
         memset(&lockedRect, 0, sizeof(lockedRect));
         m_D3dSurface->LockRect(&lockedRect, nullptr, D3DLOCK_DISCARD);
 
-        DWORD * imagedata = (DWORD*)lockedRect.pBits;
+        DWORD* imagedata = (DWORD*)lockedRect.pBits;
 
         int32_t width = m_D3dPP.Windowed ? m_Width : m_FullScreenWidth;
         int32_t height = m_D3dPP.Windowed ? m_Height : m_FullScreenHeight;
@@ -352,6 +352,14 @@ namespace yw
             }
         }
 
+        // Draw triangle.
+        DrawLine(imagedata, lockedRect.Pitch, 0xffff0000, Vector2(15.0f, 10.0f), Vector2(350.0f, 230.0f));
+        DrawLine(imagedata, lockedRect.Pitch, 0xff00ff00, Vector2(350.0f, 230.0f), Vector2(50.0f, 240.0f));
+        DrawLine(imagedata, lockedRect.Pitch, 0xff0000ff, Vector2(50.0f, 240.0f), Vector2(15.0f, 10.0f));
+
+        // Draw single line.
+        DrawLine(imagedata, lockedRect.Pitch, 0xffabcdef, Vector2(-10.0f, -40.0f), Vector2(680.0f, 840.0f));
+
         m_D3dSurface->UnlockRect();
 
         //HR(m_pD3dDevice->EndScene());
@@ -362,6 +370,72 @@ namespace yw
 
     bool RendererSoftDx9::DrawLine(float from, float to)
     {
+        return false;
+    }
+
+    bool RendererSoftDx9::DrawLine(void* buffer, uint32_t pitch, uint32_t color, Vector2 from, Vector2 to)
+    {
+        DWORD* frameBuffer = (DWORD*)buffer;
+
+        const uint32_t initCoordX = (uint32_t)from.x;
+        const uint32_t initCoordY = (uint32_t)from.y;
+
+        const float deltaX = to.x - from.x;
+        const float deltaY = to.y - from.y;
+
+        if (fabs(deltaX) > fabs(deltaY))
+        {
+            const int32_t maxPixelsX = (int32_t)deltaX;
+            if (0 == maxPixelsX)
+            {
+                return false;
+            }
+
+            const int32_t signX = (maxPixelsX > 0) ? 1 : -1;
+            const float slope = deltaY / deltaX;
+            float interpolation = (signX > 0) ? 0.0f : 1.0f;
+            float interpolationStep = (float)signX / (float)(abs(maxPixelsX) - 1);
+
+            for (int32_t i = 0; i != maxPixelsX; i += signX, interpolation += interpolationStep)
+            {
+                uint32_t idxPixelX = initCoordX + i;
+                uint32_t idxPixelY = initCoordY + (uint32_t)((float)i * slope);
+                if ((idxPixelX < 0) || (idxPixelX >= (uint32_t)m_Width) || (idxPixelY < 0) || (idxPixelY >= (uint32_t)m_Height))
+                {
+                    continue;
+                }
+
+                uint32_t idxPixel = idxPixelY * pitch / 4 + idxPixelX;
+                frameBuffer[idxPixel] = color;
+            }
+        }
+        else
+        {
+            const int32_t maxPixelsY = (int32_t)deltaY;
+            if (0 == maxPixelsY)
+            {
+                return false;
+            }
+
+            const int32_t signY = (maxPixelsY > 0) ? 1 : -1;
+            const float slope = deltaX / deltaY;
+            float interpolation = (signY > 0) ? 0.0f : 1.0f;
+            float interpolationStep = (float)signY / (float)(abs(maxPixelsY) - 1);
+
+            for (int32_t i = 0; i != maxPixelsY; i += signY, interpolation += interpolationStep)
+            {
+                uint32_t idxPixelX = initCoordX + (uint32_t)((float)i * slope);
+                uint32_t idxPixelY = initCoordY + i;
+                if ((idxPixelX < 0) || (idxPixelX >= (uint32_t)m_Width) || (idxPixelY < 0) || (idxPixelY >= (uint32_t)m_Height))
+                {
+                    continue;
+                }
+
+                uint32_t idxPixel = idxPixelY * pitch / 4 + idxPixelX;
+                frameBuffer[idxPixel] = color;
+            }
+        }
+
         return true;
     }
 }
