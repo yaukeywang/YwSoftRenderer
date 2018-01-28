@@ -1,5 +1,6 @@
 // Add by Yaukey at 2018-01-28.
 // Camera class.
+// Need improve: frustum, cull, viewport, perspective...
 
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
