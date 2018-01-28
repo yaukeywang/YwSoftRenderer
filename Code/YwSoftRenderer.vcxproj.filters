@@ -91,6 +91,12 @@
     <ClInclude Include="System\Support\Utility.h">
       <Filter>System\Support</Filter>
     </ClInclude>
+    <ClInclude Include="System\App\Camera.h">
+      <Filter>System\App</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Math\MathCommon.h">
+      <Filter>Driven\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -128,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="System\Support\Utility.cpp">
       <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\App\Camera.cpp">
+      <Filter>System\App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -102,16 +102,18 @@ namespace yw
         return value;
     }
 
-    inline Vector2 Vector2::operator *(float n) const
+    inline Vector2 Vector2::operator *(const float n) const
     {
         Vector2 value(x * n, y * n);
         return value;
     }
 
-    inline Vector2 Vector2::operator /(float n) const
+    inline Vector2 Vector2::operator /(const float n) const
     {
         float oneOverO = 1.0f / n;
         Vector2 value(x * oneOverO, y * oneOverO);
+
+        return value;
     }
 
     inline Vector2& Vector2::operator +=(const Vector2& v)
@@ -264,7 +266,7 @@ namespace yw
         return dot;
     }
 
-    static inline float Vector2Cross(const Vector2& left, const Vector2& right)
+    inline float Vector2Cross(const Vector2& left, const Vector2& right)
     {
         // The area of quad formed by vector left and right.
         // a*b*sina.
@@ -392,7 +394,7 @@ namespace yw
         return value;
     }
 
-    inline Vector3 Vector3::operator *(float n) const
+    inline Vector3 Vector3::operator *(const float n) const
     {
         Vector3 value(x * n, y * n, z * n);
         return value;
@@ -408,10 +410,12 @@ namespace yw
         return value;
     }
 
-    inline Vector3 Vector3::operator /(float n) const
+    inline Vector3 Vector3::operator /(const float n) const
     {
         float oneOverO = 1.0f / n;
         Vector3 value(x * oneOverO, y * oneOverO, z * oneOverO);
+
+        return value;
     }
 
     inline Vector3& Vector3::operator +=(const Vector3& v)
@@ -662,7 +666,7 @@ namespace yw
 
     // Member functions.
 
-    Vector4::Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
+    inline Vector4::Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
     {
     }
 
@@ -795,6 +799,8 @@ namespace yw
     {
         float oneOverO = 1.0f / n;
         Vector4 value(x * oneOverO, y * oneOverO, z * oneOverO, w * oneOverO);
+
+        return value;
     }
 
     inline Vector4& Vector4::operator +=(const Vector4& n)

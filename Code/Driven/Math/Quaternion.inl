@@ -477,7 +477,7 @@ namespace yw
         return out;
     }
 
-    Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat)
+    inline Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat)
     {
         // Calculate the four components.
         float fourXSquaredMinusl = mat._11 - mat._22 - mat._33;
@@ -548,7 +548,7 @@ namespace yw
         return out;
     }
 
-    Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat)
+    inline Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat)
     {
         // Calculate the four components.
         float fourXSquaredMinusl = mat._11 - mat._22 - mat._33;

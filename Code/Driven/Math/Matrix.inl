@@ -784,7 +784,7 @@ namespace yw
         return out;
     }
 
-    inline Matrix44& Matrix44MatrixRotationAxis(Matrix44& out, const Vector3& axis, const float angle)
+    inline Matrix44& Matrix44RotationAxis(Matrix44& out, const Vector3& axis, const float angle)
     {
         const float sine = sinf(angle);
         const float cosine = cosf(angle);

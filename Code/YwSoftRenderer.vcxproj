@@ -159,6 +159,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Driven\Math\MathCommon.h" />
     <ClInclude Include="Driven\Math\MathUtility.h" />
     <ClInclude Include="Driven\Math\Matrix.h" />
     <ClInclude Include="Driven\Math\Quaternion.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="System\App\AppSoftRenderer.h" />
+    <ClInclude Include="System\App\Camera.h" />
     <ClInclude Include="System\Input\InputDevice.h" />
     <ClInclude Include="System\Input\InputDevicekeyboard.h" />
     <ClInclude Include="System\Input\InputDeviceMouse.h" />
@@ -189,6 +191,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="System\App\AppSoftRenderer.cpp" />
+    <ClCompile Include="System\App\Camera.cpp" />
     <ClCompile Include="System\Input\InputDevice.cpp" />
     <ClCompile Include="System\Input\InputDevicekeyboard.cpp" />
     <ClCompile Include="System\Input\InputDeviceMouse.cpp" />

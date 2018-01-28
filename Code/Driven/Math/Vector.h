@@ -41,8 +41,8 @@ namespace yw
         Vector2 operator +(const Vector2& v) const;
         Vector2 operator -(const Vector2& v) const;
         Vector2 operator *(const Vector2& v) const;
-        Vector2 operator *(float n) const;
-        Vector2 operator /(float n) const;
+        Vector2 operator *(const float n) const;
+        Vector2 operator /(const float n) const;
         Vector2& operator +=(const Vector2& v);
         Vector2& operator -=(const Vector2& v);
         Vector2& operator *=(const Vector2& v);
@@ -115,9 +115,9 @@ namespace yw
         Vector3 operator +(const Vector3& v) const;
         Vector3 operator -(const Vector3& v) const;
         Vector3 operator *(const Vector3& v) const;
-        Vector3 operator *(float n) const;
+        Vector3 operator *(const float n) const;
         Vector3 operator *(const Matrix33& mat) const;
-        Vector3 operator /(float n) const;
+        Vector3 operator /(const float n) const;
         Vector3& operator +=(const Vector3& v);
         Vector3& operator -=(const Vector3& v);
         Vector3& operator *=(const Vector3& v);
