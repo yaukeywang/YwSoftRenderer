@@ -203,6 +203,9 @@ namespace yw
     // Construct a matrix rotate with z axis with euler theta.
     Matrix44& Matrix44RotationZ(Matrix44& out, const float thetaZ);
 
+    // Builds a matrix that rotates around an arbitrary axis.
+    Matrix44& Matrix44MatrixRotationAxis(Matrix44& out, const Vector3& axis, const float angle);
+
     // Construct a matrix rotate with x, y and z axis with euler theta.
     Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const float yaw, const float pitch, const float roll);
 

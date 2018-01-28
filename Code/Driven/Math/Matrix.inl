@@ -784,6 +784,20 @@ namespace yw
         return out;
     }
 
+    inline Matrix44& Matrix44MatrixRotationAxis(Matrix44& out, const Vector3& axis, const float angle)
+    {
+        const float sine = sinf(angle);
+        const float cosine = cosf(angle);
+        const float oneInvCosine = 1 - cosine;
+
+        out._11 = axis.x * axis.x * oneInvCosine + cosine; out._12 = axis.x * axis.y * oneInvCosine + axis.z * sine; out._13 = axis.x * axis.z * oneInvCosine - axis.y * sine; out._14 = 0.0f;
+        out._21 = axis.x * axis.y * oneInvCosine - axis.z * sine; out._22 = axis.y * axis.y * oneInvCosine + cosine; out._23 = axis.y * axis.z * oneInvCosine + axis.x * sine; out._24 = 0.0f;
+        out._31 = axis.x * axis.z * oneInvCosine + axis.y * sine; out._32 = axis.y * axis.z * oneInvCosine - axis.x * sine; out._33 = axis.z * axis.z * oneInvCosine + cosine; out._34 = 0.0f;
+        out._41 = 0.0f; out._42 = 0.0f; out._43 = 0.0f; out._44 = 1.0f;
+
+        return out;
+    }
+
     inline Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const float yaw, const float pitch, const float roll)
     {
         Matrix44 matYaw;
