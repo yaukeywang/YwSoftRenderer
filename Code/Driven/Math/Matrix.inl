@@ -663,10 +663,13 @@ namespace yw
     // Get transpose of matrix.
     inline Matrix44& Matrix44Transpose(Matrix44& out, const Matrix44& mat)
     {
-        out._11 = mat._11; out._12 = mat._21; out._13 = mat._31; out._14 = mat._41;
-        out._21 = mat._12; out._22 = mat._22; out._23 = mat._32; out._24 = mat._42;
-        out._31 = mat._13; out._32 = mat._23; out._33 = mat._33; out._34 = mat._43;
-        out._41 = mat._14; out._42 = mat._24; out._43 = mat._34; out._44 = mat._44;
+        Matrix44 transpose(
+            mat._11, mat._21, mat._31, mat._41,
+            mat._12 ,mat._22, mat._32, mat._42,
+            mat._13, mat._23, mat._33, mat._43,
+            mat._14, mat._24, mat._34, mat._44
+        );
+        out = transpose;
 
         return out;
     }

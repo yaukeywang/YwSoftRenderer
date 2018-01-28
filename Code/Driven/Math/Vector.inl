@@ -6,6 +6,7 @@
 
 #include "MathUtility.h"
 #include "Vector.h"
+#include "Matrix.h"
 
 namespace yw
 {
@@ -397,6 +398,16 @@ namespace yw
         return value;
     }
 
+    inline Vector3 Vector3::operator *(const Matrix33& mat) const
+    {
+        Vector3 value(
+            x * mat._11 + y * mat._21 + z * mat._31, 
+            y * mat._12 + y * mat._22 + z * mat._32, 
+            z * mat._13 + y * mat._23 + z * mat._33
+        );
+        return value;
+    }
+
     inline Vector3 Vector3::operator /(float n) const
     {
         float oneOverO = 1.0f / n;
@@ -435,6 +446,19 @@ namespace yw
         x *= n;
         y *= n;
         z *= n;
+
+        return *this;
+    }
+
+    inline Vector3& Vector3::operator *=(const Matrix33& mat)
+    {
+        float nx = x * mat._11 + y * mat._21 + z * mat._31;
+        float ny = y * mat._12 + y * mat._22 + z * mat._32;
+        float nz = z * mat._13 + y * mat._23 + z * mat._33;
+
+        x = nx;
+        y = ny;
+        z = nz;
 
         return *this;
     }
@@ -601,6 +625,38 @@ namespace yw
         return distance;
     }
 
+    inline Vector3& Vector3Transform(Vector3& out, const Vector3& v, const Matrix44& m)
+    {
+        Vector4 value(v.x, v.y, v.z, 1.0f);
+        value *= m;
+        out = value;
+
+        return out;
+    }
+
+    inline Vector3& Vector3TransformCoord(Vector3& out, const Vector3& v, const Matrix44& m)
+    {
+        Vector4 value(v.x, v.y, v.z, 1.0f);
+        value *= m;
+        value /= value.w;
+        out = value;
+
+        return out;
+    }
+
+    inline Vector3& Vector3TransformNormal(Vector3& out, const Vector3& v, const Matrix44& m)
+    {
+        Matrix44 matTrs;
+        Matrix44Inverse(matTrs, m);
+        Matrix44Transpose(matTrs, matTrs);
+
+        Vector4 value(v.x, v.y, v.z, 0.0f);
+        value *= matTrs;
+        out = value;
+
+        return out;
+    }
+
     //
     // For Vector2 class.
 
@@ -724,6 +780,17 @@ namespace yw
         return value;
     }
 
+    inline Vector4 Vector4::operator *(const Matrix44& mat) const
+    {
+        Vector4 value(
+            x * mat._11 + y * mat._21 + z * mat._31 + w * mat._41,
+            y * mat._12 + y * mat._22 + z * mat._32 + w * mat._42,
+            z * mat._13 + y * mat._23 + z * mat._33 + w * mat._43,
+            w * mat._14 + y * mat._24 + z * mat._34 + w * mat._44
+        );
+        return value;
+    }
+
     inline Vector4 Vector4::operator /(const float n) const
     {
         float oneOverO = 1.0f / n;
@@ -777,6 +844,21 @@ namespace yw
         y *= oneOverO;
         z *= oneOverO;
         w *= oneOverO;
+
+        return *this;
+    }
+
+    inline Vector4& Vector4::operator *=(const Matrix44& mat)
+    {
+        float nx = x * mat._11 + y * mat._21 + z * mat._31 + w * mat._41;
+        float ny = y * mat._12 + y * mat._22 + z * mat._32 + w * mat._42;
+        float nz = z * mat._13 + y * mat._23 + z * mat._33 + w * mat._43;
+        float nw = w * mat._14 + y * mat._24 + z * mat._34 + w * mat._44;
+
+        x = nx;
+        y = ny;
+        z = nz;
+        w = nw;
 
         return *this;
     }

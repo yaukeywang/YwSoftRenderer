@@ -11,6 +11,8 @@ namespace yw
     // Predefine.
     struct Vector3;
     struct Vector4;
+    struct Matrix33;
+    struct Matrix44;
 
     // Vector 2 class.
     struct Vector2
@@ -114,11 +116,13 @@ namespace yw
         Vector3 operator -(const Vector3& v) const;
         Vector3 operator *(const Vector3& v) const;
         Vector3 operator *(float n) const;
+        Vector3 operator *(const Matrix33& mat) const;
         Vector3 operator /(float n) const;
         Vector3& operator +=(const Vector3& v);
         Vector3& operator -=(const Vector3& v);
         Vector3& operator *=(const Vector3& v);
         Vector3& operator *=(float n);
+        Vector3& operator *=(const Matrix33& mat);
         Vector3& operator /=(float n);
         operator Vector2();
         operator Vector4();
@@ -162,6 +166,19 @@ namespace yw
     // The result of two vector3 squared distance.
     float Vector3SquaredDistance(const Vector3& left, const Vector3& right);
 
+    // Transforms vector (x, y, z, 1) by a given matrix.
+    // This function transforms the vector, v (x, y, z, 1), by the matrix m.
+    Vector3& Vector3Transform(Vector3& out, const Vector3& v, const Matrix44& m);
+
+    // Transforms a 3D vector by a given matrix, projecting the result back into w = 1.
+    // This function transforms the vector, v (x, y, z, 1), by the matrix, m, projecting the result back into w=1.
+    Vector3& Vector3TransformCoord(Vector3& out, const Vector3& v, const Matrix44& m);
+
+    // Transforms the 3D vector normal by the given matrix.
+    // This function transforms the vector (v.x, v.y, v.z, 0) by the matrix pointed to by m.
+    // If you want to transform a normal, the matrix you pass to this function should be the transpose of the inverse of the matrix you would use to transform a point.
+    Vector3& Vector3TransformNormal(Vector3& out, const Vector3& v, const Matrix44& m);
+
     // Vector 4 class.
     struct Vector4
     {
@@ -190,11 +207,13 @@ namespace yw
         Vector4 operator -(const Vector4& v) const;
         Vector4 operator *(const Vector4& v) const;
         Vector4 operator *(const float n) const;
+        Vector4 operator *(const Matrix44& mat) const;
         Vector4 operator /(const float n) const;
         Vector4& operator +=(const Vector4& n);
         Vector4& operator -=(const Vector4& n);
         Vector4& operator *=(const Vector4& n);
         Vector4& operator *=(const float n);
+        Vector4& operator *=(const Matrix44& mat);
         Vector4& operator /=(const float n);
         operator Vector2();
         operator Vector3();
