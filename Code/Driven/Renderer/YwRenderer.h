@@ -4,7 +4,7 @@
 #ifndef __RENDERER_H__
 #define __RENDERER_H__
 
-#include "System/Support/Base.h"
+#include "System/Support/YwBase.h"
 
 namespace yw
 {

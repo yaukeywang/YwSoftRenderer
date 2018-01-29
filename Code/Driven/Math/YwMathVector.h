@@ -4,7 +4,7 @@
 #ifndef __VECTOR_H__
 #define __VECTOR_H__
 
-#include "MathUtility.h"
+#include "YwMathUtility.h"
 
 namespace yw
 {
@@ -252,6 +252,6 @@ namespace yw
     float Vector4SquaredDistance(const Vector4& left, const Vector4& right);
 }
 
-#include "Vector.inl"
+#include "YwMathVector.inl"
 
 #endif // !__VECTOR_H__

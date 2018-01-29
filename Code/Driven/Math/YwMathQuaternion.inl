@@ -4,9 +4,9 @@
 #ifndef __QUATERNION_INL__
 #define __QUATERNION_INL__
 
-#include "MathUtility.h"
-#include "Quaternion.h"
-#include "Matrix.h"
+#include "YwMathUtility.h"
+#include "YwMathQuaternion.h"
+#include "YwMathMatrix.h"
 
 namespace yw
 {

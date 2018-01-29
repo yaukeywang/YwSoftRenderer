@@ -2,8 +2,8 @@
 // YW soft renderer app runner.
 
 #include "stdafx.h"
-#include "AppSoftRenderer.h"
-#include "Driven/Renderer/Renderer.h"
+#include "YwAppSoftRenderer.h"
+#include "Driven/Renderer/YwRenderer.h"
 
 namespace yw
 {

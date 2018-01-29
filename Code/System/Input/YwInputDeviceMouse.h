@@ -4,8 +4,8 @@
 #ifndef __INPUT_DEVICE_MOUSE_H__
 #define __INPUT_DEVICE_MOUSE_H__
 
-#include "System/Input/InputDevice.h"
-#include "System/Input/InputManager.h"
+#include "System/Input/YwInputDevice.h"
+#include "System/Input/YwInputManager.h"
 
 namespace yw
 {

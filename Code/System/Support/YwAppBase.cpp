@@ -9,12 +9,12 @@
 
 #include "stdafx.h"
 #include "Resource.h"
-#include "AppBase.h"
-#include "GlobalManager.h"
-#include "System/Input/InputManager.h"
-#include "Driven/Renderer/Renderer.h"
-#include "Driven/Renderer/RendererSoftDx9.h"
-#include "Utility.h"
+#include "YwAppBase.h"
+#include "YwGlobalManager.h"
+#include "System/Input/YwInputManager.h"
+#include "Driven/Renderer/YwRenderer.h"
+#include "Driven/Renderer/YwRendererSoftDx9.h"
+#include "YwUtility.h"
 
 namespace yw
 {

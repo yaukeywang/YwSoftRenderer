@@ -2,7 +2,7 @@
 // Camera class.
 
 #include "stdafx.h"
-#include "Camera.h"
+#include "YwCamera.h"
 
 namespace yw
 {

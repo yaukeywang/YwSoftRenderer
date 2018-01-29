@@ -4,8 +4,8 @@
 #ifndef __QUATERNION_H__
 #define __QUATERNION_H__
 
-#include "MathUtility.h"
-#include "Vector.h"
+#include "YwMathUtility.h"
+#include "YwMathVector.h"
 
 namespace yw
 {
@@ -112,6 +112,6 @@ namespace yw
     Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat);
 }
 
-#include "Quaternion.inl"
+#include "YwMathQuaternion.inl"
 
 #endif // !__QUATERNION_H__

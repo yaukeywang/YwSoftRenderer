@@ -4,8 +4,8 @@
 #ifndef __RENDERER_SOFT_DX9_H__
 #define __RENDERER_SOFT_DX9_H__
 
-#include "Driven/Renderer/Renderer.h"
-#include "Driven/Math/MathCore.h"
+#include "Driven/Renderer/YwRenderer.h"
+#include "Driven/Math/YwMathCore.h"
 #include <d3d9.h>
 
 namespace yw

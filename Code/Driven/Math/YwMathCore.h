@@ -4,9 +4,9 @@
 #ifndef __MATH_COMMON_H__
 #define __MATH_COMMON_H__
 
-#include "MathUtility.h"
-#include "Vector.h"
-#include "Quaternion.h"
-#include "Matrix.h"
+#include "YwMathUtility.h"
+#include "YwMathVector.h"
+#include "YwMathQuaternion.h"
+#include "YwMathMatrix.h"
 
 #endif

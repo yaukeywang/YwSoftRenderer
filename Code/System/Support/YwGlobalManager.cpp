@@ -2,10 +2,10 @@
 // The global manager class.
 
 #include "stdafx.h"
-#include "GlobalManager.h"
-#include "Logger.h"
-#include "AppBase.h"
-#include "System/Input/InputManager.h"
+#include "YwGlobalManager.h"
+#include "YwLogger.h"
+#include "YwAppBase.h"
+#include "System/Input/YwInputManager.h"
 
 namespace yw
 {

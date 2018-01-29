@@ -2,8 +2,8 @@
 // Input device mouse class.
 
 #include "stdafx.h"
-#include "InputDeviceMouse.h"
-#include "System/Support/Utility.h"
+#include "YwInputDeviceMouse.h"
+#include "System/Support/YwUtility.h"
 
 namespace yw
 {

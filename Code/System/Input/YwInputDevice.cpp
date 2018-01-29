@@ -2,9 +2,9 @@
 // Input device base class.
 
 #include "stdafx.h"
-#include "InputDevice.h"
-#include "InputManager.h"
-#include "System/Support/Utility.h"
+#include "YwInputDevice.h"
+#include "YwInputManager.h"
+#include "System/Support/YwUtility.h"
 
 namespace yw
 {

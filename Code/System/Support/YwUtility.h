@@ -4,9 +4,9 @@
 #ifndef __UTILITY_H__
 #define __UTILITY_H__
 
-#include "Base.h"
-#include "Logger.h"
-#include "GlobalManager.h"
+#include "YwBase.h"
+#include "YwLogger.h"
+#include "YwGlobalManager.h"
 
 namespace yw
 {

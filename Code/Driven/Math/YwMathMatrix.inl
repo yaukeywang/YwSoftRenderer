@@ -4,10 +4,10 @@
 #ifndef __MATRIX_INL__
 #define __MATRIX_INL__
 
-#include "MathUtility.h"
-#include "Matrix.h"
-#include "Quaternion.h"
-#include "Vector.h"
+#include "YwMathUtility.h"
+#include "YwMathMatrix.h"
+#include "YwMathQuaternion.h"
+#include "YwMathVector.h"
 
 namespace yw
 {

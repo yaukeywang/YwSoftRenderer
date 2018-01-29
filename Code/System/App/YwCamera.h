@@ -5,8 +5,8 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include "System/Support/Base.h"
-#include "Driven/Math/MathCore.h"
+#include "System/Support/YwBase.h"
+#include "Driven/Math/YwMathCore.h"
 
 namespace yw
 {

@@ -2,7 +2,7 @@
 // Logger class.
 
 #include "stdafx.h"
-#include "Logger.h"
+#include "YwLogger.h"
 
 namespace yw
 {

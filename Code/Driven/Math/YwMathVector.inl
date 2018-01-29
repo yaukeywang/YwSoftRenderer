@@ -4,9 +4,9 @@
 #ifndef __VECTOR_INL__
 #define __VECTOR_INL__
 
-#include "MathUtility.h"
-#include "Vector.h"
-#include "Matrix.h"
+#include "YwMathUtility.h"
+#include "YwMathVector.h"
+#include "YwMathMatrix.h"
 
 namespace yw
 {

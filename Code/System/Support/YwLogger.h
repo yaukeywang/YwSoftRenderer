@@ -1,7 +1,7 @@
 // Add by yaukey at 2017-08-27.
 // Logger class.
 
-#include "System/Support/Base.h"
+#include "System/Support/YwBase.h"
 
 namespace yw
 {

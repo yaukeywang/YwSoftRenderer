@@ -43,58 +43,58 @@
     <ClInclude Include="targetver.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Math\MathUtility.h">
+    <ClInclude Include="Driven\Math\YwMathCore.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Math\Matrix.h">
+    <ClInclude Include="Driven\Math\YwMathUtility.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Math\Quaternion.h">
-      <Filter>Driven\Math</Filter>
+    <ClInclude Include="System\Input\YwInputDevice.h">
+      <Filter>System\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Math\Vector.h">
-      <Filter>Driven\Math</Filter>
+    <ClInclude Include="System\Input\YwInputDevicekeyboard.h">
+      <Filter>System\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Renderer\Renderer.h">
-      <Filter>Driven\Renderer</Filter>
+    <ClInclude Include="System\Input\YwInputDeviceMouse.h">
+      <Filter>System\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Renderer\RendererSoftDx9.h">
-      <Filter>Driven\Renderer</Filter>
+    <ClInclude Include="System\Input\YwInputManager.h">
+      <Filter>System\Input</Filter>
     </ClInclude>
-    <ClInclude Include="System\App\AppSoftRenderer.h">
+    <ClInclude Include="System\App\YwAppSoftRenderer.h">
       <Filter>System\App</Filter>
     </ClInclude>
-    <ClInclude Include="System\Input\InputDevice.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Input\InputDevicekeyboard.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Input\InputDeviceMouse.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Input\InputManager.h">
-      <Filter>System\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Support\AppBase.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Support\Base.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Support\GlobalManager.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Support\Logger.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="System\Support\Utility.h">
-      <Filter>System\Support</Filter>
-    </ClInclude>
-    <ClInclude Include="System\App\Camera.h">
+    <ClInclude Include="System\App\YwCamera.h">
       <Filter>System\App</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Math\MathCore.h">
+    <ClInclude Include="System\Support\YwUtility.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\YwLogger.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\YwGlobalManager.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\YwBase.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Support\YwAppBase.h">
+      <Filter>System\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Renderer\YwRendererSoftDx9.h">
+      <Filter>Driven\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Renderer\YwRenderer.h">
+      <Filter>Driven\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Math\YwMathVector.h">
+      <Filter>Driven\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Math\YwMathQuaternion.h">
+      <Filter>Driven\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Math\YwMathMatrix.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,38 +105,38 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Driven\Renderer\RendererSoftDx9.cpp">
+    <ClCompile Include="System\Input\YwInputDevice.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\YwInputDevicekeyboard.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\YwInputDeviceMouse.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Input\YwInputManager.cpp">
+      <Filter>System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="System\App\YwAppSoftRenderer.cpp">
+      <Filter>System\App</Filter>
+    </ClCompile>
+    <ClCompile Include="System\App\YwCamera.cpp">
+      <Filter>System\App</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\YwUtility.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\YwLogger.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\YwGlobalManager.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Support\YwAppBase.cpp">
+      <Filter>System\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Renderer\YwRendererSoftDx9.cpp">
       <Filter>Driven\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="System\App\AppSoftRenderer.cpp">
-      <Filter>System\App</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Input\InputDevice.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Input\InputDevicekeyboard.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Input\InputDeviceMouse.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Input\InputManager.cpp">
-      <Filter>System\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Support\AppBase.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Support\GlobalManager.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Support\Logger.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="System\Support\Utility.cpp">
-      <Filter>System\Support</Filter>
-    </ClCompile>
-    <ClCompile Include="System\App\Camera.cpp">
-      <Filter>System\App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,13 +158,13 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Driven\Math\Vector.inl">
+    <None Include="Driven\Math\YwMathVector.inl">
       <Filter>Driven\Math</Filter>
     </None>
-    <None Include="Driven\Math\Matrix.inl">
+    <None Include="Driven\Math\YwMathQuaternion.inl">
       <Filter>Driven\Math</Filter>
     </None>
-    <None Include="Driven\Math\Quaternion.inl">
+    <None Include="Driven\Math\YwMathMatrix.inl">
       <Filter>Driven\Math</Filter>
     </None>
   </ItemGroup>

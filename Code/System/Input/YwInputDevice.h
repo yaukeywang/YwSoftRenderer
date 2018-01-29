@@ -4,7 +4,7 @@
 #ifndef __INPUT_DEVICE_H__
 #define __INPUT_DEVICE_H__
 
-#include "System/Support/Base.h"
+#include "System/Support/YwBase.h"
 #include <dinput.h>
 #include <dinputd.h>
 

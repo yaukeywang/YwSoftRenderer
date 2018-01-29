@@ -2,8 +2,8 @@
 // Soft renderer implemented with dx9.
 
 #include "stdafx.h"
-#include "RendererSoftDx9.h"
-#include "System/Support/Utility.h"
+#include "YwRendererSoftDx9.h"
+#include "System/Support/YwUtility.h"
 
 namespace yw
 {

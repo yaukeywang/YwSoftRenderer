@@ -10,8 +10,8 @@ purpose:	Application base class.
 #ifndef _TRF_APPBASE_H_
 #define _TRF_APPBASE_H_
 
-#include "System/Support/Base.h"
-#include "Driven/Renderer/Renderer.h"
+#include "System/Support/YwBase.h"
+#include "Driven/Renderer/YwRenderer.h"
 
 namespace yw
 {

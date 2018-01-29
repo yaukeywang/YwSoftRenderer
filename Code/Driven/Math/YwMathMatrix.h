@@ -4,8 +4,8 @@
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
-#include "System/Support/Base.h"
-#include "MathUtility.h"
+#include "System/Support/YwBase.h"
+#include "YwMathUtility.h"
 
 namespace yw
 {
@@ -269,6 +269,6 @@ namespace yw
     Matrix44& Matrix44Viewport(Matrix44& out, const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const float zn, const float zf);
 }
 
-#include "Matrix.inl"
+#include "YwMathMatrix.inl"
 
 #endif // !__MATRIX_H__

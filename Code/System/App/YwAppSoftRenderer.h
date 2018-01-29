@@ -5,7 +5,7 @@
 #ifndef __APP_SOFT_RENDERER_H__
 #define __APP_SOFT_RENDERER_H__
 
-#include "System/Support/AppBase.h"
+#include "System/Support/YwAppBase.h"
 
 namespace yw
 {

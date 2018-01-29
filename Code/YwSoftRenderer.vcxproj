@@ -159,30 +159,30 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Driven\Math\MathCore.h" />
-    <ClInclude Include="Driven\Math\MathUtility.h" />
-    <ClInclude Include="Driven\Math\Matrix.h" />
-    <ClInclude Include="Driven\Math\Quaternion.h" />
-    <ClInclude Include="Driven\Math\Vector.h" />
-    <ClInclude Include="Driven\Renderer\Renderer.h" />
-    <ClInclude Include="Driven\Renderer\RendererSoftDx9.h" />
+    <ClInclude Include="Driven\Math\YwMathCore.h" />
+    <ClInclude Include="Driven\Math\YwMathUtility.h" />
+    <ClInclude Include="Driven\Math\YwMathMatrix.h" />
+    <ClInclude Include="Driven\Math\YwMathQuaternion.h" />
+    <ClInclude Include="Driven\Math\YwMathVector.h" />
+    <ClInclude Include="Driven\Renderer\YwRenderer.h" />
+    <ClInclude Include="Driven\Renderer\YwRendererSoftDx9.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="System\App\AppSoftRenderer.h" />
-    <ClInclude Include="System\App\Camera.h" />
-    <ClInclude Include="System\Input\InputDevice.h" />
-    <ClInclude Include="System\Input\InputDevicekeyboard.h" />
-    <ClInclude Include="System\Input\InputDeviceMouse.h" />
-    <ClInclude Include="System\Input\InputManager.h" />
-    <ClInclude Include="System\Support\AppBase.h" />
-    <ClInclude Include="System\Support\Base.h" />
-    <ClInclude Include="System\Support\GlobalManager.h" />
-    <ClInclude Include="System\Support\Logger.h" />
-    <ClInclude Include="System\Support\Utility.h" />
+    <ClInclude Include="System\App\YwAppSoftRenderer.h" />
+    <ClInclude Include="System\App\YwCamera.h" />
+    <ClInclude Include="System\Input\YwInputDevice.h" />
+    <ClInclude Include="System\Input\YwInputDevicekeyboard.h" />
+    <ClInclude Include="System\Input\YwInputDeviceMouse.h" />
+    <ClInclude Include="System\Input\YwInputManager.h" />
+    <ClInclude Include="System\Support\YwAppBase.h" />
+    <ClInclude Include="System\Support\YwBase.h" />
+    <ClInclude Include="System\Support\YwGlobalManager.h" />
+    <ClInclude Include="System\Support\YwLogger.h" />
+    <ClInclude Include="System\Support\YwUtility.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Driven\Renderer\RendererSoftDx9.cpp" />
+    <ClCompile Include="Driven\Renderer\YwRendererSoftDx9.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -190,16 +190,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="System\App\AppSoftRenderer.cpp" />
-    <ClCompile Include="System\App\Camera.cpp" />
-    <ClCompile Include="System\Input\InputDevice.cpp" />
-    <ClCompile Include="System\Input\InputDevicekeyboard.cpp" />
-    <ClCompile Include="System\Input\InputDeviceMouse.cpp" />
-    <ClCompile Include="System\Input\InputManager.cpp" />
-    <ClCompile Include="System\Support\AppBase.cpp" />
-    <ClCompile Include="System\Support\GlobalManager.cpp" />
-    <ClCompile Include="System\Support\Logger.cpp" />
-    <ClCompile Include="System\Support\Utility.cpp" />
+    <ClCompile Include="System\App\YwAppSoftRenderer.cpp" />
+    <ClCompile Include="System\App\YwCamera.cpp" />
+    <ClCompile Include="System\Input\YwInputDevice.cpp" />
+    <ClCompile Include="System\Input\YwInputDevicekeyboard.cpp" />
+    <ClCompile Include="System\Input\YwInputDeviceMouse.cpp" />
+    <ClCompile Include="System\Input\YwInputManager.cpp" />
+    <ClCompile Include="System\Support\YwAppBase.cpp" />
+    <ClCompile Include="System\Support\YwGlobalManager.cpp" />
+    <ClCompile Include="System\Support\YwLogger.cpp" />
+    <ClCompile Include="System\Support\YwUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="YwSoftRenderer.rc" />
@@ -209,9 +209,9 @@
     <Image Include="YwSoftRenderer.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Driven\Math\Matrix.inl" />
-    <None Include="Driven\Math\Quaternion.inl" />
-    <None Include="Driven\Math\Vector.inl" />
+    <None Include="Driven\Math\YwMathMatrix.inl" />
+    <None Include="Driven\Math\YwMathQuaternion.inl" />
+    <None Include="Driven\Math\YwMathVector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

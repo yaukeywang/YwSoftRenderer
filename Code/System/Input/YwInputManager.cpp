@@ -2,11 +2,11 @@
 // All input management.
 
 #include "stdafx.h"
-#include "InputManager.h"
-#include "InputDevice.h"
-#include "InputDeviceMouse.h"
-#include "InputDevicekeyboard.h"
-#include "System/Support/Utility.h"
+#include "YwInputManager.h"
+#include "YwInputDevice.h"
+#include "YwInputDeviceMouse.h"
+#include "YwInputDevicekeyboard.h"
+#include "System/Support/YwUtility.h"
 
 namespace yw
 {
