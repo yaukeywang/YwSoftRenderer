@@ -94,7 +94,7 @@
     <ClInclude Include="System\App\Camera.h">
       <Filter>System\App</Filter>
     </ClInclude>
-    <ClInclude Include="Driven\Math\MathCommon.h">
+    <ClInclude Include="Driven\Math\MathCore.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
   </ItemGroup>

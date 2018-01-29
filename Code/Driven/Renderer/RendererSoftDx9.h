@@ -5,7 +5,7 @@
 #define __RENDERER_SOFT_DX9_H__
 
 #include "Driven/Renderer/Renderer.h"
-#include "Driven/Math/MathCommon.h"
+#include "Driven/Math/MathCore.h"
 #include <d3d9.h>
 
 namespace yw

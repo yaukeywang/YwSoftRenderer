@@ -159,7 +159,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Driven\Math\MathCommon.h" />
+    <ClInclude Include="Driven\Math\MathCore.h" />
     <ClInclude Include="Driven\Math\MathUtility.h" />
     <ClInclude Include="Driven\Math\Matrix.h" />
     <ClInclude Include="Driven\Math\Quaternion.h" />

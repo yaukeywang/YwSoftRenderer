@@ -6,7 +6,7 @@
 #define __CAMERA_H__
 
 #include "System/Support/Base.h"
-#include "Driven/Math/MathCommon.h"
+#include "Driven/Math/MathCore.h"
 
 namespace yw
 {
