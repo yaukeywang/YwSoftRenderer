@@ -106,6 +106,9 @@
     <ClInclude Include="Driven\Core\Yw3dTypes.h">
       <Filter>Driven\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dSurface.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -146,6 +149,9 @@
     </ClCompile>
     <ClCompile Include="Driven\Renderer\YwRendererSoftDx9.cpp">
       <Filter>Driven\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dSurface.cpp">
+      <Filter>Driven\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
