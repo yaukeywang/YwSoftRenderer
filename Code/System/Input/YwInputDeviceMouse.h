@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-09-05.
 // Input device mouse class.
 
-#ifndef __INPUT_DEVICE_MOUSE_H__
-#define __INPUT_DEVICE_MOUSE_H__
+#ifndef __YW_INPUT_DEVICE_MOUSE_H__
+#define __YW_INPUT_DEVICE_MOUSE_H__
 
 #include "System/Input/YwInputDevice.h"
 #include "System/Input/YwInputManager.h"
@@ -33,4 +33,4 @@ namespace yw
     };
 }
 
-#endif // !__INPUT_DEVICE_MOUSE_H__
+#endif // !__YW_INPUT_DEVICE_MOUSE_H__

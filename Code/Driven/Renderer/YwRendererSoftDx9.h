@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-08-28.
 // Soft renderer implemented with dx9.
 
-#ifndef __RENDERER_SOFT_DX9_H__
-#define __RENDERER_SOFT_DX9_H__
+#ifndef __YW_RENDERER_SOFT_DX9_H__
+#define __YW_RENDERER_SOFT_DX9_H__
 
 #include "Driven/Renderer/YwRenderer.h"
 #include "Driven/Math/YwMathCore.h"
@@ -109,5 +109,5 @@ namespace yw
     };
 }
 
-#endif // !__RENDERER_SOFT_DX9_H__
+#endif // !__YW_RENDERER_SOFT_DX9_H__
 

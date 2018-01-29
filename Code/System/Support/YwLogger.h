@@ -1,6 +1,9 @@
 // Add by yaukey at 2017-08-27.
 // Logger class.
 
+#ifndef __YW_LOGGER_H__
+#define __YW_LOGGER_H__
+
 #include "System/Support/YwBase.h"
 
 namespace yw
@@ -58,3 +61,5 @@ namespace yw
         HANDLE m_ConsoleWnd;
     };
 }
+
+#endif // !__YW_LOGGER_H__

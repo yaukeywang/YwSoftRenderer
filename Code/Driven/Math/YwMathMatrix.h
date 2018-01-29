@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-11-14.
 // Matrix class.
 
-#ifndef __MATRIX_H__
-#define __MATRIX_H__
+#ifndef __YW_MATH_MATRIX_H__
+#define __YW_MATH_MATRIX_H__
 
 #include "System/Support/YwBase.h"
 #include "YwMathUtility.h"
@@ -271,4 +271,4 @@ namespace yw
 
 #include "YwMathMatrix.inl"
 
-#endif // !__MATRIX_H__
+#endif // !__YW_MATH_MATRIX_H__

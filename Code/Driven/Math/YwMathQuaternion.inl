@@ -1,8 +1,8 @@
 ﻿// Add by yaukey at 2018-01-22.
 // All matrix class.
 
-#ifndef __QUATERNION_INL__
-#define __QUATERNION_INL__
+#ifndef __YW_MATH_QUATERNION_INL__
+#define __YW_MATH_QUATERNION_INL__
 
 #include "YwMathUtility.h"
 #include "YwMathQuaternion.h"
@@ -620,4 +620,4 @@ namespace yw
     }
 }
 
-#endif // !__QUATERNION_INL__
+#endif // !__YW_MATH_QUATERNION_INL__

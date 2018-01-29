@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-09-13.
 // Input device keyboard class.
 
-#ifndef __INPUT_DEVICE_KEYBOARD_H__
-#define __INPUT_DEVICE_KEYBOARD_H__
+#ifndef __YW_INPUT_DEVICE_KEYBOARD_H__
+#define __YW_INPUT_DEVICE_KEYBOARD_H__
 
 #include "System/Input/YwInputDevice.h"
 #include "System/Input/YwInputManager.h"
@@ -29,4 +29,4 @@ namespace yw
     };
 }
 
-#endif // !__INPUT_DEVICE_KEYBOARD_H__
+#endif // !__YW_INPUT_DEVICE_KEYBOARD_H__

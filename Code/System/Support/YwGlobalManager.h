@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-08-27.
 // The global manager class.
 
-#ifndef __GLOBAL_MANAGER_H__
-#define __GLOBAL_MANAGER_H__
+#ifndef __YW_GLOBAL_MANAGER_H__
+#define __YW_GLOBAL_MANAGER_H__
 
 namespace yw
 {
@@ -49,4 +49,4 @@ namespace yw
     };
 }
 
-#endif // __GLOBAL_MANAGER_H__
+#endif // __YW_GLOBAL_MANAGER_H__

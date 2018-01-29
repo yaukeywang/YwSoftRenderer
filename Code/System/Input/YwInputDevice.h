@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-09-04.
 // Input device base class.
 
-#ifndef __INPUT_DEVICE_H__
-#define __INPUT_DEVICE_H__
+#ifndef __YW_INPUT_DEVICE_H__
+#define __YW_INPUT_DEVICE_H__
 
 #include "System/Support/YwBase.h"
 #include <dinput.h>
@@ -57,4 +57,4 @@ namespace yw
     };
 }
 
-#endif // !__INPUT_DEVICE_H__
+#endif // !__YW_INPUT_DEVICE_H__

@@ -1,8 +1,8 @@
 // Add by yaukey at 2018-01-21.
 // All vector class.
 
-#ifndef __VECTOR_INL__
-#define __VECTOR_INL__
+#ifndef __YW_MATH_VECTOR_INL__
+#define __YW_MATH_VECTOR_INL__
 
 #include "YwMathUtility.h"
 #include "YwMathVector.h"
@@ -990,4 +990,4 @@ namespace yw
     }
 }
 
-#endif // !__VECTOR_INL__
+#endif // !__YW_MATH_VECTOR_INL__

@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-09-19.
 // All vector class.
 
-#ifndef __VECTOR_H__
-#define __VECTOR_H__
+#ifndef __YW_MATH_VECTOR_H__
+#define __YW_MATH_VECTOR_H__
 
 #include "YwMathUtility.h"
 
@@ -254,4 +254,4 @@ namespace yw
 
 #include "YwMathVector.inl"
 
-#endif // !__VECTOR_H__
+#endif // !__YW_MATH_VECTOR_H__

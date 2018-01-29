@@ -7,8 +7,8 @@ purpose:	Application base class.
             This is a part of yw soft renderer.(2017-08-22)
 *********************************************************************/
 
-#ifndef _TRF_APPBASE_H_
-#define _TRF_APPBASE_H_
+#ifndef _YW_APPBASE_H_
+#define _YW_APPBASE_H_
 
 #include "System/Support/YwBase.h"
 #include "Driven/Renderer/YwRenderer.h"
@@ -184,4 +184,4 @@ namespace yw
 	}
 }
 
-#endif // _TRF_APPBASE_H_
+#endif // _YW_APPBASE_H_

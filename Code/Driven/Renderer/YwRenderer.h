@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-08-26.
 // Base renderer class.
 
-#ifndef __RENDERER_H__
-#define __RENDERER_H__
+#ifndef __YW_RENDERER_H__
+#define __YW_RENDERER_H__
 
 #include "System/Support/YwBase.h"
 
@@ -46,4 +46,4 @@ namespace yw
     };
 }
 
-#endif // __RENDERER_H__
+#endif // __YW_RENDERER_H__

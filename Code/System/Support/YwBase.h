@@ -6,8 +6,8 @@ author:		Yaukey
 purpose:	Some utility things.
 *********************************************************************/
 
-#ifndef __UTIL_H__
-#define __UTIL_H__
+#ifndef __YW_BASE_H__
+#define __YW_BASE_H__
 
 //// Disable msvc secure warnings.
 //#if defined(WIN32) && defined(_MSC_VER)
@@ -97,4 +97,4 @@ namespace yw
                                      //WS_THICKFRAME   (no sizing border)
                                      //WS_MAXIMIZEBOX  (no maximize button)
 
-#endif // __UTIL_H__
+#endif // __YW_BASE_H__

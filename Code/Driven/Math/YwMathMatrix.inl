@@ -1,8 +1,8 @@
 // Add by yaukey at 2018-01-22.
 // All matrix class.
 
-#ifndef __MATRIX_INL__
-#define __MATRIX_INL__
+#ifndef __YW_MATH_MATRIX_INL__
+#define __YW_MATH_MATRIX_INL__
 
 #include "YwMathUtility.h"
 #include "YwMathMatrix.h"

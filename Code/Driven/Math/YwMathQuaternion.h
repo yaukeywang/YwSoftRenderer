@@ -1,8 +1,8 @@
 ﻿// Add by yaukey at 2017-10-07.
 // Quaternion class.
 
-#ifndef __QUATERNION_H__
-#define __QUATERNION_H__
+#ifndef __YW_MATH_QUATERNION_H__
+#define __YW_MATH_QUATERNION_H__
 
 #include "YwMathUtility.h"
 #include "YwMathVector.h"
@@ -114,4 +114,4 @@ namespace yw
 
 #include "YwMathQuaternion.inl"
 
-#endif // !__QUATERNION_H__
+#endif // !__YW_MATH_QUATERNION_H__

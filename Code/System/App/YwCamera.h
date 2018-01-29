@@ -2,8 +2,8 @@
 // Camera class.
 // Need improve: frustum, apsect ratio, cull, viewport, perspective...
 
-#ifndef __CAMERA_H__
-#define __CAMERA_H__
+#ifndef __YW_CAMERA_H__
+#define __YW_CAMERA_H__
 
 #include "System/Support/YwBase.h"
 #include "Driven/Math/YwMathCore.h"
@@ -114,4 +114,4 @@ namespace yw
 	};
 }
 
-#endif // __CAMERA_H__
+#endif // __YW_CAMERA_H__

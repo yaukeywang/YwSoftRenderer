@@ -1,8 +1,8 @@
 // Add by yaukey at 2017-08-30.
 // All input management.
 
-#ifndef __INPUT_MANAGER_H__
-#define __INPUT_MANAGER_H__
+#ifndef __YW_INPUT_MANAGER_H__
+#define __YW_INPUT_MANAGER_H__
 
 #include "System/Support/YwBase.h"
 #include <dinput.h>
@@ -240,4 +240,4 @@ namespace yw
     };
 }
 
-#endif // !__INPUT_MANAGER_H__
+#endif // !__YW_INPUT_MANAGER_H__

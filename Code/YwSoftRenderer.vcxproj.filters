@@ -97,6 +97,15 @@
     <ClInclude Include="Driven\Math\YwMathMatrix.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dBase.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3d.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dTypes.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

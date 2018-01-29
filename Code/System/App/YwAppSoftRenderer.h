@@ -2,8 +2,8 @@
 // YW soft renderer app runner.
 
 
-#ifndef __APP_SOFT_RENDERER_H__
-#define __APP_SOFT_RENDERER_H__
+#ifndef __YW_APP_SOFT_RENDERER_H__
+#define __YW_APP_SOFT_RENDERER_H__
 
 #include "System/Support/YwAppBase.h"
 
@@ -69,5 +69,5 @@ namespace yw
 	};
 }
 
-#endif // !__APP_SOFT_RENDERER_H__
+#endif // !__YW_APP_SOFT_RENDERER_H__
 
