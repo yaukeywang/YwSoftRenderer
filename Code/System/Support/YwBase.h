@@ -97,4 +97,33 @@ namespace yw
                                      //WS_THICKFRAME   (no sizing border)
                                      //WS_MAXIMIZEBOX  (no maximize button)
 
+
+namespace yw
+{
+    //////////////////////////////////////////////////////////////////////////
+    // Float to int.
+    inline int32_t ftol(float f)
+    {
+#ifdef __amigaos4__
+        static hexdouble hd;
+        __asm__("fctiw %0, %1" : "=f" (hd.d) : "f" (f));
+        return hd.i.lo;
+#else
+        static int32_t tmp;
+
+#if _MSC_VER > 1000
+        __asm
+        {
+            fld f
+            fistp tmp
+        }
+#else
+        asm volatile("fistpl %0" : "=m" (tmp) : "t" (f) : "st");
+#endif
+
+        return tmp;
+#endif
+    }
+}
+
 #endif // __YW_BASE_H__

@@ -377,15 +377,15 @@ namespace yw
     {
         DWORD* frameBuffer = (DWORD*)buffer;
 
-        const uint32_t initCoordX = (uint32_t)from.x;
-        const uint32_t initCoordY = (uint32_t)from.y;
+        const uint32_t initCoordX = (uint32_t)ftol(from.x);
+        const uint32_t initCoordY = (uint32_t)ftol(from.y);
 
         const float deltaX = to.x - from.x;
         const float deltaY = to.y - from.y;
 
         if (fabs(deltaX) > fabs(deltaY))
         {
-            const int32_t maxPixelsX = (int32_t)deltaX;
+            const int32_t maxPixelsX = ftol(deltaX);
             if (0 == maxPixelsX)
             {
                 return false;
@@ -399,7 +399,7 @@ namespace yw
             for (int32_t i = 0; i != maxPixelsX; i += signX, interpolation += interpolationStep)
             {
                 uint32_t idxPixelX = initCoordX + i;
-                uint32_t idxPixelY = initCoordY + (uint32_t)((float)i * slope);
+                uint32_t idxPixelY = initCoordY + (uint32_t)ftol((float)i * slope);
                 if ((idxPixelX < 0) || (idxPixelX >= (uint32_t)m_Width) || (idxPixelY < 0) || (idxPixelY >= (uint32_t)m_Height))
                 {
                     continue;
@@ -411,7 +411,7 @@ namespace yw
         }
         else
         {
-            const int32_t maxPixelsY = (int32_t)deltaY;
+            const int32_t maxPixelsY = ftol(deltaY);
             if (0 == maxPixelsY)
             {
                 return false;
@@ -424,7 +424,7 @@ namespace yw
 
             for (int32_t i = 0; i != maxPixelsY; i += signY, interpolation += interpolationStep)
             {
-                uint32_t idxPixelX = initCoordX + (uint32_t)((float)i * slope);
+                uint32_t idxPixelX = initCoordX + (uint32_t)ftol((float)i * slope);
                 uint32_t idxPixelY = initCoordY + i;
                 if ((idxPixelX < 0) || (idxPixelX >= (uint32_t)m_Width) || (idxPixelY < 0) || (idxPixelY >= (uint32_t)m_Height))
                 {
