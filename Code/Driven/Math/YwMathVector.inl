@@ -44,6 +44,22 @@ namespace yw
         return *this;
     }
 
+    inline Vector2& Vector2::operator =(const Vector3& v)
+    {
+        x = v.x;
+        y = v.y;
+
+        return *this;
+    }
+
+    inline Vector2& Vector2::operator =(const Vector4& v)
+    {
+        x = v.x;
+        y = v.y;
+
+        return *this;
+    }
+
     inline bool Vector2::operator ==(const Vector2& v) const
     {
         float deltaX = x - v.x;
@@ -290,6 +306,14 @@ namespace yw
         return distance;
     }
 
+    inline Vector2& Vector2Lerp(Vector2& out, const Vector2& a, const Vector2& b, const float t)
+    {
+        out.x = a.x + (b.x - a.x) * t;
+        out.y = a.y + (b.y - a.y) * t;
+
+        return out;
+    }
+
     //
     // For Vector3 class.
 
@@ -316,6 +340,24 @@ namespace yw
     }
 
     inline Vector3& Vector3::operator =(const Vector3& v)
+    {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+
+        return *this;
+    }
+
+    inline Vector3& Vector3::operator =(const Vector2& v)
+    {
+        x = v.x;
+        y = v.y;
+        z = 0.0f;
+
+        return *this;
+    }
+
+    inline Vector3& Vector3::operator =(const Vector4& v)
     {
         x = v.x;
         y = v.y;
@@ -629,6 +671,15 @@ namespace yw
         return distance;
     }
 
+    inline Vector3& Vector3Lerp(Vector3& out, const Vector3& a, const Vector3& b, const float t)
+    {
+        out.x = a.x + (b.x - a.x) * t;
+        out.y = a.y + (b.y - a.y) * t;
+        out.z = a.z + (b.z - a.z) * t;
+
+        return out;
+    }
+
     inline Vector3& Vector3Transform(Vector3& out, const Vector3& v, const Matrix44& m)
     {
         Vector4 value(v.x, v.y, v.z, 1.0f);
@@ -692,6 +743,26 @@ namespace yw
         y = v.y;
         z = v.z;
         w = v.w;
+
+        return *this;
+    }
+
+    inline Vector4& Vector4::operator =(const Vector2& v)
+    {
+        x = v.x;
+        y = v.y;
+        z = 0.0f;
+        w = 0.0f;
+
+        return *this;
+    }
+
+    inline Vector4& Vector4::operator =(const Vector3& v)
+    {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = 0.0f;
 
         return *this;
     }
@@ -987,6 +1058,16 @@ namespace yw
         float deltaW = left.w - right.w;
         float distance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ + deltaW * deltaW;
         return distance;
+    }
+
+    inline Vector4& Vector4Lerp(Vector4& out, const Vector4& a, const Vector4& b, const float t)
+    {
+        out.x = a.x + (b.x - a.x) * t;
+        out.y = a.y + (b.y - a.y) * t;
+        out.z = a.z + (b.z - a.z) * t;
+        out.w = a.w + (b.w - a.w) * t;
+
+        return out;
     }
 }
 

@@ -22,6 +22,7 @@ namespace yw
         {
             float m[2];
             struct { float x; float y; };
+            struct { float r; float g; };
         };
 
     public:
@@ -35,6 +36,8 @@ namespace yw
         // Member functions.
 
         Vector2& operator =(const Vector2& v);
+        Vector2& operator =(const Vector3& v);
+        Vector2& operator =(const Vector4& v);
         bool operator ==(const Vector2& v) const;
         bool operator !=(const Vector2& v) const;
         Vector2 operator -() const;
@@ -88,6 +91,9 @@ namespace yw
     // The result of two vector2 squared distance.
     float Vector2SquaredDistance(const Vector2& left, const Vector2& right);
 
+    // Linearly interpolates between two values.
+    Vector2& Vector2Lerp(Vector2& out, const Vector2& a, const Vector2& b, const float t);
+
     // Vector 3 class.
     struct Vector3
     {
@@ -96,6 +102,7 @@ namespace yw
         {
             float m[3];
             struct { float x; float y; float z; };
+            struct { float r; float g; float b; };
         };
 
     public:
@@ -109,6 +116,8 @@ namespace yw
         // Member functions.
 
         Vector3& operator =(const Vector3& v);
+        Vector3& operator =(const Vector2& v);
+        Vector3& operator =(const Vector4& v);
         bool operator ==(const Vector3& v) const;
         bool operator !=(const Vector3& v) const;
         Vector3 operator -() const;
@@ -166,6 +175,9 @@ namespace yw
     // The result of two vector3 squared distance.
     float Vector3SquaredDistance(const Vector3& left, const Vector3& right);
 
+    // Linearly interpolates between two values.
+    Vector3& Vector3Lerp(Vector3& out, const Vector3& a, const Vector3& b, const float t);
+
     // Transforms vector (x, y, z, 1) by a given matrix.
     // This function transforms the vector, v (x, y, z, 1), by the matrix m.
     Vector3& Vector3Transform(Vector3& out, const Vector3& v, const Matrix44& m);
@@ -187,6 +199,7 @@ namespace yw
         {
             float m[4];
             struct { float x; float y; float z; float w; };
+            struct { float r; float g; float b; float a; };
         };
 
     public:
@@ -200,6 +213,8 @@ namespace yw
         // Member functions.
 
         Vector4& operator =(const Vector4& v);
+        Vector4& operator =(const Vector2& v);
+        Vector4& operator =(const Vector3& v);
         bool operator ==(const Vector4& v) const;
         bool operator !=(const Vector4& v) const;
         Vector4 operator -() const;
@@ -250,6 +265,9 @@ namespace yw
 
     // The result of two vector4 squared distance.
     float Vector4SquaredDistance(const Vector4& left, const Vector4& right);
+
+    // Linearly interpolates between two values.
+    Vector4& Vector4Lerp(Vector4& out, const Vector4& a, const Vector4& b, const float t);
 }
 
 #include "YwMathVector.inl"

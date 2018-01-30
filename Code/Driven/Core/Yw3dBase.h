@@ -5,32 +5,35 @@
 #define __YW_3D_BASE_H__
 
 #include "System/Support/YwBase.h"
+#include "Driven/Math/YwMathCore.h"
 
 namespace yw
 {
     // Return result.
     enum Yw3dResult
     {
-        // No errors were encountered, function returned successfully.
-        Yw3d_S_OK = 0,
-
-        // An unknown error has occured.
-        Yw3d_E_Unknown,			
-
-        // One or more parameters were invalid.
-        Yw3d_E_InvalidParameters,
-
-        // Allocation of memory within the function failed.
-        Yw3d_E_OutOfMemory,
-
-        // A format is invalid for a specific task.
-        Yw3d_E_InvalidFormat,
-
-        // An invalid state has been found and the function cannot continue.
-        Yw3d_E_InvalidState,
+        // Success.
+        Yw3d_S_OK = 0,                  // No errors were encountered, function returned successfully.
+        
+        // Failed.
+        Yw3d_E_Unknown,			        // An unknown error has occured.
+        Yw3d_E_InvalidParameters,       // One or more parameters were invalid.
+        Yw3d_E_OutOfMemory,             // Allocation of memory within the function failed.
+        Yw3d_E_InvalidFormat,           // A format is invalid for a specific task.
+        Yw3d_E_InvalidState,            // An invalid state has been found and the function cannot continue.
 
         Yw3d_Result_End
     };
+
+    // Macro to test for success.
+    // @param[in] res a function return value.
+    // @return true if the function succeeded.
+    #define YW3D_SUCCESSFUL(res)    (Yw3d_S_OK == (res))
+
+    // Macro to test for failure.
+    // @param[in] res a function return value.
+    // @return true if the function failed.
+    #define YW3D_FAILED(res)    (Yw3d_S_OK != (res))
 
     // Yw3d base-class definition.
     // IBase is the base class for all Yw3d classes. It implements a reference-counter with functions AddRef() and Release() known from COM interfaces.
