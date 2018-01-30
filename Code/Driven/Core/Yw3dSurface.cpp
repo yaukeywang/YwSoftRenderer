@@ -11,7 +11,6 @@ namespace yw
     Yw3dSurface::Yw3dSurface(Yw3dDevice* device) :
         m_Device(device), m_Width(0), m_Height(0), m_WidthMin1(0), m_HeightMin1(0), m_LockedComplete(false), m_PartialLockData(nullptr), m_Data(nullptr)
     {
-
     }
 
     Yw3dSurface::~Yw3dSurface()
@@ -508,6 +507,7 @@ namespace yw
             curLockedData += lockWidth * surfaceFloatCount;
         }
 
+        // Release partial resource.
         YW_SAFE_DELETE_ARRAY(m_PartialLockData);
 
         return Yw3d_S_OK;
