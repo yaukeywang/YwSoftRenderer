@@ -9,7 +9,15 @@
 namespace yw
 {
     Yw3dSurface::Yw3dSurface(Yw3dDevice* device) :
-        m_Device(device), m_Width(0), m_Height(0), m_WidthMin1(0), m_HeightMin1(0), m_LockedComplete(false), m_PartialLockData(nullptr), m_Data(nullptr)
+        m_Device(device), 
+        m_Format(Yw3d_FMT_R32G32B32A32F), 
+        m_Width(0), 
+        m_Height(0), 
+        m_WidthMin1(0), 
+        m_HeightMin1(0), 
+        m_LockedComplete(false), 
+        m_PartialLockData(nullptr), 
+        m_Data(nullptr)
     {
         m_Device->AddRef();
     }

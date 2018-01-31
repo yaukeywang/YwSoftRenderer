@@ -9,7 +9,9 @@
 namespace yw
 {
     Yw3dVertexBuffer::Yw3dVertexBuffer(Yw3dDevice* device) :
-        m_Device(device), m_Length(0), m_Data(nullptr)
+        m_Device(device), 
+        m_Length(0), 
+        m_Data(nullptr)
     {
         m_Device->AddRef();
     }
@@ -28,8 +30,10 @@ namespace yw
             return Yw3d_E_InvalidParameters;
         }
 
-        // Create buffer by length.
+        // Get length.
         m_Length = length;
+
+        // Create buffer by length.
         m_Data = new uint8_t[m_Length];
         if (nullptr == m_Data)
         {
