@@ -163,6 +163,7 @@
     <ClInclude Include="Driven\Core\Yw3dBase.h" />
     <ClInclude Include="Driven\Core\Yw3dDevice.h" />
     <ClInclude Include="Driven\Core\Yw3dIndexBuffer.h" />
+    <ClInclude Include="Driven\Core\Yw3dRenderTarget.h" />
     <ClInclude Include="Driven\Core\Yw3dSurface.h" />
     <ClInclude Include="Driven\Core\Yw3dTypes.h" />
     <ClInclude Include="Driven\Core\Yw3dVertexBuffer.h" />
@@ -191,6 +192,7 @@
   <ItemGroup>
     <ClCompile Include="Driven\Core\Yw3dDevice.cpp" />
     <ClCompile Include="Driven\Core\Yw3dIndexBuffer.cpp" />
+    <ClCompile Include="Driven\Core\Yw3dRenderTarget.cpp" />
     <ClCompile Include="Driven\Core\Yw3dSurface.cpp" />
     <ClCompile Include="Driven\Core\Yw3dVertexBuffer.cpp" />
     <ClCompile Include="Driven\Renderer\YwRendererSoftDx9.cpp" />
