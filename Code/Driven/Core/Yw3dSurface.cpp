@@ -2,21 +2,23 @@
 // YW Soft Renderer 3d surface class.
 
 #include "stdafx.h"
-#include "System/Support/YwUtility.h"
 #include "Yw3dSurface.h"
 #include "Yw3dDevice.h"
+#include "System/Support/YwUtility.h"
 
 namespace yw
 {
     Yw3dSurface::Yw3dSurface(Yw3dDevice* device) :
         m_Device(device), m_Width(0), m_Height(0), m_WidthMin1(0), m_HeightMin1(0), m_LockedComplete(false), m_PartialLockData(nullptr), m_Data(nullptr)
     {
+        m_Device->AddRef();
     }
 
     Yw3dSurface::~Yw3dSurface()
     {
         YW_SAFE_DELETE_ARRAY(m_PartialLockData); // somebody might have forgotten to unlock the surface ;)
         YW_SAFE_DELETE_ARRAY(m_Data);
+        YW_SAFE_RELEASE(m_Device);
     }
 
     Yw3dResult Yw3dSurface::Create(const uint32_t width, const uint32_t height, const Yw3dFormat format)
@@ -548,6 +550,11 @@ namespace yw
 
     Yw3dDevice* Yw3dSurface::GetDevice()
     {
+        if (nullptr != m_Device)
+        {
+            m_Device->AddRef();
+        }
+
         return m_Device;
     }
 }

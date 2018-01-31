@@ -4,9 +4,12 @@
 #ifndef __YW_3D_DEVICE_H__
 #define __YW_3D_DEVICE_H__
 
+#include "Yw3dBase.h"
+#include "Yw3dTypes.h"
+
 namespace yw
 {
-    class Yw3dDevice
+    class Yw3dDevice : public IBase
     {
     public:
         Yw3dDevice();

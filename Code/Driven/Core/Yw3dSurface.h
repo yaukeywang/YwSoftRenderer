@@ -9,7 +9,8 @@
 
 namespace yw
 {
-    class Yw3dSurface : IBase
+    // Yw3dSurface implements a 2-dimensional image.
+    class Yw3dSurface : public IBase
     {
         friend class Yw3dDevice;
 
