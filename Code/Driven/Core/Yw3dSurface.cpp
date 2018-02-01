@@ -19,6 +19,7 @@ namespace yw
         m_PartialLockData(nullptr), 
         m_Data(nullptr)
     {
+        /// Note: cannot add a reference to parent or the presenttarget will never be freed?
         m_Device->AddRef();
     }
 
@@ -26,6 +27,8 @@ namespace yw
     {
         YW_SAFE_DELETE_ARRAY(m_PartialLockData); // somebody might have forgotten to unlock the surface ;)
         YW_SAFE_DELETE_ARRAY(m_Data);
+
+        /// Note: see note in constructor.
         YW_SAFE_RELEASE(m_Device);
     }
 
@@ -556,7 +559,7 @@ namespace yw
         return m_Height;
     }
 
-    Yw3dDevice* Yw3dSurface::GetDevice()
+    Yw3dDevice* Yw3dSurface::AquireDevice()
     {
         if (nullptr != m_Device)
         {

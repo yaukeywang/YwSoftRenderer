@@ -33,7 +33,7 @@ namespace yw
     public:
         // Returns a pointer to the associated device. Calling this function will increase the internal reference count of the device. 
         // Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dDevice* GetDevice();
+        class Yw3dDevice* AquireDevice();
 
         // Returns a pointer to the desired position in the buffer.
         // @param[in] offset has to be specified in bytes.

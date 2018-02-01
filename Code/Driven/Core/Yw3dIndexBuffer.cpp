@@ -52,7 +52,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dDevice* Yw3dIndexBuffer::GetDevice()
+    Yw3dDevice* Yw3dIndexBuffer::AquireDevice()
     {
         if (nullptr != m_Device)
         {
@@ -90,7 +90,7 @@ namespace yw
         return m_Format;
     }
 
-    Yw3dResult Yw3dIndexBuffer::GetVertexIndex(uint32_t arrayIndex, uint32_t& value)
+    Yw3dResult Yw3dIndexBuffer::GetVertexIndex(uint32_t arrayIndex, uint32_t& value) const
     {
         switch (m_Format)
         {

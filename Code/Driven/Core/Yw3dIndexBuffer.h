@@ -35,7 +35,7 @@ namespace yw
     public:
         // Returns a pointer to the associated device. Calling this function will increase the internal reference count of the device. 
         // Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dDevice* GetDevice();
+        class Yw3dDevice* AquireDevice();
 
         // Returns a pointer to the desired position in the buffer.
         // @param[in] offset has to be specified in bytes.
@@ -56,7 +56,7 @@ namespace yw
         // @param[out] value receives the value of the index to be looked up.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        Yw3dResult GetVertexIndex(uint32_t arrayIndex, uint32_t& value);
+        Yw3dResult GetVertexIndex(uint32_t arrayIndex, uint32_t& value) const;
 
     private:
         // Pointer to device.

@@ -24,7 +24,7 @@ namespace yw
         YW_SAFE_RELEASE(m_Device);
     }
 
-    Yw3dDevice* Yw3dRenderTarget::GetDevice()
+    Yw3dDevice* Yw3dRenderTarget::AquireDevice()
     {
         if (nullptr != m_Device)
         {
@@ -118,7 +118,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dSurface* Yw3dRenderTarget::GetColorBuffer()
+    Yw3dSurface* Yw3dRenderTarget::AquireColorBuffer()
     {
         if (nullptr != m_ColorBuffer)
         {
@@ -128,7 +128,7 @@ namespace yw
         return m_ColorBuffer;
     }
 
-    Yw3dSurface* Yw3dRenderTarget::GetDepthBuffer()
+    Yw3dSurface* Yw3dRenderTarget::AquireDepthBuffer()
     {
         if (nullptr != m_DepthBuffer)
         {
