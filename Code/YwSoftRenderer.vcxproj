@@ -167,6 +167,7 @@
     <ClInclude Include="Driven\Core\Yw3dSurface.h" />
     <ClInclude Include="Driven\Core\Yw3dTypes.h" />
     <ClInclude Include="Driven\Core\Yw3dVertexBuffer.h" />
+    <ClInclude Include="Driven\Core\Yw3dVertexFormat.h" />
     <ClInclude Include="Driven\Math\YwMathCore.h" />
     <ClInclude Include="Driven\Math\YwMathUtility.h" />
     <ClInclude Include="Driven\Math\YwMathMatrix.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Driven\Core\Yw3dRenderTarget.cpp" />
     <ClCompile Include="Driven\Core\Yw3dSurface.cpp" />
     <ClCompile Include="Driven\Core\Yw3dVertexBuffer.cpp" />
+    <ClCompile Include="Driven\Core\Yw3dVertexFormat.cpp" />
     <ClCompile Include="Driven\Renderer\YwRendererSoftDx9.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
