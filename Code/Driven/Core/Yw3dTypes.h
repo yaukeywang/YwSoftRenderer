@@ -17,6 +17,13 @@ const uint32_t YW3D_MAX_TEXTURE_SAMPLERS = 16;      // Specifies the amount of a
 // ------------------------------------------------------------------
 // Enumerations.
 
+// Defines the supported texture adressing-modes.
+enum Yw3dTextureAddress
+{
+    Yw3d_TA_Wrap,
+    Yw3d_TA_Clamp
+};
+
 // Defines the supported texturefilters.
 enum Yw3dTextureFilter
 {
