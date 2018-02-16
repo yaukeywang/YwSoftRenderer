@@ -78,6 +78,12 @@ struct Yw3dRect
     Yw3dRect() : left(0), right(0), top(0), bottom(0) {}
 };
 
+// This structure defines the device parameters.
+struct Yw3dDeviceParameters
+{
+
+};
+
 // Describes a vertex element.
 struct Yw3dVertexElement
 {
