@@ -19,4 +19,14 @@ namespace yw
     {
         return Yw3d_E_Unknown;
     }
+
+    Yw3dResult Yw3dDevice::DrawPrimitive(Yw3dPrimitiveType primitiveType, uint32_t startVertex, uint32_t primitiveCount)
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dDevice::DrawIndexedPrimitive(Yw3dPrimitiveType primitiveType, int32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount)
+    {
+        return Yw3d_E_Unknown;
+    }
 }

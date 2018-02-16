@@ -17,6 +17,32 @@ const uint32_t YW3D_MAX_TEXTURE_SAMPLERS = 16;      // Specifies the amount of a
 // ------------------------------------------------------------------
 // Enumerations.
 
+// Defines the available renderstates.
+enum Yw3dRenderState
+{
+	Yw3d_RS_ZEnable = 0,    // Set this to true to enable depth-buffering or to false to disable it.
+	Yw3d_RS_ZWriteEnable,   // Set this to true(default) to enable writing to the depth-buffer during rasterization. If no depth-buffer is available or has been disabled by setting Yw3d_RS_ZEnable to false, this renderstate has no effect.
+	Yw3d_RS_ZFunc,          // Compare-function used for depth-buffer. Set this renderstate to a member of the enumeration Yw3dCmpFunc. Default: Yw3d_CMP_Less.
+
+	Yw3d_RS_ColorWriteEnable,   // Set this to true(default) to enable writing to the color-buffer during rasteriation. If no color-buffer is available this renderstate has no effect.
+	Yw3d_RS_FillMode,           // FillMode. Set this renderstate to a member of the enumeration Yw3dFill. Default: Yw3d_Fill_Solid.
+
+	Yw3d_RS_CullMode,   // CullMode. Set this renderstate to a member of the enumeration Yw3dCull. Default: Yw3d_Cull_CCW.
+
+	Yw3d_RS_SubdivisionMode,                // SubdivisionMode. Set this renderstate to a member of the enumeration Yw3dSubdiv. Default: Yw3d_Subdiv_None.
+	Yw3d_RS_SubdivisionLevels,              // This renderstate specifies the number of recursive subdivision when using simple or smooth subdivision. It specifies the maximum number of recursive subdivisions of triangles' edges when using adaptive subdivision. In case subdivision has been disabled, this renderstate has no effect. Valid values are integers > 0 - if this renderstate has been set to 0, DrawPrimitive()-calls will fail. Default: 1.
+	Yw3d_RS_SubdivisionPositionRegister,    // This renderstate is only used when using smooth subdivision. It specifies the vertex shader input register which holds position-data. Make sure vertex positions have been homogenized (w=1)! In case subdivision has been disabled, this renderstate has no effect. Valid values are integers e [0,YW3D_VERTEX_SHADER_REGISTERS]. Default: 0.
+	Yw3d_RS_SubdivisionNormalRegister,      // This renderstate is only used when using smooth subdivision. It specifies the vertex shader input register which holds normal-data. For best results make sure that the normals have been normalized. In case subdivision has been disabled, this renderstate has no effect. Valid values are integers e [0,YW3D_VERTEX_SHADER_REGISTERS]. Default: 1.
+	Yw3d_RS_SubdivisionMaxScreenArea,		// This renderstate is only used when using adaptive subdivision. Triangles, which cover more than the set area in screenspace (rendertarget's viewport is respected), are recursivly subdividied. In case subdivision has been disabled, this renderstate has no effect. Valid values are floats > 0.0f - if this renderstate has been set to 0.0f, DrawPrimitive()-calls will fail. Default: 1.0f.
+	Yw3d_RS_SubdivisionMaxInnerLevels,      // This renderstate is only used when using adaptive subdivision. It specifies the maximum number of recursive subdivisions of triangles. In case subdivision has been disabled, this renderstate has no effect. Valid values are integers > 0 - if this renderstate has been set to 0, DrawPrimitive()-calls will fail. Default: 1.
+
+	Yw3d_RS_ScissorTestEnable,  // Set this to true to enable scissor testing. Make sure that a scissor rect has been set before calling DrawPrimitive()-functions. Set this to false(default) to disable scissor testing.
+	
+	Yw3d_RS_LineThickness,  // Controls the thickness of rendered lines Valid values are integers >= 1. Default: 1.
+
+	Yw3d_RS_NumRenderStates
+};
+
 // Defines the supported texture adressing-modes.
 enum Yw3dTextureAddress
 {
