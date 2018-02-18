@@ -4,6 +4,30 @@
 #ifndef __YW_3D_TYPES_H__
 #define __YW_3D_TYPES_H__
 
+#include "Driven/Math/YwMathCore.h"
+
+// ------------------------------------------------------------------
+// Platform-dependent definitions and includes.
+
+// Windows platform.
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN // Restrict inclusions.
+#include <windows.h>
+typedef HWND WindowHandle;  // Define window-handle for the Win32-platform.
+#endif
+
+// Linux platform.
+#ifdef LINUX_X11
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+typedef Window WindowHandle;    ///< Define window-handle for the Linux-platform.
+#endif
+
+// Mac OSX platform.
+#ifdef OSX
+typedef xxx WindowHandle;   ///< Define window-handle for the Linux-platform.
+#endif
+
 // ------------------------------------------------------------------
 // Constants
 
@@ -22,7 +46,7 @@ enum Yw3dRenderState
 {
 	Yw3d_RS_ZEnable = 0,    // Set this to true to enable depth-buffering or to false to disable it.
 	Yw3d_RS_ZWriteEnable,   // Set this to true(default) to enable writing to the depth-buffer during rasterization. If no depth-buffer is available or has been disabled by setting Yw3d_RS_ZEnable to false, this renderstate has no effect.
-	Yw3d_RS_ZFunc,          // Compare-function used for depth-buffer. Set this renderstate to a member of the enumeration Yw3dCmpFunc. Default: Yw3d_CMP_Less.
+	Yw3d_RS_ZFunc,          // Compare-function used for depth-buffer. Set this renderstate to a member of the enumeration Yw3dCompareFunction. Default: Yw3d_CMP_Less.
 
 	Yw3d_RS_ColorWriteEnable,   // Set this to true(default) to enable writing to the color-buffer during rasteriation. If no color-buffer is available this renderstate has no effect.
 	Yw3d_RS_FillMode,           // FillMode. Set this renderstate to a member of the enumeration Yw3dFill. Default: Yw3d_Fill_Solid.
@@ -43,6 +67,49 @@ enum Yw3dRenderState
 	Yw3d_RS_NumRenderStates
 };
 
+// Defines the supported compare functions.
+enum Yw3dCompareFunction
+{
+	Yw3d_CMP_Never,         // Compares will never pass.
+    Yw3d_CMP_Equal,         // Compares of two values will pass if they are equal.
+    Yw3d_CMP_NotEqual,      // Compares of two values will pass if they are not equal.
+    Yw3d_CMP_Less,          // Compares of two values a and b will pass if a < b.
+    Yw3d_CMP_LessEqual,     // Compares of two values a and b will pass if a <= b.
+    Yw3d_CMP_GreaterEqual,  // Compares of two values a and b will pass if a >= b.
+    Yw3d_CMP_Greater,       // Compares of two values a and b will pass if a > b.
+    Yw3d_CMP_Always			// Compares will always pass.
+};
+
+// Defines the supported culling modes.
+enum Yw3dCull
+{
+	Yw3d_Cull_None, // Back faces won't be culled.
+	Yw3d_Cull_CW,   // Culls faces with clockwise vertices.
+	Yw3d_Cull_CCW   // Culls faces with counterclockwise vertices (default).
+};
+
+// Defines the supported fill modes.
+enum Yw3dFill
+{
+	Yw3d_Fill_Solid,    // Triangles are filled during rasterization (default).
+	Yw3d_Fill_WireFrame // Only triangle's edges are drawn.
+};
+
+// Defines the available Texture Sampler States.
+enum YW3DTextureSamplerState
+{
+	Yw3d_TSS_AddressU = 0,  // Texture addressing mode for the u-coordinate. Set this renderstate to a member of the enumeration Yw3dTextureAddress. Default: Yw3d_TA_Wrap.
+	Yw3d_TSS_AddressV,      // Texture addressing mode for the v-coordinate. Set this renderstate to a member of the enumeration Yw3dTextureAddress. Default: Yw3d_TA_Wrap.
+	Yw3d_TSS_AddressW,      // Texture addressing mode for the w-coordinate. Set this renderstate to a member of the enumeration Yw3dTextureAddress. Default: Yw3d_TA_Wrap.
+	Yw3d_TSS_MinFilter,     // Texture minification filtering mode. Set this renderstate to a member of the enumeration Yw3dTextureFilter. Default: Yw3d_TF_Linear.
+	Yw3d_TSS_MagFilter,     // Texture magnification filtering mode. Set this renderstate to a member of the enumeration Yw3dTextureFilter. Default: Yw3d_TF_Linear.
+	Yw3d_TSS_MipFilter,     // Mipmap filtering mode. Set this renderstate to a member of the enumeration Yw3dTextureFilter. Default: Yw3d_TF_Point.
+	Yw3d_TSS_MipLodBias,    // Floating point value added to the mip-level when sampling textures. Default: 0.0f.
+	Yw3d_TSS_MaxMipLevel,   // Floating point value which specifies the smallest mip-level to be used, e.g. 3.0f would mean that the third mip-level is the smallest to be used. Set this to 0.0f to force the use of the largest mip-level. default: 16.0f
+
+	Yw3d_TSS_NumTextureSamplerStates
+};
+
 // Defines the supported texture adressing-modes.
 enum Yw3dTextureAddress
 {
@@ -55,6 +122,15 @@ enum Yw3dTextureFilter
 {
     Yw3d_TF_Point,    // Specifies nearest point sampling.
     Yw3d_TF_Linear    // Specifies linear filtering.
+};
+
+// Specifies the supported subdivision modes.
+enum Yw3dSubdiv
+{
+	Yw3d_Subdiv_None,       // Triangle subdivision is disabled.
+	Yw3d_Subdiv_Simple,     // This subdivision mode simply subdivides each triangle an user specified number of times recursively.
+	Yw3d_Subdiv_Smooth,     // This subdivision mode is a simplified implementation of ATI's TruForm: It subdivides each triangle an user specified number of times recursively and attempts to generate a smooth triangle-surface using vertex normals as a base. This subdivision mode requires access to vertex position and normal. (For best results make sure that normal-vectors are normalized.)
+	Yw3d_Subdiv_Adaptive    // This subdivision mode splits each triangle's edges an user specified number of times recursively. The triangle is then subdivided until its sub-triangles cover no more than a user specified area in clipping space.
 };
 
 // Defines the supported texture and buffer formats.
@@ -90,38 +166,161 @@ enum Yw3dVertexelEmentType
     Yw3d_VET_Vector4        // Specifies four floats. The vertex element is directly mapped to a vertex shader input register.
 };
 
+// Specifies indices for commonly used shader constants.
+enum Yw3dShaderConstant
+{
+	Yw3d_SC_Matrix_World = 0,       // World matrix for vertex transformation.
+	Yw3d_SC_Matrix_View = 1,        // View matrix for vertex transformation.
+	Yw3d_SC_Matrix_Projection = 2,  // Projection matrix for vertex transformation.
+	Yw3d_SC_Matrix_WVP = 3,         // Concatenated world, view and projection matrix for vertex transformation.
+};
+
+// Specifies the available types of vectors used for sampling different textures.
+enum Yw3dTexSampleInput
+{
+	Yw3d_TSI_2Coords,   // 2 floating point coordinates used for standard 2d texture-sampling.
+	Yw3d_TSI_3Coords,   // 3 floating point coordinates used for volume texture-sampling.
+	Yw3d_TSI_Vector     // 3-dimensional vector used for cubemap-sampling.
+};
+
+// Specifies indices for the 6 cubemap faces.
+enum Yw3dCubeFaces
+{
+	Yw3d_CF_Positive_X = 0, // face +x
+	Yw3d_CF_Negative_X,     // face -x
+	Yw3d_CF_Positive_Y,     // face +y
+	Yw3d_CF_Negative_Y,     // face -y
+	Yw3d_CF_Positive_Z,     // face +z
+	Yw3d_CF_Negative_Z      // face -z
+};
+
+// Specifies the supported pixelshader types.
+enum Yw3dPixelShaderOutput
+{
+	Yw3d_PSO_ColorOnly,     // Specifies that a given pixelshader only outputs color (default). A pixel's depth values will be automatically computed by the rasterizer through interpolation of depth values of a triangle's vertices.
+	Yw3d_PSO_ColorDepth,    // Specifies that a given pixelshader outputs both color and depth. If you want to output only depth use renderstate Yw3d_RS_ColorWriteEnable to disable writing color.
+};
+
+// Specifies the type of a particular shader register.
+enum Yw3dShaderRegType
+{
+	Yw3d_SRT_Unused = 0,    // Specifies that the register is unused.
+	Yw3d_SRT_Float32,       // Specifies that the register should be treated as a single float.
+	Yw3d_SRT_Vector2,       // Specifies that the register should be treated as a 2-dimensional vector.
+	Yw3d_SRT_Vector3,       // Specifies that the register should be treated as a 3-dimensional vector.
+	Yw3d_SRT_Vector4        // Specifies that the register should be treated as a 4-dimensional vector.
+};
+
+// Specifies the frustum cliping planes.
+enum Yw3dClippingPlanes
+{
+	Yw3d_CP_Left = 0,   // Left frustum clipping plane.
+	Yw3d_CP_Right,      // Right frustum clipping plane.
+	Yw3d_CP_Top,        // Top frustum clipping plane.
+	Yw3d_CP_Bottom,     // Bottom frustum clipping plane.
+	Yw3d_CP_Near,       // Near frustum clipping plane.
+	Yw3d_CP_Far,        // Far frustum clipping plane.
+
+	// User specified clipping planes.
+	Yw3d_CP_User0,
+	Yw3d_CP_User1,
+	Yw3d_CP_User2,
+	Yw3d_CP_User3,
+
+	Yw3d_CP_NumPlanes
+};
+
 // ------------------------------------------------------------------
 // Structures.
 
-// Defines a rectangle.
-struct Yw3dRect
+namespace yw
 {
-    uint32_t left;
-    uint32_t right;
-    uint32_t top;
-    uint32_t bottom;
+    // Defines a rectangle.
+    struct Rect
+    {
+        uint32_t left;
+        uint32_t right;
+        uint32_t top;
+        uint32_t bottom;
 
-    Yw3dRect() : left(0), right(0), top(0), bottom(0) {}
-};
+        Rect() : left(0), right(0), top(0), bottom(0) {}
+    };
 
-// This structure defines the device parameters.
-struct Yw3dDeviceParameters
-{
+    // Defines a box. Added for volume texture support.
+    struct Box
+    {
+        uint32_t left;
+        uint32_t right;
+        uint32_t top;
+        uint32_t bottom;
+        uint32_t front;
+        uint32_t back;
 
-};
+        Box() : left(-1), right(1), bottom(-1), top(1), back(-1), front(1) {}
+    };
 
-// Describes a vertex element.
-struct Yw3dVertexElement
-{
-    uint32_t Stream;                // Index of the stream this element is loaded from.
-    Yw3dVertexelEmentType Type;     // Type of this vertex element. Set this field to a member of the enumeration Yw3dVertexelEmentType.
-    uint32_t Register;              // The register of the vertex shader the vertex element's value will be passed to.
-};
+    // This structure defines the device parameters.
+    struct DeviceParameters
+    {
+        WindowHandle deviceWindow;      // Handle to the output window.
+        bool windowed;                  // True if the application runs windowed, false if it runs in full-screen.
+        uint32_t fullScreenColorBits;   // Bit-depth of backbuffer in fullscreen mode (ignored in windowed mode). Valid values: 32, 24, 16.
+        uint32_t backBufferWidth;       // Width of dimension of the backbuffer in Pixels.
+        uint32_t backBufferHeight;      // Height of dimension of the backbuffer in Pixels.
 
-// Helper-macro for vertex format declaration.
-#define YW3D_VERTEX_FORMAT_DECL(Stream, Type, Register) {Stream, Type, Register}
+        DeviceParameters() : deviceWindow(nullptr), windowed(false), fullScreenColorBits(32), backBufferWidth(0), backBufferHeight(0)
+    };
+
+    // Describes a vertex element.
+    struct VertexElement
+    {
+        uint32_t stream;                // Index of the stream this element is loaded from.
+        Yw3dVertexelEmentType type;     // Type of this vertex element. Set this field to a member of the enumeration Yw3dVertexelEmentType.
+        uint32_t register;              // The register of the vertex shader the vertex element's value will be passed to.
+    };
+
+    // Helper-macro for vertex format declaration.
+    #define YW3D_VERTEX_FORMAT_DECL(Stream, Type, Register) {(Stream), (Type), (Register)}
+}
 
 // ------------------------------------------------------------------
 // Internal structures.
+
+namespace yw
+{
+    // float point format of vector.
+    typedef Vector2 float2;
+    typedef Vector3 float3;
+    typedef Vector4 float4;
+
+    // float point format of matrix.
+    typedef Matrix33 float33;
+    typedef Matrix44 float44;
+
+    // A shader register is 128-bits wide and is divided into four floating-point-values.
+    typedef float4 ShaderRegister;
+
+    // Describes the vertex shader input.
+    // @note This structure is used internally by devices.
+    struct VSInput
+    {
+        // Vertex shader input registers.
+        ShaderRegister shaderInputs[YW3D_VERTEX_SHADER_REGISTERS];
+    };
+
+    /// Describes the vertex shader output.
+    /// @note This structure is used internally by devices.
+    struct VSOutput
+    {
+        // Original vertex shader input fetched from vertex streams; added for triangle subdivision.
+        VSInput sourceInput;
+
+        // Position of this vertex.(projected)
+        Vector4 position;  
+
+        ///< Vertex shader output registers, which are in turn used as pixel shader input registers.
+        ShaderRegister shaderOutputs[YW3D_PIXEL_SHADER_REGISTERS];  
+    }; 
+}
 
 #endif // !__YW_3D_TYPES_H__
