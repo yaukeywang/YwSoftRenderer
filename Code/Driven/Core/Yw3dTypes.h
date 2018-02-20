@@ -20,12 +20,12 @@ typedef HWND WindowHandle;  // Define window-handle for the Win32-platform.
 #ifdef LINUX_X11
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-typedef Window WindowHandle;    ///< Define window-handle for the Linux-platform.
+typedef Window WindowHandle;    // Define window-handle for the Linux-platform.
 #endif
 
 // Mac OSX platform.
 #ifdef OSX
-typedef xxx WindowHandle;   ///< Define window-handle for the Linux-platform.
+typedef xxx WindowHandle;   // Define window-handle for the Linux-platform.
 #endif
 
 // ------------------------------------------------------------------
@@ -326,8 +326,8 @@ namespace yw
         VSInput() {}
     };
 
-    /// Describes the vertex shader output.
-    /// @note This structure is used internally by devices.
+    // Describes the vertex shader output.
+    // @note This structure is used internally by devices.
     struct VSOutput
     {
         // Original vertex shader input fetched from vertex streams; added for triangle subdivision.
@@ -336,7 +336,7 @@ namespace yw
         // Position of this vertex.(projected)
         Vector4 position;
 
-        ///< Vertex shader output registers, which are in turn used as pixel shader input registers.
+        // Vertex shader output registers, which are in turn used as pixel shader input registers.
         ShaderRegister shaderOutputs[YW3D_PIXEL_SHADER_REGISTERS];
 
         VSOutput() {}
