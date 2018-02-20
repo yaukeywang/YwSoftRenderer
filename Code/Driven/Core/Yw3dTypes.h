@@ -96,7 +96,7 @@ enum Yw3dFill
 };
 
 // Defines the available Texture Sampler States.
-enum YW3DTextureSamplerState
+enum Yw3dTextureSamplerState
 {
 	Yw3d_TSS_AddressU = 0,  // Texture addressing mode for the u-coordinate. Set this renderstate to a member of the enumeration Yw3dTextureAddress. Default: Yw3d_TA_Wrap.
 	Yw3d_TSS_AddressV,      // Texture addressing mode for the v-coordinate. Set this renderstate to a member of the enumeration Yw3dTextureAddress. Default: Yw3d_TA_Wrap.
@@ -160,9 +160,9 @@ enum Yw3dPrimitiveType
 // Defines the supported vertex elements.
 enum Yw3dVertexelEmentType
 {
-    Yw3d_VET_Float,         // Specifies a single float. The vertex element is expanded to vector4( float, 0, 0, 1 ) and mapped to a vertex shader input register.
-    Yw3d_VET_Vector2,       // Specifies two floats. The vertex element is expanded to vector4( float, float, 0, 1 ) and mapped to a vertex shader input register.
-    Yw3d_VET_Vector3,       // Specifies three floats. The vertex element is expanded to vector4( float, float, float, 1 ) and mapped to a vertex shader input register.
+    Yw3d_VET_Float,         // Specifies a single float. The vertex element is expanded to vector4(float, 0, 0, 1) and mapped to a vertex shader input register.
+    Yw3d_VET_Vector2,       // Specifies two floats. The vertex element is expanded to vector4(float, float, 0, 1) and mapped to a vertex shader input register.
+    Yw3d_VET_Vector3,       // Specifies three floats. The vertex element is expanded to vector4(float, float, float, 1) and mapped to a vertex shader input register.
     Yw3d_VET_Vector4        // Specifies four floats. The vertex element is directly mapped to a vertex shader input register.
 };
 
@@ -262,11 +262,20 @@ namespace yw
     // This structure defines the device parameters.
     struct DeviceParameters
     {
-        WindowHandle deviceWindow;      // Handle to the output window.
-        bool windowed;                  // True if the application runs windowed, false if it runs in full-screen.
-        uint32_t fullScreenColorBits;   // Bit-depth of backbuffer in fullscreen mode (ignored in windowed mode). Valid values: 32, 24, 16.
-        uint32_t backBufferWidth;       // Width of dimension of the backbuffer in Pixels.
-        uint32_t backBufferHeight;      // Height of dimension of the backbuffer in Pixels.
+        // Handle to the output window.
+        WindowHandle deviceWindow;
+
+        // True if the application runs windowed, false if it runs in full-screen.
+        bool windowed;
+
+        // Bit-depth of backbuffer in fullscreen mode (ignored in windowed mode). Valid values: 32, 24, 16.
+        uint32_t fullScreenColorBits;
+
+        // Width of dimension of the backbuffer in Pixels.
+        uint32_t backBufferWidth;
+
+        // Height of dimension of the backbuffer in Pixels.
+        uint32_t backBufferHeight;
 
         DeviceParameters() : deviceWindow(nullptr), windowed(false), fullScreenColorBits(32), backBufferWidth(0), backBufferHeight(0)
     };
@@ -274,9 +283,16 @@ namespace yw
     // Describes a vertex element.
     struct VertexElement
     {
-        uint32_t stream;                // Index of the stream this element is loaded from.
-        Yw3dVertexelEmentType type;     // Type of this vertex element. Set this field to a member of the enumeration Yw3dVertexelEmentType.
-        uint32_t register;              // The register of the vertex shader the vertex element's value will be passed to.
+        // Index of the stream this element is loaded from.
+        uint32_t stream;
+
+        // Type of this vertex element. Set this field to a member of the enumeration Yw3dVertexelEmentType.
+        Yw3dVertexelEmentType type;
+
+        // The register of the vertex shader the vertex element's value will be passed to.
+        uint32_t register;
+
+        VertexElement() : stream(-1), type(Yw3d_VET_Vector3), register(-1) {}
     };
 
     // Helper-macro for vertex format declaration.
@@ -306,6 +322,8 @@ namespace yw
     {
         // Vertex shader input registers.
         ShaderRegister shaderInputs[YW3D_VERTEX_SHADER_REGISTERS];
+
+        VSInput() {}
     };
 
     /// Describes the vertex shader output.
@@ -316,11 +334,63 @@ namespace yw
         VSInput sourceInput;
 
         // Position of this vertex.(projected)
-        Vector4 position;  
+        Vector4 position;
 
         ///< Vertex shader output registers, which are in turn used as pixel shader input registers.
-        ShaderRegister shaderOutputs[YW3D_PIXEL_SHADER_REGISTERS];  
-    }; 
+        ShaderRegister shaderOutputs[YW3D_PIXEL_SHADER_REGISTERS];
+
+        VSOutput() {}
+    };
+
+    // Describes a structure that is used for triangle gradient storage.
+    // @note This structure is used internally by devices.
+    struct TriangleInfo
+    {
+        // Gradient constant.
+        float commonGradient;
+
+        // Base vertex for gradient computations.
+        const VSOutput* baseVertex;
+
+        // z partial derivatives with respect to the screen-space x- and y-coordinates.
+	    float zDdx;
+        float zDdy;
+
+        // w partial derivatives with respect to the screen-space x- and y-coordinates.
+        float wDdx;
+        float wDdy;
+
+        // Shader register partial derivatives with respect to the screen-space x-coordinate.
+        ShaderRegister shaderOutputsDdx[YW3D_PIXEL_SHADER_REGISTERS];
+
+        // Shader register partial derivatives with respect to the screen-space y-coordinate.
+        ShaderRegister shaderOutputsDdy[YW3D_PIXEL_SHADER_REGISTERS];
+
+        // Integer-coordinates of current pixel; needed by pixel shader for computation of partial derivatives.
+        uint32_t curPixelX;
+        uint32_t curPixelY;
+
+        // 1.0f / w of the current pixel; needed by pixel shader for computation of partial derivatives.
+        float curPixelInvW;
+
+        TriangleInfo() : commonGradient(0.0f), baseVertex(nullptr), zDdx(0.0f), zDdy(0.0f), wDdx(0.0f), wDdy(0.0f), curPixelX(0), curPixelY(0), curPixelInvW(1.0f) {}
+    };
+
+    // Describes a structure that is used for vertex caching.
+    // @note This structure is used internally by devices.
+    struct VertexCacheEntry
+    {
+        // Index of the contained vertex in the vertex buffer.
+        uint32_t vertexIndex;
+
+        // Vertex shader output, vertex data.
+        VSOutput vertexOutput;
+
+        // Whenever a vertex cache entry is reserved for drawing (updated or simply 'touched and returned') its fetch-time is set to m_FetchedVertices.
+        uint32_t fetchTime;
+
+        VertexCacheEntry() : vertexIndex(-1), fetchTime(-1) {}
+    };
 }
 
 #endif // !__YW_3D_TYPES_H__
