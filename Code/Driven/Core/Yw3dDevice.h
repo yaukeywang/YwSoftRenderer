@@ -54,7 +54,34 @@ namespace yw
         Yw3dResult DrawIndexedPrimitive(Yw3dPrimitiveType primitiveType, int32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount);
 
     private:
+        // Prepares internal structure with information used for rendering.
+        // Checks if all necessary objects (vertexbuffer, vertex format, etc.) have been set + if renderstates are valid.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        Yw3dResult PreRender();
 
+        // Performs cleanup: Unlocking frame- and depthbuffer, etc.
+        void PostRender();
+
+        // Loads data of a particular vertex from the vertex streams using the active vertex format as a description.
+        // @param[out] vertexShaderInput filled with vertex data from the streams.
+        // @param[in] vertexIndex index of the vertex.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        result DecodeVertexStream(VSInput& vertexShaderInput, uint32_t vertexIndex);
+
+        // Fetches a vertex from the current vertex streams and transforms it by calling the vertex shader.
+        // This function also takes care of caching transformed vertices.
+        // @param[in,out] vertexCacheEntry receives a pointer to the cache-entry holding the transformed vertex. (in-parameter, because a check is performed to see if the pointer already points to the desired vertex)
+        // @param[in] vertexIndex index of the vertex.
+        result FetchVertex(VertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex);
+
+        // Begins the processing-pipeline that works on a per-triangle base. Either continues to the clipping-stage or takes care of subdivision.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void ProcessTriangle(const VSOutput* vsOutput0, const VSOutput* vsOutput1, const VSOutput* vsOutput2);
     };
 }
 
