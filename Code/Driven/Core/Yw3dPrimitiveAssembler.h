@@ -10,7 +10,7 @@
 namespace yw
 {
     // Defines the triangle assembler interface.
-    class Yw3dPrimitiveAssembler : IBase
+    class IYw3dPrimitiveAssembler : IBase
     {
         friend class Yw3dDevice;
 

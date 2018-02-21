@@ -32,26 +32,26 @@ namespace yw
         Yw3dResult Create();
 
     public:
-        /// Renders nonindexed primitives of the specified type from the currently set vertex streams.
-        /// @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.
-        /// @param[in] startVertex Beginning at this vertex the correct number used for rendering this batch will be read from the vertex streams.
-        /// @param[in] primitiveCount Amount of primitives to render.
-        /// @return Yw3d_S_OK if the function succeeds.
-        /// @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        /// @return Yw3d_E_InvalidState if an invalid state was encountered.
+        // Renders nonindexed primitives of the specified type from the currently set vertex streams.
+        // @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.
+        // @param[in] startVertex Beginning at this vertex the correct number used for rendering this batch will be read from the vertex streams.
+        // @param[in] primitiveCount Amount of primitives to render.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
         Yw3dResult DrawPrimitive(Yw3dPrimitiveType primitiveType, uint32_t startVertex, uint32_t primitiveCount);
 
-        /// Renders geometric primitives through indexing into an array of vertices.
-        /// @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.
-        /// @param[in] baseVertexIndex added to each index before accessing a vertex from the array.
-        /// @param[in] minIndex specifies the minimum index for vertices used during this batch.
-        /// @param[in] numVertices specifies the number of vertices that will be used beginning from baseVertexIndex + minIndex.
-        /// @param[in] startIndex Location in the index buffer to start reading from.
-        /// @param[in] primitiveCount Amount of primitives to render.
-        /// @return Yw3d_S_OK if the function succeeds.
-        /// @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        /// @return Yw3d_E_InvalidState if an invalid state was encountered.
-        Yw3dResult DrawIndexedPrimitive(Yw3dPrimitiveType primitiveType, int32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount);
+        // Renders geometric primitives through indexing into an array of vertices.
+        // @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.
+        // @param[in] baseVertexIndex added to each index before accessing a vertex from the array.
+        // @param[in] minIndex specifies the minimum index for vertices used during this batch.
+        // @param[in] numVertices specifies the number of vertices that will be used beginning from baseVertexIndex + minIndex.
+        // @param[in] startIndex Location in the index buffer to start reading from.
+        // @param[in] primitiveCount Amount of primitives to render.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        Yw3dResult DrawIndexedPrimitive(Yw3dPrimitiveType primitiveType, uint32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount);
 
     private:
         // Prepares internal structure with information used for rendering.
@@ -82,6 +82,25 @@ namespace yw
         // @param[in] vsOutput1 vertex B.
         // @param[in] vsOutput2 vertex C.
         void ProcessTriangle(const VSOutput* vsOutput0, const VSOutput* vsOutput1, const VSOutput* vsOutput2);
+
+    private:
+        // The vertex format.
+        class Yw3dVertexFormat* m_VertexFormat;
+
+        // The primitive assembler; used for DrawDynamicPrimitive().
+        class IYw3dPrimitiveAssembler* m_PrimitiveAssembler;
+
+        // The vertex shader.
+        class IYw3dVertexShader* m_VertexShader;
+
+        // The triangle shader (optional).
+        class IYw3dTriangleShader* m_TriangleShader;
+        
+        // The pixel shader.
+        class IYw3dPixelShader* m_PixelShader;
+
+        // The index buffer.
+        class Yw3dIndexBuffer* m_IndexBuffer;
     };
 }
 
