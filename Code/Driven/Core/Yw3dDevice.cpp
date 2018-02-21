@@ -301,6 +301,62 @@ namespace yw
 
     Yw3dResult Yw3dDevice::FetchVertex(Yw3dVertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex)
     {
+        if ((nullptr != vertexCacheEntry) && ((*vertexCacheEntry)->vertexIndex == vertexIndex))
+        {
+            (*vertexCacheEntry)->fetchTime = m_FetchedVertices++;
+            return Yw3d_S_OK;
+        }
 
+        // Check if we can append more vertex.
+        const bool canAppend = (m_NumValidCacheEntries < YW3D_VERTEX_CACHE_SIZE);
+
+        // Find vertex in cache.
+        Yw3dVertexCacheEntry* cacheEntry = m_VertexCache[0];
+        Yw3dVertexCacheEntry* destEntry = cacheEntry;
+        for (int i = 0; i < m_NumValidCacheEntries; i++, cacheEntry++)
+        {
+            if (cacheEntry->vertexIndex == vertexIndex)
+            {
+                // Vertex is already in cache, return it.
+                cacheEntry->fetchTime = m_FetchedVertices++;
+                *vertexCacheEntry = cacheEntry;
+
+                return Yw3d_S_OK;
+            }
+
+            // if (!canAppend) // Profiling turned out, that leaving this away is faster because most of the time we can't append anyway.
+            {
+                // The vertex cache is full, so we have to look for the oldest entry and replace it in case we cannot find the desired vertex in the cache.
+                if (cacheEntry->fetchTime < destEntry->fetchTime)
+                {
+                    destEntry = cacheEntry;
+                }
+            }
+        }
+
+        // The cache is not full yet, so we can append a new vertex.
+        if (canAppend)
+        {
+            destEntry = m_VertexCache[m_NumValidCacheEntries++];
+        }
+
+        // Update the destination cache entry and return it
+        destEntry->vertexIndex = vertexIndex;
+        destEntry->fetchTime = m_FetchedVertices++;
+
+        // Decode this vertex data from stream.
+        Yw3dResult resDecode = DecodeVertexStream(destEntry->vertexOutput->sourceInput, vertexIndex);
+        if (YW3D_FAILED(resDecode))
+        {
+            return resDecode;
+        }
+
+        // Execute vertex shader.
+        //m_VertexShader->Execute();
+
+        // Fill result.
+        *vertexCacheEntry = destEntry;
+
+        return Yw3d_S_OK;
     }
 }
