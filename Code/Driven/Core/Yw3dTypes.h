@@ -236,18 +236,18 @@ enum Yw3dClippingPlanes
 namespace yw
 {
     // Defines a rectangle.
-    struct Rect
+    struct Yw3dRect
     {
         uint32_t left;
         uint32_t right;
         uint32_t top;
         uint32_t bottom;
 
-        Rect() : left(0), right(0), top(0), bottom(0) {}
+        Yw3dRect() : left(0), right(0), top(0), bottom(0) {}
     };
 
     // Defines a box. Added for volume texture support.
-    struct Box
+    struct Yw3dBox
     {
         uint32_t left;
         uint32_t right;
@@ -256,11 +256,11 @@ namespace yw
         uint32_t front;
         uint32_t back;
 
-        Box() : left(-1), right(1), bottom(-1), top(1), back(-1), front(1) {}
+        Yw3dBox() : left(0), right(1), bottom(0), top(1), back(0), front(1) {}
     };
 
     // This structure defines the device parameters.
-    struct DeviceParameters
+    struct Yw3dDeviceParameters
     {
         // Handle to the output window.
         WindowHandle deviceWindow;
@@ -277,11 +277,11 @@ namespace yw
         // Height of dimension of the backbuffer in Pixels.
         uint32_t backBufferHeight;
 
-        DeviceParameters() : deviceWindow(nullptr), windowed(false), fullScreenColorBits(32), backBufferWidth(0), backBufferHeight(0)
+        Yw3dDeviceParameters() : deviceWindow(nullptr), windowed(false), fullScreenColorBits(32), backBufferWidth(0), backBufferHeight(0)
     };
 
     // Describes a vertex element.
-    struct VertexElement
+    struct Yw3dVertexElement
     {
         // Index of the stream this element is loaded from.
         uint32_t stream;
@@ -292,7 +292,7 @@ namespace yw
         // The register of the vertex shader the vertex element's value will be passed to.
         uint32_t register;
 
-        VertexElement() : stream(-1), type(Yw3d_VET_Vector3), register(-1) {}
+        Yw3dVertexElement() : stream(-1), type(Yw3d_VET_Vector3), register(0) {}
     };
 
     // Helper-macro for vertex format declaration.
@@ -314,43 +314,43 @@ namespace yw
     typedef Matrix44 float44;
 
     // A shader register is 128-bits wide and is divided into four floating-point-values.
-    typedef float4 ShaderRegister;
+    typedef float4 Yw3dShaderRegister;
 
     // Describes the vertex shader input.
     // @note This structure is used internally by devices.
-    struct VSInput
+    struct Yw3dVSInput
     {
         // Vertex shader input registers.
-        ShaderRegister shaderInputs[YW3D_VERTEX_SHADER_REGISTERS];
+        Yw3dShaderRegister shaderInputs[YW3D_VERTEX_SHADER_REGISTERS];
 
-        VSInput() {}
+        Yw3dVSInput() {}
     };
 
     // Describes the vertex shader output.
     // @note This structure is used internally by devices.
-    struct VSOutput
+    struct Yw3dVSOutput
     {
         // Original vertex shader input fetched from vertex streams; added for triangle subdivision.
-        VSInput sourceInput;
+        Yw3dVSInput sourceInput;
 
         // Position of this vertex.(projected)
         Vector4 position;
 
         // Vertex shader output registers, which are in turn used as pixel shader input registers.
-        ShaderRegister shaderOutputs[YW3D_PIXEL_SHADER_REGISTERS];
+        Yw3dShaderRegister shaderOutputs[YW3D_PIXEL_SHADER_REGISTERS];
 
-        VSOutput() {}
+        Yw3dVSOutput() {}
     };
 
     // Describes a structure that is used for triangle gradient storage.
     // @note This structure is used internally by devices.
-    struct TriangleInfo
+    struct Yw3dTriangleInfo
     {
         // Gradient constant.
         float commonGradient;
 
         // Base vertex for gradient computations.
-        const VSOutput* baseVertex;
+        const Yw3dVSOutput* baseVertex;
 
         // z partial derivatives with respect to the screen-space x- and y-coordinates.
 	    float zDdx;
@@ -361,10 +361,10 @@ namespace yw
         float wDdy;
 
         // Shader register partial derivatives with respect to the screen-space x-coordinate.
-        ShaderRegister shaderOutputsDdx[YW3D_PIXEL_SHADER_REGISTERS];
+        Yw3dShaderRegister shaderOutputsDdx[YW3D_PIXEL_SHADER_REGISTERS];
 
         // Shader register partial derivatives with respect to the screen-space y-coordinate.
-        ShaderRegister shaderOutputsDdy[YW3D_PIXEL_SHADER_REGISTERS];
+        Yw3dShaderRegister shaderOutputsDdy[YW3D_PIXEL_SHADER_REGISTERS];
 
         // Integer-coordinates of current pixel; needed by pixel shader for computation of partial derivatives.
         uint32_t curPixelX;
@@ -373,23 +373,23 @@ namespace yw
         // 1.0f / w of the current pixel; needed by pixel shader for computation of partial derivatives.
         float curPixelInvW;
 
-        TriangleInfo() : commonGradient(0.0f), baseVertex(nullptr), zDdx(0.0f), zDdy(0.0f), wDdx(0.0f), wDdy(0.0f), curPixelX(0), curPixelY(0), curPixelInvW(1.0f) {}
+        Yw3dTriangleInfo() : commonGradient(0.0f), baseVertex(nullptr), zDdx(0.0f), zDdy(0.0f), wDdx(0.0f), wDdy(0.0f), curPixelX(0), curPixelY(0), curPixelInvW(1.0f) {}
     };
 
     // Describes a structure that is used for vertex caching.
     // @note This structure is used internally by devices.
-    struct VertexCacheEntry
+    struct Yw3dVertexCacheEntry
     {
         // Index of the contained vertex in the vertex buffer.
         uint32_t vertexIndex;
 
         // Vertex shader output, vertex data.
-        VSOutput vertexOutput;
+        Yw3dVSOutput vertexOutput;
 
         // Whenever a vertex cache entry is reserved for drawing (updated or simply 'touched and returned') its fetch-time is set to m_FetchedVertices.
         uint32_t fetchTime;
 
-        VertexCacheEntry() : vertexIndex(-1), fetchTime(-1) {}
+        Yw3dVertexCacheEntry() : vertexIndex(0), fetchTime(0) {}
     };
 }
 

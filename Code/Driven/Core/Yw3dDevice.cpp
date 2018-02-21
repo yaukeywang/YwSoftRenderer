@@ -69,7 +69,7 @@ namespace yw
         bool flip4TriStrip = false; // used when drawing triangle strips.
         while (primitiveCount-- > 0)
         {
-            VertexCacheEntry* vertices = {nullptr, nullptr, nullptr};
+            Yw3dVertexCacheEntry* vertices = {nullptr, nullptr, nullptr};
             for (uint32_t i = 0; i < 3; i++)
             {
                 // Fetch the 3 vertices of this primitive.
@@ -159,7 +159,7 @@ namespace yw
         bool flip4TriStrip = false; // used when drawing triangle strips.
         while (primitiveCount-- > 0)
         {
-            VertexCacheEntry* vertices = {nullptr, nullptr, nullptr};
+            Yw3dVertexCacheEntry* vertices = {nullptr, nullptr, nullptr};
             for (uint32_t i = 0; i < 3; i++)
             {
                 uint32_t vertexIndex = 0;
@@ -168,7 +168,7 @@ namespace yw
                 {
                     LOGE(_T("Yw3dDevice::DrawIndexedPrimitive: couldn't read vertex index from indexbuffer.\n"));
 				    PostRender();
-                    
+
 				    return resGetVertexIndex;
                 }
 
@@ -231,5 +231,76 @@ namespace yw
     void Yw3dDevice::PostRender()
     {
         return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dDevice::DecodeVertexStream(Yw3dVSInput& vertexShaderInput, uint32_t vertexIndex)
+    {
+        // Raw vertex data cache for each stream.
+        const byte* vertexRawData[YW3D_MAX_VERTEX_STREAMS];
+        memset(vertexRawData, 0, sizeof(byte) * YW3D_MAX_VERTEX_STREAMS);
+
+        // Get start vertex index in vertex buffer of each stream.
+        const VertexStream* vertexStream = m_VertexStreams;
+        for (int streamIdx = 0; streamIdx < m_VertexFormat->GetHighestStream(); streamIdx++; vertexStream++)
+        {
+            uint32_t vertexOffset = vertexStream->offset + vertexIndex * vertexStream->stride;
+            if (vertexOffset >= vertexStream->vertexBuffer->GetLength())
+            {
+                LOGE(_T("Yw3dDevice::DecodeVertexStream: vertex stream offset exceeds vertex buffer length.\n"));
+			    return Yw3d_E_Unknown;
+            }
+
+            // Get vertex raw data at start index in this stream.
+            Yw3dResult resVertex = vertexStream->vertexBuffer->GetPointer(vertexOffset, (void**)&vertexRawData[streamIdx]);
+            if (YW3D_FAILED(resVertex))
+            {
+                return resVertex;
+            }
+        }
+
+        // Fill vertex-info structure, which can be passed to the vertex shader,
+        // with data from the vertex-streams, depending on the current VertexFormat.
+        const Yw3dVertexElement* vertexElement = m_VertexFormat->GetElements();
+        uint32_t elementCount = m_VertexFormat->GetNumVertexElements();
+        while (elementCount-- > 0)
+        {
+            // The result holder of this shader register.
+            Yw3dShaderRegister& shaderRegister = vertexShaderInput->shaderInputs[vertexElement->register];
+            
+            // Convert vertex raw data from byte into float.
+            const float* vertexData = (const float*)vertexRawData[vertexElement->stream];
+
+            // Fill this shader register result by register type, and read from vertex data.
+            switch (vertexElement->type)
+            {
+            case Yw3d_VET_Float:
+                shaderRegister = Yw3dShaderRegister(vertexData[0], 0.0f, 0.0f, 0.0f);
+                vertexRawData[vertexElement->stream] += sizeof(float);
+                break;
+            case Yw3d_VET_Vector2;
+                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], 0.0f, 0.0f);
+                vertexRawData[vertexElement->stream] += sizeof(float) * 2;
+                break;
+            case Yw3d_VET_Vector3:
+                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], vertexData[2], 0.0f);
+                vertexRawData[vertexElement->stream] += sizeof(float) * 3;
+                break;
+            case Yw3d_VET_Vector4:
+                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], vertexData[2], vertexData[3]);
+                vertexRawData[vertexElement->stream] += sizeof(float) * 4;
+                break;
+            default:
+                // Can not happen.
+                break;
+            }
+        }
+
+        // Get next vertex element format.
+        vertexElement++;
+    }
+
+    Yw3dResult Yw3dDevice::FetchVertex(Yw3dVertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex)
+    {
+
     }
 }

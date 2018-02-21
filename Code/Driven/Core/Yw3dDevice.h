@@ -69,21 +69,23 @@ namespace yw
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_InvalidState if an invalid state was encountered.
-        result DecodeVertexStream(VSInput& vertexShaderInput, uint32_t vertexIndex);
+        Yw3dResult DecodeVertexStream(Yw3dVSInput& vertexShaderInput, uint32_t vertexIndex);
 
         // Fetches a vertex from the current vertex streams and transforms it by calling the vertex shader.
         // This function also takes care of caching transformed vertices.
         // @param[in,out] vertexCacheEntry receives a pointer to the cache-entry holding the transformed vertex. (in-parameter, because a check is performed to see if the pointer already points to the desired vertex)
         // @param[in] vertexIndex index of the vertex.
-        result FetchVertex(VertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex);
+        Yw3dResult FetchVertex(Yw3dVertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex);
 
         // Begins the processing-pipeline that works on a per-triangle base. Either continues to the clipping-stage or takes care of subdivision.
         // @param[in] vsOutput0 vertex A.
         // @param[in] vsOutput1 vertex B.
         // @param[in] vsOutput2 vertex C.
-        void ProcessTriangle(const VSOutput* vsOutput0, const VSOutput* vsOutput1, const VSOutput* vsOutput2);
+        void ProcessTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
 
     private:
+        // ------------------------------------------------------------------
+
         // The vertex format.
         class Yw3dVertexFormat* m_VertexFormat;
 
@@ -101,6 +103,41 @@ namespace yw
 
         // The index buffer.
         class Yw3dIndexBuffer* m_IndexBuffer;
+
+        // ------------------------------------------------------------------
+
+        /// @internal Describes a vertex stream.
+        /// @note This structure is used internally by devices.
+        struct VertexStream
+        {
+            // Pointer to the vertex buffer.
+            class Yw3dVertexBuffer* vertexBuffer;
+
+            // Offset from the beginning of the vertex buffer in bytes.
+            uint32_t offset;
+
+            //< Stride in bytes.
+            uint32_t stride;
+
+            VertexStream() : vertexBuffer(nullptr), offset(0), stride(0) {}
+        };
+
+        // The vertex streams;
+        m_VertexStreams[c_iMaxVertexStreams];
+
+        // ------------------------------------------------------------------
+
+        // Contains gradient information that serves as the base for scanline-conversion.
+        Yw3dTriangleInfo m_TriangleInfo;
+
+        // Number of valid vertex cache entries - reset before each draw-call.
+        uint32_t m_NumValidCacheEntries;
+
+        // Amount of fetched vertices - reset before each draw-call.
+        uint32_t m_FetchedVertices;
+
+        // Vertex cache contents.        
+        Yw3dVertexCacheEntry m_VertexCache[YW3D_VERTEX_CACHE_SIZE];
     };
 }
 
