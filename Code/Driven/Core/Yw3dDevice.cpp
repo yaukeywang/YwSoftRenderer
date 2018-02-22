@@ -223,6 +223,11 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
+    {
+        return Yw3d_E_Unknown;
+    }
+
     Yw3dResult Yw3dDevice::PreRender()
     {
         return Yw3d_E_Unknown;

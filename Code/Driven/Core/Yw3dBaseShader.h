@@ -42,23 +42,23 @@ namespace yw
         // @param[in] index index of the constant.
         const Matrix44& GetMatrix(uint32_t index) const;
 
-protected:
-    // Accessible by Yw3dDevice - Sets the rendering-device.
-	// @param[in] device the device.
-	void SetDevice(class Yw3dDevice* device);
+    protected:
+        // Accessible by Yw3dDevice - Sets the rendering-device.
+        // @param[in] device the device.
+        void SetDevice(class Yw3dDevice* device);
 
-    // Samples the texture and returns the looked-up color. This simply functions
-	// simply forwards the sampling-call to the device.
-	// @param[out] color receives the color of the pixel to be looked up.
-	// @param[in] samplerNumber number of the sampler.
-	// @param[in] u u-component of the lookup-vector.
-	// @param[in] v v-component of the lookup-vector.
-	// @param[in] w w-component of the lookup-vector.
-	// @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate (optional, base for mip-level calculations).
-	// @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate (optional, base for mip-level calculations).
-	// @return Yw3d_S_OK if the function succeeds.
-	// @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-	Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, const Vector4* xGradient = 0.0f, const Vector4* yGradient = 0.0f);
+        // Samples the texture and returns the looked-up color. This simply functions
+        // simply forwards the sampling-call to the device.
+        // @param[out] color receives the color of the pixel to be looked up.
+        // @param[in] samplerNumber number of the sampler.
+        // @param[in] u u-component of the lookup-vector.
+        // @param[in] v v-component of the lookup-vector.
+        // @param[in] w w-component of the lookup-vector.
+        // @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate (optional, base for mip-level calculations).
+        // @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate (optional, base for mip-level calculations).
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, const Vector4* xGradient = 0.0f, const Vector4* yGradient = 0.0f);
 
     private:
         // Single float-constants.
