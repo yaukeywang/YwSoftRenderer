@@ -8,6 +8,7 @@
 #include "Yw3dIndexBuffer.h"
 #include "Yw3dPrimitiveAssembler.h"
 #include "Yw3dRenderTarget.h"
+#include "Yw3dShader.h"
 #include "Yw3dSurface.h"
 #include "Yw3dVertexBuffer.h"
 #include "Yw3dVertexFormat.h"
@@ -357,7 +358,7 @@ namespace yw
         }
 
         // Execute vertex shader.
-        //m_VertexShader->Execute();
+        m_VertexShader->Execute(destEntry->vertexOutput->sourceInput->shaderInputs, destEntry->vertexOutput->position, destEntry->vertexOutput->shaderOutputs);
 
         // Fill result.
         *vertexCacheEntry = destEntry;
