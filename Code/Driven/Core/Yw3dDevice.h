@@ -53,6 +53,18 @@ namespace yw
         // @return Yw3d_E_InvalidState if an invalid state was encountered.
         Yw3dResult DrawIndexedPrimitive(Yw3dPrimitiveType primitiveType, uint32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount);
 
+        // Samples the texture and returns the looked-up color.
+        // @param[out] color receives the color of the pixel to be looked up.
+        // @param[in] samplerNumber number of the sampler.
+        // @param[in] u u-component of the lookup-vector.
+        // @param[in] v v-component of the lookup-vector.
+        // @param[in] w w-component of the lookup-vector.
+        // @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate (optional, base for mip-level calculations).
+        // @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate (optional, base for mip-level calculations).
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, const Vector4* xGradient = 0.0f, const Vector4* yGradient = 0.0f);
+
     private:
         // Prepares internal structure with information used for rendering.
         // Checks if all necessary objects (vertexbuffer, vertex format, etc.) have been set + if renderstates are valid.
