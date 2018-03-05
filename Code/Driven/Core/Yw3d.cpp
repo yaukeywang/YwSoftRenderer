@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Yw3d.h"
 
-namespace Yw3d
+namespace yw
 {
     Yw3d::Yw3d()
     {

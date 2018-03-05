@@ -45,28 +45,28 @@ namespace yw
         const Yw3dVertexElement* curElement = vertexDeclaration;
         for (uint32_t element = 0; element < m_NumVertexElements; element++, curElement++)
         {
-            if (curElement->Stream >= YW3D_MAX_VERTEX_STREAMS)
+            if (curElement->stream >= YW3D_MAX_VERTEX_STREAMS)
             {
                 LOGE(_T("Yw3dVertexFormat::Create: vertex element's stream number exceeds number of available streams.\n"));
                 return Yw3d_E_InvalidParameters;
             }
 
-            if (curElement->Register >= YW3D_VERTEX_SHADER_REGISTERS)
+            if (curElement->shaderRegister >= YW3D_VERTEX_SHADER_REGISTERS)
             {
                 LOGE(_T("Yw3dVertexFormat::Create: vertex element's target register exceeds number of available vertex shader registers.\n"));
                 return Yw3d_E_InvalidParameters;
             }
 
-            if ((curElement->Type < Yw3d_VET_Float) || (curElement->Type > Yw3d_VET_Vector4))
+            if ((curElement->type < Yw3d_VET_Float) || (curElement->type > Yw3d_VET_Vector4))
             {
                 LOGE(_T("Yw3dVertexFormat::Create: vertex element has invalid type.\n"));
                 return Yw3d_E_InvalidParameters;
             }
 
             // Get highest stream.
-            if (curElement->Stream > m_HighestStream)
+            if (curElement->stream > m_HighestStream)
             {
-                m_HighestStream = curElement->Stream;
+                m_HighestStream = curElement->stream;
             }
         }
 

@@ -16,7 +16,7 @@
 namespace yw
 {
     Yw3dDevice::Yw3dDevice(Yw3d* yw3d, const Yw3dDeviceParameters* deviceParameters) :
-        m_pVertexFormat(nullptr),
+        m_VertexFormat(nullptr),
         m_PrimitiveAssembler(nullptr),
         m_VertexShader(nullptr),
         m_TriangleShader(nullptr),
@@ -47,13 +47,13 @@ namespace yw
         switch (primitiveType)
         {
         case Yw3d_PT_TriangleFan:
-            primitiveType = primitiveCount + 2;
+            numVertices = primitiveCount + 2;
             break;
         case Yw3d_PT_TriangleStrip:
-            primitiveType = primitiveCount + 2;
+            numVertices = primitiveCount + 2;
             break;
         case Yw3d_PT_TriangleList:
-            primitiveType = primitiveCount * 3;
+            numVertices = primitiveCount * 3;
             break;
         default:
             LOGE(_T("Yw3dDevice::DrawPrimitive: invalid primitive type specified.\n"));
@@ -66,11 +66,11 @@ namespace yw
             return resCheck;
         }
 
-        uint32_t vertexIndicies = {startVertex, startVertex + 1, startVertex + 2};
+        uint32_t vertexIndicies[3] = { startVertex, startVertex + 1, startVertex + 2 };
         bool flip4TriStrip = false; // used when drawing triangle strips.
         while (primitiveCount-- > 0)
         {
-            Yw3dVertexCacheEntry* vertices = {nullptr, nullptr, nullptr};
+            Yw3dVertexCacheEntry* vertices[3] = {nullptr, nullptr, nullptr};
             for (uint32_t i = 0; i < 3; i++)
             {
                 // Fetch the 3 vertices of this primitive.
@@ -87,11 +87,11 @@ namespace yw
             // Process this triangle.
             if (flip4TriStrip)
             {
-                ProcessTriangle(vertices[0]->vertexOutput, vertices[2]->vertexOutput, vertices[1]->vertexOutput);
+                ProcessTriangle(&vertices[0]->vertexOutput, &vertices[2]->vertexOutput, &vertices[1]->vertexOutput);
             }
             else
             {
-                ProcessTriangle(vertices[0]->vertexOutput, vertices[1]->vertexOutput, vertices[2]->vertexOutput);
+                ProcessTriangle(&vertices[0]->vertexOutput, &vertices[1]->vertexOutput, &vertices[2]->vertexOutput);
             }
 
             // Prepare vertex-indices for the next triangle.
@@ -135,19 +135,19 @@ namespace yw
         if (numVertices <= 0)
         {
             LOGE(_T("Yw3dDevice::DrawIndexedPrimitive: number of vertices is 0.\n"));
-            return e_invalidparameters;
+            return Yw3d_E_InvalidParameters;
         }
 
         if ((Yw3d_PT_TriangleFan != primitiveType) || (Yw3d_PT_TriangleStrip != primitiveType) || (Yw3d_PT_TriangleList != primitiveType))
         {
-            LOGE( "Yw3dDevice::DrawIndexedPrimitive: invalid primitive type specified.\n" );
-            return e_invalidparameters;
+            LOGE(_T("Yw3dDevice::DrawIndexedPrimitive: invalid primitive type specified.\n"));
+            return Yw3d_E_InvalidParameters;
         }
 
         if (nullptr == m_IndexBuffer)
         {
-            LOGE( "Yw3dDevice::DrawIndexedPrimitive: no indexbuffer has been set!\n" );
-            return e_invalidstate;
+            LOGE(_T("Yw3dDevice::DrawIndexedPrimitive: no indexbuffer has been set!\n"));
+            return Yw3d_E_InvalidState;
         }
 
         Yw3dResult resCheck = PreRender();
@@ -156,11 +156,11 @@ namespace yw
             return resCheck;
         }
 
-        uint32_t vertexIndicies = {startVertex, startVertex + 1, startVertex + 2};
+        uint32_t vertexIndicies[3] = { startIndex, startIndex + 1, startIndex + 2 };
         bool flip4TriStrip = false; // used when drawing triangle strips.
         while (primitiveCount-- > 0)
         {
-            Yw3dVertexCacheEntry* vertices = {nullptr, nullptr, nullptr};
+            Yw3dVertexCacheEntry* vertices[3] = {nullptr, nullptr, nullptr};
             for (uint32_t i = 0; i < 3; i++)
             {
                 uint32_t vertexIndex = 0;
@@ -187,11 +187,11 @@ namespace yw
             // Process this triangle.
             if (flip4TriStrip)
             {
-                ProcessTriangle(vertices[0]->vertexOutput, vertices[2]->vertexOutput, vertices[1]->vertexOutput);
+                ProcessTriangle(&vertices[0]->vertexOutput, &vertices[2]->vertexOutput, &vertices[1]->vertexOutput);
             }
             else
             {
-                ProcessTriangle(vertices[0]->vertexOutput, vertices[1]->vertexOutput, vertices[2]->vertexOutput);
+                ProcessTriangle(&vertices[0]->vertexOutput, &vertices[1]->vertexOutput, &vertices[2]->vertexOutput);
             }
 
             // Prepare vertex-indices for the next triangle.
@@ -224,7 +224,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
+    Yw3dResult Yw3dDevice::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
     {
         return Yw3d_E_Unknown;
     }
@@ -236,7 +236,7 @@ namespace yw
 
     void Yw3dDevice::PostRender()
     {
-        return Yw3d_E_Unknown;
+        return;
     }
 
     Yw3dResult Yw3dDevice::DecodeVertexStream(Yw3dVSInput& vertexShaderInput, uint32_t vertexIndex)
@@ -247,7 +247,7 @@ namespace yw
 
         // Get start vertex index in vertex buffer of each stream.
         const VertexStream* vertexStream = m_VertexStreams;
-        for (int streamIdx = 0; streamIdx < m_VertexFormat->GetHighestStream(); streamIdx++; vertexStream++)
+        for (uint32_t streamIdx = 0; streamIdx < m_VertexFormat->GetHighestStream(); streamIdx++, vertexStream++)
         {
             uint32_t vertexOffset = vertexStream->offset + vertexIndex * vertexStream->stride;
             if (vertexOffset >= vertexStream->vertexBuffer->GetLength())
@@ -271,7 +271,7 @@ namespace yw
         while (elementCount-- > 0)
         {
             // The result holder of this shader register.
-            Yw3dShaderRegister& shaderRegister = vertexShaderInput->shaderInputs[vertexElement->register];
+            Yw3dShaderRegister& shaderRegister = vertexShaderInput.shaderInputs[vertexElement->shaderRegister];
             
             // Convert vertex raw data from byte into float.
             const float* vertexData = (const float*)vertexRawData[vertexElement->stream];
@@ -283,7 +283,7 @@ namespace yw
                 shaderRegister = Yw3dShaderRegister(vertexData[0], 0.0f, 0.0f, 0.0f);
                 vertexRawData[vertexElement->stream] += sizeof(float);
                 break;
-            case Yw3d_VET_Vector2;
+            case Yw3d_VET_Vector2:
                 shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], 0.0f, 0.0f);
                 vertexRawData[vertexElement->stream] += sizeof(float) * 2;
                 break;
@@ -299,10 +299,12 @@ namespace yw
                 // Can not happen.
                 break;
             }
+
+            // Get next vertex element format.
+            vertexElement++;
         }
 
-        // Get next vertex element format.
-        vertexElement++;
+        return Yw3d_S_OK;
     }
 
     Yw3dResult Yw3dDevice::FetchVertex(Yw3dVertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex)
@@ -317,9 +319,9 @@ namespace yw
         const bool canAppend = (m_NumValidCacheEntries < YW3D_VERTEX_CACHE_SIZE);
 
         // Find vertex in cache.
-        Yw3dVertexCacheEntry* cacheEntry = m_VertexCache[0];
+        Yw3dVertexCacheEntry* cacheEntry = &m_VertexCache[0];
         Yw3dVertexCacheEntry* destEntry = cacheEntry;
-        for (int i = 0; i < m_NumValidCacheEntries; i++, cacheEntry++)
+        for (uint32_t i = 0; i < m_NumValidCacheEntries; i++, cacheEntry++)
         {
             if (cacheEntry->vertexIndex == vertexIndex)
             {
@@ -343,7 +345,7 @@ namespace yw
         // The cache is not full yet, so we can append a new vertex.
         if (canAppend)
         {
-            destEntry = m_VertexCache[m_NumValidCacheEntries++];
+            destEntry = &m_VertexCache[m_NumValidCacheEntries++];
         }
 
         // Update the destination cache entry and return it
@@ -351,18 +353,23 @@ namespace yw
         destEntry->fetchTime = m_FetchedVertices++;
 
         // Decode this vertex data from stream.
-        Yw3dResult resDecode = DecodeVertexStream(destEntry->vertexOutput->sourceInput, vertexIndex);
+        Yw3dResult resDecode = DecodeVertexStream(destEntry->vertexOutput.sourceInput, vertexIndex);
         if (YW3D_FAILED(resDecode))
         {
             return resDecode;
         }
 
         // Execute vertex shader.
-        m_VertexShader->Execute(destEntry->vertexOutput->sourceInput->shaderInputs, destEntry->vertexOutput->position, destEntry->vertexOutput->shaderOutputs);
+        m_VertexShader->Execute(destEntry->vertexOutput.sourceInput.shaderInputs, destEntry->vertexOutput.position, destEntry->vertexOutput.shaderOutputs);
 
         // Fill result.
         *vertexCacheEntry = destEntry;
 
         return Yw3d_S_OK;
+    }
+
+    void Yw3dDevice::ProcessTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+
     }
 }

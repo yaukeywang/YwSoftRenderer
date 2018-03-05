@@ -34,7 +34,7 @@ namespace yw
             return;
         }
 
-        return m_VectorConstants[index];
+        m_VectorConstants[index] = vector;
     }
 
     const Vector4& IYw3dBaseShader::GetVector(uint32_t index) const

@@ -45,7 +45,7 @@ namespace yw
     };
 
     // Defines the pixel shader interface.
-    class IYw3dPixelShader : public IMuli3DBaseShader
+    class IYw3dPixelShader : public IYw3dBaseShader
     {
         friend class Yw3dDevice;
 
