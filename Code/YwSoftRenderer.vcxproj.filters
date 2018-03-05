@@ -127,6 +127,12 @@
     <ClInclude Include="Driven\Core\Yw3dPrimitiveAssembler.h">
       <Filter>Driven\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dBaseShader.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dShader.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -184,6 +190,15 @@
       <Filter>Driven\Core</Filter>
     </ClCompile>
     <ClCompile Include="Driven\Core\Yw3dVertexFormat.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3d.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dBaseShader.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dShader.cpp">
       <Filter>Driven\Core</Filter>
     </ClCompile>
   </ItemGroup>
