@@ -239,7 +239,7 @@ namespace yw
 
     inline void Quaternion::SetRotationAboutAxis(const Vector3& axis, const float theta)
     {
-        assert(fabs(axis.Length() - 1.0f) < FLT_EPSILON);
+        assert(fabs(axis.Length() - 1.0f) < YW_FLOAT_PRECISION);
 
         float halfTheta = theta * 0.5f;
         float s = sin(halfTheta);

@@ -307,7 +307,7 @@ namespace yw
     inline bool Matrix33Inverse(Matrix33& out, const Matrix33& mat)
     {
         const float determinant = Matrix33Determinant(mat);
-        if (fabsf(determinant) < FLT_EPSILON)
+        if (fabsf(determinant) < YW_FLOAT_PRECISION)
         {
             return false;
         }
@@ -651,7 +651,7 @@ namespace yw
     inline bool Matrix44Inverse(Matrix44& out, const Matrix44& mat)
     {
         const float determinant = Matrix44Determinant(mat);
-        if (fabsf(determinant) < FLT_EPSILON)
+        if (fabsf(determinant) < YW_FLOAT_PRECISION)
         {
             return false;
         }
