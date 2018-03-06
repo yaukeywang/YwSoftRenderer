@@ -26,6 +26,7 @@ namespace yw
         m_NumValidCacheEntries(0),
         m_FetchedVertices(0)
     {
+        memset(m_RenderStates, 0, Yw3d_RS_NumRenderStates * sizeof(uint32_t));
     }
 
     Yw3dDevice::~Yw3dDevice()
@@ -633,5 +634,20 @@ namespace yw
                 break;
             }
         }
+    }
+
+    void Yw3dDevice::RasterizeTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+
+    }
+
+    void Yw3dDevice::RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1)
+    {
+
+    }
+
+    void Yw3dDevice::RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
+    {
+
     }
 }

@@ -135,6 +135,24 @@ namespace yw
         // @param[in,out] vsOutput vertex shader output.
         void StepXVSOutputFromGradient(Yw3dVSOutput* vsOutput);
 
+        // Rasterizes a single triangle: Performs triangle setup and does scanline-conversion.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void RasterizeTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
+        // Rasterizes a line.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        void RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1);
+
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer. Does not support pixel-killing.
+        // @param[in] y position in rendertarget along y-axis.
+        // @param[in] x1 left position in rendertarget along x-axis.
+        // @param[in] x2 right position in rendertarget along x-axis.
+        // @param[in,out] vsOutput interpolated vertex data.
+        void RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
+
     private:
         // ------------------------------------------------------------------
 
@@ -178,6 +196,9 @@ namespace yw
         VertexStream m_VertexStreams[YW3D_MAX_VERTEX_STREAMS];
 
         // ------------------------------------------------------------------
+
+        // The render state.
+        uint32_t m_RenderStates[Yw3d_RS_NumRenderStates];
 
         // The render target.
         class Yw3dRenderTarget* m_RenderTarget;
