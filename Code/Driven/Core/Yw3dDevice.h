@@ -185,13 +185,83 @@ namespace yw
         // Render information struct of this device.
         struct RenderInfo
         {
+            // ------------------------------------------------------------------
+            // Shader info.
+
             // Holds information about the type of a particular input-register.
             Yw3dShaderRegisterType vsInputRegisterTypes[YW3D_VERTEX_SHADER_REGISTERS];
 
             // Type of vertex shader output-registers.
             Yw3dShaderRegisterType vsOutputRegisterTypes[YW3D_PIXEL_SHADER_REGISTERS];
 
-            RenderInfo() {}
+            // ------------------------------------------------------------------
+            // Frame and color info.
+
+            // Holds a pointer to the colorbuffer data.
+            float* frameData;
+
+            // Number of floats in colorbuffer, e.g. 2 for a vector2-texture.
+            uint32_t colorFloats;
+
+            // Colorbuffer width * number of floats; pitch in multiples of sizeof(float).
+            uint32_t colorBufferPitch;
+
+            // True if writing to the colorbuffer has been enabled + if a colorbuffer is available.
+            bool colorWriteEnabled;
+
+            // ------------------------------------------------------------------
+            // Depth info.
+
+            // Holds a pointer to the depthbuffer data.
+            float* depthData;
+
+            // Depthbuffer width * 1 (depthbuffers may only contain a single float); pitch in multiples of sizeof(float).
+            uint32_t depthBufferPitch;
+
+            // Depth compare-function. If no depthbuffer is available this is m3dcmp_always.
+            Yw3dCompareFunction depthCompare;
+
+            // True if writing to the depthbuffer has been enabled + if a depthbuffer is available.
+            bool depthWriteEnabled;
+
+            // ------------------------------------------------------------------
+            // Rasterize info.
+
+            // Rasterization-function for scanlines (triangle-drawing).
+            void (Yw3dDevice::*RasterizeScanline)(uint32_t, uint32_t, uint32_t, Yw3dVSOutput*);
+
+            // Drawing-function for individual pixels.
+            void (Yw3dDevice::*DrawPixel)(uint32_t, uint32_t, const Yw3dVSOutput*);
+
+            // Counts the number of pixels that pass the depth-test.
+            uint32_t renderedPixels;
+
+            // Active viewport rectangle.
+            Yw3dRect viewportRect;
+
+            // ------------------------------------------------------------------
+            // Clip info.
+
+            // Planes used for clipping, frustum planes are initialized at device creation time.
+            Plane clippingPlanes[Yw3d_CP_NumPlanes];
+
+            // Signals if a particular clipping plane is enabled.
+            bool clippingPlaneEnabled[Yw3d_CP_NumPlanes];
+
+            // Scissor planes used for clipping created from m_ScissorRect;
+            Plane scissorPlanes[4];
+
+            RenderInfo() : 
+                frameData(nullptr), colorFloats(4), colorBufferPitch(0), colorWriteEnabled(true), 
+                depthData(nullptr), depthBufferPitch(0), depthCompare(Yw3d_CMP_Less), depthWriteEnabled(true), 
+                RasterizeScanline(nullptr), DrawPixel(nullptr), renderedPixels(0)
+            {
+                // Init clip plans.
+                for (uint32_t i = 0; i < Yw3d_CP_NumPlanes; i++)
+                {
+                    clippingPlaneEnabled[i] = true;
+                }
+            }
         };
 
         // Current render information of this device.

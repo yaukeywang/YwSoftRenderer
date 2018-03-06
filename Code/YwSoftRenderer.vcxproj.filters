@@ -133,6 +133,9 @@
     <ClInclude Include="Driven\Core\Yw3dShader.h">
       <Filter>Driven\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Math\YwMathPlane.h">
+      <Filter>Driven\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -228,6 +231,9 @@
       <Filter>Driven\Math</Filter>
     </None>
     <None Include="Driven\Math\YwMathMatrix.inl">
+      <Filter>Driven\Math</Filter>
+    </None>
+    <None Include="Driven\Math\YwMathPlane.inl">
       <Filter>Driven\Math</Filter>
     </None>
   </ItemGroup>

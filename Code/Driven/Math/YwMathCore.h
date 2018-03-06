@@ -8,5 +8,6 @@
 #include "YwMathVector.h"
 #include "YwMathQuaternion.h"
 #include "YwMathMatrix.h"
+#include "YwMathPlane.h"
 
 #endif // !__YW_MATH_COMMON_H__

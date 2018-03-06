@@ -172,6 +172,7 @@
     <ClInclude Include="Driven\Core\Yw3dVertexBuffer.h" />
     <ClInclude Include="Driven\Core\Yw3dVertexFormat.h" />
     <ClInclude Include="Driven\Math\YwMathCore.h" />
+    <ClInclude Include="Driven\Math\YwMathPlane.h" />
     <ClInclude Include="Driven\Math\YwMathUtility.h" />
     <ClInclude Include="Driven\Math\YwMathMatrix.h" />
     <ClInclude Include="Driven\Math\YwMathQuaternion.h" />
@@ -231,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Driven\Math\YwMathMatrix.inl" />
+    <None Include="Driven\Math\YwMathPlane.inl" />
     <None Include="Driven\Math\YwMathQuaternion.inl" />
     <None Include="Driven\Math\YwMathVector.inl" />
   </ItemGroup>
