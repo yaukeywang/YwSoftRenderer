@@ -35,6 +35,7 @@ namespace yw
     public:
         // Member functions.
 
+        Vector2& operator =(const float v);
         Vector2& operator =(const Vector2& v);
         Vector2& operator =(const Vector3& v);
         Vector2& operator =(const Vector4& v);
@@ -115,6 +116,7 @@ namespace yw
     public:
         // Member functions.
 
+        Vector3& operator =(const float v);
         Vector3& operator =(const Vector3& v);
         Vector3& operator =(const Vector2& v);
         Vector3& operator =(const Vector4& v);
@@ -212,6 +214,7 @@ namespace yw
     public:
         // Member functions.
 
+        Vector4& operator =(const float v);
         Vector4& operator =(const Vector4& v);
         Vector4& operator =(const Vector2& v);
         Vector4& operator =(const Vector3& v);

@@ -36,6 +36,14 @@ namespace yw
     {
     }
 
+    inline Vector2& Vector2::operator =(const float v)
+    {
+        x = v;
+        y = 0.0f;
+
+        return *this;
+    }
+
     inline Vector2& Vector2::operator =(const Vector2& v)
     {
         x = v.x;
@@ -337,6 +345,15 @@ namespace yw
 
     inline Vector3::Vector3(const Vector4& v) : x(v.x), y(v.y), z(v.z)
     {
+    }
+
+    inline Vector3& Vector3::operator =(const float v)
+    {
+        x = v;
+        y = 0.0f;
+        z = 0.0f;
+
+        return *this;
     }
 
     inline Vector3& Vector3::operator =(const Vector3& v)
@@ -735,6 +752,16 @@ namespace yw
 
     inline Vector4::Vector4(const Vector3& v) : x(v.x), y(v.y), z(v.z), w(0.0f)
     {
+    }
+
+    inline Vector4& Vector4::operator =(const float v)
+    {
+        x = v;
+        y = 0.0f;
+        z = 0.0f;
+        w = 0.0f;
+
+        return *this;
     }
 
     inline Vector4& Vector4::operator =(const Vector4& v)

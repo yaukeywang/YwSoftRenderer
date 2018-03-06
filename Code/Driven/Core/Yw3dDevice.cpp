@@ -1,4 +1,4 @@
-// Add by Yaukey at 2018-01-30.
+﻿// Add by Yaukey at 2018-01-30.
 // YW Soft Renderer 3d device class.
 
 #include "stdafx.h"
@@ -492,8 +492,9 @@ namespace yw
     void Yw3dDevice::CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
         // References:
-        // Physically Based Rendering, Third Edition : Page 158.
+        // Physically Based Rendering, Third Edition : Page 158 - Compute triangle partial derivatives.
         // Partial derivatives, Directional derivatives, Gradient.
+        // pi = p0 + (∂p/∂u)*ui + (∂p/∂v)*vi.
 
         // Position of each vertex.
         const Vector4& position0 = vsOutput0->position;
@@ -555,6 +556,48 @@ namespace yw
                 }
             case Yw3d_SRT_Unused:
             default:    // Cannot happen.
+                break;
+            }
+        }
+    }
+
+    void Yw3dDevice::SetVSOutputFromGradient(Yw3dVSOutput* vsOutput, float x, float y)
+    {
+        // References:
+        // pi = p0 + (∂p/∂u)*ui + (∂p/∂v)*vi.
+
+        // Get offset x and y from base vertex in screen space.
+        const float offsetX = x - m_TriangleInfo.baseVertex->position.x;
+        const float offsetY = y - m_TriangleInfo.baseVertex->position.y;
+
+        // Get position z and w value from partial derivatives by delta x and delta y.
+        vsOutput->position.z = m_TriangleInfo.baseVertex->position.z + m_TriangleInfo.zDdx * offsetX + m_TriangleInfo.zDdy * offsetY;
+        vsOutput->position.w = m_TriangleInfo.baseVertex->position.w + m_TriangleInfo.wDdx * offsetX + m_TriangleInfo.wDdy * offsetY;
+
+        // Get shader register from partial derivatives by delta x and delta y.
+        Yw3dShaderRegister* regDest = vsOutput->shaderOutputs;
+        const Yw3dShaderRegister* regBase = m_TriangleInfo.baseVertex->shaderOutputs;
+        const Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
+        const Yw3dShaderRegister* regDdy = m_TriangleInfo.shaderOutputsDdy;
+
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, regDest++, regBase++, regDdx++, regDdy++)
+        {
+            switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
+            {
+            case Yw3d_SRT_Float32:
+                *regDest = *(float*)regBase + *(float*)regDdx * offsetX + *(float*)regDdy * offsetY;
+                break;
+            case Yw3d_SRT_Vector2:
+                *regDest = *(Vector2*)regBase + *(Vector2*)regDdx * offsetX + *(Vector2*)regDdy * offsetY;
+                break;
+            case Yw3d_SRT_Vector3:
+                *regDest = *(Vector3*)regBase + *(Vector3*)regDdx * offsetX + *(Vector3*)regDdy * offsetY;
+                break;
+            case Yw3d_SRT_Vector4:
+                *regDest = *(Vector4*)regBase + *(Vector4*)regDdx * offsetX + *(Vector4*)regDdy * offsetY;
+                break;
+            case Yw3d_SRT_Unused:
+            default:    // This can not happen.
                 break;
             }
         }

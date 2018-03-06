@@ -125,6 +125,12 @@ namespace yw
         // @param[in] vsOutput2 vertex C.
         void CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
 
+        // Sets shader registers from triangle gradients.
+        // @param[in,out] vsOutput vertex shader output.
+        // @param[in] x screen space x-coordinate.
+        // @param[in] y screen space y-coordinate.
+        void SetVSOutputFromGradient(Yw3dVSOutput* vsOutput, float x, float y);
+
     private:
         // ------------------------------------------------------------------
 
