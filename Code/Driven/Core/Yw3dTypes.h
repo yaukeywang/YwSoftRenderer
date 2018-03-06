@@ -202,7 +202,7 @@ enum Yw3dPixelShaderOutput
 };
 
 // Specifies the type of a particular shader register.
-enum Yw3dShaderRegType
+enum Yw3dShaderRegisterType
 {
 	Yw3d_SRT_Unused = 0,    // Specifies that the register is unused.
 	Yw3d_SRT_Float32,       // Specifies that the register should be treated as a single float.

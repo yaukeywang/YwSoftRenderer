@@ -6,7 +6,7 @@
 
 namespace yw
 {
-    void IYw3dPixelShader::SetInfo(const Yw3dShaderRegType* vsOutputs, const Yw3dTriangleInfo* triangleInfo)
+    void IYw3dPixelShader::SetInfo(const Yw3dShaderRegisterType* vsOutputs, const Yw3dTriangleInfo* triangleInfo)
     {
         m_VSOutputs = vsOutputs;
         m_TriangleInfo = triangleInfo;

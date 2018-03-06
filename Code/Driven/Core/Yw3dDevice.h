@@ -95,6 +95,26 @@ namespace yw
         // @param[in] vsOutput2 vertex C.
         void ProcessTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
 
+        // Interpolates between two vertex shader inputs (used for subdivision).
+        // @param[out] vsInput output.
+        // @param[in] vsInputA input A.
+        // @param[in] vsInputB input B.
+        // @param[in] interpolation interpolation value e [0,1].
+        void InterpolateVertexShaderInput(Yw3dVSInput* vsInput, const Yw3dVSInput* vsInputA, const Yw3dVSInput* vsInputB, float interpolation);
+
+        // Interpolates between two vertex shader outputs.
+        // @param[out] vsOutput output.
+        // @param[in] vsOutputA input A.
+        // @param[in] vsOutputB input B.
+        // @param[in] interpolation interpolation value e [0;1].
+        void InterpolateVertexShaderOutput(Yw3dVSOutput* vsOutput, const Yw3dVSOutput* vsOutputA, const Yw3dVSOutput* vsOutputB, float interpolation);
+
+        // Multiples a vertex shader output's registers by a floating point value.
+        // @param[out] dest vertex shader output destination.
+        // @param[in] src vertex shader output source.
+        // @param[in] value floating point value to multiply registers with.
+        void MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value);
+
         // Projects a vertex and prepares it for interpolation during rasterization.
         // @param[in,out] vsOutput the vertex.
         void ProjectVertex(Yw3dVSOutput* vsOutput);
@@ -149,14 +169,19 @@ namespace yw
 
         // ------------------------------------------------------------------
 
+        // The render target.
+        class Yw3dRenderTarget* m_RenderTarget;
+
         // Render information struct of this device.
         struct RenderInfo
         {
             // Holds information about the type of a particular input-register.
-            Yw3dShaderRegType vsInputRegTypes[YW3D_VERTEX_SHADER_REGISTERS];
+            Yw3dShaderRegisterType vsInputRegisterTypes[YW3D_VERTEX_SHADER_REGISTERS];
 
             // Type of vertex shader output-registers.
-            Yw3dShaderRegType vsOutputRegTypes[YW3D_PIXEL_SHADER_REGISTERS];
+            Yw3dShaderRegisterType vsOutputRegisterTypes[YW3D_PIXEL_SHADER_REGISTERS];
+
+            RenderInfo() {}
         };
 
         // Current render information of this device.

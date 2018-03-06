@@ -25,7 +25,7 @@ namespace yw
 
         // Returns the type of a particular output register. Member of the enumeration Yw3dShaderRegType; if a given register is not used, return Yw3d_SRT_Unused.
         // @param[in] register index of register, e [0,YW3D_PIXEL_SHADER_REGISTERS].
-        virtual Yw3dShaderRegType GetOutputRegisters(uint32_t register) = 0;
+        virtual Yw3dShaderRegisterType GetOutputRegisters(uint32_t register) = 0;
     };
 
     // Defines the triangle shader interface.
@@ -68,7 +68,7 @@ namespace yw
         // Accessible by Yw3dDevice - Sets the triangle info.
         // @param[in] vsOutputs pointer to the pixel shader input register-types.
         // @param[in] triangleInfo pointer to the triangle info structure.
-        void SetInfo(const Yw3dShaderRegType* vsOutputs, const struct Yw3dTriangleInfo* triangleInfo);
+        void SetInfo(const Yw3dShaderRegisterType* vsOutputs, const struct Yw3dTriangleInfo* triangleInfo);
 
         // This functions computes the partial derivatives of a shader register with respect to the screen space coordinates.
         // @param[in] register index of the source shader register.
@@ -78,7 +78,7 @@ namespace yw
 
     private:
         // Register type info.
-        const Yw3dShaderRegType* m_VSOutputs;
+        const Yw3dShaderRegisterType* m_VSOutputs;
 
         // Gradient info about the triangle that is currently being drawn.
 	    const struct Yw3dTriangleInfo* m_TriangleInfo;

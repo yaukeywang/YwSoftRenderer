@@ -21,7 +21,10 @@ namespace yw
         m_VertexShader(nullptr),
         m_TriangleShader(nullptr),
         m_PixelShader(nullptr),
-        m_IndexBuffer(nullptr)
+        m_IndexBuffer(nullptr),
+        m_RenderTarget(nullptr),
+        m_NumValidCacheEntries(0),
+        m_FetchedVertices(0)
     {
     }
 
@@ -373,9 +376,117 @@ namespace yw
 
     }
 
+    void Yw3dDevice::InterpolateVertexShaderInput(Yw3dVSInput* vsInput, const Yw3dVSInput* vsInputA, const Yw3dVSInput* vsInputB, float interpolation)
+    {
+        // Interpolate registers.
+        Yw3dShaderRegister* regO = vsInput->shaderInputs;
+        const Yw3dShaderRegister* regA = vsInput->shaderInputs;
+        const Yw3dShaderRegister* regB = vsInput->shaderInputs;
+
+        for (uint32_t regIdx = 0; regIdx < YW3D_VERTEX_SHADER_REGISTERS; regIdx++, regO++, regA++, regB++)
+        {
+            switch (m_RenderInfo.vsInputRegisterTypes[regIdx])
+            {
+            case Yw3d_SRT_Float32:
+                regO->x = Lerp(regA->x, regB->x, interpolation);
+                regO->y = 0.0f;
+                regO->z = 0.0f;
+                regO->w = 1.0f;
+                break;
+            case Yw3d_SRT_Vector2:
+                regO->x = Lerp(regA->x, regB->x, interpolation);
+                regO->y = Lerp(regA->y, regB->y, interpolation);
+                regO->z = 0.0f;
+                regO->w = 1.0f;
+                break;
+            case Yw3d_SRT_Vector3:
+                regO->x = Lerp(regA->x, regB->x, interpolation);
+                regO->y = Lerp(regA->y, regB->y, interpolation);
+                regO->z = Lerp(regA->z, regB->z, interpolation);
+                regO->w = 1.0f;
+                break;
+            case Yw3d_SRT_Vector4:
+                Vector4Lerp(*regO, *regA, *regB, interpolation);
+                break;
+            case Yw3d_SRT_Unused:
+            default:    // This can not happen.
+                break;
+            }
+        }
+    }
+
+    void Yw3dDevice::InterpolateVertexShaderOutput(Yw3dVSOutput* vsOutput, const Yw3dVSOutput* vsOutputA, const Yw3dVSOutput* vsOutputB, float interpolation)
+    {
+        // Interpolate vertex position.
+        Vector4Lerp(vsOutput->position, vsOutputA->position, vsOutputB->position, interpolation);
+
+        // Interpolate registers.
+        Yw3dShaderRegister* regO = vsOutput->shaderOutputs;
+        const Yw3dShaderRegister* regA = vsOutputA->shaderOutputs;
+        const Yw3dShaderRegister* regB = vsOutputB->shaderOutputs;
+
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, regO++, regA++, regB++)
+        {
+            switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
+            {
+            case Yw3d_SRT_Vector4:
+                regO->w = Lerp(regA->w, regB->w, interpolation);
+            case Yw3d_SRT_Vector3:
+                regO->z = Lerp(regA->z, regB->z, interpolation);
+            case Yw3d_SRT_Vector2:
+                regO->y = Lerp(regA->y, regB->y, interpolation);
+            case Yw3d_SRT_Float32:
+                regO->x = Lerp(regA->x, regB->x, interpolation);
+            case Yw3d_SRT_Unused:
+            default:    // This can not happen.
+                break;
+            }
+        }
+    }
+
+    void Yw3dDevice::MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value)
+    {
+        // Multiply registers.
+        Yw3dShaderRegister* destRegister = dest->shaderOutputs;
+        const Yw3dShaderRegister* srcRegister = src->shaderOutputs;
+
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, destRegister++, srcRegister++)
+        {
+            switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
+            {
+            case Yw3d_SRT_Vector4:
+                destRegister->w = srcRegister->w * value;
+            case Yw3d_SRT_Vector3:
+                destRegister->z = srcRegister->z * value;
+            case Yw3d_SRT_Vector2:
+                destRegister->y = srcRegister->y * value;
+            case Yw3d_SRT_Float32:
+                destRegister->x = srcRegister->x * value;
+            case Yw3d_SRT_Unused:
+            default:    // Can not happen.
+                break;
+            }
+        }
+    }
+
     void Yw3dDevice::ProjectVertex(Yw3dVSOutput* vsOutput)
     {
+        if (vsOutput->position.w < YW_FLOAT_PRECISION)
+        {
+            return;
+        }
 
+        const float invW = 1.0f / vsOutput->position.w;
+        vsOutput->position.x *= invW;
+        vsOutput->position.y *= invW;
+        vsOutput->position.z *= invW;
+        vsOutput->position.w = 1.0f;
+
+        vsOutput->position *= m_RenderTarget->GetViewportMatrix();
+
+        // Divide shader output registers by w(1/z); this way we can interpolate them linearly while rasterizing ...
+        vsOutput->position.w = invW;
+        MultiplyVertexShaderOutputRegisters(vsOutput, vsOutput, invW);
     }
 
     void Yw3dDevice::CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
@@ -416,7 +527,7 @@ namespace yw
         Yw3dShaderRegister* destDdy = m_TriangleInfo.shaderOutputsDdy;
         for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, destDdx++, destDdy++)
         {
-            switch (m_RenderInfo.vsOutputRegTypes[regIdx])
+            switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
             {
             case Yw3d_SRT_Vector4:
                 {
