@@ -447,21 +447,21 @@ namespace yw
     void Yw3dDevice::MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value)
     {
         // Multiply registers.
-        Yw3dShaderRegister* destRegister = dest->shaderOutputs;
-        const Yw3dShaderRegister* srcRegister = src->shaderOutputs;
+        Yw3dShaderRegister* regDest = dest->shaderOutputs;
+        const Yw3dShaderRegister* regSrc = src->shaderOutputs;
 
-        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, destRegister++, srcRegister++)
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, regDest++, regSrc++)
         {
             switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
             {
             case Yw3d_SRT_Vector4:
-                destRegister->w = srcRegister->w * value;
+                regDest->w = regSrc->w * value;
             case Yw3d_SRT_Vector3:
-                destRegister->z = srcRegister->z * value;
+                regDest->z = regSrc->z * value;
             case Yw3d_SRT_Vector2:
-                destRegister->y = srcRegister->y * value;
+                regDest->y = regSrc->y * value;
             case Yw3d_SRT_Float32:
-                destRegister->x = srcRegister->x * value;
+                regDest->x = regSrc->x * value;
             case Yw3d_SRT_Unused:
             default:    // Can not happen.
                 break;
@@ -598,6 +598,38 @@ namespace yw
                 break;
             case Yw3d_SRT_Unused:
             default:    // This can not happen.
+                break;
+            }
+        }
+    }
+
+    inline void Yw3dDevice::StepXVSOutputFromGradient(Yw3dVSOutput* vsOutput)
+    {
+        // Use partial derivatives with respect to the screen-space x-coordinate.
+        // This is the increment of value each time when increasing 1 pixel value in x-coordinate.
+
+        // Get the value of z and w.
+        vsOutput->position.z += m_TriangleInfo.zDdx;
+        vsOutput->position.w += m_TriangleInfo.wDdx;
+
+        // Get the value of each shader register.
+        Yw3dShaderRegister* regDest = vsOutput->shaderOutputs;
+        Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
+
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++)
+        {
+            switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
+            {
+            case Yw3d_SRT_Vector4:
+                regDest->w += regDdx->w;
+            case Yw3d_SRT_Vector3:
+                regDest->z += regDdx->z;
+            case Yw3d_SRT_Vector2:
+                regDest->y += regDdx->y;
+            case Yw3d_SRT_Float32:
+                regDest->x += regDdx->x;
+            case Yw3d_SRT_Unused:
+            default:    // Can not happen.
                 break;
             }
         }

@@ -131,6 +131,10 @@ namespace yw
         // @param[in] y screen space y-coordinate.
         void SetVSOutputFromGradient(Yw3dVSOutput* vsOutput, float x, float y);
 
+        // Updates shader registers from triangle gradients performing a step to the next pixel in the current scanline.
+        // @param[in,out] vsOutput vertex shader output.
+        void StepXVSOutputFromGradient(Yw3dVSOutput* vsOutput);
+
     private:
         // ------------------------------------------------------------------
 
