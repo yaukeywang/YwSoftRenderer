@@ -347,7 +347,7 @@ namespace yw
     struct Yw3dTriangleInfo
     {
         // Gradient constant.
-        float commonGradient;
+        //float commonGradient;
 
         // Base vertex for gradient computations.
         const Yw3dVSOutput* baseVertex;
@@ -373,7 +373,7 @@ namespace yw
         // 1.0f / w of the current pixel; needed by pixel shader for computation of partial derivatives.
         float curPixelInvW;
 
-        Yw3dTriangleInfo() : commonGradient(0.0f), baseVertex(nullptr), zDdx(0.0f), zDdy(0.0f), wDdx(0.0f), wDdy(0.0f), curPixelX(0), curPixelY(0), curPixelInvW(1.0f) {}
+        Yw3dTriangleInfo() : /*commonGradient(0.0f),*/ baseVertex(nullptr), zDdx(0.0f), zDdy(0.0f), wDdx(0.0f), wDdy(0.0f), curPixelX(0), curPixelY(0), curPixelInvW(1.0f) {}
     };
 
     // Describes a structure that is used for vertex caching.

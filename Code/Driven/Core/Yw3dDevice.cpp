@@ -372,4 +372,73 @@ namespace yw
     {
 
     }
+
+    void Yw3dDevice::ProjectVertex(Yw3dVSOutput* vsOutput)
+    {
+
+    }
+
+    void Yw3dDevice::CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+        const Vector4& position0 = vsOutput0->position;
+        const Vector4& position1 = vsOutput1->position;
+        const Vector4& position2 = vsOutput2->position;
+
+        const float deltaX[2] = { position1.x - position0.x, position2.x - position0.x };
+        const float deltaY[2] = { position1.y - position0.y, position2.y - position0.x };
+        const float deltaZ[2] = { position1.z - position0.z, position2.z - position0.z };
+        const float deltaW[2] = { position1.w - position0.w, position2.w - position0.w };
+
+        const float oneOverDeterminant = 1.0f / (deltaX[0] * deltaY[1] - deltaX[1] * deltaY[0]);
+
+        // Set base vertex.
+        m_TriangleInfo.baseVertex = vsOutput0;
+
+        // The derivatives with respect to the y-coordinate are negated, because in screen-space the y-axis is reversed.
+
+        // Get z partial derivatives with respect to the screen-space x and y coordinate.
+        m_TriangleInfo.zDdx = (deltaY[1] * deltaZ[0] - deltaY[0] * deltaZ[1]) * oneOverDeterminant;
+        m_TriangleInfo.zDdy = -(deltaX[1] * deltaZ[0] - deltaX[0] * deltaZ[1]) * oneOverDeterminant;
+
+        // Get w partial derivatives with respect to the screen-space x and y coordinate.
+        m_TriangleInfo.zDdx = (deltaY[1] * deltaW[0] - deltaY[0] * deltaW[1]) * oneOverDeterminant;
+        m_TriangleInfo.zDdy = -(deltaX[1] * deltaW[0] - deltaX[0] * deltaW[1]) * oneOverDeterminant;
+
+        // Calculate shader register partial derivatives with respect to the screen-space x and y coordinate.
+        Yw3dShaderRegister* destDdx = m_TriangleInfo.shaderOutputsDdx;
+        Yw3dShaderRegister* destDdy = m_TriangleInfo.shaderOutputsDdy;
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, destDdx++, destDdy++)
+        {
+            switch (m_RenderInfo.vsOutputRegTypes[regIdx])
+            {
+            case Yw3d_SRT_Vector4:
+                {
+                    const float deltaRegValue[2] = { vsOutput1->shaderOutputs[regIdx].w - vsOutput0->shaderOutputs[regIdx].w, vsOutput2->shaderOutputs[regIdx].w - vsOutput0->shaderOutputs[regIdx].w };
+                    destDdx->w = (deltaY[1] * deltaRegValue[0] - deltaY[0] * deltaRegValue[1]) * oneOverDeterminant;
+                    destDdy->w = -(deltaX[1] * deltaRegValue[0] - deltaX[0] * deltaRegValue[1]) * oneOverDeterminant;
+                }
+            case Yw3d_SRT_Vector3:
+                {
+                    const float deltaRegValue[2] = { vsOutput1->shaderOutputs[regIdx].z - vsOutput0->shaderOutputs[regIdx].z, vsOutput2->shaderOutputs[regIdx].z - vsOutput0->shaderOutputs[regIdx].z };
+                    destDdx->z = (deltaY[1] * deltaRegValue[0] - deltaY[0] * deltaRegValue[1]) * oneOverDeterminant;
+                    destDdy->z = -(deltaX[1] * deltaRegValue[0] - deltaX[0] * deltaRegValue[1]) * oneOverDeterminant;
+                }
+            case Yw3d_SRT_Vector2:
+                {
+                    const float deltaRegValue[2] = { vsOutput1->shaderOutputs[regIdx].y - vsOutput0->shaderOutputs[regIdx].y, vsOutput2->shaderOutputs[regIdx].y - vsOutput0->shaderOutputs[regIdx].y };
+                    destDdx->y = (deltaY[1] * deltaRegValue[0] - deltaY[0] * deltaRegValue[1]) * oneOverDeterminant;
+                    destDdy->y = -(deltaX[1] * deltaRegValue[0] - deltaX[0] * deltaRegValue[1]) * oneOverDeterminant;
+                }
+            case Yw3d_SRT_Float32:
+                {
+                    const float deltaRegValue[2] = { vsOutput1->shaderOutputs[regIdx].x - vsOutput0->shaderOutputs[regIdx].x, vsOutput2->shaderOutputs[regIdx].x - vsOutput0->shaderOutputs[regIdx].x };
+                    destDdx->x = (deltaY[1] * deltaRegValue[0] - deltaY[0] * deltaRegValue[1]) * oneOverDeterminant;
+                    destDdy->x = -(deltaX[1] * deltaRegValue[0] - deltaX[0] * deltaRegValue[1]) * oneOverDeterminant;
+                }
+            case Yw3d_SRT_Unused:
+            default:    // Cannot happen.
+                break;
+            }
+        }
+    }
 }

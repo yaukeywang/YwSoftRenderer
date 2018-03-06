@@ -95,6 +95,16 @@ namespace yw
         // @param[in] vsOutput2 vertex C.
         void ProcessTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
 
+        // Projects a vertex and prepares it for interpolation during rasterization.
+        // @param[in,out] vsOutput the vertex.
+        void ProjectVertex(Yw3dVSOutput* vsOutput);
+
+        // Calculates gradients for shader registers.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
     private:
         // ------------------------------------------------------------------
 
@@ -118,8 +128,8 @@ namespace yw
 
         // ------------------------------------------------------------------
 
-        /// @internal Describes a vertex stream.
-        /// @note This structure is used internally by devices.
+        // @internal Describes a vertex stream.
+        // @note This structure is used internally by devices.
         struct VertexStream
         {
             // Pointer to the vertex buffer.
@@ -139,8 +149,23 @@ namespace yw
 
         // ------------------------------------------------------------------
 
+        // Render information struct of this device.
+        struct RenderInfo
+        {
+            // Holds information about the type of a particular input-register.
+            Yw3dShaderRegType vsInputRegTypes[YW3D_VERTEX_SHADER_REGISTERS];
+
+            // Type of vertex shader output-registers.
+            Yw3dShaderRegType vsOutputRegTypes[YW3D_PIXEL_SHADER_REGISTERS];
+        };
+
+        // Current render information of this device.
+        RenderInfo m_RenderInfo;
+
         // Contains gradient information that serves as the base for scanline-conversion.
         Yw3dTriangleInfo m_TriangleInfo;
+
+        // ------------------------------------------------------------------
 
         // Number of valid vertex cache entries - reset before each draw-call.
         uint32_t m_NumValidCacheEntries;
