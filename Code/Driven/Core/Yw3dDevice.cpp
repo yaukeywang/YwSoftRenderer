@@ -380,15 +380,22 @@ namespace yw
 
     void Yw3dDevice::CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
+        // References:
+        // Physically Based Rendering, Third Edition : Page 158.
+        // Partial derivatives, Directional derivatives, Gradient.
+
+        // Position of each vertex.
         const Vector4& position0 = vsOutput0->position;
         const Vector4& position1 = vsOutput1->position;
         const Vector4& position2 = vsOutput2->position;
 
+        // Delta x and delta y in screen-space.
         const float deltaX[2] = { position1.x - position0.x, position2.x - position0.x };
         const float deltaY[2] = { position1.y - position0.y, position2.y - position0.x };
         const float deltaZ[2] = { position1.z - position0.z, position2.z - position0.z };
         const float deltaW[2] = { position1.w - position0.w, position2.w - position0.w };
 
+        // The "one over determinant" of matrix for calculating partial derivatives.
         const float oneOverDeterminant = 1.0f / (deltaX[0] * deltaY[1] - deltaX[1] * deltaY[0]);
 
         // Set base vertex.
