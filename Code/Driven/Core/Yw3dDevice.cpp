@@ -647,7 +647,7 @@ namespace yw
         const Vector4& posA = vsOutput0->position;
         const Vector4& posB = vsOutput1->position;
 
-        float intCoordA[2] = { ftol(posA.x), ftol(posA.y) };
+        uint32_t intCoordA[2] = { (uint32_t)ftol(posA.x), (uint32_t)ftol(posA.y) };
         float deltaX = posB.x - posA.x;
         float deltaY = posB.y - posA.y;
 
@@ -694,7 +694,7 @@ namespace yw
                     for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
                     {
                         const int32_t newPixelY = curPixelY + j;
-                        if ((newPixelY < m_RenderInfo.viewportRect.top) || (newPixelY >= m_RenderInfo.viewportRect.bottom))
+                        if ((newPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (newPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
                         {
                             continue;
                         }
@@ -740,7 +740,7 @@ namespace yw
                     for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
                     {
                         const int32_t newPixelX = curPixelX + j;
-                        if ((newPixelX < m_RenderInfo.viewportRect.left) || (newPixelX >= m_RenderInfo.viewportRect.right))
+                        if ((newPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (newPixelX >= (int32_t)m_RenderInfo.viewportRect.right))
                         {
                             continue;
                         }
