@@ -643,7 +643,113 @@ namespace yw
 
     void Yw3dDevice::RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1)
     {
+        // Get referenced position.
+        const Vector4& posA = vsOutput0->position;
+        const Vector4& posB = vsOutput1->position;
 
+        float intCoordA[2] = { ftol(posA.x), ftol(posA.y) };
+        float deltaX = posB.x - posA.x;
+        float deltaY = posB.y - posA.y;
+
+        // Get half thickness in pixels.
+        const int32_t lineThicknessHalf = -((int32_t)(m_RenderStates[Yw3d_RS_LineThickness] / 2));
+
+        // Odd number is 1, even number is 0.
+        // (m_RenderStates[Yw3d_RS_LineThickness] & 1) is 1 means odd, 0 means even.
+        const int32_t posOffset = (m_RenderStates[Yw3d_RS_LineThickness] & 1) ? 0 : 1;
+
+        if (fabsf(deltaX) > fabsf(deltaY))
+        {
+            // Drawing a line which is more horizontal than vertical.
+            const int32_t pixelsX = ftol(deltaX);
+            if (0 == pixelsX)
+            {
+                return;
+            }
+
+            const int32_t signX = (pixelsX > 0) ? 1 : -1;
+            const float slope = deltaY / deltaX;
+
+            float interpolation = (signX > 0) ? 0.0f : 1.0f;
+            const float interpolationStep = (float)signX / (float)(abs(pixelsX) - 1);
+
+            for (int32_t i = 0; i != pixelsX; i += signX, interpolation += interpolationStep)
+            {
+                const uint32_t curPixelX = intCoordA[0] + i;
+                const uint32_t curPixelY = intCoordA[1] + (uint32_t)ftol(slope * i);
+
+                // Interpolation a vertex output for pixel input.
+                Yw3dVSOutput psInput;
+                SetVSOutputFromGradient(&psInput, (float)curPixelX, (float)curPixelY);
+
+                m_TriangleInfo.curPixelInvW = 1.0f / psInput.position.w;
+                MultiplyVertexShaderOutputRegisters(&psInput, &psInput, m_TriangleInfo.curPixelInvW);
+
+                if (0 == lineThicknessHalf)
+                {
+                    (this->*m_RenderInfo.DrawPixel)(curPixelX, curPixelY, &psInput);
+                }
+                else
+                {
+                    for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
+                    {
+                        const int32_t newPixelY = curPixelY + j;
+                        if ((newPixelY < m_RenderInfo.viewportRect.top) || (newPixelY >= m_RenderInfo.viewportRect.bottom))
+                        {
+                            continue;
+                        }
+
+                        (this->*m_RenderInfo.DrawPixel)(curPixelX, newPixelY, &psInput);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Drawing a line which is more vertical than horizontal or equal.
+            const int32_t pixelsY = ftol(deltaY);
+            if (0 == pixelsY)
+            {
+                return;
+            }
+
+            const int32_t signY = (pixelsY > 0) ? 1 : -1;
+            const float slope = deltaX / deltaY;
+
+            float interpolation = (signY > 0) ? 0.0f : 1.0f;
+            const float interpolationStep = (float)signY / (float)(abs(pixelsY) - 1);
+
+            for (int32_t i = 0; i != pixelsY; i += signY, interpolation += interpolationStep)
+            {
+                const uint32_t curPixelX = intCoordA[0] + ftol(slope * i);
+                const uint32_t curPixelY = intCoordA[1] + i;
+
+                // Interpolation a vertex output for pixel input.
+                Yw3dVSOutput psInput;
+                SetVSOutputFromGradient(&psInput, (float)curPixelX, (float)curPixelY);
+
+                m_TriangleInfo.curPixelInvW = 1.0f / psInput.position.w;
+                MultiplyVertexShaderOutputRegisters(&psInput, &psInput, m_TriangleInfo.curPixelInvW);
+
+                if (0 == lineThicknessHalf)
+                {
+                    (this->*m_RenderInfo.DrawPixel)(curPixelX, curPixelY, &psInput);
+                }
+                else
+                {
+                    for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
+                    {
+                        const int32_t newPixelX = curPixelX + j;
+                        if ((newPixelX < m_RenderInfo.viewportRect.left) || (newPixelX >= m_RenderInfo.viewportRect.right))
+                        {
+                            continue;
+                        }
+
+                        (this->*m_RenderInfo.DrawPixel)(newPixelX, curPixelY, &psInput);
+                    }
+                }
+            }
+        }
     }
 
     void Yw3dDevice::RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
