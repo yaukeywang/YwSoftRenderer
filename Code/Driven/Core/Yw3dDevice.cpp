@@ -650,6 +650,109 @@ namespace yw
 
             return;
         }
+
+        // ------------------------------------------------------------------
+        // Rasterize this triangle by scan line.
+
+        // Sort vertices by y-coordinate.
+        const Yw3dVSOutput* vertices[3] = { vsOutput0, vsOutput1, vsOutput2 };
+        if (vsOutput1->position.y < vertices[0]->position.y)
+        {
+            vertices[1] = vertices[0];
+            vertices[0] = vsOutput1;
+        }
+
+        if (vsOutput2->position.y < vertices[0]->position.y)
+        {
+            vertices[2] = vertices[1];
+            vertices[1] = vertices[0];
+            vertices[0] = vsOutput2;
+        }
+        else if (vsOutput2->position.y < vertices[1]->position.y)
+        {
+            vertices[2] = vertices[1];
+            vertices[1] = vsOutput2;
+        }
+
+        // Screenspace-position references.
+        const Vector4& posA = vertices[0]->position;
+        const Vector4& posB = vertices[1]->position;
+        const Vector4& posC = vertices[2]->position;
+
+        // Calculate slopes for stepping.
+        const float stepX[3] = 
+        {
+            (posB.y - posA.y > 0.0f) ? (posB.x - posA.x) / (posB.y - posA.y) : 0.0f,
+            (posC.y - posA.y > 0.0f) ? (posC.x - posA.x) / (posC.y - posA.y) : 0.0f,
+            (posC.y - posB.y > 0.0f) ? (posC.x - posB.x) / (posC.y - posB.y) : 0.0f
+        };
+
+        // Begin rasterization.
+        float fX[2] = { posA.x, posA.x };
+        for (uint32_t triPart = 0; triPart < 2; triPart++)
+        {
+            uint32_t iY[2] = { 0, 0 };
+            float deltaX[2] = { 0.0f, 0.0f };
+
+            switch (triPart)
+            {
+                case 0: // Draw upper triangle-part.
+                {
+                    iY[0] = (uint32_t)ftol(ceilf(posA.y));
+                    iY[1] = (uint32_t)ftol(ceilf(posB.y));
+
+                    if (stepX[0] > stepX[1]) // left <-> right ?
+                    {
+                        deltaX[0] = stepX[1];
+                        deltaX[1] = stepX[0];
+                    }
+                    else
+                    {
+                        deltaX[0] = stepX[0];
+                        deltaX[1] = stepX[1];
+                    }
+
+                    const float preStepY = (float)iY[0] - posA.y;
+                    fX[0] += deltaX[0] * preStepY;
+                    fX[1] += deltaX[1] * preStepY;
+                }
+                break;
+            case 1: // Draw lower triangle-part
+                {
+                    //iY[0] = iY[1];
+                    iY[1] = (uint32_t)ftol(ceilf(posC.y));
+
+                    const float preStepY = (float)iY[0] - posB.y;
+                    if (stepX[1] > stepX[2]) // left <-> right ?
+                    {
+                        deltaX[0] = stepX[1];
+                        deltaX[1] = stepX[2];
+                        fX[1] = posB.x + deltaX[1] * preStepY;
+                    }
+                    else
+                    {
+                        deltaX[0] = stepX[2];
+                        deltaX[1] = stepX[1];
+                        fX[0] = posB.x + deltaX[0] * preStepY;
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+
+            // Rasterize a single scan line.
+            for (; iY[0] < iY[1]; fX[0] += deltaX[0], fX[1] += deltaX[1])
+            {
+                const int32_t iX[2] = { ftol(ceilf(fX[0])), ftol(ceilf(fX[1])) };
+                //const float preStepX = (float)iX[0] - fX[0];
+
+                Yw3dVSOutput psInput;
+                SetVSOutputFromGradient(&psInput, (float)iX[0], (float)iY[0]);
+                m_TriangleInfo.curPixelY = iY[0];
+                (this->*m_RenderInfo.RasterizeScanline)(iY[0], iX[0], iX[1], &psInput);
+            }
+        }
     }
 
     void Yw3dDevice::RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1)
