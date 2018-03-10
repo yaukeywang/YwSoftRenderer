@@ -638,7 +638,18 @@ namespace yw
 
     void Yw3dDevice::RasterizeTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
+        // Calculate triangle gradient first.
+        CalculateTriangleGradients(vsOutput0, vsOutput1, vsOutput2);
 
+        // Check if wireframe mode.
+        if (Yw3d_Fill_WireFrame == m_RenderStates[Yw3d_RS_FillMode])
+        {
+            RasterizeLine(vsOutput0, vsOutput1);
+            RasterizeLine(vsOutput1, vsOutput2);
+            RasterizeLine(vsOutput2, vsOutput0);
+
+            return;
+        }
     }
 
     void Yw3dDevice::RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1)
