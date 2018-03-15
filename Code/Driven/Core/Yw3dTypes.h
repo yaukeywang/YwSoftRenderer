@@ -75,8 +75,8 @@ enum Yw3dCompareFunction
     Yw3d_CMP_NotEqual,      // Compares of two values will pass if they are not equal.
     Yw3d_CMP_Less,          // Compares of two values a and b will pass if a < b.
     Yw3d_CMP_LessEqual,     // Compares of two values a and b will pass if a <= b.
-    Yw3d_CMP_GreaterEqual,  // Compares of two values a and b will pass if a >= b.
     Yw3d_CMP_Greater,       // Compares of two values a and b will pass if a > b.
+    Yw3d_CMP_GreaterEqual,  // Compares of two values a and b will pass if a >= b.
     Yw3d_CMP_Always			// Compares will always pass.
 };
 
