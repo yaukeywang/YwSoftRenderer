@@ -1118,4 +1118,151 @@ namespace yw
             m_RenderInfo.renderedPixels++;
         }
     }
+
+    void Yw3dDevice::DrawPixel_ColorOnly(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput)
+    {
+        // Get color buffer data and depth buffer data.
+        float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x * m_RenderInfo.colorFloats);
+        float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x);
+
+        // Get depth of current pixel.
+        float depth = vsOutput->position.z;
+
+        // Perform depth test.
+        switch (m_RenderInfo.depthCompare)
+        {
+        case Yw3d_CMP_Never: return;
+        case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else return;
+        case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else return;
+        case Yw3d_CMP_Less: if (depth < *depthData) break; else return;
+        case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else return;
+        case Yw3d_CMP_Greater: if (depth > *depthData) break; else return;
+        case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else return;
+        case Yw3d_CMP_Always: break;
+        default: break; // Can not happen.
+        }
+
+        // passed depth test - update depthbuffer!
+        if (m_RenderInfo.depthWriteEnabled)
+        {
+            *depthData = depth;
+        }
+
+        // Update color buffer.
+        if (m_RenderInfo.colorWriteEnabled)
+        {
+            // Read in current pixel's color in the colorbuffer.
+            Vector4 pixelColor(0.0f, 0.0f, 0.0f, 1.0f);
+            switch (m_RenderInfo.colorFloats)
+            {
+            case 4:
+                pixelColor.a = frameData[3];
+            case 3:
+                pixelColor.b = frameData[2];
+            case 2:
+                pixelColor.g = frameData[1];
+            case 1:
+                pixelColor.r = frameData[0];
+            default:    // Can not happen.
+                break;
+            }
+
+            // Execute the pixel shader.
+            m_TriangleInfo.curPixelX = x;
+            m_TriangleInfo.curPixelY = y;
+            m_PixelShader->Execute(vsOutput->shaderOutputs, pixelColor, depth);
+
+            // Write the new color to the colorbuffer.
+            switch (m_RenderInfo.colorFloats)
+            {
+            case 4:
+                frameData[3] = pixelColor.a;
+            case 3:
+                frameData[2] = pixelColor.b;
+            case 2:
+                frameData[1] = pixelColor.g;
+            case 1:
+                frameData[0] = pixelColor.r;
+            default:    // Can not happen.
+                break;
+            }
+        }
+
+        m_RenderInfo.renderedPixels++;
+    }
+
+    void Yw3dDevice::DrawPixel_ColorDepth(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput)
+    {
+        // Get color buffer data and depth buffer data.
+        float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x * m_RenderInfo.colorFloats);
+        float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x);
+
+        // Read in current pixel's color in the colorbuffer.
+        Vector4 pixelColor(0.0f, 0.0f, 0.0f, 1.0f);
+        switch (m_RenderInfo.colorFloats)
+        {
+        case 4:
+            pixelColor.a = frameData[3];
+        case 3:
+            pixelColor.b = frameData[2];
+        case 2:
+            pixelColor.g = frameData[1];
+        case 1:
+            pixelColor.r = frameData[0];
+        default:    // Can not happen.
+            break;
+        }
+
+        // Get depth of current pixel.
+        float depth = vsOutput->position.z;
+
+        // Execute the pixel shader.
+        m_TriangleInfo.curPixelX = x;
+        m_TriangleInfo.curPixelY = y;
+        if (!m_PixelShader->Execute(vsOutput->shaderOutputs, pixelColor, depth))
+        {
+            // Pixel got killed.
+            return;
+        }
+
+        // Perform depth test.
+        switch (m_RenderInfo.depthCompare)
+        {
+        case Yw3d_CMP_Never: return;
+        case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else return;
+        case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else return;
+        case Yw3d_CMP_Less: if (depth < *depthData) break; else return;
+        case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else return;
+        case Yw3d_CMP_Greater: if (depth > *depthData) break; else return;
+        case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else return;
+        case Yw3d_CMP_Always: break;
+        default: break; // Can not happen.
+        }
+
+        // passed depth test - update depthbuffer!
+        if (m_RenderInfo.depthWriteEnabled)
+        {
+            *depthData = depth;
+        }
+
+        // Update color buffer.
+        if (m_RenderInfo.colorWriteEnabled)
+        {
+            switch (m_RenderInfo.colorFloats)
+            {
+            case 4:
+                frameData[3] = pixelColor.a;
+            case 3:
+                frameData[2] = pixelColor.b;
+            case 2:
+                frameData[1] = pixelColor.g;
+            case 1:
+                frameData[0] = pixelColor.r;
+            default:    // Can not happen.
+                break;
+            }
+        }
+
+        m_RenderInfo.renderedPixels++;
+    }
 }

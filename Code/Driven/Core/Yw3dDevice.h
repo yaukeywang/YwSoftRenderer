@@ -168,6 +168,19 @@ namespace yw
         // @param[in,out] io_pVSOutput interpolated vertex data.
         void RasterizeScanline_ColorDepth(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
+        // Draws a single pixels. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the vertices to the depth buffer. Does not support pixel-killing.
+        // @param[in] x position in rendertarget along x-axis.
+        // @param[in] y position in rendertarget along y-axis.
+        // @param[in] vsOutput interpolated vertex data, already divided by position w component.
+        void DrawPixel_ColorOnly(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
+
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer.
+        // @note Early depth-testing is disabled, which may lead to worse performance because regardless of the depth value the pixel shader will always be called for a given pixel.
+        // @param[in] x position in rendertarget along x-axis.
+        // @param[in] y position in rendertarget along y-axis.
+        // @param[in] vsOutput interpolated vertex data, already divided by position w component.
+        void DrawPixel_ColorDepth(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
+
     private:
         // ------------------------------------------------------------------
 
