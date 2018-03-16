@@ -907,7 +907,7 @@ namespace yw
                 m_TriangleInfo.curPixelInvW = 1.0f / vsOutput->position.w;
                 MultiplyVertexShaderOutputRegisters(&psInput, vsOutput, m_TriangleInfo.curPixelInvW);
 
-                // Read in current pixel's color in the colorbuffer
+                // Read in current pixel's color in the colorbuffer.
                 Vector4 pixelColor(0.0f, 0.0f, 0.0f, 1.0f);
                 switch (m_RenderInfo.colorFloats)
                 {
@@ -940,6 +940,94 @@ namespace yw
                     frameData[0] = pixelColor.r;
                 default:    // Can not happen.
                     break;
+                }
+            }
+
+            m_RenderInfo.renderedPixels++;
+        }
+    }
+
+    void Yw3dDevice::RasterizeScanline_ColorOnly_MightKillPixels(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
+    {
+        // Get color buffer data and depth buffer data.
+        float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
+        float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
+
+        // Start to render each pixel.
+        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, StepXVSOutputFromGradient(vsOutput))
+        {
+            // Get depth of current pixel.
+            float depth = vsOutput->position.z;
+
+            // Perform depth test.
+            switch (m_RenderInfo.depthCompare)
+            {
+            case Yw3d_CMP_Never: return;
+            case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else continue;
+            case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else continue;
+            case Yw3d_CMP_Less: if (depth < *depthData) break; else continue;
+            case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else continue;
+            case Yw3d_CMP_Greater: if (depth > *depthData) break; else continue;
+            case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else continue;
+            case Yw3d_CMP_Always: break;
+            default: break; // Can not happen.
+            }
+
+            // Only update color and depth buffer when pixel is not killed.
+            if (m_RenderInfo.colorWriteEnabled || m_RenderInfo.depthWriteEnabled)
+            {
+                // Get only shader register data only.
+                // Note: psInput now only contains valid register data, position etc. are not initialized!
+                Yw3dVSOutput psInput;
+                m_TriangleInfo.curPixelInvW = 1.0f / vsOutput->position.w;
+                MultiplyVertexShaderOutputRegisters(&psInput, vsOutput, m_TriangleInfo.curPixelInvW);
+
+                // Read in current pixel's color in the colorbuffer.
+                Vector4 pixelColor(0.0f, 0.0f, 0.0f, 1.0f);
+                switch (m_RenderInfo.colorFloats)
+                {
+                case 4:
+                    pixelColor.a = frameData[3];
+                case 3:
+                    pixelColor.b = frameData[2];
+                case 2:
+                    pixelColor.g = frameData[1];
+                case 1:
+                    pixelColor.r = frameData[0];
+                default:    // Can not happen.
+                    break;
+                }
+
+                // Execute the pixel shader.
+                m_TriangleInfo.curPixelX = x1;
+                if (!m_PixelShader->Execute(psInput.shaderOutputs, pixelColor, depth))
+                {
+                    // Pixel got killed.
+                    continue;
+                }
+
+                // Passed depth-test and pixel was not killed, so update depthbuffer.
+                if (m_RenderInfo.depthWriteEnabled)
+                {
+                    *depthData = depth;
+                }
+
+                // Write the new color to the colorbuffer.
+                if (m_RenderInfo.colorWriteEnabled)
+                {
+                    switch (m_RenderInfo.colorFloats)
+                    {
+                    case 4:
+                        frameData[3] = pixelColor.a;
+                    case 3:
+                        frameData[2] = pixelColor.b;
+                    case 2:
+                        frameData[1] = pixelColor.g;
+                    case 1:
+                        frameData[0] = pixelColor.r;
+                    default:    // Can not happen.
+                        break;
+                    }
                 }
             }
 

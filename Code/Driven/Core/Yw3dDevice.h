@@ -153,6 +153,13 @@ namespace yw
         // @param[in,out] vsOutput interpolated vertex data.
         void RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer.
+        // @param[in] i_iY position in rendertarget along y-axis.
+        // @param[in] i_iX left position in rendertarget along x-axis.
+        // @param[in] i_iX2 right position in rendertarget along x-axis.
+        // @param[in,out] io_pVSOutput interpolated vertex data.
+        void RasterizeScanline_ColorOnly_MightKillPixels(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
+
     private:
         // ------------------------------------------------------------------
 
