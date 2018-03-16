@@ -154,11 +154,19 @@ namespace yw
         void RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
         // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer.
-        // @param[in] i_iY position in rendertarget along y-axis.
-        // @param[in] i_iX left position in rendertarget along x-axis.
-        // @param[in] i_iX2 right position in rendertarget along x-axis.
+        // @param[in] y position in rendertarget along y-axis.
+        // @param[in] x1 left position in rendertarget along x-axis.
+        // @param[in] x2 right position in rendertarget along x-axis.
         // @param[in,out] io_pVSOutput interpolated vertex data.
         void RasterizeScanline_ColorOnly_MightKillPixels(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
+
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer.
+        // @note Early depth-testing is disabled, which may lead to worse performance because regardless of the depth value the pixel shader will always be called for a given pixel.
+        // @param[in] y position in rendertarget along y-axis.
+        // @param[in] x1 left position in rendertarget along x-axis.
+        // @param[in] x2 right position in rendertarget along x-axis.
+        // @param[in,out] io_pVSOutput interpolated vertex data.
+        void RasterizeScanline_ColorDepth(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
     private:
         // ------------------------------------------------------------------
