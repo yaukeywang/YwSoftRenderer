@@ -115,6 +115,12 @@ namespace yw
         // @param[in] value floating point value to multiply registers with.
         void MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value);
 
+        // Performs back face culling in screen space.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        bool CullTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
         // Projects a vertex and prepares it for interpolation during rasterization.
         // @param[in,out] vsOutput the vertex.
         void ProjectVertex(Yw3dVSOutput* vsOutput);

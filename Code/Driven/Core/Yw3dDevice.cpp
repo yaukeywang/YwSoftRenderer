@@ -470,6 +470,39 @@ namespace yw
         }
     }
 
+    bool Yw3dDevice::CullTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+        // Do backface-culling.
+        if (Yw3d_Cull_None == m_RenderStates[Yw3d_RS_CullMode])
+        {
+            return false;
+        }
+
+        // Vector3 vAB = vScreenSpacePos[1] - vScreenSpacePos[0];
+        // Vector3 vAC = vScreenSpacePos[2] - vScreenSpacePos[0];
+        // Vector3 vFaceNormal; Vector3Cross(vFaceNormal, vAB, vAC);
+        // float dirTest = Vector3Dot(vFaceNormal, Vector3(0.0f, 0.0f, 1.0f));
+        const float dirTest = (vsOutput1->position.x - vsOutput0->position.x) * (vsOutput2->position.y - vsOutput0->position.y) - (vsOutput1->position.y - vsOutput0->position.y) * (vsOutput2->position.x - vsOutput0->position.x);
+        if (Yw3d_Cull_CCW == m_RenderStates[Yw3d_RS_CullMode])
+        {
+            // Counterclockwise vertices.
+            if (dirTest <= 0.0f)
+            {
+                return true;
+            }
+        }
+        else
+        {   
+            // Clockwise vertices.
+            if (dirTest >= 0.0f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void Yw3dDevice::ProjectVertex(Yw3dVSOutput* vsOutput)
     {
         if (vsOutput->position.w < YW_FLOAT_PRECISION)
