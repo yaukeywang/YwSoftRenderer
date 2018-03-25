@@ -24,9 +24,13 @@ namespace yw
         m_IndexBuffer(nullptr),
         m_RenderTarget(nullptr),
         m_NumValidCacheEntries(0),
-        m_FetchedVertices(0)
+        m_FetchedVertices(0),
+        m_NextFreeClipVertex(0)
     {
         memset(m_RenderStates, 0, Yw3d_RS_NumRenderStates * sizeof(uint32_t));
+        memset(m_ClipVertices, 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput));
+        memset(m_ClipVerticesStages[0], 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput*));
+        memset(m_ClipVerticesStages[1], 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput*));
     }
 
     Yw3dDevice::~Yw3dDevice()
@@ -468,6 +472,77 @@ namespace yw
                 break;
             }
         }
+    }
+
+    uint32_t Yw3dDevice::ClipToPlane(uint32_t numVertices, uint32_t stage, const Plane &plane, bool homogenous)
+    {
+        Yw3dVSOutput** srcVertices = m_ClipVerticesStages[stage];
+        Yw3dVSOutput** dstVertices = m_ClipVerticesStages[(stage + 1) & 1];
+
+        uint32_t numClippedVertices = 0;
+        for (uint32_t i = 0, j = 1; i < numVertices; i++, j++)
+        {
+            // Wrap over.
+            if (j == numVertices)
+            {
+                j = 0;
+            }
+
+            // The signed distances of current and next vertex to clipping plane.
+            float di = 0;
+            float dj = 0;
+            if (homogenous)
+            {
+                di = plane * srcVertices[i]->position;
+                dj = plane * srcVertices[j]->position;
+            }
+            else
+            {
+                di = plane * (*(Vector3*)&srcVertices[i]->position);
+                dj = plane * (*(Vector3*)&srcVertices[j]->position);
+            }
+
+            if (di >= 0.0f)
+            {
+                // First vertex inside plane, output it.
+                dstVertices[numClippedVertices++] = srcVertices[i];
+
+                if (dj < 0.0f)
+                {
+                    // Second vertex outside plan, calculate the intersect point, including interpolate vertex attribute and shader output.
+                    InterpolateVertexShaderOutput(&m_ClipVertices[m_NextFreeClipVertex], srcVertices[i], srcVertices[j], di / (di - dj));
+                    dstVertices[numClippedVertices++] = &m_ClipVertices[m_NextFreeClipVertex];
+                    m_NextFreeClipVertex = (m_NextFreeClipVertex + 1) % YW3D_CLIP_VERTEX_CACHE_SIZE;
+
+#ifdef _DEBUG
+                    if (0 == m_NextFreeClipVertex)
+                    {
+                        LOGE(_T("Yw3dDevice::ClipToPlane: Wrap over, vertex creation during clipping! array too small ...?\n"));
+                    }
+#endif
+                }
+            }
+            else
+            {
+                // First vertex outside plane.
+                if (dj >= 0)
+                {
+                    // First vertex outside plane, second vertex inside plane, calculate the intersect point, including interpolate vertex attribute and shader output.
+                    InterpolateVertexShaderOutput(&m_ClipVertices[m_NextFreeClipVertex], srcVertices[j], srcVertices[i], dj / (dj - di));
+                    dstVertices[numClippedVertices++] = &m_ClipVertices[m_NextFreeClipVertex];
+                    m_NextFreeClipVertex = (m_NextFreeClipVertex + 1) % YW3D_CLIP_VERTEX_CACHE_SIZE;
+
+#ifdef _DEBUG
+                    if (0 == m_NextFreeClipVertex)
+                    {
+                        LOGE(_T("Yw3dDevice::ClipToPlane: Wrap over, vertex creation during clipping! array too small ...?\n"));
+                    }
+#endif
+                }
+            }
+        }
+
+        return numClippedVertices;
     }
 
     bool Yw3dDevice::CullTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)

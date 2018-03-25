@@ -37,6 +37,7 @@ const uint32_t YW3D_PIXEL_SHADER_REGISTERS = 8;     // Specifies the amount of a
 const uint32_t YW3D_NUM_SHADER_CONSTANTS = 32;      // Specifies the amount of available shader constants-registers for both vertex and pixel shaders.
 const uint32_t YW3D_MAX_VERTEX_STREAMS = 8;         // Specifies the amount of available vertex streams.
 const uint32_t YW3D_MAX_TEXTURE_SAMPLERS = 16;      // Specifies the amount of available texture samplers.
+const uint32_t YW3D_CLIP_VERTEX_CACHE_SIZE = 20;    // Specifies the amount of clipping vertex cache size.
 
 // ------------------------------------------------------------------
 // Enumerations.

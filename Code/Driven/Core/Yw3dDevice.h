@@ -115,6 +115,14 @@ namespace yw
         // @param[in] value floating point value to multiply registers with.
         void MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value);
 
+        // Clippes a polygon to the specified clipping plane.
+        // @param[in] numVertices number of vertices of the polygon to clip.
+        // @param[in] stage stage in the clipping pipeline.
+        // @param[in] plane clipping plane.
+        // @param[in] homogenous if true the w-coordinate of vertex position is taken into account.
+        // @return number of vertices of the clipped polygon.
+        uint32_t ClipToPlane(uint32_t numVertices, uint32_t stage, const Plane &plane, bool homogenous);
+
         // Performs back face culling in screen space.
         // @param[in] vsOutput0 vertex A.
         // @param[in] vsOutput1 vertex B.
@@ -335,6 +343,17 @@ namespace yw
 
         // Vertex cache contents.        
         Yw3dVertexCacheEntry m_VertexCache[YW3D_VERTEX_CACHE_SIZE];
+
+        // ------------------------------------------------------------------
+
+        // Storage for vertices, that are created during clipping.
+        Yw3dVSOutput m_ClipVertices[YW3D_CLIP_VERTEX_CACHE_SIZE];
+
+        // Keeps the next index of m_ClipVertices that can be used for the creation of vertices during clipping.
+        uint32_t m_NextFreeClipVertex;
+
+        // Pointers to polygon vertices, two stages: ping-pong during clipping.
+        Yw3dVSOutput* m_ClipVerticesStages[2][YW3D_CLIP_VERTEX_CACHE_SIZE];
     };
 }
 
