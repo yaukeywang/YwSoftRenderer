@@ -474,6 +474,96 @@ namespace yw
         }
     }
 
+    void Yw3dDevice::DrawTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+        // Prepare triangle for homogenous clipping.
+        uint32_t numVertices = 3;
+        memcpy(&m_ClipVertices[0], vsOutput0, sizeof(Yw3dVSOutput));
+        memcpy(&m_ClipVertices[1], vsOutput0, sizeof(Yw3dVSOutput));
+        memcpy(&m_ClipVertices[2], vsOutput0, sizeof(Yw3dVSOutput));
+        m_NextFreeClipVertex = 3;
+
+        uint32_t stage = 0;
+        m_ClipVerticesStages[stage][0] = &m_ClipVertices[0];
+        m_ClipVerticesStages[stage][1] = &m_ClipVertices[1];
+        m_ClipVerticesStages[stage][2] = &m_ClipVertices[2];
+
+        // Execute the triangle shader.
+        if (nullptr != m_TriangleShader)
+        {
+            if (!m_TriangleShader->Execute(m_ClipVerticesStages[stage][0]->shaderOutputs, m_ClipVerticesStages[stage][1]->shaderOutputs, m_ClipVerticesStages[stage][2]->shaderOutputs))
+            {
+                // Triangle got rejected.
+                return;
+            }
+        }
+
+        // Perform clipping to the frustum planes.
+        for (uint32_t planeIdx = 0; planeIdx < Yw3d_CP_NumPlanes; planeIdx++)
+        {
+            if (!m_RenderInfo.clippingPlaneEnabled[planeIdx])
+            {
+                continue;
+            }
+
+            numVertices = ClipToPlane(numVertices, stage, m_RenderInfo.clippingPlanes[planeIdx], true);
+            if (numVertices < 3)
+            {
+                // Exception!
+                return;
+            }
+
+            stage = (stage + 1) & 1;
+        }
+
+        // Project and rasterize the clipped triangle.
+        uint32_t vertexIdx = 0;
+
+        // Project the first three vertices for back face culling.
+        Yw3dVSOutput** srcVsOutput = m_ClipVerticesStages[stage];
+        for (vertexIdx = 0; vertexIdx < 3; vertexIdx++)
+        {
+            ProjectVertex(srcVsOutput[vertexIdx]);
+        }
+
+        // We do not have to check for back face culling for each sub-polygon of the triangle, as they
+        // are all in the same plane. If the first polygon is back face culled then all other polygons
+        // would be culled, too.
+        if (CullTriangle(srcVsOutput[0], srcVsOutput[1], srcVsOutput[2]))
+        {
+            return;
+        }
+
+        // Project the remaining vertices.
+        for (vertexIdx = 3; vertexIdx < numVertices; vertexIdx++)
+        {
+            ProjectVertex(srcVsOutput[vertexIdx]);
+        }
+
+        // Perform clipping (in screenspace) to the scissor rectangle if enabled.
+        if (m_RenderStates[Yw3d_RS_ScissorTestEnable])
+        {
+            for (uint32_t planeIdx = 0; planeIdx < 4; planeIdx++, stage = (stage + 1) & 1)
+            {
+                numVertices = ClipToPlane(numVertices, stage, m_RenderInfo.scissorPlanes[planeIdx], false);
+                if (numVertices < 3)
+                {
+                    // Exception.
+                    return;
+                }
+
+                // New source for rasterization after scissoring ...
+                srcVsOutput = m_ClipVerticesStages[stage];
+            }
+        }
+
+        // Subdivide this polygon into triangle and rasterize them by each.
+        for (vertexIdx = 1; vertexIdx < numVertices - 1; vertexIdx++)
+        {
+            RasterizeTriangle(srcVsOutput[0], srcVsOutput[vertexIdx], srcVsOutput[vertexIdx + 1]);
+        }
+    }
+
     uint32_t Yw3dDevice::ClipToPlane(uint32_t numVertices, uint32_t stage, const Plane &plane, bool homogenous)
     {
         Yw3dVSOutput** srcVertices = m_ClipVerticesStages[stage];

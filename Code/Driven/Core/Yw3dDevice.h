@@ -115,6 +115,12 @@ namespace yw
         // @param[in] value floating point value to multiply registers with.
         void MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value);
 
+        // DrawTriangle() takes care of backface culling, triangle clipping, vertex projection and begins rasterization.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void DrawTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
         // Clippes a polygon to the specified clipping plane.
         // @param[in] numVertices number of vertices of the polygon to clip.
         // @param[in] stage stage in the clipping pipeline.
