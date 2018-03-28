@@ -851,6 +851,8 @@ namespace yw
 
         // ------------------------------------------------------------------
         // Rasterize this triangle by scan line.
+        // We use "top-left" Fill Convention which d3d used.
+        // Reference: <<Tricks of the 3D Game Programming Gurus : Advanced 3D Graphics and Rasterization>>, 9.4.2 Fill Convention, Page604(Chinese), Page934(English)
 
         // Sort vertices by y-coordinate.
         const Yw3dVSOutput* vertices[3] = { vsOutput0, vsOutput1, vsOutput2 };
