@@ -378,7 +378,23 @@ namespace yw
 
     void Yw3dDevice::ProcessTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
-
+        switch (m_RenderStates[Yw3d_RS_SubdivisionMode])
+        {
+        case Yw3d_Subdiv_None:
+            DrawTriangle(vsOutput0, vsOutput1, vsOutput2);
+            break;
+        case Yw3d_Subdiv_Simple:
+            SubdivideTriangle_Simple(0, vsOutput0, vsOutput1, vsOutput2);
+            break;
+        case Yw3d_Subdiv_Smooth:
+            SubdivideTriangle_Smooth(0, vsOutput0, vsOutput1, vsOutput2);
+            break;
+        case Yw3d_Subdiv_Adaptive:
+            SubdivideTriangle_Adaptive(vsOutput0, vsOutput1, vsOutput2);
+            break;
+        default:
+            break;  // This can not happen.
+        }
     }
 
     void Yw3dDevice::InterpolateVertexShaderInput(Yw3dVSInput* vsInput, const Yw3dVSInput* vsInputA, const Yw3dVSInput* vsInputB, float interpolation)
@@ -472,6 +488,31 @@ namespace yw
                 break;
             }
         }
+    }
+
+    void Yw3dDevice::SubdivideTriangle_Simple(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+
+    }
+
+    void Yw3dDevice::SubdivideTriangle_Smooth(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+
+    }
+
+    void Yw3dDevice::SubdivideTriangle_Adaptive(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+
+    }
+
+    void Yw3dDevice::SubdivideTriangle_Adaptive_SubdivideEdges(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutputEdge0, const Yw3dVSOutput* vsOutputEdge1, const Yw3dVSOutput* vsOutputCenter)
+    {
+
+    }
+
+    void Yw3dDevice::SubdivideTriangle_Adaptive_SubdivideInnerPart(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
+    {
+
     }
 
     void Yw3dDevice::DrawTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)

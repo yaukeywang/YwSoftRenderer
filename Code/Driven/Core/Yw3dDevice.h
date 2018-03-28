@@ -115,6 +115,40 @@ namespace yw
         // @param[in] value floating point value to multiply registers with.
         void MultiplyVertexShaderOutputRegisters(Yw3dVSOutput* dest, const Yw3dVSOutput* src, float value);
 
+        // Performs simple-subdivision.
+        // @param[in] subdivisionLevel number of times to subdivide.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void SubdivideTriangle_Simple(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
+        // Performs smooth-subdivision.
+        // @param[in] subdivisionLevel number of times to subdivide.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void SubdivideTriangle_Smooth(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
+        // Performs adaptive-subdivision: Finds the triangle's center vertex and initiates splitting of triangle edges.
+        // @param[in] vsOutput0 vertex A.
+        // @param[in] vsOutput1 vertex B.
+        // @param[in] vsOutput2 vertex C.
+        void SubdivideTriangle_Adaptive(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
+        // Helper function for adaptive-subdivision: Recursively splits triangle edges.
+        // @param[in] subdivisionLevel number of times to subdivide.
+        // @param[in] vsOutputEdge0 first output edge.
+        // @param[in] vsOutputEdge1 second output edge.
+        // @param[in] vsOutputCenter the output center.
+        void SubdivideTriangle_Adaptive_SubdivideEdges(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutputEdge0, const Yw3dVSOutput* vsOutputEdge1, const Yw3dVSOutput* vsOutputCenter);
+
+        // Helper function for adaptive-subdivision: Recursively subdivides triangles until their screen-area falls below a user-defined threshold.
+        // @param[in] i_iSubdivisionLevel number of times to subdivide.
+        // @param[in] i_pVSOutput0 vertex A.
+        // @param[in] i_pVSOutput1 vertex B.
+        // @param[in] i_pVSOutput2 vertex C.
+        void SubdivideTriangle_Adaptive_SubdivideInnerPart(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2);
+
         // DrawTriangle() takes care of backface culling, triangle clipping, vertex projection and begins rasterization.
         // @param[in] vsOutput0 vertex A.
         // @param[in] vsOutput1 vertex B.
