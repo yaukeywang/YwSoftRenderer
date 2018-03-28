@@ -492,7 +492,34 @@ namespace yw
 
     void Yw3dDevice::SubdivideTriangle_Simple(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
+        // In case the triangle has been subdivided to the requested level, draw it ...
+        if (subdivisionLevel >= m_RenderStates[Yw3d_RS_SubdivisionLevels])
+        {
+            DrawTriangle(vsOutput0, vsOutput1, vsOutput2);
+            return;
+        }
 
+        subdivisionLevel++;
+
+        // Generate three new vertices: in the middle of each edge
+        // Interpolate inputs for the new vertices (we're splitting the triangle's edges)
+        Yw3dVSOutput newVsOutputs[3];
+        InterpolateVertexShaderInput(&newVsOutputs[0].sourceInput, &vsOutput0->sourceInput, &vsOutput1->sourceInput, 0.5f);
+        InterpolateVertexShaderInput(&newVsOutputs[1].sourceInput, &vsOutput1->sourceInput, &vsOutput2->sourceInput, 0.5f);
+        InterpolateVertexShaderInput(&newVsOutputs[2].sourceInput, &vsOutput2->sourceInput, &vsOutput0->sourceInput, 0.5f);
+
+        // Calculate new vertex shader outputs.
+        Yw3dVSOutput* curVsOutput = newVsOutputs;
+        for (uint32_t i = 0; i < 3; i++, curVsOutput++)
+        {
+            m_VertexShader->Execute(curVsOutput->sourceInput.shaderInputs, curVsOutput->position, curVsOutput->shaderOutputs);
+        }
+
+        // Go on subdividing new triangles.
+        SubdivideTriangle_Simple(subdivisionLevel, vsOutput0, &newVsOutputs[0], &newVsOutputs[2]);
+        SubdivideTriangle_Simple(subdivisionLevel, vsOutput1, &newVsOutputs[1], &newVsOutputs[0]);
+        SubdivideTriangle_Simple(subdivisionLevel, vsOutput2, &newVsOutputs[2], &newVsOutputs[1]);
+        SubdivideTriangle_Simple(subdivisionLevel, &newVsOutputs[0], &newVsOutputs[1], &newVsOutputs[2]);
     }
 
     void Yw3dDevice::SubdivideTriangle_Smooth(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
