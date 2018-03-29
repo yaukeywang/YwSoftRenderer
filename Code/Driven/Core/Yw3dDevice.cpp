@@ -593,17 +593,112 @@ namespace yw
 
     void Yw3dDevice::SubdivideTriangle_Adaptive(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
+        // Define divede param.
+        static const float s_MultDivideByThree = 1.0f / 3.0f;
 
+        // Average inputs for the center vertex.
+        const Yw3dShaderRegister* shaderInputs[3] = { vsOutput0->sourceInput.shaderInputs, vsOutput1->sourceInput.shaderInputs, vsOutput2->sourceInput.shaderInputs };
+
+        // Get the center shader input of the three vertex.
+        Yw3dVSOutput vsOutputCenter;
+        for (uint32_t i = 0; i < YW3D_VERTEX_SHADER_REGISTERS; i++)
+        {
+            vsOutputCenter.sourceInput.shaderInputs[i] = (shaderInputs[0][i] + shaderInputs[1][i] + shaderInputs[2][i]) * s_MultDivideByThree;
+        }
+
+        // Call vertex shader.
+        m_VertexShader->Execute(vsOutputCenter.sourceInput.shaderInputs, vsOutputCenter.position, vsOutputCenter.shaderOutputs);
+
+        // Split outer triangle-edges.
+        SubdivideTriangle_Adaptive_SubdivideEdges(0, vsOutput0, vsOutput1, &vsOutputCenter);
+        SubdivideTriangle_Adaptive_SubdivideEdges(0, vsOutput1, vsOutput2, &vsOutputCenter);
+        SubdivideTriangle_Adaptive_SubdivideEdges(0, vsOutput2, vsOutput0, &vsOutputCenter);
     }
 
     void Yw3dDevice::SubdivideTriangle_Adaptive_SubdivideEdges(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutputEdge0, const Yw3dVSOutput* vsOutputEdge1, const Yw3dVSOutput* vsOutputCenter)
     {
+        // In case the triangle-edges have been subdivided to the requested level, begin adaptive-subdivision of inner part.
+        if (subdivisionLevel >= m_RenderStates[Yw3d_RS_SubdivisionLevels])
+        {
+            SubdivideTriangle_Adaptive_SubdivideInnerPart(0, vsOutputEdge0, vsOutputEdge1, vsOutputCenter);
+            return;
+        }
 
+        subdivisionLevel++;
+
+        // Split edge and call subdivideedges recursively.
+        Yw3dVSOutput vsOutputMiddleEdge;
+        InterpolateVertexShaderInput(&vsOutputMiddleEdge.sourceInput, &vsOutputEdge0->sourceInput, &vsOutputEdge1->sourceInput, 0.5f);
+
+        // Call vertex shader.
+        m_VertexShader->Execute(vsOutputMiddleEdge.sourceInput.shaderInputs, vsOutputMiddleEdge.position, vsOutputMiddleEdge.shaderOutputs);
+
+        // Go on to subdivide.
+        SubdivideTriangle_Adaptive_SubdivideEdges(subdivisionLevel, vsOutputEdge0, &vsOutputMiddleEdge, vsOutputCenter);
+        SubdivideTriangle_Adaptive_SubdivideEdges(subdivisionLevel, &vsOutputMiddleEdge, vsOutputEdge1, vsOutputCenter);
     }
 
     void Yw3dDevice::SubdivideTriangle_Adaptive_SubdivideInnerPart(uint32_t subdivisionLevel, const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
+        static const float s_MultDivideByThree = 1.0f / 3.0f;
 
+        // Info about subdivisionLevel: here we are counting the maximum inner subdivisions.
+        if (subdivisionLevel >= m_RenderStates[Yw3d_RS_SubdivisionMaxInnerLevels])
+        {
+            DrawTriangle(vsOutput0, vsOutput1, vsOutput2);
+            return;
+        }
+
+        // Check area of triangle in screen space.
+        {
+            Vector4 pos[3] = { vsOutput0->position, vsOutput1->position, vsOutput2->position };
+
+            for (uint32_t vertexIdx = 0; vertexIdx < 3; vertexIdx++)
+            {
+                // TODO: should actually be clipped to view frustum.
+
+                // Project vertex position + scale to rendertarget's viewport.
+                pos[vertexIdx].Homogenize();
+                pos[vertexIdx] *= m_RenderTarget->GetViewportMatrix();
+            }
+
+            const Vector3 v0To1 = (Vector3)pos[1] - (Vector3)pos[0];
+            const Vector3 v0T02 = (Vector3)pos[2] - (Vector3)pos[0];
+
+            // Area of triangle = 0.5*|a|*|b|*sina = 0.5*|a cross b|.
+            Vector3 vNormal;
+            Vector3Cross(vNormal, v0To1, v0T02);
+
+            // Get actual area of this triangle.
+            const float triangleArea = 0.5f * vNormal.Length();
+
+            if (triangleArea < *(float*)&m_RenderStates[Yw3d_RS_SubdivisionMaxScreenArea])
+            {
+                DrawTriangle(vsOutput0, vsOutput1, vsOutput2);
+                return;
+            }
+        }
+
+        // Continue splitting: find center vertex and call SubdivideInnerPart for the three new vertices.
+        subdivisionLevel++;
+
+        // Average inputs for the center vertex.
+        const Yw3dShaderRegister* shaderInputs[3] = { vsOutput0->sourceInput.shaderInputs, vsOutput1->sourceInput.shaderInputs, vsOutput2->sourceInput.shaderInputs };
+
+        // Get the center shader input of the three vertex.
+        Yw3dVSOutput vsOutputCenter;
+        for (uint32_t i = 0; i < YW3D_VERTEX_SHADER_REGISTERS; i++)
+        {
+            vsOutputCenter.sourceInput.shaderInputs[i] = (shaderInputs[0][i] + shaderInputs[1][i] + shaderInputs[2][i]) * s_MultDivideByThree;
+        }
+
+        // Call vertex shader.
+        m_VertexShader->Execute(vsOutputCenter.sourceInput.shaderInputs, vsOutputCenter.position, vsOutputCenter.shaderOutputs);
+
+        // Split outer triangle-edges.
+        SubdivideTriangle_Adaptive_SubdivideInnerPart(subdivisionLevel, vsOutput0, vsOutput1, &vsOutputCenter);
+        SubdivideTriangle_Adaptive_SubdivideInnerPart(subdivisionLevel, vsOutput1, vsOutput2, &vsOutputCenter);
+        SubdivideTriangle_Adaptive_SubdivideInnerPart(subdivisionLevel, vsOutput2, vsOutput0, &vsOutputCenter);
     }
 
     void Yw3dDevice::DrawTriangle(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)

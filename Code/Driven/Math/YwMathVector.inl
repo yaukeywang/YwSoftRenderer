@@ -1020,6 +1020,17 @@ namespace yw
         return *this;
     }
 
+    inline Vector4& Vector4::Homogenize()
+    {
+        const float invW = 1.0f / w;
+        x *= invW;
+        y *= invW;
+        z *= invW;
+        w = 1.0f;
+
+        return *this;
+    }
+
     // Static functions.
 
     inline Vector4 Vector4::Zero()

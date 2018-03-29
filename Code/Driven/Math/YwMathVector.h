@@ -243,6 +243,9 @@ namespace yw
         float SquaredLength() const;
         Vector4& Normalize();
 
+        // Divides the vector by its w-coordinate.
+        Vector4 & Homogenize();
+
         // Static functions.
 
         inline static Vector4 Zero();
