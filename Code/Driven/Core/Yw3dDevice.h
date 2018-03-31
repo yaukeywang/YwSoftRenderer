@@ -32,6 +32,9 @@ namespace yw
         Yw3dResult Create();
 
     public:
+        // ------------------------------------------------------------------
+        // Drawing.
+
         // Renders nonindexed primitives of the specified type from the currently set vertex streams.
         // @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.
         // @param[in] startVertex Beginning at this vertex the correct number used for rendering this batch will be read from the vertex streams.
@@ -52,6 +55,14 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_InvalidState if an invalid state was encountered.
         Yw3dResult DrawIndexedPrimitive(Yw3dPrimitiveType primitiveType, uint32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount);
+
+        // Renders primitives assembled through the triangle assembler from the currently set vertex streams.
+        // @param[in] startVertex Beginning at this vertex the correct number used for rendering this batch will be read from the vertex streams.
+        // @param[in] numVertices specifies the number of vertices that will be used beginning from startVertex.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        Yw3dResult DrawDynamicPrimitive(uint32_t startVertex, uint32_t numVertices);
 
         // Samples the texture and returns the looked-up color.
         // @param[out] color receives the color of the pixel to be looked up.
@@ -419,7 +430,7 @@ namespace yw
         // Amount of fetched vertices - reset before each draw-call.
         uint32_t m_FetchedVertices;
 
-        // Vertex cache contents.        
+        // Vertex cache contents.
         Yw3dVertexCacheEntry m_VertexCache[YW3D_VERTEX_CACHE_SIZE];
 
         // ------------------------------------------------------------------

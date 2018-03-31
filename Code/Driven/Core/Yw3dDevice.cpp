@@ -235,6 +235,111 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult Yw3dDevice::DrawDynamicPrimitive(uint32_t startVertex, uint32_t numVertices)
+    {
+        if (numVertices <= 0)
+        {
+            LOGE(_T("Yw3dDevice::DrawIndexedPrimitive: number of vertices is 0.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (nullptr == m_PrimitiveAssembler)
+        {
+            LOGE(_T("Yw3dDevice::DrawDynamicPrimitive: no primitive assembler has been set.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        Yw3dResult resCheck = PreRender();
+        if (YW3D_FAILED(resCheck))
+        {
+            return resCheck;
+        }
+
+        // Execute primitive assembler.
+        std::vector<uint32_t> vertexIndices;
+        Yw3dPrimitiveType primitiveType = m_PrimitiveAssembler->Execute(vertexIndices, numVertices);
+
+        // Get primitive count by type.
+        uint32_t primitiveCount = 0;
+        switch (primitiveType)
+        {
+        case Yw3d_PT_TriangleFan:
+            primitiveCount = (uint32_t)vertexIndices.size() - 2;
+            break;
+        case Yw3d_PT_TriangleStrip:
+            primitiveCount = (uint32_t)vertexIndices.size() - 2;
+            break;
+        case Yw3d_PT_TriangleList:
+            primitiveCount = (uint32_t)vertexIndices.size() / 3;
+            break;
+        default:
+            LOGE(_T("Yw3dDevice::DrawDynamicPrimitive: invalid primitive type specified.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (0 == primitiveCount)
+        {
+            return Yw3d_S_OK;
+        }
+
+        uint32_t vertexIndicies[3] = { 0, 1, 2 };
+        bool flip4TriStrip = false; // used when drawing triangle strips.
+        while (primitiveCount-- > 0)
+        {
+            Yw3dVertexCacheEntry* vertices[3] = { nullptr, nullptr, nullptr };
+            for (uint32_t i = 0; i < 3; i++)
+            {
+                // Fetch the 3 vertices of this primitive.
+                Yw3dResult resFetch = FetchVertex(&vertices[i], vertexIndices[vertexIndicies[i]]);
+                if (YW3D_FAILED(resFetch))
+                {
+                    LOGE(_T("Yw3dDevice::DrawDynamicPrimitive: couldn't fetch vertex from streams.\n"));
+                    PostRender();
+
+                    return resFetch;
+                }
+            }
+
+            // Process this triangle.
+            if (flip4TriStrip)
+            {
+                ProcessTriangle(&vertices[0]->vertexOutput, &vertices[2]->vertexOutput, &vertices[1]->vertexOutput);
+            }
+            else
+            {
+                ProcessTriangle(&vertices[0]->vertexOutput, &vertices[1]->vertexOutput, &vertices[2]->vertexOutput);
+            }
+
+            // Prepare vertex-indices for the next triangle.
+            switch (primitiveType)
+            {
+            case Yw3d_PT_TriangleFan:
+                vertexIndicies[1] = vertexIndicies[2];
+                vertexIndicies[2]++;
+                break;
+            case Yw3d_PT_TriangleStrip:
+                flip4TriStrip = !flip4TriStrip;
+                vertexIndicies[0] = vertexIndicies[1];
+                vertexIndicies[1] = vertexIndicies[2];
+                vertexIndicies[2]++;
+                break;
+            case Yw3d_PT_TriangleList:
+                vertexIndicies[0] += 3;
+                vertexIndicies[1] += 3;
+                vertexIndicies[2] += 3;
+                break;
+            default:
+                // cannot happen.
+                break;
+            }
+        }
+
+        // Process post render state reset.
+        PostRender();
+
+        return Yw3d_S_OK;
+    }
+
     Yw3dResult Yw3dDevice::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
     {
         return Yw3d_E_Unknown;
