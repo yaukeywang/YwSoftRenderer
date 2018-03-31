@@ -238,6 +238,17 @@ namespace yw
     private:
         // ------------------------------------------------------------------
 
+        // Pointer to parent.
+        class Yw3d* m_Parent;
+
+        // Device parameters, initialize at device-creation time.
+        Yw3dDeviceParameters m_DeviceParameters;
+
+        // Base for rendering to screen.
+        class Yw3dPresentTarget* m_PresentTarget;
+
+        // ------------------------------------------------------------------
+
         // The vertex format.
         class Yw3dVertexFormat* m_VertexFormat;
 

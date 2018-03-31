@@ -6,6 +6,7 @@
 #include "Yw3dDevice.h"
 #include "Yw3d.h"
 #include "Yw3dIndexBuffer.h"
+#include "Yw3dPresentTarget.h"
 #include "Yw3dPrimitiveAssembler.h"
 #include "Yw3dRenderTarget.h"
 #include "Yw3dShader.h"
@@ -16,6 +17,8 @@
 namespace yw
 {
     Yw3dDevice::Yw3dDevice(Yw3d* yw3d, const Yw3dDeviceParameters* deviceParameters) :
+        m_Parent(nullptr),
+        m_PresentTarget(nullptr),
         m_VertexFormat(nullptr),
         m_PrimitiveAssembler(nullptr),
         m_VertexShader(nullptr),

@@ -136,6 +136,9 @@
     <ClInclude Include="Driven\Math\YwMathPlane.h">
       <Filter>Driven\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dPresentTarget.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -202,6 +205,9 @@
       <Filter>Driven\Core</Filter>
     </ClCompile>
     <ClCompile Include="Driven\Core\Yw3dShader.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dPresentTarget.cpp">
       <Filter>Driven\Core</Filter>
     </ClCompile>
   </ItemGroup>
