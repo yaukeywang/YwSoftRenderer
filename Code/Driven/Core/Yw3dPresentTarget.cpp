@@ -7,20 +7,20 @@
 
 namespace yw
 {
-    Yw3dPresentTarget::Yw3dPresentTarget(Yw3dDevice* device) : 
+    IYw3dPresentTarget::IYw3dPresentTarget(Yw3dDevice* device) :
         m_Device(device)
     {
         // Note: cannot add a reference to parent device or the presenttarget will never be freed.
         // m_Device->AddRef();
     }
 
-    Yw3dPresentTarget::~Yw3dPresentTarget()
+    IYw3dPresentTarget::~IYw3dPresentTarget()
     {
         // Note: see note in constructor.
         // SAFE_RELEASE(m_Device);
     }
 
-    Yw3dDevice* Yw3dPresentTarget::AquireDevice()
+    Yw3dDevice* IYw3dPresentTarget::AquireDevice()
     {
         if (nullptr != m_Device)
         {

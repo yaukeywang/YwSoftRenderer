@@ -296,6 +296,33 @@ namespace yw
         // The render target.
         class Yw3dRenderTarget* m_RenderTarget;
 
+        // The active scissor rect.
+        Yw3dRect m_ScissorRect;
+
+        // Internal Describes a texture sampler.
+        // Note: This structure is used internally by devices.
+        struct TextureSampler
+        {
+            // Pointer to the texture.
+            class IYw3dBaseTexture* texture;
+
+            // The samplers states.
+            uint32_t textureSamplerStates[Yw3d_TSS_NumTextureSamplerStates];
+
+            // Type of texture coordinates for sampling.
+            Yw3dTextureSampleInput textureSampleInput;
+
+            TextureSampler() : 
+                texture(nullptr),
+                textureSampleInput(Yw3d_TSI_2Coords)
+            {
+                memset(textureSamplerStates, 0, sizeof(uint32_t) * Yw3d_TSS_NumTextureSamplerStates);
+            }
+        };
+
+        // The texture samplers.
+        TextureSampler m_TextureSamplers[YW3D_MAX_TEXTURE_SAMPLERS];
+
         // Render information struct of this device.
         struct RenderInfo
         {

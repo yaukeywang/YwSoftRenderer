@@ -177,7 +177,7 @@ enum Yw3dShaderConstant
 };
 
 // Specifies the available types of vectors used for sampling different textures.
-enum Yw3dTexSampleInput
+enum Yw3dTextureSampleInput
 {
 	Yw3d_TSI_2Coords,   // 2 floating point coordinates used for standard 2d texture-sampling.
 	Yw3d_TSI_3Coords,   // 3 floating point coordinates used for volume texture-sampling.

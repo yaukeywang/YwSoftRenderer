@@ -162,6 +162,7 @@
     <ClInclude Include="Driven\Core\Yw3d.h" />
     <ClInclude Include="Driven\Core\Yw3dBase.h" />
     <ClInclude Include="Driven\Core\Yw3dBaseShader.h" />
+    <ClInclude Include="Driven\Core\Yw3dBaseTexture.h" />
     <ClInclude Include="Driven\Core\Yw3dDevice.h" />
     <ClInclude Include="Driven\Core\Yw3dIndexBuffer.h" />
     <ClInclude Include="Driven\Core\Yw3dPresentTarget.h" />
@@ -198,6 +199,7 @@
   <ItemGroup>
     <ClCompile Include="Driven\Core\Yw3d.cpp" />
     <ClCompile Include="Driven\Core\Yw3dBaseShader.cpp" />
+    <ClCompile Include="Driven\Core\Yw3dBaseTexture.cpp" />
     <ClCompile Include="Driven\Core\Yw3dDevice.cpp" />
     <ClCompile Include="Driven\Core\Yw3dIndexBuffer.cpp" />
     <ClCompile Include="Driven\Core\Yw3dPresentTarget.cpp" />

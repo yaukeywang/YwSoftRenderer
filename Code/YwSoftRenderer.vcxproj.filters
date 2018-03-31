@@ -139,6 +139,9 @@
     <ClInclude Include="Driven\Core\Yw3dPresentTarget.h">
       <Filter>Driven\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dBaseTexture.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -208,6 +211,9 @@
       <Filter>Driven\Core</Filter>
     </ClCompile>
     <ClCompile Include="Driven\Core\Yw3dPresentTarget.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dBaseTexture.cpp">
       <Filter>Driven\Core</Filter>
     </ClCompile>
   </ItemGroup>

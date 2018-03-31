@@ -10,15 +10,15 @@
 namespace yw
 {
     // The base class of the present target.
-    class Yw3dPresentTarget : public IBase
+    class IYw3dPresentTarget : public IBase
     {
     protected:
         // Present-target constructor.
         // @param[in] device a pointer to the parent Yw3dDevice-object.
-        Yw3dPresentTarget(class Yw3dDevice* device);
+        IYw3dPresentTarget(class Yw3dDevice* device);
 
         // Accessible by IBase. The destructor is called when the reference count reaches zero.
-        virtual ~Yw3dPresentTarget();
+        virtual ~IYw3dPresentTarget();
 
     public:
         // Creates and initializes the presenttarget.
