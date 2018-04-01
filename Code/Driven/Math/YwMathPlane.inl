@@ -32,6 +32,8 @@ namespace yw
     {
         normal = p.normal;
         d = p.d;
+
+        return *this;
     }
 
     inline Plane::operator float*()

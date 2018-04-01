@@ -340,9 +340,133 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult Yw3dDevice::SetRenderState(Yw3dRenderState renderState, uint32_t value)
+    {
+        if (renderState >= Yw3d_RS_NumRenderStates)
+        {
+            LOGE(_T("Yw3dDevice::SetRenderState: invalid renderstate.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_RenderStates[renderState] = value;
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetRenderState(Yw3dRenderState renderState, uint32_t& value)
+    {
+        if (renderState >= Yw3d_RS_NumRenderStates)
+        {
+            value = 0;
+            LOGE(_T("Yw3dDevice::SetRenderState: invalid renderstate.\n"));
+
+            return Yw3d_E_InvalidParameters;
+        }
+
+        value = m_RenderStates[renderState];
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::SetTextureSamplerState(uint32_t samplerNumber, Yw3dTextureSamplerState textureSamplerState, uint32_t state)
+    {
+        if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
+        {
+            LOGE(_T("Yw3dDevice::SetTextureSamplerState: samplerNumber exceeds number of available texture samplers.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (textureSamplerState >= Yw3d_TSS_NumTextureSamplerStates)
+        {
+            LOGE(_T("Yw3dDevice::SetTextureSamplerState: invalid texture sampler state.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_TextureSamplers[samplerNumber].textureSamplerStates[textureSamplerState] = state;
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetTextureSamplerState(uint32_t samplerNumber, Yw3dTextureSamplerState textureSamplerState, uint32_t& state)
+    {
+        if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
+        {
+            state = 0;
+            LOGE(_T("Yw3dDevice::GetTextureSamplerState: samplerNumber exceeds number of available texture samplers.\n"));
+
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (textureSamplerState >= Yw3d_TSS_NumTextureSamplerStates)
+        {
+            state = 0;
+            LOGE(_T("Yw3dDevice::GetTextureSamplerState: invalid texture sampler state.\n"));
+
+            return Yw3d_E_InvalidParameters;
+        }
+
+        state = m_TextureSamplers[samplerNumber].textureSamplerStates[textureSamplerState];
+        return Yw3d_S_OK;
+    }
+
     Yw3dResult Yw3dDevice::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
     {
         return Yw3d_E_Unknown;
+    }
+
+    void Yw3dDevice::SetDefaultRenderStates()
+    {
+        SetRenderState(Yw3d_RS_ZEnable, true);
+        SetRenderState(Yw3d_RS_ZWriteEnable, true);
+        SetRenderState(Yw3d_RS_ZFunc, Yw3d_CMP_Less);
+
+        SetRenderState(Yw3d_RS_ColorWriteEnable, true);
+        SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
+        SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
+
+        SetRenderState(Yw3d_RS_SubdivisionMode, Yw3d_Subdiv_None);
+        SetRenderState(Yw3d_RS_SubdivisionLevels, 1);
+        SetRenderState(Yw3d_RS_SubdivisionPositionRegister, 0);
+        SetRenderState(Yw3d_RS_SubdivisionNormalRegister, 1);
+
+        const float defaultSubdividingMaxScreenArea = 1.0f;
+        SetRenderState(Yw3d_RS_SubdivisionMaxScreenArea, *(uint32_t*)&defaultSubdividingMaxScreenArea);
+        SetRenderState(Yw3d_RS_SubdivisionMaxInnerLevels, 1);
+
+        SetRenderState(Yw3d_RS_ScissorTestEnable, false);
+
+        SetRenderState(Yw3d_RS_LineThickness, 1);
+    }
+
+    void Yw3dDevice::SetDefaultTextureSamplerStates()
+    {
+        const float mipLODBias = 0.0f;
+        const float maxMipLevel = 16.0f;
+        for (uint32_t textureSampler = 0; textureSampler < YW3D_MAX_TEXTURE_SAMPLERS; textureSampler++)
+        {
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_AddressW, Yw3d_TA_Wrap);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_MipFilter, Yw3d_TF_Point);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_MipLodBias, *(uint32_t*)&mipLODBias);
+            SetTextureSamplerState(textureSampler, Yw3d_TSS_MaxMipLevel, *(uint32_t*)&maxMipLevel);
+        }
+    }
+
+    void Yw3dDevice::SetDefaultClippingPlanes()
+    {
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Left] = Plane(1.0f, 0.0f, 0.0f, 1.0f);
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Right] = Plane(-1.0f, 0.0f, 0.0f, 1.0f);
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Top] = Plane(0.0f, -1.0f, 0.0f, 1.0f);
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Bottom] = Plane(0.0f, 1.0f, 0.0f, 1.0f);
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Near] = Plane(0.0f, 0.0f, 1.0f, 0.0f);
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Far] = Plane(0.0f, 0.0f, -1.0f, 1.0f);
+
+        // Enable the default clipping planes ...
+        for (uint32_t planeIdx = Yw3d_CP_Left; planeIdx <= Yw3d_CP_Far; planeIdx++)
+        {
+            m_RenderInfo.clippingPlaneEnabled[planeIdx] = true;
+        }
     }
 
     Yw3dResult Yw3dDevice::PreRender()

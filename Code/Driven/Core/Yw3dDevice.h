@@ -64,6 +64,42 @@ namespace yw
         // @return Yw3d_E_InvalidState if an invalid state was encountered.
         Yw3dResult DrawDynamicPrimitive(uint32_t startVertex, uint32_t numVertices);
 
+        // ------------------------------------------------------------------
+        // Resource creation.
+
+        // ------------------------------------------------------------------
+        // State management.
+
+        // Sets a renderstate.
+        // @param[in] renderState member of the enumeration Yw3dRenderState.
+        // @param[in] value value to be set. Some renderstates require floating point values, which can be set through casting to a uint32-pointer and dereferencing it.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SetRenderState(Yw3dRenderState renderState, uint32_t value);
+
+        // Retrieves the value of a renderstate.
+        // @param[in] renderState member of the enumeration Yw3dRenderState.
+        // @param[out] value receives the value of the renderstate.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult GetRenderState(Yw3dRenderState renderState, uint32_t& value);
+
+        // Sets a sampler state.
+        // @param[in] samplerNumber number of the sampler.
+        // @param[in] textureSamplerState sampler state. Member of the enumeration m3dtexturesamplerstate.
+        // @param[in] state value to be set. Some sampler states require floating point values, which can be set through casting to a uint32-pointer and dereferencing it.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SetTextureSamplerState(uint32_t samplerNumber, Yw3dTextureSamplerState textureSamplerState, uint32_t state);
+
+        // Retrieves a sampler state.
+        // @param[in] samplerNumber number of the sampler.
+        // @param[in] textureSamplerState sampler state. Member of the enumeration m3dtexturesamplerstate.
+        // @param[out] state receives the value of the sampler state.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult GetTextureSamplerState(uint32_t samplerNumber, Yw3dTextureSamplerState textureSamplerState, uint32_t& state);
+
         // Samples the texture and returns the looked-up color.
         // @param[out] color receives the color of the pixel to be looked up.
         // @param[in] samplerNumber number of the sampler.
@@ -77,6 +113,15 @@ namespace yw
         Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, const Vector4* xGradient = nullptr, const Vector4* yGradient = nullptr);
 
     private:
+        // Initializes renderstates to default values.
+        void SetDefaultRenderStates();
+
+        // Initializes samplerstates to default values.
+        void SetDefaultTextureSamplerStates();
+
+        // Initializes the frustum clipping planes.
+        void SetDefaultClippingPlanes();
+
         // Prepares internal structure with information used for rendering.
         // Checks if all necessary objects (vertexbuffer, vertex format, etc.) have been set + if renderstates are valid.
         // @return Yw3d_S_OK if the function succeeds.
