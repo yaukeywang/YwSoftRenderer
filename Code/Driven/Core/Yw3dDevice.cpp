@@ -468,6 +468,21 @@ namespace yw
         return texture->SampleTexture(color, u, v, w, xGradient, yGradient, textureSampler.textureSamplerStates);
     }
 
+    void Yw3dDevice::SetRenderTarget(Yw3dRenderTarget* renderTarget)
+    {
+        m_RenderTarget = renderTarget;
+    }
+
+    Yw3dRenderTarget* Yw3dDevice::GetRenderTarget()
+    {
+        if (nullptr != m_RenderTarget)
+        {
+            m_RenderTarget->AddRef();
+        }
+
+        return m_RenderTarget;
+    }
+
     void Yw3dDevice::SetDefaultRenderStates()
     {
         SetRenderState(Yw3d_RS_ZEnable, true);

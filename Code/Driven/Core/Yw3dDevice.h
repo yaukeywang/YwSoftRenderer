@@ -112,6 +112,14 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, const Vector4* xGradient = nullptr, const Vector4* yGradient = nullptr);
 
+        // Sets the render target.
+        // @param[in] renderTarget pointer to the render target.
+        void SetRenderTarget(class Yw3dRenderTarget* renderTarget);
+
+        // Returns a pointer to the active render target. Calling this function will increase the internal reference count of the render target.
+        // Failure to call Release() when finished using the pointer will result in a memory leak.
+        class Yw3dRenderTarget* GetRenderTarget();
+
     private:
         // Initializes renderstates to default values.
         void SetDefaultRenderStates();
