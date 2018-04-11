@@ -483,6 +483,50 @@ namespace yw
         return m_RenderTarget;
     }
 
+    Yw3dResult Yw3dDevice::SetScissorRect(const Yw3dRect& scissorRect)
+    {
+        if ((scissorRect.left >= scissorRect.right) || (scissorRect.top >= scissorRect.bottom))
+        {
+            LOGE(_T("Yw3dDevice::SetScissorRect: invalid scissor rect!\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_ScissorRect = scissorRect;
+
+        // Construct planes for clipping to the scissor rect.
+        m_RenderInfo.scissorPlanes[0] = Plane(1.0f, 0.0f, 0.0f, -(float)m_ScissorRect.left);
+        m_RenderInfo.scissorPlanes[1] = Plane(-1.0f, 0.0f, 0.0f, (float)m_ScissorRect.right);
+        m_RenderInfo.scissorPlanes[2] = Plane(0.0f, 1.0f, 0.0f, -(float)m_ScissorRect.top);
+        m_RenderInfo.scissorPlanes[3] = Plane(0.0f, -1.0f, 0.0f, (float)m_ScissorRect.bottom);
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dRect Yw3dDevice::GetScissorRect()
+    {
+        return m_ScissorRect;
+    }
+
+    Yw3dResult Yw3dDevice::SetDepthBounds(float minZ, float maxZ)
+    {
+        if ((minZ < 0.0f) || (minZ > 1.0f) || (maxZ < 0.0f) || (maxZ > 1.0f) || (minZ >= maxZ))
+        {
+            LOGE(_T("Yw3dDevice::SetDepthBounds: invalid depth bounds!\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Near].d = minZ;
+        m_RenderInfo.clippingPlanes[Yw3d_CP_Far].d = maxZ;
+
+        return Yw3d_S_OK;
+    }
+
+    void Yw3dDevice::GetDepthBounds(float& minZ, float& maxZ)
+    {
+        minZ = m_RenderInfo.clippingPlanes[Yw3d_CP_Near].d;
+        maxZ = m_RenderInfo.clippingPlanes[Yw3d_CP_Far].d;
+    }
+
     void Yw3dDevice::SetDefaultRenderStates()
     {
         SetRenderState(Yw3d_RS_ZEnable, true);

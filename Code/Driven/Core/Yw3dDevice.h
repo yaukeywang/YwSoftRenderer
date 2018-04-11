@@ -120,6 +120,25 @@ namespace yw
         // Failure to call Release() when finished using the pointer will result in a memory leak.
         class Yw3dRenderTarget* GetRenderTarget();
 
+        // Sets the scissor rect.
+        // @param[in] scissorRect the scissor rect.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if the scissor rectangle is invalid.
+        Yw3dResult SetScissorRect(const Yw3dRect& scissorRect);
+
+        // Returns the currently set scissor rect.
+        Yw3dRect GetScissorRect();
+
+        // Sets the bounding values for depth.
+        // @param[in] minZ minimum allowed depth value, e [0,1], default: 0.
+        // @param[in] maxZ maximum allowed depth value, e [0,1], default: 1.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if the bound values are invalid.
+        Yw3dResult SetDepthBounds(float minZ, float maxZ);
+
+        // Returns the currently set depth bounding values.
+        void GetDepthBounds(float& minZ, float& maxZ);
+
     private:
         // Initializes renderstates to default values.
         void SetDefaultRenderStates();
