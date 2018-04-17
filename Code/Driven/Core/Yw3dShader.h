@@ -50,6 +50,10 @@ namespace yw
         friend class Yw3dDevice;
 
     protected:
+        // Accessible by Yw3dDevice which is the only class that may create.
+        IYw3dPixelShader();
+
+    protected:
         // Accessible by Yw3dDevice. Returns the type of the pixel shader; member of the enumeration Yw3dPixelShaderOutput. Default: Yw3d_PSO_ColorOnly.
         virtual Yw3dPixelShaderOutput GetShaderOutput() { return Yw3d_PSO_ColorOnly; }
 
@@ -78,7 +82,7 @@ namespace yw
 
     private:
         // Register type info.
-        const Yw3dShaderRegisterType* m_VSOutputs;
+        const Yw3dShaderRegisterType* m_VsOutputs;
 
         // Gradient info about the triangle that is currently being drawn.
 	    const struct Yw3dTriangleInfo* m_TriangleInfo;
