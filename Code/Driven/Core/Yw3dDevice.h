@@ -84,6 +84,20 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         Yw3dResult GetRenderState(Yw3dRenderState renderState, uint32_t& value);
 
+        // Sets a vertex buffer to a given sampler.
+        // @param[in] samplerNumber number of the sampler.
+        // @param[in] texture pointer to the texture.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SetTexture(uint32_t samplerNumber, class IYw3dBaseTexture* texture);
+
+        // Returns a pointer to the active texture of a given sampler. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
+        // @param[in] samplerNumber number of the sampler.
+        // @param[out] texture receives a pointer to the texture.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult GetTexture(uint32_t samplerNumber, class IYw3dBaseTexture** texture);
+
         // Sets a sampler state.
         // @param[in] samplerNumber number of the sampler.
         // @param[in] textureSamplerState sampler state. Member of the enumeration m3dtexturesamplerstate.

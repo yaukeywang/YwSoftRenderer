@@ -367,6 +367,47 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult Yw3dDevice::SetTexture(uint32_t samplerNumber, class IYw3dBaseTexture* texture)
+    {
+        if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
+        {
+            LOGE(_T("Yw3dDevice::SetTexture: samplerNumber exceeds number of available texture samplers.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_TextureSamplers[samplerNumber].texture = texture;
+        if (nullptr != texture)
+        {
+            m_TextureSamplers[samplerNumber].textureSampleInput = texture->GetTexSampleInput();
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetTexture(uint32_t samplerNumber, class IYw3dBaseTexture** texture)
+    {
+        if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
+        {
+            LOGE(_T("Yw3dDevice::GetTexture: samplerNumber exceeds number of available texture samplers.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (nullptr == texture)
+        {
+            LOGE(_T("Yw3dDevice::GetTexture: parameter texture points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        IYw3dBaseTexture* requestTexture = m_TextureSamplers[samplerNumber].texture;
+        *texture = requestTexture;
+        if (nullptr != requestTexture)
+        {
+            requestTexture->AddRef();
+        }
+
+        return Yw3d_S_OK;
+    }
+
     Yw3dResult Yw3dDevice::SetTextureSamplerState(uint32_t samplerNumber, Yw3dTextureSamplerState textureSamplerState, uint32_t state)
     {
         if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
