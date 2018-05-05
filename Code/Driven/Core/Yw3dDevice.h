@@ -84,6 +84,74 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         Yw3dResult GetRenderState(Yw3dRenderState renderState, uint32_t& value);
 
+        // Sets the vertex format.
+        // @param[in] vertexFormat pointer to the vertex format.
+        // @return Yw3d_S_OK if the function succeeds.
+        Yw3dResult SetVertexFormat(class Yw3dVertexFormat* vertexFormat);
+
+        // Returns a pointer to the active vertex format. Calling this function will increase the internal reference count of the vertex format. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class Yw3dVertexFormat* GetVertexFormat();
+
+        // Sets the triangle assembler.
+        // @param[in] primitiveAssembler pointer to the primitive assembler.
+        void SetPrimitiveAssembler(class IYw3dPrimitiveAssembler* primitiveAssembler);
+
+        // Returns a pointer to the active triangle assembler. Calling this function will increase the internal reference count of the primitive assembler. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class IYw3dPrimitiveAssembler* GetPrimitiveAssembler();
+
+        // Sets the vertex shader.
+        // @param[in] vertexShader pointer to the vertex shader.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidState if the type of a vertex shader output register is invalid.
+        Yw3dResult SetVertexShader(class IYw3dVertexShader* vertexShader);
+
+        // Returns a pointer to the active vertex shader. Calling this function will increase the internal reference count of the vertex shader. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class IYw3dVertexShader* GetVertexShader();
+
+        // Sets the triangle shader.
+        // @param[in] triangleShader pointer to the triangle shader.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidState if the type of pixelshader is invalid.
+        Yw3dResult SetTriangleShader(class IYw3dTriangleShader* triangleShader);
+
+        // Returns a pointer to the active triangle shader. Calling this function will increase the internal reference count of the triangle shader. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class IYw3dTriangleShader* GetTriangleShader();
+
+        // Sets the pixel shader.
+        // @param[in] pixelShader pointer to the pixel shader.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidState if the type of pixelshader is invalid.
+        Yw3dResult SetPixelShader(class IYw3dPixelShader* pixelShader);
+
+        // Returns a pointer to the active pixel shader. Calling this function will increase the internal reference count of the pixel shader. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class IYw3dPixelShader* GetPixelShader();
+
+        // Sets the index buffer.
+        // @param[in] i_pIndexBuffer pointer to the index buffer.
+        // @return s_ok if the function succeeds.
+        Yw3dResult SetIndexBuffer(class Yw3dIndexBuffer* indexBuffer);
+
+        // Returns a pointer to the active index buffer. Calling this function will increase the internal reference count of the index buffer. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class Yw3dIndexBuffer* GetIndexBuffer();
+
+        // Sets a vertex buffer to a given stream.
+        // @param[in] streamNumber number of the stream.
+        // @param[in] vertexBuffer pointer to the vertex buffer.
+        // @param[in] offset offset from the start of the vertex buffer in bytes.
+        // @param[in] stride stride in bytes.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SetVertexStream(uint32_t streamNumber, class Yw3dVertexBuffer* vertexBuffer, uint32_t offset, uint32_t stride);
+
+        // Returns a pointer to the active vertex buffer of a given stream. Calling this function will increase the internal reference count of the vertex buffer. Failure to call Release() when finished using the pointer will result in a memory leak.
+        // @param[in] streamNumber number of the stream.
+        // @param[out] vertexBuffer receives a pointer to the vertex buffer.
+        // @param[out] offset receives the offset from the start of the vertex buffer in bytes. (In case this value doesn't need to be retrieved, pass 0 as parameter.)
+        // @param[out] stride receives the stride in bytes. (In case this value doesn't need to be retrieved, pass 0 as parameter.)
+        // @return s_ok Yw3d_S_OK the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult GetVertexStream(uint32_t streamNumber, class Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride);
+
         // Sets a vertex buffer to a given sampler.
         // @param[in] samplerNumber number of the sampler.
         // @param[in] texture pointer to the texture.
@@ -152,6 +220,22 @@ namespace yw
 
         // Returns the currently set depth bounding values.
         void GetDepthBounds(float& minZ, float& maxZ);
+
+        // Sets an user-specified clipping plane.
+        // @param[in] index clipping plane index (member of the enumeration m3dclippingplanes) starting from m3dcp_user0.
+        // @param[in] plane pointer to clipping plane. Pass 0 to disable a clipping plane.
+        // @return Yw3d_E_InvalidParameters if the index is invalid.
+        Yw3dResult SetClippingPlane(Yw3dClippingPlanes index, const Plane* plane);
+
+        // Gets an user-specified clipping plane.
+        // @param[in] index clipping plane index (member of the enumeration m3dclippingplanes) starting from m3dcp_user0.
+        // @param[out] plane reference to the output plane.
+        // @return Yw3d_E_InvalidParameters if the index is invalid.
+        // @return Yw3d_E_InvalidState if the specified clipping has not been set.
+        Yw3dResult GetClippingPlane(Yw3dClippingPlanes index, Plane& plane);
+
+        // Returns the number of pixels that passed the depth-test during the last Draw*Primitive() call.
+        uint32_t GetRenderedPixels();
 
     private:
         // Initializes renderstates to default values.

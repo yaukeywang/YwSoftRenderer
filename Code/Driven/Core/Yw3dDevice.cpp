@@ -367,7 +367,222 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::SetTexture(uint32_t samplerNumber, class IYw3dBaseTexture* texture)
+    Yw3dResult Yw3dDevice::SetVertexFormat(Yw3dVertexFormat* vertexFormat)
+    {
+        m_VertexFormat = vertexFormat;
+        if (nullptr == vertexFormat)
+        {
+            return Yw3d_S_OK;
+        }
+
+        // Initialize part of internal render-info structure.
+        for (uint32_t regIdx = 0; regIdx < YW3D_VERTEX_SHADER_REGISTERS; regIdx++)
+        {
+            m_RenderInfo.vsInputRegisterTypes[regIdx] = Yw3d_SRT_Unused;
+        }
+
+        const Yw3dVertexElement* curVertexElement = m_VertexFormat->GetElements();
+        uint32_t elementCount = m_VertexFormat->GetNumVertexElements();
+        while (elementCount--)
+        {
+            switch (curVertexElement->type)
+            {
+            case Yw3d_VET_Float:
+                m_RenderInfo.vsInputRegisterTypes[curVertexElement->shaderRegister] = Yw3d_SRT_Float32;
+                break;
+            case Yw3d_VET_Vector2:
+                m_RenderInfo.vsInputRegisterTypes[curVertexElement->shaderRegister] = Yw3d_SRT_Vector2;
+                break;
+            case Yw3d_VET_Vector3:
+                m_RenderInfo.vsInputRegisterTypes[curVertexElement->shaderRegister] = Yw3d_SRT_Vector3;
+                break;
+            case Yw3d_VET_Vector4:
+                m_RenderInfo.vsInputRegisterTypes[curVertexElement->shaderRegister] = Yw3d_SRT_Vector4;
+                break;
+            default: /* cannot happen */ 
+                LOGE(_T("Yw3dDevice::SetVertexFormat: invalid vertex element type.\n"));
+                return  Yw3d_E_InvalidParameters;
+            }
+
+            ++curVertexElement;
+        }
+
+        return  Yw3d_S_OK;
+    }
+
+    Yw3dVertexFormat* Yw3dDevice::GetVertexFormat()
+    {
+        if (nullptr != m_VertexFormat)
+        {
+            m_VertexFormat->AddRef();
+        }
+
+        return m_VertexFormat;
+    }
+
+    void Yw3dDevice::SetPrimitiveAssembler(IYw3dPrimitiveAssembler* primitiveAssembler)
+    {
+        m_PrimitiveAssembler = primitiveAssembler;
+    }
+
+    IYw3dPrimitiveAssembler* Yw3dDevice::GetPrimitiveAssembler()
+    {
+        if (nullptr != m_PrimitiveAssembler)
+        {
+            m_PrimitiveAssembler->AddRef();
+        }
+
+        return m_PrimitiveAssembler;
+    }
+
+    Yw3dResult Yw3dDevice::SetVertexShader(IYw3dVertexShader* vertexShader)
+    {
+        if (nullptr == vertexShader)
+        {
+            m_VertexShader = vertexShader;
+            return  Yw3d_S_OK;
+        }
+
+        // Validate vertex shader register output types.
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++)
+        {
+            uint32_t regType = vertexShader->GetOutputRegisters(regIdx);
+            if ((regType < Yw3d_SRT_Unused) || (regType > Yw3d_SRT_Vector4))
+            {
+                LOGE(_T("Yw3dDevice::SetVertexShader: type of vertexshader output register is invalid.\n"));
+                return Yw3d_E_InvalidState;
+            }
+        }
+
+        m_VertexShader = vertexShader;
+        return Yw3d_S_OK;
+    }
+
+    IYw3dVertexShader* Yw3dDevice::GetVertexShader()
+    {
+        if (nullptr != m_VertexShader)
+        {
+            m_VertexShader->AddRef();
+        }
+
+        return m_VertexShader;
+    }
+
+    Yw3dResult Yw3dDevice::SetTriangleShader(IYw3dTriangleShader* triangleShader)
+    {
+        m_TriangleShader = triangleShader;
+        return Yw3d_S_OK;
+    }
+
+    IYw3dTriangleShader* Yw3dDevice::GetTriangleShader()
+    {
+        if (nullptr != m_TriangleShader)
+        {
+            m_TriangleShader->AddRef();
+        }
+
+        return m_TriangleShader;
+    }
+
+    Yw3dResult Yw3dDevice::SetPixelShader(IYw3dPixelShader* pixelShader)
+    {
+        m_PixelShader = pixelShader;
+        return Yw3d_S_OK;
+    }
+
+    IYw3dPixelShader* Yw3dDevice::GetPixelShader()
+    {
+        if (nullptr != m_PixelShader)
+        {
+            m_PixelShader->AddRef();
+        }
+
+        return m_PixelShader;
+    }
+
+    Yw3dResult Yw3dDevice::SetIndexBuffer(Yw3dIndexBuffer* indexBuffer)
+    {
+        m_IndexBuffer = indexBuffer;
+        return Yw3d_S_OK;
+    }
+
+    Yw3dIndexBuffer* Yw3dDevice::GetIndexBuffer()
+    {
+        if (nullptr != m_IndexBuffer)
+        {
+            m_IndexBuffer->AddRef();
+        }
+
+        return m_IndexBuffer;
+    }
+
+    Yw3dResult Yw3dDevice::SetVertexStream(uint32_t streamNumber, Yw3dVertexBuffer* vertexBuffer, uint32_t offset, uint32_t stride)
+    {
+        if (streamNumber >= YW3D_MAX_VERTEX_STREAMS)
+        {
+            LOGE(_T("Yw3dDevice::SetVertexStream: streamNumber exceeds number of available vertex streams.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (0 == stride)
+        {
+            LOGE(_T("Yw3dDevice::SetVertexStream: stride is 0.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_VertexStreams[streamNumber].vertexBuffer = vertexBuffer;
+        m_VertexStreams[streamNumber].offset = offset;
+        m_VertexStreams[streamNumber].stride = stride;
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetVertexStream(uint32_t streamNumber, Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride)
+    {
+        if (streamNumber >= YW3D_MAX_VERTEX_STREAMS)
+        {
+            if (nullptr != vertexBuffer)
+            {
+                *vertexBuffer = nullptr;
+            }
+
+            if (nullptr != offset)
+            {
+                *offset = 0;
+            }
+
+            if (nullptr != stride)
+            {
+                *stride = 0;
+            }
+
+            LOGE(_T("Yw3dDevice::GetVertexStream: streamNumber exceeds number of available vertex streams.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (nullptr != vertexBuffer)
+        {
+            *vertexBuffer = m_VertexStreams[streamNumber].vertexBuffer;
+            if (nullptr != m_VertexStreams[streamNumber].vertexBuffer)
+            {
+                m_VertexStreams[streamNumber].vertexBuffer->AddRef();
+            }
+        }
+
+        if (nullptr != offset)
+        {
+            *offset = m_VertexStreams[streamNumber].offset;
+        }
+
+        if (nullptr != stride)
+        {
+            *stride = m_VertexStreams[streamNumber].offset;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::SetTexture(uint32_t samplerNumber, IYw3dBaseTexture* texture)
     {
         if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
         {
@@ -384,7 +599,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::GetTexture(uint32_t samplerNumber, class IYw3dBaseTexture** texture)
+    Yw3dResult Yw3dDevice::GetTexture(uint32_t samplerNumber, IYw3dBaseTexture** texture)
     {
         if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
         {
@@ -566,6 +781,47 @@ namespace yw
     {
         minZ = m_RenderInfo.clippingPlanes[Yw3d_CP_Near].d;
         maxZ = m_RenderInfo.clippingPlanes[Yw3d_CP_Far].d;
+    }
+
+    Yw3dResult Yw3dDevice::SetClippingPlane(Yw3dClippingPlanes index, const Plane* plane)
+    {
+        if ((index < Yw3d_CP_User0) || (index >= Yw3d_CP_NumPlanes))
+        {
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (nullptr != plane)
+        {
+            m_RenderInfo.clippingPlanes[index] = *plane;
+            m_RenderInfo.clippingPlaneEnabled[index] = true;
+        }
+        else
+        {
+            m_RenderInfo.clippingPlaneEnabled[index] = false;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetClippingPlane(Yw3dClippingPlanes index, Plane& plane)
+    {
+        if ((index < Yw3d_CP_User0) || index >= Yw3d_CP_NumPlanes)
+        {
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (!m_RenderInfo.clippingPlaneEnabled[index])
+        {
+            return Yw3d_E_InvalidState;
+        }
+
+        plane = m_RenderInfo.clippingPlanes[index];
+        return Yw3d_S_OK;
+    }
+
+    uint32_t Yw3dDevice::GetRenderedPixels()
+    {
+        return m_RenderInfo.renderedPixels;
     }
 
     void Yw3dDevice::SetDefaultRenderStates()
