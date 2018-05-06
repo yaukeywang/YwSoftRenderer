@@ -67,6 +67,93 @@ namespace yw
         // ------------------------------------------------------------------
         // Resource creation.
 
+        // Creates a vertex format from a vertex declaration. A vertex format describes the layout of vertex data in the vertex streams.
+        // @param[out] o_ppVertexFormat receives a pointer to the created vertex format.
+        // @param[in] i_pVertexDeclaration pointer to the vertex declaration.
+        // @param[in] i_iVertexDeclSize size of the vertex declaration in bytes.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateVertexFormat(class Yw3dVertexFormat** vertexFormat, const Yw3dVertexElement* vertexDeclaration, uint32_t vertexDeclSize);
+
+        // Creates an index buffer for index storage.
+        // @param[out] indexBuffer receives a pointer to the created index buffer.
+        // @param[in] length length of the index buffer to be created in bytes.
+        // @param[in] format format of the index buffer to be created. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateIndexBuffer(class Yw3dIndexBuffer** indexBuffer, uint32_t length, Yw3dFormat format);
+
+        // Creates a vertex buffer for vertex storage.
+        // @param[out] vertexBuffer receives a pointer to the created vertex buffer.
+        // @param[in] length length of the vertex buffer to be created in bytes.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateVertexBuffer(class Yw3dVertexBuffer** vertexBuffer, uint32_t length);
+
+        // Creates a surface.
+        // @param[out] surface receives a pointer to the created surface.
+        // @param[in] width width of the surface in pixels.
+        // @param[in] height height of the surface in pixels.
+        // @param[in] format format of the new surface. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateSurface(class Yw3dSurface** surface, uint32_t width, uint32_t height, Yw3dFormat format);
+
+        // Creates a standard 2d texture, which may either be used for texture data storage or as a target for rendering-operations (as frame- or depthbuffer).
+        // @param[out] texture receives a pointer to the created texture.
+        // @param[in] width width of the texture in pixels.
+        // @param[in] height height of the texture in pixels.
+        // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
+        // @param[in] format format of the new texture. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateTexture(class Yw3dTexture** texture, uint32_t width, uint32_t height, uint32_t mipLevels, Yw3dFormat format);
+
+        // Creates a cube texture. A pointer to each of the 6 faces can be obtained and used as a target for renderin-operations like a standard 2d texture.
+        // @param[out] cubeTexture receives a pointer to the created texture.
+        // @param[in] edgeLength edge length of the texture in pixels.
+        // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
+        // @param[in] format format of the new texture. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateCubeTexture(class Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, uint32_t format);
+
+        // Creates a volume.
+        // @param[out] volume receives a pointer to the created volume.
+        // @param[in] width width of the volume in pixels.
+        // @param[in] height height of the volume in pixels.
+        // @param[in] depth depth of the volume in pixels.
+        // @param[in] format format of the new surface. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateVolume(class Yw3dVolume** volume, uint32_t width, uint32_t height, uint32_t depth, Yw3dFormat format);
+
+        // Creates a volume texture. Volume texture cannot be used as a target for rendering-operations.
+        // @param[out] volumeTexture receives a pointer to the created texture.
+        // @param[in] width width of the texture in pixels.
+        // @param[in] height height of the texture in pixels.
+        // @param[in] depth depth of the texture in pixels.
+        // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
+        // @param[in] format format of the new texture. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateVolumeTexture(class Yw3dVolumeTexture** volumeTexture, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, Yw3dFormat format);
+
+        // Creates a render target.
+        // @param[out] renderTarget receives a pointer to the created render target.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_OutOfMemory if memory allocation failed.
+        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget);
+
         // ------------------------------------------------------------------
         // State management.
 
@@ -127,8 +214,8 @@ namespace yw
         class IYw3dPixelShader* GetPixelShader();
 
         // Sets the index buffer.
-        // @param[in] i_pIndexBuffer pointer to the index buffer.
-        // @return s_ok if the function succeeds.
+        // @param[in] indexBuffer pointer to the index buffer.
+        // @return Yw3d_S_OK if the function succeeds.
         Yw3dResult SetIndexBuffer(class Yw3dIndexBuffer* indexBuffer);
 
         // Returns a pointer to the active index buffer. Calling this function will increase the internal reference count of the index buffer. Failure to call Release() when finished using the pointer will result in a memory leak.
@@ -148,7 +235,7 @@ namespace yw
         // @param[out] vertexBuffer receives a pointer to the vertex buffer.
         // @param[out] offset receives the offset from the start of the vertex buffer in bytes. (In case this value doesn't need to be retrieved, pass 0 as parameter.)
         // @param[out] stride receives the stride in bytes. (In case this value doesn't need to be retrieved, pass 0 as parameter.)
-        // @return s_ok Yw3d_S_OK the function succeeds.
+        // @return Yw3d_S_OK the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         Yw3dResult GetVertexStream(uint32_t streamNumber, class Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride);
 

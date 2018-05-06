@@ -341,6 +341,161 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult Yw3dDevice::CreateVertexFormat(Yw3dVertexFormat** vertexFormat, const Yw3dVertexElement* vertexDeclaration, uint32_t vertexDeclSize)
+    {
+        if (nullptr == vertexFormat)
+        {
+            LOGE(_T("Yw3dDevice::CreateVertexFormat: parameter vertexFormat points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        *vertexFormat = new Yw3dVertexFormat(this);
+        if (nullptr == (*vertexFormat))
+        {
+            LOGE(_T("Yw3dDevice::CreateVertexFormat: out of memory, cannot create vertex format.\n"));
+            return Yw3d_E_OutOfMemory;
+        }
+
+        Yw3dResult resCreate = (*vertexFormat)->Create(vertexDeclaration, vertexDeclSize);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*vertexFormat);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::CreateIndexBuffer(Yw3dIndexBuffer** indexBuffer, uint32_t length, Yw3dFormat format)
+    {
+        if (nullptr == indexBuffer)
+        {
+            LOGE(_T("Yw3dDevice::CreateIndexBuffer: parameter indexBuffer points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        *indexBuffer = new Yw3dIndexBuffer(this);
+        if (nullptr == (*indexBuffer))
+        {
+            LOGE(_T("Yw3dDevice::CreateIndexBuffer: out of memory, cannot create indexbuffer.\n"));
+            return Yw3d_E_OutOfMemory;
+        }
+
+        Yw3dResult resCreate = (*indexBuffer)->Create(length, format);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*indexBuffer);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::CreateVertexBuffer(Yw3dVertexBuffer** vertexBuffer, uint32_t length)
+    {
+        if (nullptr == vertexBuffer)
+        {
+            LOGE(_T("Yw3dDevice::CreateVertexBuffer: parameter vertexBuffer points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        *vertexBuffer = new Yw3dVertexBuffer(this);
+        if (nullptr == (*vertexBuffer))
+        {
+            LOGE(_T("Yw3dDevice::CreateVertexBuffer: out of memory, cannot create vertexbuffer.\n"));
+            return Yw3d_E_OutOfMemory;
+        }
+
+        Yw3dResult resCreate = (*vertexBuffer)->Create(length);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*vertexBuffer);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::CreateSurface(Yw3dSurface** surface, uint32_t width, uint32_t height, Yw3dFormat format)
+    {
+        if (nullptr == surface)
+        {
+            LOGE(_T("Yw3dDevice::CreateSurface: parameter surface points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        *surface = new Yw3dSurface(this);
+        if (nullptr == (*surface))
+        {
+            LOGE(_T("Yw3dDevice::CreateSurface: out of memory, cannot create surface.\n"));
+            return Yw3d_E_OutOfMemory;
+        }
+
+        Yw3dResult resCreate = (*surface)->Create(width, height, format);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*surface);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    //Yw3dResult Yw3dDevice::CreateTexture(Yw3dTexture** texture, uint32_t width, uint32_t height, uint32_t mipLevels, Yw3dFormat format)
+    //{
+    //    if (nullptr == texture)
+    //    {
+    //        LOGE(_T("Yw3dDevice::CreateTexture: parameter texture points to null.\n"));
+    //        return Yw3d_E_InvalidParameters;
+    //    }
+
+    //    *texture = new Yw3dTexture(this);
+    //    if (nullptr == (*texture))
+    //    {
+    //        LOGE(_T("Yw3dDevice::CreateTexture: out of memory, cannot create texture.\n"));
+    //        return  Yw3d_E_OutOfMemory;
+    //    }
+
+    //    Yw3dResult resCreate = (*texture)->Create(width, height, mipLevels, format);
+    //    if (YW3D_FAILED(resCreate))
+    //    {
+    //        YW_SAFE_RELEASE(*texture);
+    //        return resCreate;
+    //    }
+
+    //    return  Yw3d_S_OK;
+    //}
+
+    //Yw3dResult Yw3dDevice::CreateCubeTexture(Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, uint32_t format)
+    //{
+    //}
+
+    //Yw3dResult Yw3dDevice::CreateVolume(Yw3dVolume** volume, uint32_t width, uint32_t height, uint32_t depth, Yw3dFormat format)
+    //{
+    //}
+
+    //Yw3dResult Yw3dDevice::CreateVolumeTexture(Yw3dVolumeTexture** volumeTexture, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, Yw3dFormat format)
+    //{
+    //}
+
+    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget)
+    {
+        if (nullptr == renderTarget)
+        {
+            LOGE(_T("Yw3dDevice::CreateRenderTarget: parameter renderTarget points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        *renderTarget = new Yw3dRenderTarget(this);
+        if (nullptr == (*renderTarget))
+        {
+            LOGE(_T("Yw3dDevice::CreateRenderTarget: out of memory, cannot create rendertarget.\n"));
+            return Yw3d_E_OutOfMemory;
+        }
+
+        return Yw3d_S_OK;
+    }
+
     Yw3dResult Yw3dDevice::SetRenderState(Yw3dRenderState renderState, uint32_t value)
     {
         if (renderState >= Yw3d_RS_NumRenderStates)
