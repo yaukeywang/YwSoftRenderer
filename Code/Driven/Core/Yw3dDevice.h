@@ -33,7 +33,25 @@ namespace yw
 
     public:
         // ------------------------------------------------------------------
+        // Base setting.
+
+        // Returns a pointer to the Muli3D instance. Calling this function will increase the internal reference count of the Muli3D instance. Failure to call Release() when finished using the pointer will result in a memory leak.
+        Yw3d* GetYw3d();
+
+        // Returns the device parameters.
+        const Yw3dDeviceParameters& GetDeviceParameters();
+
+        // ------------------------------------------------------------------
         // Drawing.
+
+        // Presents the contents of a given rendertarget's colorbuffer.
+        // @param[in] renderTarget the rendertarget to be presented.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidFormat if an invalid format was encountered.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        // @return Yw3d_E_Unknown if a present-target related problem was encountered.
+        Yw3dResult Present(class Yw3dRenderTarget* renderTarget);
 
         // Renders nonindexed primitives of the specified type from the currently set vertex streams.
         // @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.

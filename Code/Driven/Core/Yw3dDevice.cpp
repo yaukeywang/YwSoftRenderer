@@ -18,7 +18,7 @@
 namespace yw
 {
     Yw3dDevice::Yw3dDevice(Yw3d* yw3d, const Yw3dDeviceParameters* deviceParameters) :
-        m_Parent(nullptr),
+        m_Parent(yw3d),
         m_PresentTarget(nullptr),
         m_VertexFormat(nullptr),
         m_PrimitiveAssembler(nullptr),
@@ -31,18 +31,114 @@ namespace yw
         m_FetchedVertices(0),
         m_NextFreeClipVertex(0)
     {
+        m_Parent->AddRef();
+
+        memcpy(&m_DeviceParameters, deviceParameters, sizeof(Yw3dDeviceParameters));
         memset(m_RenderStates, 0, Yw3d_RS_NumRenderStates * sizeof(uint32_t));
         memset(m_ClipVertices, 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput));
         memset(m_ClipVerticesStages[0], 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput*));
         memset(m_ClipVerticesStages[1], 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput*));
+
+        SetDefaultRenderStates();
+        SetDefaultTextureSamplerStates();
+        SetDefaultClippingPlanes();
     }
 
     Yw3dDevice::~Yw3dDevice()
     {
+        //YW_SAFE_RELEASE(m_PresentTarget);
+        YW_SAFE_RELEASE(m_Parent);
     }
 
     Yw3dResult Yw3dDevice::Create()
     {
+//        // Create the present-target.
+//
+//        // NOTE: add support for other platforms here
+//#ifdef WIN32
+//        //m_PresentTarget = new CMuli3DPresentTargetWin32(this);
+//#endif
+//
+//#ifdef LINUX_X11
+//        //m_PresentTarget = new CMuli3DPresentTargetLinuxX11(this);
+//#endif
+//
+//#ifdef __amigaos4__
+//        //m_PresentTarget = new CMuli3DPresentTargetAmigaOS4(this);
+//#endif
+//
+//        if (nullptr == m_PresentTarget)
+//        {
+//            LOGE(_T("Yw3dDevice::Create: out of memory, cannot create present-target.\n"));
+//            return Yw3d_E_OutOfMemory;
+//        }
+//
+//        return m_PresentTarget->Create();
+
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3d* Yw3dDevice::GetYw3d()
+    {
+        if (nullptr != m_Parent)
+        {
+            m_Parent->AddRef();
+        }
+
+        return m_Parent;
+    }
+
+    const Yw3dDeviceParameters& Yw3dDevice::GetDeviceParameters()
+    {
+        return m_DeviceParameters;
+    }
+
+    Yw3dResult Yw3dDevice::Present(Yw3dRenderTarget* renderTarget)
+    {
+        //if (nullptr == renderTarget)
+        //{
+        //    LOGE(_T("Yw3dDevice::Present: parameter renderTarget points to null.\n"));
+        //    return Yw3d_E_InvalidParameters;
+        //}
+
+        //// Get pointer to the colorbuffer of the rendertarget ---------------------
+        //Yw3dSurface* colorBuffer = renderTarget->AquireColorBuffer();
+        //if (nullptr == colorBuffer)
+        //{
+        //    LOGE(_T("Yw3dDevice::Present: rendertarget doesn't have a colorbuffer attached.\n"));
+        //    return  Yw3d_E_InvalidState;
+        //}
+
+        //if ((colorBuffer->GetWidth() != m_DeviceParameters.backBufferWidth) || (colorBuffer->GetHeight() != m_DeviceParameters.backBufferHeight))
+        //{
+        //    YW_SAFE_RELEASE(colorBuffer);
+        //    LOGE(_T("Yw3dDevice::Present: colorbuffer's dimensions don't match backbuffer.\n"));
+        //    return Yw3d_E_InvalidState;
+        //}
+
+        //const uint32_t floatCount = colorBuffer->GetFormatFloats();
+        //if (floatCount < 3)
+        //{
+        //    YW_SAFE_RELEASE(colorBuffer);
+        //    LOGE(_T("Yw3dDevice::Present: invalid colorbuffer format - only m3dfmt_r32g32b32f and m3dfmt_r32g32b32a32f are supported!\n"));
+        //    return  Yw3d_E_InvalidFormat;
+        //}
+
+        //const float* sourceBufData = nullptr;
+        //if (YW3D_FAILED(colorBuffer->LockRect((void**)&sourceBufData, 0)))
+        //{
+        //    YW_SAFE_RELEASE(colorBuffer);
+        //    LOGE(_T("Yw3dDevice::Present: couldn't access colorbuffer.\n"));
+        //    return Yw3d_E_Unknown;
+        //}
+
+        //Yw3dResult resPresent = m_PresentTarget->Present(sourceBufData, floatCount);
+
+        //colorBuffer->UnlockRect();
+        //YW_SAFE_RELEASE(colorBuffer);
+
+        //return resPresent;
+
         return Yw3d_E_Unknown;
     }
 
