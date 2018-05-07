@@ -26,7 +26,7 @@ namespace yw
         // Accessible by Yw3dDevice which is the only class that may create a surface.
         // @param[in] width width of the surface to be created in pixels.
         // @param[in] height height of the surface to be created in pixels.
-        // @param[in] Yw3dFormat format of the surface to be created. Member of the enumeration m3dformat; m3dfmt_r32f, m3dfmt_r32g32f, m3dfmt_r32g32b32f or m3dfmt_r32g32b32a32f.
+        // @param[in] Yw3dFormat format of the surface to be created. Member of the enumeration Yw3dFormat; Yw3d_FMT_R32F, Yw3d_FMT_R32G32F, Yw3d_FMT_R32G32B32F or Yw3d_FMT_R32G32B32A32F.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -78,7 +78,7 @@ namespace yw
         // @return Yw3d_E_InvalidState if the surface is not locked.
         Yw3dResult UnlockRect();
 
-        // Returns the format of the surface. Member of the enumeration m3dformat; m3dfmt_r32f, m3dfmt_r32g32f, m3dfmt_r32g32b32f or m3dfmt_r32g32b32a32f.
+        // Returns the format of the surface. Member of the enumeration Yw3dFormat; Yw3d_FMT_R32F, Yw3d_FMT_R32G32F, Yw3d_FMT_R32G32B32F or Yw3d_FMT_R32G32B32A32F.
         Yw3dFormat GetFormat() const;
 
         //< Returns the number of floats of the format, e [1,4].
@@ -97,7 +97,7 @@ namespace yw
         // Pointer to parent.
         class Yw3dDevice* m_Device;
 
-        // Format of the surface. Member of the enumeration m3dformat; m3dfmt_r32f, m3dfmt_r32g32f, m3dfmt_r32g32b32f or m3dfmt_r32g32b32a32f.
+        // Format of the surface. Member of the enumeration Yw3dFormat; Yw3d_FMT_R32F, Yw3d_FMT_R32G32F, Yw3d_FMT_R32G32B32F or Yw3d_FMT_R32G32B32A32F.
         Yw3dFormat m_Format;
 
         // Width of the surface in pixels.

@@ -19,7 +19,7 @@ namespace yw
         m_PartialLockData(nullptr), 
         m_Data(nullptr)
     {
-        /// Note: cannot add a reference to parent or the presenttarget will never be freed?
+        // Note: cannot add a reference to parent or the presenttarget will never be freed?
         m_Device->AddRef();
     }
 

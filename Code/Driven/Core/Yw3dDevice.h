@@ -97,7 +97,7 @@ namespace yw
         // Creates an index buffer for index storage.
         // @param[out] indexBuffer receives a pointer to the created index buffer.
         // @param[in] length length of the index buffer to be created in bytes.
-        // @param[in] format format of the index buffer to be created. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @param[in] format format of the index buffer to be created. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -126,7 +126,7 @@ namespace yw
         // @param[in] width width of the texture in pixels.
         // @param[in] height height of the texture in pixels.
         // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
-        // @param[in] format format of the new texture. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -136,7 +136,7 @@ namespace yw
         // @param[out] cubeTexture receives a pointer to the created texture.
         // @param[in] edgeLength edge length of the texture in pixels.
         // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
-        // @param[in] format format of the new texture. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -147,7 +147,7 @@ namespace yw
         // @param[in] width width of the volume in pixels.
         // @param[in] height height of the volume in pixels.
         // @param[in] depth depth of the volume in pixels.
-        // @param[in] format format of the new surface. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @param[in] format format of the new surface. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -159,7 +159,7 @@ namespace yw
         // @param[in] height height of the texture in pixels.
         // @param[in] depth depth of the texture in pixels.
         // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
-        // @param[in] format format of the new texture. Member of the enumeration m3dformat; either m3dfmt_index16 or m3dfmt_index32.
+        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
