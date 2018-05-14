@@ -110,8 +110,8 @@ namespace yw
         uint32_t m_MipLevels;
 
         // Squared dimensions of the base mip-level, used for mip-calculations.
-        float m_fSquaredWidth;
-        float m_fSquaredHeight;
+        float m_SquaredWidth;
+        float m_SquaredHeight;
 
         // Pointer to the mip-level data.
         class Yw3dSurface** m_MipLevelsData;
