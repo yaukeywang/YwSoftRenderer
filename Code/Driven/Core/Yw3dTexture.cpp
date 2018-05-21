@@ -177,7 +177,129 @@ namespace yw
 
     Yw3dResult Yw3dTexture::GenerateMipSubLevels(uint32_t srcLevel)
     {
-        return Yw3d_E_Unknown;
+        if ((srcLevel + 1) > m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::GenerateMipSubLevels: srcLevel refers either to last mip-level or is larger than the number of mip-levels.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        // Generate by each mip level.
+        for (uint32_t level = srcLevel + 1; level < m_MipLevels; level++)
+        {
+            // Lock mip surface data on source data.
+            const float* srcData = nullptr;
+            Yw3dResult resLock = LockRect(level - 1, (void**)&srcData, nullptr);
+            if (YW3D_FAILED(resLock))
+            {
+                return resLock;
+            }
+
+            // Lock mip surface data on dest data.
+            float* destData = nullptr;
+            resLock = LockRect(level, (void**)&destData, nullptr);
+            if (YW3D_FAILED(resLock))
+            {
+                UnlockRect(level - 1);
+                return resLock;
+            }
+
+            // Get original width and height from source mip level.
+            const uint32_t srcWidth = GetWidth(level - 1);
+            const uint32_t srcHeight = GetHeight(level - 1);
+
+            switch (GetFormat())
+            {
+            case Yw3d_FMT_R32F:
+                {
+                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    {
+                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
+                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData++)
+                        {
+                            const float srcPixels[4] = 
+                            {
+                                srcData[indexRows[0] + idxX],
+                                srcData[indexRows[0] + idxX + 1],
+                                srcData[indexRows[1] + idxX],
+                                srcData[indexRows[1] + idxX + 1]
+                            };
+
+                            *destData = (srcPixels[0] + srcPixels[1] + srcPixels[2] + srcPixels[3]) * 0.25f;
+                        }
+                    }
+                }
+                break;
+            case Yw3d_FMT_R32G32F:
+                {
+                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    {
+                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
+                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData += 2)
+                        {
+                            const Vector2* srcPixels[4] =
+                            {
+                                &((Vector2*)srcData)[indexRows[0] + idxX],
+                                &((Vector2*)srcData)[indexRows[0] + idxX + 1],
+                                &((Vector2*)srcData)[indexRows[1] + idxX],
+                                &((Vector2*)srcData)[indexRows[1] + idxX + 1]
+                            };
+
+                            *(Vector2*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                        }
+                    }
+                }
+                break;
+            case Yw3d_FMT_R32G32B32F:
+                {
+                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    {
+                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
+                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData += 3)
+                        {
+                            const Vector3* srcPixels[4] =
+                            {
+                                &((Vector3*)srcData)[indexRows[0] + idxX],
+                                &((Vector3*)srcData)[indexRows[0] + idxX + 1],
+                                &((Vector3*)srcData)[indexRows[1] + idxX],
+                                &((Vector3*)srcData)[indexRows[1] + idxX + 1]
+                            };
+
+                            *(Vector3*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                        }
+                    }
+                }
+                break;
+            case Yw3d_FMT_R32G32B32A32F:
+                {
+                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    {
+                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
+                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData += 4)
+                        {
+                            const Vector4* srcPixels[4] =
+                            {
+                                &((Vector4*)srcData)[indexRows[0] + idxX],
+                                &((Vector4*)srcData)[indexRows[0] + idxX + 1],
+                                &((Vector4*)srcData)[indexRows[1] + idxX],
+                                &((Vector4*)srcData)[indexRows[1] + idxX + 1]
+                            };
+
+                            *(Vector4*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                        }
+                    }
+                }
+                break;
+            default:
+                // This can not happen.
+                break;
+            }
+
+            // Unlock data.
+            UnlockRect(level);
+            UnlockRect(level - 1);
+        }
+
+        return Yw3d_S_OK;
     }
 
     Yw3dResult Yw3dTexture::Clear(uint32_t mipLevel, const Vector4& color, const Yw3dRect* rect)
