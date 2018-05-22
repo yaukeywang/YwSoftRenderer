@@ -304,46 +304,83 @@ namespace yw
 
     Yw3dResult Yw3dTexture::Clear(uint32_t mipLevel, const Vector4& color, const Yw3dRect* rect)
     {
-        return Yw3d_E_Unknown;
+        if (mipLevel >= m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::Clear: invalid mip-level specified.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        return m_MipLevelsData[mipLevel]->Clear(color, rect);
     }
 
     Yw3dResult Yw3dTexture::LockRect(uint32_t mipLevel, void** data, const Yw3dRect* rect)
     {
-        return Yw3d_E_Unknown;
+        if (mipLevel >= m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::LockRect: invalid mip-level specified.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        return m_MipLevelsData[mipLevel]->LockRect(data, rect);
     }
 
     Yw3dResult Yw3dTexture::UnlockRect(uint32_t mipLevel)
     {
-        return Yw3d_E_Unknown;
+        if (mipLevel >= m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::UnlockRect: invalid mip-level specified.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        return m_MipLevelsData[mipLevel]->UnlockRect();
     }
 
-    Yw3dSurface* GetMipLevel(uint32_t mipLevel)
+    Yw3dSurface* Yw3dTexture::GetMipLevel(uint32_t mipLevel)
     {
-        return nullptr;
+        if (mipLevel >= m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::GetMipLevel: invalid mip-level specified.\n"));
+            return nullptr;
+        }
+
+        m_MipLevelsData[mipLevel]->AddRef();
+        return m_MipLevelsData[mipLevel];
     }
 
-    Yw3dFormat Yw3dTexture::GetFormat()
+    Yw3dFormat Yw3dTexture::GetFormat() const
     {
-        return Yw3d_FMT_R32G32B32A32F;
+        return m_MipLevelsData[0]->GetFormat();
     }
 
-    uint32_t Yw3dTexture::GetFormatFloats()
+    uint32_t Yw3dTexture::GetFormatFloats() const
     {
-        return 0;
+        return m_MipLevelsData[0]->GetFormatFloats();
     }
 
-    uint32_t Yw3dTexture::GetMipLevels()
+    uint32_t Yw3dTexture::GetMipLevels() const
     {
-        return 0;
+        return m_MipLevels;
     }
 
-    uint32_t Yw3dTexture::GetWidth(uint32_t)
+    uint32_t Yw3dTexture::GetWidth(uint32_t mipLevel) const
     {
-        return 0;
+        if (mipLevel >= m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::GetWidth: invalid mip-level specified.\n"));
+            return 0;
+        }
+
+        return m_MipLevelsData[mipLevel]->GetWidth();
     }
 
-    uint32_t Yw3dTexture::GetHeight(uint32_t)
+    uint32_t Yw3dTexture::GetHeight(uint32_t mipLevel) const
     {
-        return 0;
+        if (mipLevel >= m_MipLevels)
+        {
+            LOGE(_T("Yw3dTexture::GetHeight: invalid mip-level specified.\n"));
+            return 0;
+        }
+
+        return m_MipLevelsData[mipLevel]->GetHeight();
     }
 }

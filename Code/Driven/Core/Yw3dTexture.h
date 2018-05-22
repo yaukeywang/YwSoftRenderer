@@ -89,21 +89,21 @@ namespace yw
         class Yw3dSurface* GetMipLevel(uint32_t mipLevel);
 
         // Returns the format of the texture. Member of the enumeration Yw3dFormat; Yw3d_FMT_R32F, Yw3d_FMT_R32G32F, Yw3d_FMT_R32G32B32F or Yw3d_FMT_R32G32B32A32F.
-        Yw3dFormat GetFormat();
+        Yw3dFormat GetFormat() const;
 
         // Returns the number of floats of the format, e [1,4].
-        uint32_t GetFormatFloats();
+        uint32_t GetFormatFloats() const;
 
         // Returns the number of mip-levels this texture consists of.
-        uint32_t GetMipLevels();
+        uint32_t GetMipLevels() const;
 
         // Returns the width of the given mip-level in pixels.
         // @param[in] mipLevel the mip-level whose width is requested.
-        uint32_t GetWidth(uint32_t mipLevel = 0);
+        uint32_t GetWidth(uint32_t mipLevel = 0) const;
 
         // Returns the height of the given mip-level in pixels.
         // @param[in] mipLevel the mip-level whose height is requested.
-        uint32_t GetHeight(uint32_t mipLevel = 0);
+        uint32_t GetHeight(uint32_t mipLevel = 0) const;
 
     private:
         // Number of mip-levels.
