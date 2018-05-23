@@ -163,6 +163,7 @@
     <ClInclude Include="Driven\Core\Yw3dBase.h" />
     <ClInclude Include="Driven\Core\Yw3dBaseShader.h" />
     <ClInclude Include="Driven\Core\Yw3dBaseTexture.h" />
+    <ClInclude Include="Driven\Core\Yw3dCubeTexture.h" />
     <ClInclude Include="Driven\Core\Yw3dDevice.h" />
     <ClInclude Include="Driven\Core\Yw3dIndexBuffer.h" />
     <ClInclude Include="Driven\Core\Yw3dPresentTarget.h" />
@@ -174,6 +175,8 @@
     <ClInclude Include="Driven\Core\Yw3dTypes.h" />
     <ClInclude Include="Driven\Core\Yw3dVertexBuffer.h" />
     <ClInclude Include="Driven\Core\Yw3dVertexFormat.h" />
+    <ClInclude Include="Driven\Core\Yw3dVolume.h" />
+    <ClInclude Include="Driven\Core\Yw3dVolumeTexture.h" />
     <ClInclude Include="Driven\Math\YwMathCore.h" />
     <ClInclude Include="Driven\Math\YwMathPlane.h" />
     <ClInclude Include="Driven\Math\YwMathUtility.h" />
@@ -201,6 +204,7 @@
     <ClCompile Include="Driven\Core\Yw3d.cpp" />
     <ClCompile Include="Driven\Core\Yw3dBaseShader.cpp" />
     <ClCompile Include="Driven\Core\Yw3dBaseTexture.cpp" />
+    <ClCompile Include="Driven\Core\Yw3dCubeTexture.cpp" />
     <ClCompile Include="Driven\Core\Yw3dDevice.cpp" />
     <ClCompile Include="Driven\Core\Yw3dIndexBuffer.cpp" />
     <ClCompile Include="Driven\Core\Yw3dPresentTarget.cpp" />
@@ -210,6 +214,8 @@
     <ClCompile Include="Driven\Core\Yw3dTexture.cpp" />
     <ClCompile Include="Driven\Core\Yw3dVertexBuffer.cpp" />
     <ClCompile Include="Driven\Core\Yw3dVertexFormat.cpp" />
+    <ClCompile Include="Driven\Core\Yw3dVolume.cpp" />
+    <ClCompile Include="Driven\Core\Yw3dVolumeTexture.cpp" />
     <ClCompile Include="Driven\Renderer\YwRendererSoftDx9.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">

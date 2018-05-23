@@ -145,6 +145,15 @@
     <ClInclude Include="Driven\Core\Yw3dTexture.h">
       <Filter>Driven\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dVolume.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dVolumeTexture.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Driven\Core\Yw3dCubeTexture.h">
+      <Filter>Driven\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -220,6 +229,15 @@
       <Filter>Driven\Core</Filter>
     </ClCompile>
     <ClCompile Include="Driven\Core\Yw3dTexture.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dVolume.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dVolumeTexture.cpp">
+      <Filter>Driven\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Driven\Core\Yw3dCubeTexture.cpp">
       <Filter>Driven\Core</Filter>
     </ClCompile>
   </ItemGroup>
