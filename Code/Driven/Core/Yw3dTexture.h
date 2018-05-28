@@ -86,7 +86,7 @@ namespace yw
         // Returns a surface-pointer to a given texture mip-level.
         // Calling this function will increase the internal reference count of the surface. Failure to call Release() when finished using the pointer will result in a memory leak.
         // @param[in] mipLevel mip-level, 0 being the largest mip-level.
-        class Yw3dSurface* AquireMipLevel(uint32_t mipLevel);
+        class Yw3dSurface* AcquireMipLevel(uint32_t mipLevel);
 
         // Returns the format of the texture. Member of the enumeration Yw3dFormat; Yw3d_FMT_R32F, Yw3d_FMT_R32G32F, Yw3d_FMT_R32G32B32F or Yw3d_FMT_R32G32B32A32F.
         Yw3dFormat GetFormat() const;

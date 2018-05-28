@@ -84,7 +84,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dDevice* Yw3dVertexFormat::AquireDevice()
+    Yw3dDevice* Yw3dVertexFormat::AcquireDevice()
     {
         if (nullptr != m_Device)
         {

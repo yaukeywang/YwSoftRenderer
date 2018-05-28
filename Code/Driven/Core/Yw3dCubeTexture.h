@@ -90,7 +90,7 @@ namespace yw
         // Returns a pointer to a cube face which can then be accessed like a normal 2d texture.
         // Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
         // @param[in] face member of the enumeration m3dcubefaces.
-        class Yw3dTexture* AquireCubeFace(Yw3dCubeFaces face);
+        class Yw3dTexture* AcquireCubeFace(Yw3dCubeFaces face);
 
     private:
         // Pointer to the 6 cube faces.

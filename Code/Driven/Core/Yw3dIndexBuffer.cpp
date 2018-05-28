@@ -52,7 +52,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dDevice* Yw3dIndexBuffer::AquireDevice()
+    Yw3dDevice* Yw3dIndexBuffer::AcquireDevice()
     {
         if (nullptr != m_Device)
         {

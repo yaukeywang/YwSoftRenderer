@@ -20,7 +20,7 @@ namespace yw
         // SAFE_RELEASE(m_Device);
     }
 
-    Yw3dDevice* IYw3dPresentTarget::AquireDevice()
+    Yw3dDevice* IYw3dPresentTarget::AcquireDevice()
     {
         if (nullptr != m_Device)
         {

@@ -78,7 +78,7 @@ namespace yw
         return Yw3d_E_Unknown;
     }
 
-    Yw3d* Yw3dDevice::GetYw3d()
+    Yw3d* Yw3dDevice::AcquireYw3d()
     {
         if (nullptr != m_Parent)
         {
@@ -102,7 +102,7 @@ namespace yw
         //}
 
         //// Get pointer to the colorbuffer of the rendertarget ---------------------
-        //Yw3dSurface* colorBuffer = renderTarget->AquireColorBuffer();
+        //Yw3dSurface* colorBuffer = renderTarget->AcquireColorBuffer();
         //if (nullptr == colorBuffer)
         //{
         //    LOGE(_T("Yw3dDevice::Present: rendertarget doesn't have a colorbuffer attached.\n"));
@@ -676,7 +676,7 @@ namespace yw
         m_PrimitiveAssembler = primitiveAssembler;
     }
 
-    IYw3dPrimitiveAssembler* Yw3dDevice::GetPrimitiveAssembler()
+    IYw3dPrimitiveAssembler* Yw3dDevice::AcquirePrimitiveAssembler()
     {
         if (nullptr != m_PrimitiveAssembler)
         {
@@ -709,7 +709,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    IYw3dVertexShader* Yw3dDevice::GetVertexShader()
+    IYw3dVertexShader* Yw3dDevice::AcquireVertexShader()
     {
         if (nullptr != m_VertexShader)
         {
@@ -725,7 +725,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    IYw3dTriangleShader* Yw3dDevice::GetTriangleShader()
+    IYw3dTriangleShader* Yw3dDevice::AcquireTriangleShader()
     {
         if (nullptr != m_TriangleShader)
         {
@@ -741,7 +741,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    IYw3dPixelShader* Yw3dDevice::GetPixelShader()
+    IYw3dPixelShader* Yw3dDevice::AcquirePixelShader()
     {
         if (nullptr != m_PixelShader)
         {
@@ -757,7 +757,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dIndexBuffer* Yw3dDevice::GetIndexBuffer()
+    Yw3dIndexBuffer* Yw3dDevice::AcquireIndexBuffer()
     {
         if (nullptr != m_IndexBuffer)
         {
@@ -850,7 +850,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::GetTexture(uint32_t samplerNumber, IYw3dBaseTexture** texture)
+    Yw3dResult Yw3dDevice::AcquireTexture(uint32_t samplerNumber, IYw3dBaseTexture** texture)
     {
         if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
         {
@@ -980,7 +980,7 @@ namespace yw
         m_RenderTarget = renderTarget;
     }
 
-    Yw3dRenderTarget* Yw3dDevice::GetRenderTarget()
+    Yw3dRenderTarget* Yw3dDevice::AcquireRenderTarget()
     {
         if (nullptr != m_RenderTarget)
         {

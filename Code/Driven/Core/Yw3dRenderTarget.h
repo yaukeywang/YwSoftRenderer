@@ -25,7 +25,7 @@ namespace yw
     public:
         // Returns a pointer to the associated device. Calling this function will increase the internal reference count of the device. 
         // Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dDevice* AquireDevice();
+        class Yw3dDevice* AcquireDevice();
 
         // Clears the colorbuffer, which is associated with this rendertarget, to a given color.
         // @param[in] color color to clear the colorbuffer to.
@@ -58,10 +58,10 @@ namespace yw
         Yw3dResult SetDepthBuffer(class Yw3dSurface* depthBuffer);
 
         // Returns a pointer to the rendertarget's colorbuffer. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dSurface* AquireColorBuffer();
+        class Yw3dSurface* AcquireColorBuffer();
 
         // Returns a pointer to the rendertarget's depthbuffer. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dSurface* AquireDepthBuffer();
+        class Yw3dSurface* AcquireDepthBuffer();
 
         // Sets the rendertarget's viewport matrix.
         // @param[in] viewportMatrix the viewport matrix.

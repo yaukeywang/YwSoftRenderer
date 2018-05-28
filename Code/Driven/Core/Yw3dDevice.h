@@ -36,7 +36,7 @@ namespace yw
         // Base setting.
 
         // Returns a pointer to the Muli3D instance. Calling this function will increase the internal reference count of the Muli3D instance. Failure to call Release() when finished using the pointer will result in a memory leak.
-        Yw3d* GetYw3d();
+        Yw3d* AcquireYw3d();
 
         // Returns the device parameters.
         const Yw3dDeviceParameters& GetDeviceParameters();
@@ -202,7 +202,7 @@ namespace yw
         void SetPrimitiveAssembler(class IYw3dPrimitiveAssembler* primitiveAssembler);
 
         // Returns a pointer to the active triangle assembler. Calling this function will increase the internal reference count of the primitive assembler. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class IYw3dPrimitiveAssembler* GetPrimitiveAssembler();
+        class IYw3dPrimitiveAssembler* AcquirePrimitiveAssembler();
 
         // Sets the vertex shader.
         // @param[in] vertexShader pointer to the vertex shader.
@@ -211,7 +211,7 @@ namespace yw
         Yw3dResult SetVertexShader(class IYw3dVertexShader* vertexShader);
 
         // Returns a pointer to the active vertex shader. Calling this function will increase the internal reference count of the vertex shader. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class IYw3dVertexShader* GetVertexShader();
+        class IYw3dVertexShader* AcquireVertexShader();
 
         // Sets the triangle shader.
         // @param[in] triangleShader pointer to the triangle shader.
@@ -220,7 +220,7 @@ namespace yw
         Yw3dResult SetTriangleShader(class IYw3dTriangleShader* triangleShader);
 
         // Returns a pointer to the active triangle shader. Calling this function will increase the internal reference count of the triangle shader. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class IYw3dTriangleShader* GetTriangleShader();
+        class IYw3dTriangleShader* AcquireTriangleShader();
 
         // Sets the pixel shader.
         // @param[in] pixelShader pointer to the pixel shader.
@@ -229,7 +229,7 @@ namespace yw
         Yw3dResult SetPixelShader(class IYw3dPixelShader* pixelShader);
 
         // Returns a pointer to the active pixel shader. Calling this function will increase the internal reference count of the pixel shader. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class IYw3dPixelShader* GetPixelShader();
+        class IYw3dPixelShader* AcquirePixelShader();
 
         // Sets the index buffer.
         // @param[in] indexBuffer pointer to the index buffer.
@@ -237,7 +237,7 @@ namespace yw
         Yw3dResult SetIndexBuffer(class Yw3dIndexBuffer* indexBuffer);
 
         // Returns a pointer to the active index buffer. Calling this function will increase the internal reference count of the index buffer. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dIndexBuffer* GetIndexBuffer();
+        class Yw3dIndexBuffer* AcquireIndexBuffer();
 
         // Sets a vertex buffer to a given stream.
         // @param[in] streamNumber number of the stream.
@@ -269,7 +269,7 @@ namespace yw
         // @param[out] texture receives a pointer to the texture.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        Yw3dResult GetTexture(uint32_t samplerNumber, class IYw3dBaseTexture** texture);
+        Yw3dResult AcquireTexture(uint32_t samplerNumber, class IYw3dBaseTexture** texture);
 
         // Sets a sampler state.
         // @param[in] samplerNumber number of the sampler.
@@ -305,7 +305,7 @@ namespace yw
 
         // Returns a pointer to the active render target. Calling this function will increase the internal reference count of the render target.
         // Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dRenderTarget* GetRenderTarget();
+        class Yw3dRenderTarget* AcquireRenderTarget();
 
         // Sets the scissor rect.
         // @param[in] scissorRect the scissor rect.

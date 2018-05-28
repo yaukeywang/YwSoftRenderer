@@ -19,7 +19,7 @@ namespace yw
         YW_SAFE_RELEASE(m_Device);
     }
 
-    Yw3dDevice* IYw3dBaseTexture::AquireDevice()
+    Yw3dDevice* IYw3dBaseTexture::AcquireDevice()
     {
         if (nullptr != m_Device)
         {

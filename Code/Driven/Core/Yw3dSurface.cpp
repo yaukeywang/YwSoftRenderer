@@ -559,7 +559,7 @@ namespace yw
         return m_Height;
     }
 
-    Yw3dDevice* Yw3dSurface::AquireDevice()
+    Yw3dDevice* Yw3dSurface::AcquireDevice()
     {
         if (nullptr != m_Device)
         {

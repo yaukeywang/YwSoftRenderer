@@ -72,7 +72,7 @@ namespace yw
         return -1;
     }
 
-    Yw3dTexture* Yw3dCubeTexture::AquireCubeFace(Yw3dCubeFaces face)
+    Yw3dTexture* Yw3dCubeTexture::AcquireCubeFace(Yw3dCubeFaces face)
     {
         return nullptr;
     }

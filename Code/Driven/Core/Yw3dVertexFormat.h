@@ -33,7 +33,7 @@ namespace yw
 
     public:
         // Returns a pointer to the associated device. Calling this function will increase the internal reference count of the device. Failure to call Release() when finished using the pointer will Yw3dResult in a memory leak.
-        class Yw3dDevice* AquireDevice();
+        class Yw3dDevice* AcquireDevice();
 
     protected:
         // Accessible by Yw3dDevice. Returns the number of vertex elements described in this vertex format.
