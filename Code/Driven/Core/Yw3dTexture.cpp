@@ -335,7 +335,7 @@ namespace yw
         return m_MipLevelsData[mipLevel]->UnlockRect();
     }
 
-    Yw3dSurface* Yw3dTexture::GetMipLevel(uint32_t mipLevel)
+    Yw3dSurface* Yw3dTexture::AquireMipLevel(uint32_t mipLevel)
     {
         if (mipLevel >= m_MipLevels)
         {

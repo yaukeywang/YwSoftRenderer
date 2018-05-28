@@ -20,4 +20,60 @@ namespace yw
     {
 
     }
+
+    Yw3dResult Yw3dCubeTexture::Create(uint32_t edgeLength, uint32_t mipLevels, Yw3dFormat format)
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dTextureSampleInput Yw3dCubeTexture::GetTexSampleInput()
+    {
+        return Yw3d_TSI_Vector;
+    }
+
+    Yw3dResult Yw3dCubeTexture::SampleTexture(Vector4& color, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dCubeTexture::GenerateMipSubLevels(uint32_t srcLevel)
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dCubeTexture::LockRect(Yw3dCubeFaces face, uint32_t mipLevel, void** data, const Yw3dRect* rect)
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dCubeTexture::UnlockRect(Yw3dCubeFaces face, uint32_t mipLevel)
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dFormat Yw3dCubeTexture::GetFormat() const
+    {
+        return Yw3d_FMT_R32G32B32A32F;
+    }
+
+    uint32_t Yw3dCubeTexture::GetFormatFloats() const
+    {
+        return -1;
+    }
+
+    // Returns the number of mip-levels this texture consists of.
+    uint32_t Yw3dCubeTexture::GetMipLevels() const
+    {
+        return -1;
+    }
+
+    uint32_t Yw3dCubeTexture::GetEdgeLength(uint32_t mipLevel)
+    {
+        return -1;
+    }
+
+    Yw3dTexture* Yw3dCubeTexture::AquireCubeFace(Yw3dCubeFaces face)
+    {
+        return nullptr;
+    }
 }
