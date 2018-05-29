@@ -35,7 +35,7 @@ namespace yw
         Yw3dResult Create(uint32_t edgeLength, uint32_t mipLevels, Yw3dFormat format);
 
         // Sampling this texture requires a 3-dimensional floating point vector.
-        Yw3dTextureSampleInput GetTexSampleInput();
+        Yw3dTextureSampleInput GetTextureSampleInput() const;
 
         // Accessible by Yw3dDevice.
         // Samples the texture and returns the looked-up color.

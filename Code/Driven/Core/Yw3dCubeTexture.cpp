@@ -12,21 +12,49 @@ namespace yw
     Yw3dCubeTexture::Yw3dCubeTexture(Yw3dDevice* device) :
         IYw3dBaseTexture(device)
     {
-
+        for (uint32_t faceIdx = Yw3d_CF_Positive_X; faceIdx <= Yw3d_CF_Negative_Z; faceIdx++)
+        {
+            m_CubeFaces[faceIdx] = nullptr;
+        }
     }
 
     // Accessible by IBase. The destructor is called when the reference count reaches zero.
     Yw3dCubeTexture::~Yw3dCubeTexture()
     {
-
+        for (uint32_t faceIdx = Yw3d_CF_Positive_X; faceIdx <= Yw3d_CF_Negative_Z; faceIdx++)
+        {
+            YW_SAFE_RELEASE(m_CubeFaces[faceIdx]);
+        }
     }
 
     Yw3dResult Yw3dCubeTexture::Create(uint32_t edgeLength, uint32_t mipLevels, Yw3dFormat format)
     {
-        return Yw3d_E_Unknown;
+        if (0 == edgeLength)
+        {
+            LOGE(_T("Yw3dCubeTexture::Create: edge length is invalid.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if ((format < Yw3d_FMT_R32F) || (format > Yw3d_FMT_R32G32B32A32F))
+        {
+            LOGE(_T("Yw3dCubeTexture::Create: invalid format specified.\n"));
+            return Yw3d_E_InvalidFormat;
+        }
+
+        Yw3dResult resCreate = Yw3d_E_Unknown;
+        for (uint32_t faceIdx = Yw3d_CF_Positive_X; faceIdx <= Yw3d_CF_Negative_Z; faceIdx++)
+        {
+            resCreate = m_Device->CreateTexture(&m_CubeFaces[faceIdx], edgeLength, edgeLength, mipLevels, format);
+            if (YW3D_FAILED(resCreate))
+            {
+                return resCreate;
+            }
+        }
+
+        return Yw3d_S_OK;
     }
 
-    Yw3dTextureSampleInput Yw3dCubeTexture::GetTexSampleInput()
+    Yw3dTextureSampleInput Yw3dCubeTexture::GetTextureSampleInput() const
     {
         return Yw3d_TSI_Vector;
     }
@@ -38,42 +66,71 @@ namespace yw
 
     Yw3dResult Yw3dCubeTexture::GenerateMipSubLevels(uint32_t srcLevel)
     {
-        return Yw3d_E_Unknown;
+        Yw3dResult resFace = Yw3d_E_Unknown;
+        for (uint32_t faceIdx = Yw3d_CF_Positive_X; faceIdx <= Yw3d_CF_Negative_Z; faceIdx++)
+        {
+            resFace = m_CubeFaces[faceIdx]->GenerateMipSubLevels(srcLevel);
+            if (YW3D_FAILED(resFace))
+            {
+                return resFace;
+            }
+        }
+
+        return Yw3d_S_OK;
     }
 
     Yw3dResult Yw3dCubeTexture::LockRect(Yw3dCubeFaces face, uint32_t mipLevel, void** data, const Yw3dRect* rect)
     {
-        return Yw3d_E_Unknown;
+        if ((face < 0) || (face >= 6))
+        {
+            LOGE(_T("Yw3dCubeTexture::LockRect: invalid cube face requested.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        return m_CubeFaces[face]->LockRect(mipLevel, data, rect);
     }
 
     Yw3dResult Yw3dCubeTexture::UnlockRect(Yw3dCubeFaces face, uint32_t mipLevel)
     {
-        return Yw3d_E_Unknown;
+        if ((face < 0) || (face >= 6))
+        {
+            LOGE(_T("Yw3dCubeTexture::UnlockRect: invalid cube face specified.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        return m_CubeFaces[face]->UnlockRect(mipLevel);
     }
 
     Yw3dFormat Yw3dCubeTexture::GetFormat() const
     {
-        return Yw3d_FMT_R32G32B32A32F;
+        return m_CubeFaces[0]->GetFormat();
     }
 
     uint32_t Yw3dCubeTexture::GetFormatFloats() const
     {
-        return -1;
+        return m_CubeFaces[0]->GetFormatFloats();
     }
 
     // Returns the number of mip-levels this texture consists of.
     uint32_t Yw3dCubeTexture::GetMipLevels() const
     {
-        return -1;
+        return m_CubeFaces[0]->GetMipLevels();
     }
 
     uint32_t Yw3dCubeTexture::GetEdgeLength(uint32_t mipLevel)
     {
-        return -1;
+        return m_CubeFaces[0]->GetWidth(mipLevel);
     }
 
     Yw3dTexture* Yw3dCubeTexture::AcquireCubeFace(Yw3dCubeFaces face)
     {
-        return nullptr;
+        if ((face < 0) || (face >= 6))
+        {
+            LOGE(_T("Yw3dCubeTexture::AcquireCubeFace: invalid cube face requested.\n"));
+            return nullptr;
+        }
+
+        m_CubeFaces[face]->AddRef();
+        return m_CubeFaces[face];
     }
 }

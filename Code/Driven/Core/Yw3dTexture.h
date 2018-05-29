@@ -37,7 +37,7 @@ namespace yw
         Yw3dResult Create(uint32_t width, uint32_t height, uint32_t mipLevels, Yw3dFormat format);
 
         // Sampling this texture requires 2 floating point coordinates.
-        Yw3dTextureSampleInput GetTextureSampleInput();
+        Yw3dTextureSampleInput GetTextureSampleInput() const;
 
         // Accessible by Yw3dDevice and Yw3dCubeTexture. (A cube-texture consists of six standard 2d textures and needs access to their sampling function.)
         // Samples the texture and returns the looked-up color.

@@ -97,7 +97,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dTextureSampleInput Yw3dTexture::GetTextureSampleInput()
+    Yw3dTextureSampleInput Yw3dTexture::GetTextureSampleInput() const
     {
         return Yw3d_TSI_2Coords;
     }
