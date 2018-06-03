@@ -44,7 +44,7 @@ purpose:	Some utility things.
 #endif
 
 #ifndef YW_SAFE_DELETE_ARRAY
-#define YW_SAFE_DELETE_ARRAY(p) {if (NULL != (p)) {delete [] (p); (p) = nullptr;}}
+#define YW_SAFE_DELETE_ARRAY(p) {if (nullptr != (p)) {delete [] (p); (p) = nullptr;}}
 #endif
 
 #ifndef YW_SAFE_RELEASE
