@@ -126,7 +126,7 @@ namespace yw
         uint32_t m_DepthMin1;
 
         // True if the whole volume has been locked.
-        bool m_bLockedComplete;
+        bool m_LockedComplete;
 
         // Information about the locked box.
         Yw3dBox	m_PartialLockBox;

@@ -17,7 +17,7 @@ namespace yw
         m_WidthMin1(0),
         m_HeightMin1(0),
         m_DepthMin1(0),
-        m_bLockedComplete(false),
+        m_LockedComplete(false),
         m_PartialLockData(nullptr),
         m_Data(nullptr)
     {
@@ -235,12 +235,101 @@ namespace yw
 
     Yw3dResult Yw3dVolume::LockBox(void** data, const Yw3dBox* box)
     {
+        if (nullptr == data)
+        {
+            LOGE(_T( "Yw3dVolume::LockBox: data points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
 
+        if (m_LockedComplete || (nullptr == m_PartialLockData))
+        {
+            LOGE(_T( "Yw3dVolume::LockBox: data points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        if (nullptr == box)
+        {
+            data == m_Data;
+            m_LockedComplete = true;
+
+            return Yw3d_S_OK;
+        }
+
+        if ((box->right > m_Width) || (box->bottom > m_Height) || (box->back > m_Depth))
+        {
+            LOGE(_T( "Yw3dVolume::LockBox: box exceeds volume dimensions!\n"));
+		    return Yw3d_E_InvalidParameters;
+        }
+
+        if ((box->left > box->right) || (box->top > box->bottom) || (box->front > box->back))
+        {
+            LOGE(_T( "Yw3dVolume::LockBox: invalid box specified!\n"));
+		    return Yw3d_E_InvalidParameters;
+        }
+
+        m_PartialLockBox = *box;
+
+        // Create lock-buffer.
+        const uint32_t lockWidth = m_PartialLockBox.right - m_PartialLockBox.left;
+        const uint32_t lockHeight = m_PartialLockBox.bottom - m_PartialLockBox.top;
+        const uint32_t lockDepth = m_PartialLockBox.back - m_PartialLockBox.front;
+        const volumeFloats = GetFormatFloats();
+
+        m_PartialLockData = new float[lockWidth * lockHeight * lockDepth * volumeFloats];
+        if (nullptr == m_PartialLockData)
+        {
+            LOGE(_T( "Yw3dVolume::LockBox: memory allocation failed!\n"));
+		    return Yw3d_E_OutOfMemory;
+        }
+
+        float* curLockData = m_PartialLockData;
+        for (uint32_t zIdx = m_PartialLockBox.front; zIdx < m_PartialLockBox.back; zIdx++)
+        {
+            const float* curVolumeData2 = &m_Data[(zIdx * m_Width * m_Height) * volumeFloats];
+            for (uint32_t yIdx = m_PartialLockBox.top; yIdx < m_PartialLockBox.bottom; yIdx++)
+            {
+                const float* curVolumeData = &curVolumeData2[(yIdx * m_Width + m_PartialLockBox.left) * volumeFloats];
+                memcpy(curLockData, curVolumeData, sizeof(float) * volumeFloats * lockWidth);
+                curLockData += volumeFloats * lockWidth;
+            }
+        }
+        
+        *data = m_PartialLockData;
+        return Yw3d_S_OK;
     }
 
     Yw3dResult Yw3dVolume::UnlockBox()
     {
+        if (!m_LockedComplete && (nullptr == m_PartialLockData))
+        {
+            LOGE(_T( "Yw3dVolume::UnlockBox: cannot unlock volume because it isn't locked!\n"));
+		    return Yw3d_E_InvalidState;
+        }
 
+        if (m_LockedComplete)
+        {
+            m_LockedComplete = false;
+            return Yw3d_S_OK;
+        }
+
+        // Update volume.
+        const uint32_t lockWidth = m_PartialLockBox.right - m_PartialLockBox.left;
+        const uint32_t volumeFloats = GetFormatFloats();
+
+        const float* curLockData = m_PartialLockData;
+        for (uint32_t zIdx = m_PartialLockBox.front; zIdx < m_PartialLockBox.back; zIdx++)
+        {
+            const float* curVolumeData2 = &m_Data[(zIdx * m_Width * m_Height) * volumeFloats];
+            for (uint32_t yIdx = m_PartialLockBox.top; yIdx < m_PartialLockBox.bottom; yIdx++)
+            {
+                const float* curVolumeData = &curVolumeData2[(yIdx * m_Width + m_PartialLockBox.left) * volumeFloats];
+                memcpy(curVolumeData, curLockData, sizeof(float) * volumeFloats * lockWidth);
+                curLockData += volumeFloats * lockWidth;
+            }
+        }
+
+        YW_SAFE_DELETE_ARRAY(m_PartialLockData);
+        return Yw3d_S_OK;
     }
 
     Yw3dFormat Yw3dVolume::GetFormat() const
