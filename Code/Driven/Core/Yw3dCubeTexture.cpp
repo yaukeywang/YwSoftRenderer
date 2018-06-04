@@ -110,7 +110,7 @@ namespace yw
                 face = Yw3d_CF_Positive_Y;
                 cu = u;
                 cv = w;
-                invMag = 1.0 / absV;
+                invMag = 1.0f / absV;
             }
             else
             {

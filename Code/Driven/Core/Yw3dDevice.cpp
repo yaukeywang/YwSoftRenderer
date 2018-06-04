@@ -10,6 +10,7 @@
 #include "Yw3dPresentTarget.h"
 #include "Yw3dPrimitiveAssembler.h"
 #include "Yw3dRenderTarget.h"
+#include "Yw3dTexture.h"
 #include "Yw3dShader.h"
 #include "Yw3dSurface.h"
 #include "Yw3dVertexBuffer.h"
@@ -537,30 +538,30 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    //Yw3dResult Yw3dDevice::CreateTexture(Yw3dTexture** texture, uint32_t width, uint32_t height, uint32_t mipLevels, Yw3dFormat format)
-    //{
-    //    if (nullptr == texture)
-    //    {
-    //        LOGE(_T("Yw3dDevice::CreateTexture: parameter texture points to null.\n"));
-    //        return Yw3d_E_InvalidParameters;
-    //    }
+    Yw3dResult Yw3dDevice::CreateTexture(Yw3dTexture** texture, uint32_t width, uint32_t height, uint32_t mipLevels, Yw3dFormat format)
+    {
+        if (nullptr == texture)
+        {
+            LOGE(_T("Yw3dDevice::CreateTexture: parameter texture points to null.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
 
-    //    *texture = new Yw3dTexture(this);
-    //    if (nullptr == (*texture))
-    //    {
-    //        LOGE(_T("Yw3dDevice::CreateTexture: out of memory, cannot create texture.\n"));
-    //        return  Yw3d_E_OutOfMemory;
-    //    }
+        *texture = new Yw3dTexture(this);
+        if (nullptr == (*texture))
+        {
+            LOGE(_T("Yw3dDevice::CreateTexture: out of memory, cannot create texture.\n"));
+            return  Yw3d_E_OutOfMemory;
+        }
 
-    //    Yw3dResult resCreate = (*texture)->Create(width, height, mipLevels, format);
-    //    if (YW3D_FAILED(resCreate))
-    //    {
-    //        YW_SAFE_RELEASE(*texture);
-    //        return resCreate;
-    //    }
+        Yw3dResult resCreate = (*texture)->Create(width, height, mipLevels, format);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*texture);
+            return resCreate;
+        }
 
-    //    return  Yw3d_S_OK;
-    //}
+        return  Yw3d_S_OK;
+    }
 
     //Yw3dResult Yw3dDevice::CreateCubeTexture(Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, uint32_t format)
     //{
@@ -844,7 +845,7 @@ namespace yw
         m_TextureSamplers[samplerNumber].texture = texture;
         if (nullptr != texture)
         {
-            m_TextureSamplers[samplerNumber].textureSampleInput = texture->GetTexSampleInput();
+            m_TextureSamplers[samplerNumber].textureSampleInput = texture->GetTextureSampleInput();
         }
 
         return Yw3d_S_OK;

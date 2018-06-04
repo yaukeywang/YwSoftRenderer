@@ -135,7 +135,7 @@ namespace yw
         float* m_PartialLockData;
 
         // Pointer to volume data.
-        float32* m_Data;
+        float* m_Data;
     };
 }
 
