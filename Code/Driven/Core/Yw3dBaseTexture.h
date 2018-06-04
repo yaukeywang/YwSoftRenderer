@@ -24,7 +24,7 @@ namespace yw
 
     protected:
         // Returns a member of enum Yw3dTextureSampleInput, which determines the type of input vector SampleTexture() will receive when sampling the texture.
-        virtual Yw3dTextureSampleInput GetTexSampleInput() = 0;
+        virtual Yw3dTextureSampleInput GetTextureSampleInput() const = 0;
 
         // Samples the texture and returns the looked-up color.
         // @param[out] color receives the color of the pixel to be looked up.

@@ -14,7 +14,7 @@ namespace yw
     class Yw3dTexture : public IYw3dBaseTexture
     {
         friend class Yw3dDevice;
-        //friend class Yw3dCubeTexture;
+        friend class Yw3dCubeTexture;
 
     protected:
         // Accessible by Yw3dDevice which is the only class that may create a texture.
