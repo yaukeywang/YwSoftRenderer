@@ -22,6 +22,18 @@ namespace yw
 
         // Accessible by IBase. The destructor is called when the reference count reaches zero.
         ~Yw3dVolumeTexture();
+
+    private:
+        // Number of mip-levels.
+        uint32_t m_MipLevels;
+
+        // Squared dimensions of the base mip-level, used for mip-calculations.
+        float m_SquaredWidth;
+        float m_SquaredHeight;
+        float m_SquaredDepth;
+
+        //  The texture's mip-levels data.
+        class Yw3dVolume** m_MipLevelsData;
     };
 }
 
