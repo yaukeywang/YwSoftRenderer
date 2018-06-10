@@ -6,6 +6,7 @@
 #include "Yw3dDevice.h"
 #include "Yw3d.h"
 #include "Yw3dBaseTexture.h"
+#include "Yw3dCubeTexture.h"
 #include "Yw3dIndexBuffer.h"
 #include "Yw3dPresentTarget.h"
 #include "Yw3dPrimitiveAssembler.h"
@@ -15,6 +16,8 @@
 #include "Yw3dSurface.h"
 #include "Yw3dVertexBuffer.h"
 #include "Yw3dVertexFormat.h"
+#include "Yw3dVolume.h"
+#include "Yw3dVolumeTexture.h"
 
 namespace yw
 {
@@ -563,17 +566,80 @@ namespace yw
         return  Yw3d_S_OK;
     }
 
-    //Yw3dResult Yw3dDevice::CreateCubeTexture(Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, uint32_t format)
-    //{
-    //}
+    Yw3dResult Yw3dDevice::CreateCubeTexture(Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, Yw3dFormat format)
+    {
+        if (nullptr == cubeTexture)
+        {
+            LOGE(_T("Yw3dDevice::CreateCubeTexture: parameter cubeTexture points to null.\n"));
+            return  Yw3d_E_InvalidParameters;
+        }
 
-    //Yw3dResult Yw3dDevice::CreateVolume(Yw3dVolume** volume, uint32_t width, uint32_t height, uint32_t depth, Yw3dFormat format)
-    //{
-    //}
+        *cubeTexture = new Yw3dCubeTexture(this);
+        if (nullptr == (*cubeTexture))
+        {
+            LOGE(_T("Yw3dDevice::CreateCubeTexture: out of memory, cannot create cube-texture.\n"));
+            return  Yw3d_E_OutOfMemory;
+        }
 
-    //Yw3dResult Yw3dDevice::CreateVolumeTexture(Yw3dVolumeTexture** volumeTexture, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, Yw3dFormat format)
-    //{
-    //}
+        Yw3dResult resCreate = (*cubeTexture)->Create(edgeLength, mipLevels, format);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*cubeTexture);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::CreateVolume(Yw3dVolume** volume, uint32_t width, uint32_t height, uint32_t depth, Yw3dFormat format)
+    {
+        if (nullptr == volume)
+        {
+            LOGE(_T("Yw3dDevice::CreateVolume: parameter volume points to null.\n"));
+            return  Yw3d_E_InvalidParameters;
+        }
+
+        *volume = new Yw3dVolume(this);
+        if (nullptr == (*volume))
+        {
+            LOGE(_T("Yw3dDevice::CreateVolume: out of memory, cannot create volume.\n"));
+            return  Yw3d_E_OutOfMemory;
+        }
+
+        Yw3dResult resCreate = (*volume)->Create(width, height, depth, format);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*volume);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::CreateVolumeTexture(Yw3dVolumeTexture** volumeTexture, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, Yw3dFormat format)
+    {
+        if (nullptr == volumeTexture)
+        {
+            LOGE(_T("Yw3dDevice::CreateVolumeTexture: parameter volumeTexture points to null.\n"));
+            return  Yw3d_E_InvalidParameters;
+        }
+
+        *volumeTexture = new Yw3dVolumeTexture(this);
+        if (nullptr == (*volumeTexture))
+        {
+            LOGE(_T("Yw3dDevice::CreateVolumeTexture: out of memory, cannot create volume-texture.\n"));
+            return  Yw3d_E_OutOfMemory;
+        }
+
+        Yw3dResult resCreate = (*volumeTexture)->Create(width, height, depth, mipLevels, format);
+        if (YW3D_FAILED(resCreate))
+        {
+            YW_SAFE_RELEASE(*volumeTexture);
+            return resCreate;
+        }
+
+        return Yw3d_S_OK;
+    }
 
     Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget)
     {
