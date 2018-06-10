@@ -70,14 +70,14 @@ namespace yw
         // Zero surface memory.
         memset(m_MipLevelsData, 0, sizeof(Yw3dSurface*) * mipLevels);
 
-        // Create each surface for each mipmap level.
+        // Create surface for each mipmap level.
         Yw3dSurface** curMipLevelData = m_MipLevelsData;
         do
         {
             Yw3dResult resMipLevel = m_Device->CreateSurface(curMipLevelData, width, height, format);
             if (YW3D_FAILED(resMipLevel))
             {
-                // destructor will perform cleanup
+                // Destructor will perform cleanup.
                 LOGE(_T("Yw3dTexture::Create: creation of mip-level failed.\n"));
                 return resMipLevel;
             }

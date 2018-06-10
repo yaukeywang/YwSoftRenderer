@@ -140,7 +140,7 @@ namespace yw
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
-        Yw3dResult CreateCubeTexture(class Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, uint32_t format);
+        Yw3dResult CreateCubeTexture(class Yw3dCubeTexture** cubeTexture, uint32_t edgeLength, uint32_t mipLevels, Yw3dFormat format);
 
         // Creates a volume.
         // @param[out] volume receives a pointer to the created volume.
