@@ -39,7 +39,7 @@ namespace yw
         Yw3d* AcquireYw3d();
 
         // Returns the device parameters.
-        const Yw3dDeviceParameters& GetDeviceParameters();
+        const Yw3dDeviceParameters& GetDeviceParameters() const;
 
         // ------------------------------------------------------------------
         // Drawing.

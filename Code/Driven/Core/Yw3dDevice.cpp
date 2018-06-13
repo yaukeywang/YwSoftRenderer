@@ -92,7 +92,7 @@ namespace yw
         return m_Parent;
     }
 
-    const Yw3dDeviceParameters& Yw3dDevice::GetDeviceParameters()
+    const Yw3dDeviceParameters& Yw3dDevice::GetDeviceParameters() const
     {
         return m_DeviceParameters;
     }
