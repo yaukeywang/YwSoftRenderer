@@ -48,6 +48,7 @@ namespace yw
         // Pointer to device.
         class Yw3dDevice* m_Device;
     };
+}
 
     // ------------------------------------------------------------------
     // Platform-dependent code.
@@ -61,7 +62,9 @@ namespace yw
     #pragma comment(lib, "ddraw.lib")
     #pragma comment(lib, "dxguid.lib")
 
-    // This class defines a Yw3d presenttarget for the Windows-platform.
+namespace yw
+{
+    // This class defines a Yw3d present target for the Windows-platform.
     class Yw3dPresentTargetWindows : IYw3dPresentTarget
     {
         friend class Yw3dDevice;
@@ -75,7 +78,7 @@ namespace yw
         ~Yw3dPresentTargetWindows();
 
     public:
-        // Creates and initializes the presenttarget.
+        // Creates and initializes the present target.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_Unknown if a presenttarget-specific problem was encountered.
@@ -117,8 +120,8 @@ namespace yw
         // Used when presenting to a 16-bit backbuffer. Shifts for the individual color channels, e.g. (
         uint16_t m_16bitShift[3];
     };
-
-#endif
 }
+
+#endif // End of Platform-dependence.
 
 #endif // __YW_3D_PRESENT_TARGET_H__
