@@ -100,9 +100,35 @@ namespace yw
         return Yw3d_E_Unknown;
     }
 
+    // Small utility function to find the LowBit and Number of Bits in a supplied Mask.
+    // Thank you, Nathan Davies!
+    // - http://archive.gamedev.net/archive/reference/articles/article588.html
+    // - https://www.gamedev.net/articles/programming/graphics/plotting-pixels-in-non-palettized-directdraw-su-r588
     void Yw3dPresentTargetWindows::ProcessBits(uint32_t mask, uint16_t& lowBit, uint16_t& numberBits)
     {
+        // Find low bit start position.
+        uint32_t testMask = 1;
+        for (lowBit = 0; lowBit < 32; lowBit++)
+        {
+            if (0 != (mask & testMask))
+            {
+                break;
+            }
 
+            testMask <<= 1;
+        }
+
+        // Find low bit count.
+        testMask <<= 1;
+        for (numberBits = 1; numberBits < 32; numberBits++)
+        {
+            if (0 == (mask & testMask))
+            {
+                break;
+            }
+
+            testMask <<= 1;
+        }
     }
 
 #endif
