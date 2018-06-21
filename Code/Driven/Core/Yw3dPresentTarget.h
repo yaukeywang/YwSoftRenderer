@@ -122,6 +122,6 @@ namespace yw
     };
 }
 
-#endif // End of Platform-dependence.
+#endif // End of Windows platform.
 
 #endif // __YW_3D_PRESENT_TARGET_H__
