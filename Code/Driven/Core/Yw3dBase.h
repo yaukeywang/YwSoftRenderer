@@ -9,6 +9,7 @@
 
 namespace yw
 {
+    // ------------------------------------------------------------------
     // Return result.
     enum Yw3dResult
     {
@@ -35,6 +36,7 @@ namespace yw
     // @return true if the function failed.
     #define YW3D_FAILED(res)    (Yw3d_S_OK != (res))
 
+    // ------------------------------------------------------------------
     // Yw3d base-class definition.
     // IBase is the base class for all Yw3d classes. It implements a reference-counter with functions AddRef() and Release() known from COM interfaces.
     class IBase
@@ -74,6 +76,23 @@ namespace yw
     private:
         uint32_t m_RefCount;
     };
+
+    // ------------------------------------------------------------------
+    // Floating pointer helper-functions.
+    #ifdef WIN32
+
+    #include <float.h>
+
+    // Disable warning about _controlfp being deprecated.
+    #pragma warning(disable:4996)
+
+    // Sets FPU to truncation-mode and single precision.
+    inline void fpuTruncate() { _controlfp(_RC_DOWN + _PC_24, _MCW_RC | _MCW_PC); }
+
+    // Resets FPU to default.
+    inline void fpuReset() { _controlfp(_CW_DEFAULT, _MCW_RC | _MCW_PC); }
+
+    #endif
 }
 
 #endif // !__YW_3D_BASE_H__
