@@ -92,7 +92,7 @@ namespace yw
         return m_Parent;
     }
 
-    const Yw3dDeviceParameters& Yw3dDevice::GetDeviceParameters()
+    const Yw3dDeviceParameters& Yw3dDevice::GetDeviceParameters() const
     {
         return m_DeviceParameters;
     }
@@ -1068,6 +1068,10 @@ namespace yw
         m_ScissorRect = scissorRect;
 
         // Construct planes for clipping to the scissor rect.
+        // Ax + By + Cz + D = 0.
+        // Normal -> (na, nb, nc) -> (A, B, C).
+        // D -> nd -> -(N dot P).
+        // Take left as example: N = (1, 0, 0), P = (m_ScissorRect.left, 0, 0), so D = -(N dot P) = -[(1, 0, 0) dot (m_ScissorRect.left, 0, 0)] = -m_ScissorRect.left.
         m_RenderInfo.scissorPlanes[0] = Plane(1.0f, 0.0f, 0.0f, -(float)m_ScissorRect.left);
         m_RenderInfo.scissorPlanes[1] = Plane(-1.0f, 0.0f, 0.0f, (float)m_ScissorRect.right);
         m_RenderInfo.scissorPlanes[2] = Plane(0.0f, 1.0f, 0.0f, -(float)m_ScissorRect.top);
