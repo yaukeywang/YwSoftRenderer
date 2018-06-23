@@ -313,6 +313,10 @@ namespace yw
                 uint32_t width = deviceParameters.backBufferWidth;
                 while (width--)
                 {
+                    // descSurface.ddpfPixelFormat.dwRBitMask: 0x00ff0000.
+                    // descSurface.ddpfPixelFormat.dwGBitMask: 0x0000ff00.
+                    // descSurface.ddpfPixelFormat.dwBBitMask: 0x000000ff.
+                    // descSurface.ddpfPixelFormat.dwRGBAlphaBitMask: 0x00000000.
                     destination[0] = Clamp(ftol(source[2] * 255.0f), 0, 255); // b
                     destination[1] = Clamp(ftol(source[1] * 255.0f), 0, 255); // g
                     destination[2] = Clamp(ftol(source[0] * 255.0f), 0, 255); // r
