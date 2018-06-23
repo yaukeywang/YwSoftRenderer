@@ -2286,7 +2286,7 @@ namespace yw
             default: break; // Can not happen.
             }
 
-            // passed depth test - update depthbuffer!
+            // Passed depth test - update depthbuffer!
             if (m_RenderInfo.depthWriteEnabled)
             {
                 *depthData = depth;
@@ -2485,7 +2485,7 @@ namespace yw
             default: break; // Can not happen.
             }
 
-            // passed depth test - update depthbuffer!
+            // Passed depth test - update depthbuffer!
             if (m_RenderInfo.depthWriteEnabled)
             {
                 *depthData = depth;
@@ -2536,7 +2536,7 @@ namespace yw
         default: break; // Can not happen.
         }
 
-        // passed depth test - update depthbuffer!
+        // Passed depth test - update depthbuffer!
         if (m_RenderInfo.depthWriteEnabled)
         {
             *depthData = depth;
@@ -2633,7 +2633,7 @@ namespace yw
         default: break; // Can not happen.
         }
 
-        // passed depth test - update depthbuffer!
+        // Passed depth test - update depthbuffer!
         if (m_RenderInfo.depthWriteEnabled)
         {
             *depthData = depth;
