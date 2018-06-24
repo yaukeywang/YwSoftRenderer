@@ -9,6 +9,7 @@
 
 namespace yw
 {
+    // ------------------------------------------------------------------
     // The Yw3d parent-class - "the root of all evil ;)"
     class Yw3d : public IBase
     {
@@ -31,12 +32,28 @@ namespace yw
         Yw3dResult CreateDevice(class Yw3dDevice** device, const Yw3dDeviceParameters* deviceParameters);
     };
 
+    // ------------------------------------------------------------------
     // Creates a Yw3d-instance.
-    /// @param[out] yw3d receives the pointer to the Yw3d instance.
-    /// @return Yw3d_S_OK if the function succeeds.
-    /// @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-    /// @return Yw3d_E_OutOfMemory if memory allocation failed.
+    // @param[out] yw3d receives the pointer to the Yw3d instance.
+    // @return Yw3d_S_OK if the function succeeds.
+    // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+    // @return Yw3d_E_OutOfMemory if memory allocation failed.
     Yw3dResult CreateYw3d(class Yw3d** yw3d);
 }
+
+// ------------------------------------------------------------------
+// Include all core-headers.
+#include "Yw3dCubeTexture.h"
+#include "Yw3dDevice.h"
+#include "Yw3dIndexBuffer.h"
+#include "Yw3dPrimitiveAssembler.h"
+#include "Yw3dRenderTarget.h"
+#include "Yw3dShader.h"
+#include "Yw3dSurface.h"
+#include "Yw3dTexture.h"
+#include "Yw3dVertexBuffer.h"
+#include "Yw3dVertexFormat.h"
+#include "Yw3dVolume.h"
+#include "Yw3dVolumeTexture.h"
 
 #endif // !__YW_3D_H__

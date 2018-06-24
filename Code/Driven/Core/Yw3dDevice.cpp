@@ -50,36 +50,34 @@ namespace yw
 
     Yw3dDevice::~Yw3dDevice()
     {
-        //YW_SAFE_RELEASE(m_PresentTarget);
+        YW_SAFE_RELEASE(m_PresentTarget);
         YW_SAFE_RELEASE(m_Parent);
     }
 
     Yw3dResult Yw3dDevice::Create()
     {
-//        // Create the present-target.
-//
-//        // NOTE: add support for other platforms here
-//#ifdef WIN32
-//        //m_PresentTarget = new CMuli3DPresentTargetWin32(this);
-//#endif
-//
-//#ifdef LINUX_X11
-//        //m_PresentTarget = new CMuli3DPresentTargetLinuxX11(this);
-//#endif
-//
-//#ifdef __amigaos4__
-//        //m_PresentTarget = new CMuli3DPresentTargetAmigaOS4(this);
-//#endif
-//
-//        if (nullptr == m_PresentTarget)
-//        {
-//            LOGE(_T("Yw3dDevice::Create: out of memory, cannot create present-target.\n"));
-//            return Yw3d_E_OutOfMemory;
-//        }
-//
-//        return m_PresentTarget->Create();
+        // Create the present-target.
 
-        return Yw3d_E_Unknown;
+        // NOTE: add support for other platforms here.
+#ifdef WIN32
+        m_PresentTarget = new Yw3dPresentTargetWindows(this);
+#endif
+
+#ifdef LINUX_X11
+        m_PresentTarget = new Yw3dPresentTargetLinuxX11(this);
+#endif
+
+#ifdef __amigaos4__
+        m_PresentTarget = new Yw3dPresentTargetAmigaOS4(this);
+#endif
+
+        if (nullptr == m_PresentTarget)
+        {
+            LOGE(_T("Yw3dDevice::Create: out of memory, cannot create present-target.\n"));
+            return Yw3d_E_OutOfMemory;
+        }
+
+        return m_PresentTarget->Create();
     }
 
     Yw3d* Yw3dDevice::AcquireYw3d()
