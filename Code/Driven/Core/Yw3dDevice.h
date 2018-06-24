@@ -531,7 +531,7 @@ namespace yw
         Yw3dDeviceParameters m_DeviceParameters;
 
         // Base for rendering to screen.
-        class Yw3dPresentTarget* m_PresentTarget;
+        class IYw3dPresentTarget* m_PresentTarget;
 
         // ------------------------------------------------------------------
 
