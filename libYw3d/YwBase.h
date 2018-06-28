@@ -52,6 +52,7 @@
 #endif // !_T
 #endif // !_UNICODE
 
+// ------------------------------------------------------------------
 // String.
 namespace yw
 {
@@ -64,8 +65,47 @@ namespace yw
 	typedef std_tstring(string) String;
 }
 
-//////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------------
+// Debug things.
 #if defined(DEBUG) | defined(_DEBUG)
+#endif
+
+// ------------------------------------------------------------------
+// Log things.
+#ifndef WIN32
+#define OutputDebugString printf
+#endif
+
+#ifndef LOG
+#define LOG(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGF
+#define LOGF(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGI
+#define LOGI(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGIF
+#define LOGIF(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGW
+#define LOGW(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGWF
+#define LOGWF(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGE
+#define LOGE(x) OutputDebugString(x)
+#endif
+
+#ifndef LOGEF
+#define LOGEF(x) OutputDebugString(x)
 #endif
 
 #endif // __YW_BASE_H__
