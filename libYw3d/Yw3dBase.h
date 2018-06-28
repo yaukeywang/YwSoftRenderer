@@ -88,19 +88,16 @@ namespace yw
     // Disable warning about _controlfp being deprecated.
     #pragma warning(disable:4996)
 
-    namespace yw
+    // Sets FPU to truncation-mode and single precision.
+    inline void fpuTruncate()
     {
-        // Sets FPU to truncation-mode and single precision.
-        inline void fpuTruncate()
-        {
-            _controlfp(_RC_DOWN + _PC_24, _MCW_RC | _MCW_PC);
-        }
+        _controlfp(_RC_DOWN + _PC_24, _MCW_RC | _MCW_PC);
+    }
 
-        // Resets FPU to default.
-        inline void fpuReset()
-        {
-            _controlfp(_CW_DEFAULT, _MCW_RC | _MCW_PC);
-        }
+    // Resets FPU to default.
+    inline void fpuReset()
+    {
+        _controlfp(_CW_DEFAULT, _MCW_RC | _MCW_PC);
     }
 
     #endif // !WIN32
@@ -111,21 +108,18 @@ namespace yw
     // Float type header.
     #include <fpu_control.h>
 
-    namespace yw
+    // Sets FPU to truncation-mode and single precision.
+    inline void fpuTruncate()
     {
-        // Sets FPU to truncation-mode and single precision.
-        inline void fpuTruncate()
-        {
-            fpu_control_t cwChop = _FPU_RC_DOWN | _FPU_IEEE | _FPU_SINGLE;
-            _FPU_SETCW(cwChop);
-        }
+        fpu_control_t cwChop = _FPU_RC_DOWN | _FPU_IEEE | _FPU_SINGLE;
+        _FPU_SETCW(cwChop);
+    }
 
-        // Resets FPU to default.
-        inline void fpuReset()
-        {
-            fpu_control_t cwDefault = _FPU_DEFAULT;
-            _FPU_SETCW(cwDefault);
-        }
+    // Resets FPU to default.
+    inline void fpuReset()
+    {
+        fpu_control_t cwDefault = _FPU_DEFAULT;
+        _FPU_SETCW(cwDefault);
     }
 
     #endif // !LINUX_X11
@@ -133,71 +127,66 @@ namespace yw
     // AmigaOS4.
     #ifdef __amigaos4__
 
-    namespace yw
+    inline void fpuTruncate()
     {
-        inline void fpuTruncate()
-        {
-            // #warning: fpuTruncate() currently not implemented on AmigaOS 4 
-        }
+        // #warning: fpuTruncate() currently not implemented on AmigaOS 4 
+    }
 
-        inline void fpuReset()
-        {
-            // #warning: fpuReset() currently not implemented on AmigaOS 4
-        }
+    inline void fpuReset()
+    {
+        // #warning: fpuReset() currently not implemented on AmigaOS 4
     }
 
     #endif // !__amigaos4__
 
     // ------------------------------------------------------------------
     // Others.
-    namespace yw
-    {
-        // ftol() performs fast float to integer-conversion.
-        // Ensure that fpuTruncate() has been called before using this function, otherwise
-        // ftol() will round to the nearest integer. After calling fpuTruncate() it is advised to 
-        // reset the fpu to rounding-mode using fpuReset().
-        // @param[in] f The floating pointer number to be converted to an integer.
-        // @return an integer.
 
-        #ifdef __amigaos4__
+    // ftol() performs fast float to integer-conversion.
+    // Ensure that fpuTruncate() has been called before using this function, otherwise
+    // ftol() will round to the nearest integer. After calling fpuTruncate() it is advised to 
+    // reset the fpu to rounding-mode using fpuReset().
+    // @param[in] f The floating pointer number to be converted to an integer.
+    // @return an integer.
 
-        // Float calc union.
-        typedef union
-        {
-            struct
-            {
-                unsigned long hi;
-                unsigned long lo;
-            } i;
-            
-            double d;
-        } hexdouble;
-
-        #endif // !__amigaos4__
-
-        // Float to int.
-        inline int32_t ftol(float f)
-        {
     #ifdef __amigaos4__
-            static hexdouble hd;
-            __asm__("fctiw %0, %1" : "=f" (hd.d) : "f" (f));
-            return hd.i.lo;
-    #else
-            static int32_t tmp;
 
-    #if _MSC_VER > 1000
+    // Float calc union.
+    typedef union
+    {
+        struct
+        {
+            unsigned long hi;
+            unsigned long lo;
+        } i;
+
+        double d;
+    } hexdouble;
+
+    #endif // !__amigaos4__
+
+    // Float to int.
+    inline int32_t ftol(float f)
+    {
+    #ifdef __amigaos4__
+        static hexdouble hd;
+        __asm__("fctiw %0, %1" : "=f" (hd.d) : "f" (f));
+        return hd.i.lo;
+    #else
+        static int32_t tmp;
+
+        #if _MSC_VER > 1000
             __asm
             {
                 fld f
                 fistp tmp
             }
-    #else
+        #else
             asm volatile("fistpl %0" : "=m" (tmp) : "t" (f) : "st");
-    #endif
+        #endif
 
-            return tmp;
+        return tmp;
     #endif
-        }
     }
 }
 

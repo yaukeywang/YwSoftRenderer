@@ -4,7 +4,7 @@
 #ifndef __YW_3D_TYPES_H__
 #define __YW_3D_TYPES_H__
 
-#include "Driven/Math/YwMathCore.h"
+#include "Math/YwMath.h"
 
 // ------------------------------------------------------------------
 // Platform-dependent definitions and includes.

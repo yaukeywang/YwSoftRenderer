@@ -15,6 +15,12 @@
 #include <tchar.h>
 #endif
 
+#ifndef __amigaos4__
+#include <memory.h>
+#else
+#include <exec/types.h>
+#endif
+
 // ------------------------------------------------------------------
 // Assert utilities.
 #ifndef ASSERT
