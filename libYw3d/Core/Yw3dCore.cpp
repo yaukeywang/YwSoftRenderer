@@ -1,10 +1,8 @@
 // Add by Yaukey at 2018-02-16.
 // YW Soft Renderer 3d header file.
 
-#include "stdafx.h"
-#include "Yw3d.h"
+#include "Yw3dCore.h"
 #include "Yw3dDevice.h"
-#include "System/Support/YwUtility.h"
 
 namespace yw
 {

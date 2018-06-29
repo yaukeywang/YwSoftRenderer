@@ -1,7 +1,6 @@
 // Add by Yaukey at 2018-02-22.
 // YW Soft Renderer 3d base shader class.
 
-#include "stdafx.h"
 #include "Yw3dBaseShader.h"
 #include "Yw3dDevice.h"
 

@@ -1,7 +1,6 @@
 // Add by Yaukey at 2018-03-31.
 // YW Soft Renderer base texture class.
 
-#include "stdafx.h"
 #include "Yw3dBaseTexture.h"
 #include "Yw3dDevice.h"
 

@@ -1,23 +1,9 @@
 ﻿// Add by Yaukey at 2018-01-30.
 // YW Soft Renderer 3d device class.
 
-#include "stdafx.h"
-#include "System/Support/YwUtility.h"
+#include "Yw3dCore.h"
 #include "Yw3dDevice.h"
-#include "Yw3d.h"
-#include "Yw3dBaseTexture.h"
-#include "Yw3dCubeTexture.h"
-#include "Yw3dIndexBuffer.h"
 #include "Yw3dPresentTarget.h"
-#include "Yw3dPrimitiveAssembler.h"
-#include "Yw3dRenderTarget.h"
-#include "Yw3dTexture.h"
-#include "Yw3dShader.h"
-#include "Yw3dSurface.h"
-#include "Yw3dVertexBuffer.h"
-#include "Yw3dVertexFormat.h"
-#include "Yw3dVolume.h"
-#include "Yw3dVolumeTexture.h"
 
 namespace yw
 {

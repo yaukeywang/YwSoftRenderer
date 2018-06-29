@@ -1,10 +1,8 @@
 // Add by Yaukey at 2018-03-31.
 // YW Soft Renderer present target class.
 
-#include "stdafx.h"
 #include "Yw3dPresentTarget.h"
 #include "Yw3dDevice.h"
-#include "System/Support/YwUtility.h"
 
 namespace yw
 {

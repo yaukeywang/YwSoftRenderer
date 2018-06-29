@@ -1,7 +1,6 @@
 // Add by Yaukey at 2018-02-22.
 // YW Soft Renderer 3d shader class( vertex-shader, triangle-shader and pixel shader).
 
-#include "stdafx.h"
 #include "Yw3dShader.h"
 
 namespace yw

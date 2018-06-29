@@ -1,10 +1,8 @@
 // Add by Yaukey at 2018-01-31.
 // YW Soft Renderer vertex format class.
 
-#include "stdafx.h"
 #include "Yw3dVertexFormat.h"
 #include "Yw3dDevice.h"
-#include "System/Support/YwUtility.h"
 
 namespace yw
 {

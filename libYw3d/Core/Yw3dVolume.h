@@ -4,8 +4,8 @@
 #ifndef __YW_3D_VOLUME_H__
 #define __YW_3D_VOLUME_H__
 
-#include "Yw3dBase.h"
-#include "Yw3dTypes.h"
+#include "../Yw3dBase.h"
+#include "../Yw3dTypes.h"
 
 namespace yw
 {

@@ -4,7 +4,6 @@
 #ifndef __YW_MATH_MATRIX_H__
 #define __YW_MATH_MATRIX_H__
 
-#include "System/Support/YwBase.h"
 #include "YwMathUtility.h"
 
 namespace yw
