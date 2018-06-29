@@ -12,50 +12,50 @@
 #include <wtypes.h>
 
 #ifdef WIN32
-#include <tchar.h>
+    #include <tchar.h>
 #endif
 
 #ifndef __amigaos4__
-#include <memory.h>
+    #include <memory.h>
 #else
-#include <exec/types.h>
+    #include <exec/types.h>
 #endif
 
 // ------------------------------------------------------------------
 // Assert utilities.
 #ifndef ASSERT
-#include <assert.h>
-#define ASSERT assert
+    #include <assert.h>
+    #define ASSERT assert
 #endif
 
 // ------------------------------------------------------------------
 // Delete or release.
 #ifndef YW_SAFE_DELETE
-#define YW_SAFE_DELETE(p) {if (nullptr != (p)) {delete (p); (p) = nullptr;}}
+    #define YW_SAFE_DELETE(p) {if (nullptr != (p)) {delete (p); (p) = nullptr;}}
 #endif
 
 #ifndef YW_SAFE_DELETE_ARRAY
-#define YW_SAFE_DELETE_ARRAY(p) {if (nullptr != (p)) {delete [] (p); (p) = nullptr;}}
+    #define YW_SAFE_DELETE_ARRAY(p) {if (nullptr != (p)) {delete [] (p); (p) = nullptr;}}
 #endif
 
 #ifndef YW_SAFE_RELEASE
-#define YW_SAFE_RELEASE(p) {if (nullptr != (p)) {(p)->Release(); (p) = nullptr;}}
+    #define YW_SAFE_RELEASE(p) {if (nullptr != (p)) {(p)->Release(); (p) = nullptr;}}
 #endif
 
 #ifndef YW_SAFE_RELEASE_DELETE
-#define YW_SAFE_RELEASE_DELETE(p) {if (nullptr != (p)) {(p)->Release(); delete (p); (p) = nullptr;}}
+    #define YW_SAFE_RELEASE_DELETE(p) {if (nullptr != (p)) {(p)->Release(); delete (p); (p) = nullptr;}}
 #endif
 
 // ------------------------------------------------------------------
 // Unicode.
 #ifdef _UNICODE
-#ifndef _T
-#define _T(x) L##x
-#endif // !_T
+    #ifndef _T
+        #define _T(x) L##x
+    #endif // !_T
 #else
-#ifndef _T
-#define _T(x) x
-#endif // !_T
+    #ifndef _T
+        #define _T(x) x
+    #endif // !_T
 #endif // !_UNICODE
 
 // ------------------------------------------------------------------
@@ -63,9 +63,9 @@
 namespace yw
 {
 	#ifndef _UNICODE
-	#define std_tstring(x) std::##x
+	    #define std_tstring(x) std::##x
 	#else
-	#define std_tstring(x) std::w##x
+	    #define std_tstring(x) std::w##x
 	#endif // !_UNICODE
 
 	typedef std_tstring(string) String;
@@ -79,39 +79,39 @@ namespace yw
 // ------------------------------------------------------------------
 // Log things.
 #ifndef WIN32
-#define OutputDebugString printf
+    #define OutputDebugString printf
 #endif
 
 #ifndef LOG
-#define LOG(x) OutputDebugString(x)
+    #define LOG(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGF
-#define LOGF(x) OutputDebugString(x)
+    #define LOGF(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGI
-#define LOGI(x) OutputDebugString(x)
+    #define LOGI(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGIF
-#define LOGIF(x) OutputDebugString(x)
+    #define LOGIF(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGW
-#define LOGW(x) OutputDebugString(x)
+    #define LOGW(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGWF
-#define LOGWF(x) OutputDebugString(x)
+    #define LOGWF(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGE
-#define LOGE(x) OutputDebugString(x)
+    #define LOGE(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGEF
-#define LOGEF(x) OutputDebugString(x)
+    #define LOGEF(x) OutputDebugString(x)
 #endif
 
 #endif // __YW_BASE_H__

@@ -28,12 +28,12 @@ namespace yw
     // Macro to test for success.
     // @param[in] res a function return value.
     // @return true if the function succeeded.
-    #define YW3D_SUCCESSFUL(res)    (Yw3d_S_OK == (res))
+    #define YW3D_SUCCESSFUL(res) (Yw3d_S_OK == (res))
 
     // Macro to test for failure.
     // @param[in] res a function return value.
     // @return true if the function failed.
-    #define YW3D_FAILED(res)    (Yw3d_S_OK != (res))
+    #define YW3D_FAILED(res) (Yw3d_S_OK != (res))
 
     // ------------------------------------------------------------------
     // Yw3d base-class definition.
@@ -82,60 +82,60 @@ namespace yw
     // Windows.
     #ifdef WIN32
 
-    // Float type header.
-    #include <float.h>
+        // Float type header.
+        #include <float.h>
 
-    // Disable warning about _controlfp being deprecated.
-    #pragma warning(disable:4996)
+        // Disable warning about _controlfp being deprecated.
+        #pragma warning(disable:4996)
 
-    // Sets FPU to truncation-mode and single precision.
-    inline void fpuTruncate()
-    {
-        _controlfp(_RC_DOWN + _PC_24, _MCW_RC | _MCW_PC);
-    }
+        // Sets FPU to truncation-mode and single precision.
+        inline void fpuTruncate()
+        {
+            _controlfp(_RC_DOWN + _PC_24, _MCW_RC | _MCW_PC);
+        }
 
-    // Resets FPU to default.
-    inline void fpuReset()
-    {
-        _controlfp(_CW_DEFAULT, _MCW_RC | _MCW_PC);
-    }
+        // Resets FPU to default.
+        inline void fpuReset()
+        {
+            _controlfp(_CW_DEFAULT, _MCW_RC | _MCW_PC);
+        }
 
     #endif // !WIN32
 
     // Linux.
     #ifdef LINUX_X11
 
-    // Float type header.
-    #include <fpu_control.h>
+        // Float type header.
+        #include <fpu_control.h>
 
-    // Sets FPU to truncation-mode and single precision.
-    inline void fpuTruncate()
-    {
-        fpu_control_t cwChop = _FPU_RC_DOWN | _FPU_IEEE | _FPU_SINGLE;
-        _FPU_SETCW(cwChop);
-    }
+        // Sets FPU to truncation-mode and single precision.
+        inline void fpuTruncate()
+        {
+            fpu_control_t cwChop = _FPU_RC_DOWN | _FPU_IEEE | _FPU_SINGLE;
+            _FPU_SETCW(cwChop);
+        }
 
-    // Resets FPU to default.
-    inline void fpuReset()
-    {
-        fpu_control_t cwDefault = _FPU_DEFAULT;
-        _FPU_SETCW(cwDefault);
-    }
+        // Resets FPU to default.
+        inline void fpuReset()
+        {
+            fpu_control_t cwDefault = _FPU_DEFAULT;
+            _FPU_SETCW(cwDefault);
+        }
 
     #endif // !LINUX_X11
 
     // AmigaOS4.
     #ifdef __amigaos4__
 
-    inline void fpuTruncate()
-    {
-        // #warning: fpuTruncate() currently not implemented on AmigaOS 4 
-    }
+        inline void fpuTruncate()
+        {
+            // #warning: fpuTruncate() currently not implemented on AmigaOS 4 
+        }
 
-    inline void fpuReset()
-    {
-        // #warning: fpuReset() currently not implemented on AmigaOS 4
-    }
+        inline void fpuReset()
+        {
+            // #warning: fpuReset() currently not implemented on AmigaOS 4
+        }
 
     #endif // !__amigaos4__
 
@@ -151,17 +151,17 @@ namespace yw
 
     #ifdef __amigaos4__
 
-    // Float calc union.
-    typedef union
-    {
-        struct
+        // Float calc union.
+        typedef union
         {
-            unsigned long hi;
-            unsigned long lo;
-        } i;
+            struct
+            {
+                unsigned long hi;
+                unsigned long lo;
+            } i;
 
-        double d;
-    } hexdouble;
+            double d;
+        } hexdouble;
 
     #endif // !__amigaos4__
 
@@ -172,19 +172,25 @@ namespace yw
         static hexdouble hd;
         __asm__("fctiw %0, %1" : "=f" (hd.d) : "f" (f));
         return hd.i.lo;
+    #elif defined(WIN32)
+        #ifdef _WIN64
+            return (int32_t)f;
+        #else
+            static int32_t tmp;
+            #if _MSC_VER > 1000
+                __asm
+                {
+                    fld f
+                    fistp tmp
+                }
+            #else
+                asm volatile("fistpl %0" : "=m" (tmp) : "t" (f) : "st");
+            #endif // !_MSC_VER
+            return tmp;
+        #endif  // !_WIN64
     #else
         static int32_t tmp;
-
-        #if _MSC_VER > 1000
-            __asm
-            {
-                fld f
-                fistp tmp
-            }
-        #else
-            asm volatile("fistpl %0" : "=m" (tmp) : "t" (f) : "st");
-        #endif
-
+        asm volatile("fistpl %0" : "=m" (tmp) : "t" (f) : "st");
         return tmp;
     #endif
     }
