@@ -74,5 +74,5 @@ project "libYw3d"
     --     postbuildcommands
     --     {
     --         '{MKDIR} "%{wks.location}../../Build/Bin/%{cfg.platform}/%{prj.name}"',
-    --         '{COPY} "%{cfg.targetdir}/%{cfg.buildtarget.name}" "%{wks.location}../../Build/Bin/%{cfg.platform}/%{prj.name}"'
+    --         '{COPY} "%{cfg.targetdir}/%{cfg.buildtarget.name}" "%{wks.location}../../' .. builddir .. '/Bin/%{cfg.platform}/%{prj.name}"'
     --     }
