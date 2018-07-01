@@ -643,6 +643,30 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult Yw3dDevice::SetTransform(Yw3dTransformState transformState, const Matrix44& value)
+    {
+        if (transformState >= Yw3d_TS_NumTransformState)
+        {
+            LOGE(_T("Yw3dDevice::SetTransform: invalid transform state.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_TransformState[transformState] = value;
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetTransform(Yw3dTransformState transformState, Matrix44& value)
+    {
+        if (transformState >= Yw3d_TS_NumTransformState)
+        {
+            LOGE(_T("Yw3dDevice::SetTransform: invalid transform state.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        value = m_TransformState[transformState];
+        return Yw3d_S_OK;
+    }
+
     Yw3dResult Yw3dDevice::SetRenderState(Yw3dRenderState renderState, uint32_t value)
     {
         if (renderState >= Yw3d_RS_NumRenderStates)

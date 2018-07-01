@@ -175,6 +175,20 @@ namespace yw
         // ------------------------------------------------------------------
         // State management.
 
+        // Sets a transform state.
+        // @param[in] transformState member of the enumeration Yw3dTransformState.
+        // @param[in] value value to be set.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult SetTransform(Yw3dTransformState transformState, const Matrix44& value);
+
+        // Gets a transform state.
+        // @param[in] transformState member of the enumeration Yw3dTransformState.
+        // @param[in] value value receives the value of the transform state.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        Yw3dResult GetTransform(Yw3dTransformState transformState, Matrix44& value);
+
         // Sets a renderstate.
         // @param[in] renderState member of the enumeration Yw3dRenderState.
         // @param[in] value value to be set. Some renderstates require floating point values, which can be set through casting to a uint32-pointer and dereferencing it.
@@ -575,6 +589,9 @@ namespace yw
         VertexStream m_VertexStreams[YW3D_MAX_VERTEX_STREAMS];
 
         // ------------------------------------------------------------------
+
+        // The transform state.
+        Matrix44 m_TransformState[Yw3d_TSS_NumTextureSamplerStates];
 
         // The render state.
         uint32_t m_RenderStates[Yw3d_RS_NumRenderStates];

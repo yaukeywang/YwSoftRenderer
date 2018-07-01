@@ -42,6 +42,15 @@ const uint32_t YW3D_CLIP_VERTEX_CACHE_SIZE = 20;    // Specifies the amount of c
 // ------------------------------------------------------------------
 // Enumerations.
 
+// Defines the transform states.
+enum Yw3dTransformState
+{
+    Yw3d_TS_View = 0,           // Identifies the transformation matrix being set as the view transformation matrix. The default value is the identity matrix.
+    Yw3d_TS_Projection,         // Identifies the transformation matrix being set as the projection transformation matrix. The default value is the identity matrix.
+
+    Yw3d_TS_NumTransformState,
+};
+
 // Defines the available renderstates.
 enum Yw3dRenderState
 {
