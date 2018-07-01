@@ -83,51 +83,49 @@ namespace yw
 
     Yw3dResult Yw3dDevice::Present(Yw3dRenderTarget* renderTarget)
     {
-        //if (nullptr == renderTarget)
-        //{
-        //    LOGE(_T("Yw3dDevice::Present: parameter renderTarget points to null.\n"));
-        //    return Yw3d_E_InvalidParameters;
-        //}
+        if (nullptr == renderTarget)
+        {
+           LOGE(_T("Yw3dDevice::Present: parameter renderTarget points to null.\n"));
+           return Yw3d_E_InvalidParameters;
+        }
 
-        //// Get pointer to the colorbuffer of the rendertarget ---------------------
-        //Yw3dSurface* colorBuffer = renderTarget->AcquireColorBuffer();
-        //if (nullptr == colorBuffer)
-        //{
-        //    LOGE(_T("Yw3dDevice::Present: rendertarget doesn't have a colorbuffer attached.\n"));
-        //    return  Yw3d_E_InvalidState;
-        //}
+        // Get pointer to the colorbuffer of the rendertarget.
+        Yw3dSurface* colorBuffer = renderTarget->AcquireColorBuffer();
+        if (nullptr == colorBuffer)
+        {
+           LOGE(_T("Yw3dDevice::Present: rendertarget doesn't have a colorbuffer attached.\n"));
+           return  Yw3d_E_InvalidState;
+        }
 
-        //if ((colorBuffer->GetWidth() != m_DeviceParameters.backBufferWidth) || (colorBuffer->GetHeight() != m_DeviceParameters.backBufferHeight))
-        //{
-        //    YW_SAFE_RELEASE(colorBuffer);
-        //    LOGE(_T("Yw3dDevice::Present: colorbuffer's dimensions don't match backbuffer.\n"));
-        //    return Yw3d_E_InvalidState;
-        //}
+        if ((colorBuffer->GetWidth() != m_DeviceParameters.backBufferWidth) || (colorBuffer->GetHeight() != m_DeviceParameters.backBufferHeight))
+        {
+           YW_SAFE_RELEASE(colorBuffer);
+           LOGE(_T("Yw3dDevice::Present: colorbuffer's dimensions don't match backbuffer.\n"));
+           return Yw3d_E_InvalidState;
+        }
 
-        //const uint32_t floatCount = colorBuffer->GetFormatFloats();
-        //if (floatCount < 3)
-        //{
-        //    YW_SAFE_RELEASE(colorBuffer);
-        //    LOGE(_T("Yw3dDevice::Present: invalid colorbuffer format - only m3dfmt_r32g32b32f and m3dfmt_r32g32b32a32f are supported!\n"));
-        //    return  Yw3d_E_InvalidFormat;
-        //}
+        const uint32_t floatCount = colorBuffer->GetFormatFloats();
+        if (floatCount < 3)
+        {
+           YW_SAFE_RELEASE(colorBuffer);
+           LOGE(_T("Yw3dDevice::Present: invalid colorbuffer format - only Yw3d_FMT_R32G32B32F and Yw3d_FMT_R32G32B32A32F are supported!\n"));
+           return  Yw3d_E_InvalidFormat;
+        }
 
-        //const float* sourceBufData = nullptr;
-        //if (YW3D_FAILED(colorBuffer->LockRect((void**)&sourceBufData, 0)))
-        //{
-        //    YW_SAFE_RELEASE(colorBuffer);
-        //    LOGE(_T("Yw3dDevice::Present: couldn't access colorbuffer.\n"));
-        //    return Yw3d_E_Unknown;
-        //}
+        const float* sourceBufData = nullptr;
+        if (YW3D_FAILED(colorBuffer->LockRect((void**)&sourceBufData, 0)))
+        {
+           YW_SAFE_RELEASE(colorBuffer);
+           LOGE(_T("Yw3dDevice::Present: couldn't access colorbuffer.\n"));
+           return Yw3d_E_Unknown;
+        }
 
-        //Yw3dResult resPresent = m_PresentTarget->Present(sourceBufData, floatCount);
+        Yw3dResult resPresent = m_PresentTarget->Present(sourceBufData, floatCount);
 
-        //colorBuffer->UnlockRect();
-        //YW_SAFE_RELEASE(colorBuffer);
+        colorBuffer->UnlockRect();
+        YW_SAFE_RELEASE(colorBuffer);
 
-        //return resPresent;
-
-        return Yw3d_E_Unknown;
+        return resPresent;
     }
 
     Yw3dResult Yw3dDevice::DrawPrimitive(Yw3dPrimitiveType primitiveType, uint32_t startVertex, uint32_t primitiveCount)
@@ -1165,7 +1163,7 @@ namespace yw
 
         SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
 
-        SetRenderState(Yw3d_RS_SubdivisionMode, Yw3d_Subdiv_None);
+        SetRenderState(Yw3d_RS_SubdivisionMode, Yw3d_Subdivision_None);
         SetRenderState(Yw3d_RS_SubdivisionLevels, 1);
         SetRenderState(Yw3d_RS_SubdivisionPositionRegister, 0);
         SetRenderState(Yw3d_RS_SubdivisionNormalRegister, 1);
@@ -1214,6 +1212,256 @@ namespace yw
 
     Yw3dResult Yw3dDevice::PreRender()
     {
+        if (nullptr == m_VertexFormat)
+        {
+            LOGE(_T("Yw3dDevice::PreRender: no vertex format has been set.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        if (nullptr == m_VertexShader)
+        {
+            LOGE(_T("Yw3dDevice::PreRender: no vertex shader has been set.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        if (nullptr == m_PixelShader)
+        {
+            LOGE(_T("Yw3dDevice::PreRender: no pixel shader has been set.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        if (nullptr == m_RenderTarget)
+        {
+            LOGE(_T("Yw3dDevice::PreRender: no render target has been set.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Set viewport for this triangle info.
+        const Matrix44& viewportMatrix = m_RenderTarget->GetViewportMatrix();
+        Rect& triangleViewport = m_RenderInfo.viewportRect;
+        triangleViewport.left = (uint32_t)(viewportMatrix._41 - viewportMatrix._11);
+        triangleViewport.right = (uint32_t)(viewportMatrix._41 + viewportMatrix._11);
+        triangleViewport.top = (uint32_t)(viewportMatrix._42 + viewportMatrix._22);
+        triangleViewport.bottom = (uint32_t)(viewportMatrix._42 - viewportMatrix._22);
+
+        // Check validation of triangle viewport.
+        if ((triangleViewport.left >= triangleViewport.right) || (triangleViewport.top >= triangleViewport.bottom))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: invalid viewport matrix.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Get color and depth buffer.
+        Yw3dSurface* colorBuffer = m_RenderTarget->AcquireColorBuffer();
+        Yw3dSurface* depthBuffer = m_RenderTarget->AcquireDepthBuffer();
+        if ((nullptr == colorBuffer) && (nullptr == depthBuffer))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: render target has no associated frame buffer and depth buffer.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check color buffer with viewport.
+        if ((nullptr != colorBuffer) && ((colorBuffer->GetWidth() < triangleViewport.right) || (colorBuffer->GetHeight() < triangleViewport.bottom)))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: color buffer's dimensions are smaller than set viewport.\n"));
+            YW_SAFE_RELEASE(colorBuffer);
+            YW_SAFE_RELEASE(depthBuffer);
+
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check depth buffer with viewport.
+        if ((nullptr != depthBuffer) && ((depthBuffer.GetWidth() < triangleViewport.right) || (depthBuffer->GetHeight() < triangleViewport.bottom)))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: depth buffer's dimensions are smaller than set viewport.\n"));
+            YW_SAFE_RELEASE(colorBuffer);
+            YW_SAFE_RELEASE(depthBuffer);
+
+            return Yw3d_E_InvalidState;
+        }
+
+        YW_SAFE_RELEASE(colorBuffer);
+        YW_SAFE_RELEASE(depthBuffer);
+
+        // Check vertex stream.
+        const VertexStream* curVertexStream = m_VertexStreams;
+        for (uint32_t streamIdx = 0; streamIdx <= m_VertexFormat->GetHighestStream(); streamIdx++, curVertexStream++)
+        {
+            if (nullptr == curVertexStream->vertexBuffer)
+            {
+                LOGE(_T("Yw3dDevice::PreRender: vertex format references an empty vertex stream.\n"));
+                return Yw3d_E_InvalidState;
+            }
+        }
+
+        // Check status of scissor-testing.
+        if (m_RenderStates[Yw3d_RS_ScissorTestEnable])
+        {
+            if (
+                !((m_ScissorRect.left >= triangleViewport.left) && (m_ScissorRect.left < triangleViewport.right)) ||
+                !((m_ScissorRect.right > triangleViewport.left) && (m_ScissorRect.right <= triangleViewport.right)) ||
+                !((m_ScissorRect.top >= triangleViewport.top) && (m_ScissorRect.top < triangleViewport.bottom)) ||
+                !((m_ScissorRect.bottom > triangleViewport.top) && (m_ScissorRect.bottom <= triangleViewport.bottom))
+            )
+            {
+                LOGE(_T("Yw3dDevice::PreRender: scissor rect exceeds viewport's dimensions.\n"));
+                return Yw3d_E_InvalidState;
+            }
+        }
+
+        // Check line-thickness.
+        if (0 == m_RenderStates[Yw3d_RS_LineThickness])
+        {
+            LOGE(_T("Yw3dDevice::PreRender: line-thickness is invalid.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check if render states for subdivision-mode are valid.
+        switch (m_RenderStates[Yw3d_RS_SubdivisionMode])
+        {
+        case Yw3d_Subdivision_None:
+            break;
+        case Yw3d_Subdivision_Simple:
+            {
+                if (0 == m_RenderStates[Yw3d_RS_SubdivisionLevels])
+                {
+                    LOGE(_T("Yw3dDevice::PreRender: subdivision levels for simple-subdivision are 0.\n"));
+                    return Yw3d_E_InvalidState;
+                }
+            }
+            break;
+        case Yw3d_Subdivision_Smooth:
+            {
+                if (0 == m_RenderStates[Yw3d_RS_SubdivisionLevels])
+                {
+                    LOGE(_T("Yw3dDevice::PreRender: subdivision levels for smooth-subdivision are 0.\n"));
+                    return Yw3d_E_InvalidState;
+                }
+                else if (m_RenderStates[Yw3d_RS_SubdivisionPositionRegister] >= YW3D_VERTEX_SHADER_REGISTERS)
+                {
+                    LOGE(_T("Yw3dDevice::PreRender: position register for smooth-subdivision exceeds number of avilable vertex shader input registers.\n"));
+                    return Yw3d_E_InvalidState;
+                }
+                else if (m_RenderStates[Yw3d_RS_SubdivisionNormalRegister] >= YW3D_VERTEX_SHADER_REGISTERS)
+                {
+                    LOGE(_T("Yw3dDevice::PreRender: position register for smooth-subdivision exceeds number of avilable vertex shader input registers.\n"));
+                    return Yw3d_E_InvalidState;
+                }
+            }
+            break;
+        case Yw3d_Subdivision_Adaptive:
+            {
+                if ((0 == m_RenderStates[Yw3d_RS_SubdivisionLevels]) && (0 == Yw3d_RS_SubdivisionMaxInnerLevels))
+                {
+                    LOGE(_T("Yw3dDevice::PreRender: both subdivision levels for adaptive-subdivision are 0.\n"));
+                    return Yw3d_E_InvalidState;
+                }
+                else if (*(float*)&m_RenderStates[Yw3d_RS_SubdivisionMaxScreenArea] <= 0.0f)
+                {
+                    LOGE(_T("Yw3dDevice::PreRender: max screenarea for smooth-subdivision is <= 0.0f.\n"));
+                    return Yw3d_E_InvalidState;
+                }
+            }
+            break;
+        default:
+            LOGE(_T("Yw3dDevice::PreRender: value of render state Yw3d_RS_SubdivisionMode is invalid.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check for valid device-states, which won't produce any output.
+        if (m_RenderStates[Yw3d_RS_ZEnable] && (Yw3d_CMP_Never == m_RenderStates[Yw3d_RS_ZFunc]))
+        {
+            LOGI(_T("Yw3dDevice::PreRender: nothing will be rendered - depth buffering has been enabled and the compare-function has been set to m3dcmp_never - nothing will be rendered to the screen.\n"));
+        }
+
+        if (m_RenderStates[Yw3d_RS_ScissorTestEnable])
+        {
+            if ((m_ScissorRect.left == m_ScissorRect.right) || (m_ScissorRect.top == m_ScissorRect.bottom))
+            {
+                LOGI(_T("Yw3dDevice::PreRender: nothing will be rendered - scissor testing is enabled and scissor rect spans across an area of 0 pixels.\n"));
+            }
+        }
+
+        if (!m_RenderStates[Yw3d_RS_ColorWriteEnable] && (!m_RenderStates[Yw3d_RS_ZEnable] || !m_RenderStates[Yw3d_RS_ZWriteEnable]))
+        {
+            LOGI(_T("Yw3dDevice::PreRender: nothing will be rendered - writing to the colorbuffer and the depthbuffer has been disabled.\n"));
+        }
+
+        // Todo: Add more checks.
+        // ...
+
+        // Initialize internal  render-info structure.
+
+        // Store color buffer releated states.
+        colorBuffer = m_RenderTarget->AcquireColorBuffer();
+        if (nullptr != colorBuffer)
+        {
+            Yw3dResult resBuffer = colorBuffer->LockRect((void**)&m_RenderInfo.frameData, nullptr);
+            if (YW3D_FAILED(resBuffer))
+            {
+                LOGI(_T("Yw3dDevice::PreRender: couldn't access color buffer.\n"));
+                YW_SAFE_RELEASE(colorBuffer);
+
+                return resBuffer;
+            }
+
+            m_RenderInfo.colorFloats = colorBuffer->GetFormatFloats();
+            if (0 == m_RenderInfo.colorFloats)
+            {
+                colorBuffer->UnlockRect();
+                YW_SAFE_RELEASE(colorBuffer);
+
+                return Yw3d_E_Unknown;
+            }
+
+            m_RenderInfo.colorBufferPitch = colorBuffer->GetWidth() * m_RenderInfo.colorFloats;
+            m_RenderInfo.colorWriteEnabled = m_RenderStates[Yw3d_RS_ColorWriteEnable] ? true : false;
+        }
+        else
+        {
+            m_RenderInfo.frameData = nullptr;
+            m_RenderInfo.colorFloats = 0;
+            m_RenderInfo.colorBufferPitch = 0;
+            m_RenderInfo.colorWriteEnabled = false;
+        }
+
+        // Get depth buffer releated states.
+        depthBuffer = m_RenderStates[Yw3d_RS_ZEnable] ? m_RenderTarget->AcquireDepthBuffer() : nullptr;
+        if (nullptr != depthBuffer)
+        {
+            Yw3dResult resBuffer = depthBuffer->LockRect((void**)&m_RenderInfo.depthData, nullptr);
+            if (YW3D_FAILED(resBuffer))
+            {
+                LOGI(_T("Yw3dDevice::PreRender: couldn't access depth buffer.\n"));
+                if (nullptr != m_RenderInfo.frameData)
+                {
+                    colorBuffer->UnlockRect();
+                }
+
+                YW_SAFE_RELEASE(colorBuffer);
+                YW_SAFE_RELEASE(depthBuffer);
+
+                return resBuffer;
+            }
+
+            m_RenderInfo.depthBufferPitch = depthBuffer->GetWidth();
+            m_RenderInfo.depthCompare = (Yw3dCompareFunction)m_RenderStates[Yw3d_RS_ZFunc];
+            m_RenderInfo.depthWriteEnabled = m_RenderStates[Yw3d_RS_ZWriteEnable] ? true : false;
+        }
+        else
+        {
+            m_RenderInfo.depthData = nullptr;
+            m_RenderInfo.depthBufferPitch = 0;
+            m_RenderInfo.depthCompare = Yw3d_CMP_Always;
+            m_RenderInfo.depthWriteEnabled = false;
+        }
+
+        YW_SAFE_RELEASE(colorBuffer);
+        YW_SAFE_RELEASE(depthBuffer);
+
+        // Reset pixel-counter to 0.
+        m_RenderInfo.renderedPixels = 0;
+
         return Yw3d_E_Unknown;
     }
 
@@ -1355,16 +1603,16 @@ namespace yw
     {
         switch (m_RenderStates[Yw3d_RS_SubdivisionMode])
         {
-        case Yw3d_Subdiv_None:
+        case Yw3d_Subdivision_None:
             DrawTriangle(vsOutput0, vsOutput1, vsOutput2);
             break;
-        case Yw3d_Subdiv_Simple:
+        case Yw3d_Subdivision_Simple:
             SubdivideTriangle_Simple(0, vsOutput0, vsOutput1, vsOutput2);
             break;
-        case Yw3d_Subdiv_Smooth:
+        case Yw3d_Subdivision_Smooth:
             SubdivideTriangle_Smooth(0, vsOutput0, vsOutput1, vsOutput2);
             break;
-        case Yw3d_Subdiv_Adaptive:
+        case Yw3d_Subdivision_Adaptive:
             SubdivideTriangle_Adaptive(vsOutput0, vsOutput1, vsOutput2);
             break;
         default:

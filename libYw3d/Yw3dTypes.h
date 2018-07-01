@@ -63,7 +63,7 @@ enum Yw3dRenderState
 
 	Yw3d_RS_CullMode,   // CullMode. Set this renderstate to a member of the enumeration Yw3dCull. Default: Yw3d_Cull_CCW.
 
-	Yw3d_RS_SubdivisionMode,                // SubdivisionMode. Set this renderstate to a member of the enumeration Yw3dSubdiv. Default: Yw3d_Subdiv_None.
+	Yw3d_RS_SubdivisionMode,                // SubdivisionMode. Set this renderstate to a member of the enumeration Yw3dSubdivision. Default: Yw3d_Subdivision_None.
 	Yw3d_RS_SubdivisionLevels,              // This renderstate specifies the number of recursive subdivision when using simple or smooth subdivision. It specifies the maximum number of recursive subdivisions of triangles' edges when using adaptive subdivision. In case subdivision has been disabled, this renderstate has no effect. Valid values are integers > 0 - if this renderstate has been set to 0, DrawPrimitive()-calls will fail. Default: 1.
 	Yw3d_RS_SubdivisionPositionRegister,    // This renderstate is only used when using smooth subdivision. It specifies the vertex shader input register which holds position-data. Make sure vertex positions have been homogenized (w=1)! In case subdivision has been disabled, this renderstate has no effect. Valid values are integers e [0,YW3D_VERTEX_SHADER_REGISTERS]. Default: 0.
 	Yw3d_RS_SubdivisionNormalRegister,      // This renderstate is only used when using smooth subdivision. It specifies the vertex shader input register which holds normal-data. For best results make sure that the normals have been normalized. In case subdivision has been disabled, this renderstate has no effect. Valid values are integers e [0,YW3D_VERTEX_SHADER_REGISTERS]. Default: 1.
@@ -135,12 +135,12 @@ enum Yw3dTextureFilter
 };
 
 // Specifies the supported subdivision modes.
-enum Yw3dSubdiv
+enum Yw3dSubdivision
 {
-	Yw3d_Subdiv_None,       // Triangle subdivision is disabled.
-	Yw3d_Subdiv_Simple,     // This subdivision mode simply subdivides each triangle an user specified number of times recursively.
-	Yw3d_Subdiv_Smooth,     // This subdivision mode is a simplified implementation of ATI's TruForm: It subdivides each triangle an user specified number of times recursively and attempts to generate a smooth triangle-surface using vertex normals as a base. This subdivision mode requires access to vertex position and normal. (For best results make sure that normal-vectors are normalized.)
-	Yw3d_Subdiv_Adaptive    // This subdivision mode splits each triangle's edges an user specified number of times recursively. The triangle is then subdivided until its sub-triangles cover no more than a user specified area in clipping space.
+	Yw3d_Subdivision_None,       // Triangle subdivision is disabled.
+	Yw3d_Subdivision_Simple,     // This subdivision mode simply subdivides each triangle an user specified number of times recursively.
+	Yw3d_Subdivision_Smooth,     // This subdivision mode is a simplified implementation of ATI's TruForm: It subdivides each triangle an user specified number of times recursively and attempts to generate a smooth triangle-surface using vertex normals as a base. This subdivision mode requires access to vertex position and normal. (For best results make sure that normal-vectors are normalized.)
+	Yw3d_Subdivision_Adaptive    // This subdivision mode splits each triangle's edges an user specified number of times recursively. The triangle is then subdivided until its sub-triangles cover no more than a user specified area in clipping space.
 };
 
 // Defines the supported texture and buffer formats.
