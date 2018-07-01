@@ -672,10 +672,10 @@ namespace yw
             // Rasterize info.
 
             // Rasterization-function for scanlines (triangle-drawing).
-            void (Yw3dDevice::*RasterizeScanline)(uint32_t, uint32_t, uint32_t, Yw3dVSOutput*);
+            void (Yw3dDevice::*fpRasterizeScanline)(uint32_t, uint32_t, uint32_t, Yw3dVSOutput*);
 
             // Drawing-function for individual pixels.
-            void (Yw3dDevice::*DrawPixel)(uint32_t, uint32_t, const Yw3dVSOutput*);
+            void (Yw3dDevice::*fpDrawPixel)(uint32_t, uint32_t, const Yw3dVSOutput*);
 
             // Counts the number of pixels that pass the depth-test.
             uint32_t renderedPixels;
@@ -698,7 +698,7 @@ namespace yw
             RenderInfo() : 
                 frameData(nullptr), colorFloats(4), colorBufferPitch(0), colorWriteEnabled(true), 
                 depthData(nullptr), depthBufferPitch(0), depthCompare(Yw3d_CMP_Less), depthWriteEnabled(true), 
-                RasterizeScanline(nullptr), DrawPixel(nullptr), renderedPixels(0)
+                fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0)
             {
                 // Init clip plans.
                 for (uint32_t i = 0; i < Yw3d_CP_NumPlanes; i++)

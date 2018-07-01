@@ -1238,7 +1238,7 @@ namespace yw
 
         // Set viewport for this triangle info.
         const Matrix44& viewportMatrix = m_RenderTarget->GetViewportMatrix();
-        Rect& triangleViewport = m_RenderInfo.viewportRect;
+        Yw3dRect& triangleViewport = m_RenderInfo.viewportRect;
         triangleViewport.left = (uint32_t)(viewportMatrix._41 - viewportMatrix._11);
         triangleViewport.right = (uint32_t)(viewportMatrix._41 + viewportMatrix._11);
         triangleViewport.top = (uint32_t)(viewportMatrix._42 + viewportMatrix._22);
@@ -1271,7 +1271,7 @@ namespace yw
         }
 
         // Check depth buffer with viewport.
-        if ((nullptr != depthBuffer) && ((depthBuffer.GetWidth() < triangleViewport.right) || (depthBuffer->GetHeight() < triangleViewport.bottom)))
+        if ((nullptr != depthBuffer) && ((depthBuffer->GetWidth() < triangleViewport.right) || (depthBuffer->GetHeight() < triangleViewport.bottom)))
         {
             LOGE(_T("Yw3dDevice::PreRender: depth buffer's dimensions are smaller than set viewport.\n"));
             YW_SAFE_RELEASE(colorBuffer);
@@ -1462,12 +1462,82 @@ namespace yw
         // Reset pixel-counter to 0.
         m_RenderInfo.renderedPixels = 0;
 
-        return Yw3d_E_Unknown;
+        // Depending on m_PixelShader->GetShaderOutput() chose the appropriate
+        // RasterizeScanline-function and assign it to the function pointer.
+        switch (m_PixelShader->GetShaderOutput())
+        {
+        case Yw3d_PSO_ColorOnly:
+            m_RenderInfo.fpRasterizeScanline = m_PixelShader->MightKillPixels() ? &Yw3dDevice::RasterizeScanline_ColorOnly_MightKillPixels : &Yw3dDevice::RasterizeScanline_ColorOnly;
+            m_RenderInfo.fpDrawPixel = &Yw3dDevice::DrawPixel_ColorOnly;
+            break;
+        case Yw3d_PSO_ColorDepth:
+            m_RenderInfo.fpRasterizeScanline = &Yw3dDevice::RasterizeScanline_ColorDepth;
+            m_RenderInfo.fpDrawPixel = &Yw3dDevice::DrawPixel_ColorDepth;
+            break;
+        default:
+            LOGE(_T("Yw3dDevice::PreRender: type of pixel shader is invalid.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Initialize shader's pointer to the rendering device,
+        // have to do this right before drawing and not at set-time, because a shader
+        // may be used with different devices.
+        m_VertexShader->SetDevice(this);
+        m_PixelShader->SetDevice(this);
+        if (nullptr != m_TriangleShader)
+        {
+            m_TriangleShader->SetDevice(this);
+        }
+
+        // Initialize pixel shader's pointers to info structures.
+        m_PixelShader->SetInfo(m_RenderInfo.vsOutputRegisterTypes, &m_TriangleInfo);
+
+        // Initialize vertex cache.
+        m_NumValidCacheEntries = 0;
+        m_FetchedVertices = 0;
+
+        // Make ftol() returns expected integer values.
+        fpuTruncate();
+
+        return Yw3d_S_OK;
     }
 
     void Yw3dDevice::PostRender()
     {
-        return;
+        // Reset FPU to default(rounding) mode.
+        fpuReset();
+
+        // Unlock and release color buffer.
+        if (nullptr != m_RenderInfo.frameData)
+        {
+            Yw3dSurface* colorBuffer = m_RenderTarget->AcquireColorBuffer();
+            if (nullptr != colorBuffer)
+            {
+                colorBuffer->UnlockRect();
+            }
+
+            YW_SAFE_RELEASE(colorBuffer);
+        }
+
+        // Unlock and release depth buffer.
+        if (nullptr != m_RenderInfo.depthData)
+        {
+            Yw3dSurface* depthBuffer = m_RenderTarget->AcquireDepthBuffer();
+            if (nullptr != depthBuffer)
+            {
+                depthBuffer->UnlockRect();
+            }
+
+            YW_SAFE_RELEASE(depthBuffer)
+        }
+
+        // Clear current device associated with used shaders.
+        m_VertexShader->SetDevice(nullptr);
+        m_PixelShader->SetDevice(nullptr);
+        if (nullptr != m_TriangleShader)
+        {
+            m_TriangleShader->SetDevice(nullptr);
+        }
     }
 
     Yw3dResult Yw3dDevice::DecodeVertexStream(Yw3dVSInput& vertexShaderInput, uint32_t vertexIndex)
@@ -2400,7 +2470,7 @@ namespace yw
                 Yw3dVSOutput psInput;
                 SetVSOutputFromGradient(&psInput, (float)iX[0], (float)iY[0]);
                 m_TriangleInfo.curPixelY = iY[0];
-                (this->*m_RenderInfo.RasterizeScanline)(iY[0], iX[0], iX[1], &psInput);
+                (this->*m_RenderInfo.fpRasterizeScanline)(iY[0], iX[0], iX[1], &psInput);
             }
         }
     }
@@ -2451,7 +2521,7 @@ namespace yw
 
                 if (0 == lineThicknessHalf)
                 {
-                    (this->*m_RenderInfo.DrawPixel)(curPixelX, curPixelY, &psInput);
+                    (this->*m_RenderInfo.fpDrawPixel)(curPixelX, curPixelY, &psInput);
                 }
                 else
                 {
@@ -2463,7 +2533,7 @@ namespace yw
                             continue;
                         }
 
-                        (this->*m_RenderInfo.DrawPixel)(curPixelX, newPixelY, &psInput);
+                        (this->*m_RenderInfo.fpDrawPixel)(curPixelX, newPixelY, &psInput);
                     }
                 }
             }
@@ -2497,7 +2567,7 @@ namespace yw
 
                 if (0 == lineThicknessHalf)
                 {
-                    (this->*m_RenderInfo.DrawPixel)(curPixelX, curPixelY, &psInput);
+                    (this->*m_RenderInfo.fpDrawPixel)(curPixelX, curPixelY, &psInput);
                 }
                 else
                 {
@@ -2509,7 +2579,7 @@ namespace yw
                             continue;
                         }
 
-                        (this->*m_RenderInfo.DrawPixel)(newPixelX, curPixelY, &psInput);
+                        (this->*m_RenderInfo.fpDrawPixel)(newPixelX, curPixelY, &psInput);
                     }
                 }
             }
