@@ -2416,7 +2416,7 @@ namespace yw
 
             switch (triPart)
             {
-                case 0: // Draw upper triangle-part.
+            case 0: // Draw upper triangle-part.
                 {
                     iY[0] = (uint32_t)ftol(ceilf(posA.y));
                     iY[1] = (uint32_t)ftol(ceilf(posB.y));
