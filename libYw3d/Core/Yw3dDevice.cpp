@@ -1392,7 +1392,7 @@ namespace yw
 
         // Initialize internal  render-info structure.
 
-        // Store color buffer releated states.
+        // Store color buffer related states.
         colorBuffer = m_RenderTarget->AcquireColorBuffer();
         if (nullptr != colorBuffer)
         {
@@ -1425,7 +1425,7 @@ namespace yw
             m_RenderInfo.colorWriteEnabled = false;
         }
 
-        // Get depth buffer releated states.
+        // Get depth buffer related states.
         depthBuffer = m_RenderStates[Yw3d_RS_ZEnable] ? m_RenderTarget->AcquireDepthBuffer() : nullptr;
         if (nullptr != depthBuffer)
         {
