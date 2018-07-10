@@ -76,3 +76,41 @@ project "libYw3d"
     --         '{MKDIR} "%{wks.location}../../Build/Bin/%{cfg.platform}/%{prj.name}"',
     --         '{COPY} "%{cfg.targetdir}/%{cfg.buildtarget.name}" "%{wks.location}../../' .. builddir .. '/Bin/%{cfg.platform}/%{prj.name}"'
     --     }
+
+project "libYwAppFramework"
+    language "C++"
+    kind "StaticLib"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d"
+    }
+
+    files
+    { 
+        "libYwAppFramework/*.h",
+        "libYwAppFramework/*.cpp",
+        "libYwAppFramework/Core/*.h",
+        "libYwAppFramework/Core/*.cpp",
+    }
+
+    vpaths 
+    {
+        ["*"] = { "libYwAppFramework/*.h", "libYwAppFramework/*.cpp" },
+        ["Core"] = { "libYwAppFramework/Core/*.h", "libYwAppFramework/Core/*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d"
+    }
+
+    filter { "architecture:x86" }
+        targetdir (builddir .. "/x86/libYwAppFramework")
+
+    filter { "architecture:x86_64" }
+        targetdir (builddir .. "/x64/libYwAppFramework")
+
+    filter { "configurations:Debug*" }
+        targetsuffix "D"
