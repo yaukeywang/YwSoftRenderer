@@ -2,10 +2,11 @@
 // YW Soft Renderer 3d device render state control class.
 
 #include "YwStateBlock.h"
+#include "YwGraphics.h"
 
 namespace yw
 {
-    StateBlock::StateBlock()
+    StateBlock::StateBlock(Graphics* graphics)
     {
     }
 
