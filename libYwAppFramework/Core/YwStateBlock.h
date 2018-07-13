@@ -12,7 +12,7 @@ namespace yw
     // The state block class.
     class StateBlock
     {
-        class Graphics* m_Graphics;
+        friend class Graphics;
 
     protected:
         // Constructor.

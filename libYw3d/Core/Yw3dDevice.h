@@ -209,7 +209,7 @@ namespace yw
         Yw3dResult SetVertexFormat(class Yw3dVertexFormat* vertexFormat);
 
         // Returns a pointer to the active vertex format. Calling this function will increase the internal reference count of the vertex format. Failure to call Release() when finished using the pointer will result in a memory leak.
-        class Yw3dVertexFormat* GetVertexFormat();
+        class Yw3dVertexFormat* AcquireVertexFormat();
 
         // Sets the triangle assembler.
         // @param[in] primitiveAssembler pointer to the primitive assembler.
@@ -269,7 +269,7 @@ namespace yw
         // @param[out] stride receives the stride in bytes. (In case this value doesn't need to be retrieved, pass 0 as parameter.)
         // @return Yw3d_S_OK the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        Yw3dResult GetVertexStream(uint32_t streamNumber, class Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride);
+        Yw3dResult AcquireVertexStream(uint32_t streamNumber, class Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride);
 
         // Sets a vertex buffer to a given sampler.
         // @param[in] samplerNumber number of the sampler.

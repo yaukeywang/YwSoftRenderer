@@ -14,8 +14,20 @@ namespace yw
         Graphics();
         ~Graphics();
 
-    private:
+    public:
+        inline Yw3d* GetYw3d()
+        {
+            return m_Yw3d;
+        }
 
+        inline Yw3dDevice* GetYw3dDevice()
+        {
+            return m_Yw3dDevice;
+        }
+
+    private:
+        Yw3d* m_Yw3d;
+        Yw3dDevice* m_Yw3dDevice;
     };
 }
 

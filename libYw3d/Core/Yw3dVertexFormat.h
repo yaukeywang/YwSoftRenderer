@@ -10,7 +10,7 @@
 namespace yw
 {
     // A vertex format describes the data-layout of vertex streams.
-    class Yw3dVertexFormat : IBase
+    class Yw3dVertexFormat : public IBase
     {
         friend class Yw3dDevice;
 

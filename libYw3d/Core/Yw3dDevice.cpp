@@ -734,7 +734,7 @@ namespace yw
         return  Yw3d_S_OK;
     }
 
-    Yw3dVertexFormat* Yw3dDevice::GetVertexFormat()
+    Yw3dVertexFormat* Yw3dDevice::AcquireVertexFormat()
     {
         if (nullptr != m_VertexFormat)
         {
@@ -861,7 +861,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::GetVertexStream(uint32_t streamNumber, Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride)
+    Yw3dResult Yw3dDevice::AcquireVertexStream(uint32_t streamNumber, Yw3dVertexBuffer** vertexBuffer, uint32_t* offset, uint32_t* stride)
     {
         if (streamNumber >= YW3D_MAX_VERTEX_STREAMS)
         {
