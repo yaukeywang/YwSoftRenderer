@@ -1086,7 +1086,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dRect Yw3dDevice::GetScissorRect()
+    Yw3dRect Yw3dDevice::GetScissorRect() const
     {
         return m_ScissorRect;
     }
@@ -1105,7 +1105,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    void Yw3dDevice::GetDepthBounds(float& minZ, float& maxZ)
+    void Yw3dDevice::GetDepthBounds(float& minZ, float& maxZ) const
     {
         minZ = m_RenderInfo.clippingPlanes[Yw3d_CP_Near].d;
         maxZ = m_RenderInfo.clippingPlanes[Yw3d_CP_Far].d;
@@ -1131,7 +1131,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::GetClippingPlane(Yw3dClippingPlanes index, Plane& plane)
+    Yw3dResult Yw3dDevice::GetClippingPlane(Yw3dClippingPlanes index, Plane& plane) const
     {
         if ((index < Yw3d_CP_User0) || index >= Yw3d_CP_NumPlanes)
         {
@@ -1147,7 +1147,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    uint32_t Yw3dDevice::GetRenderedPixels()
+    uint32_t Yw3dDevice::GetRenderedPixels() const
     {
         return m_RenderInfo.renderedPixels;
     }

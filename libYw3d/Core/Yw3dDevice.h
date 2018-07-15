@@ -328,7 +328,7 @@ namespace yw
         Yw3dResult SetScissorRect(const Yw3dRect& scissorRect);
 
         // Returns the currently set scissor rect.
-        Yw3dRect GetScissorRect();
+        Yw3dRect GetScissorRect() const;
 
         // Sets the bounding values for depth.
         // @param[in] minZ minimum allowed depth value, e [0,1], default: 0.
@@ -338,7 +338,7 @@ namespace yw
         Yw3dResult SetDepthBounds(float minZ, float maxZ);
 
         // Returns the currently set depth bounding values.
-        void GetDepthBounds(float& minZ, float& maxZ);
+        void GetDepthBounds(float& minZ, float& maxZ) const;
 
         // Sets an user-specified clipping plane.
         // @param[in] index clipping plane index (member of the enumeration m3dclippingplanes) starting from m3dcp_user0.
@@ -351,10 +351,10 @@ namespace yw
         // @param[out] plane reference to the output plane.
         // @return Yw3d_E_InvalidParameters if the index is invalid.
         // @return Yw3d_E_InvalidState if the specified clipping has not been set.
-        Yw3dResult GetClippingPlane(Yw3dClippingPlanes index, Plane& plane);
+        Yw3dResult GetClippingPlane(Yw3dClippingPlanes index, Plane& plane) const;
 
         // Returns the number of pixels that passed the depth-test during the last Draw*Primitive() call.
-        uint32_t GetRenderedPixels();
+        uint32_t GetRenderedPixels() const;
 
     private:
         // Initializes renderstates to default values.
