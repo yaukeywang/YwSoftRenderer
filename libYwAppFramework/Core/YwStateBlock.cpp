@@ -27,7 +27,116 @@ namespace yw
 
     void StateBlock::RestoreStates()
     {
+        // Get device.
+        Yw3dDevice* device = m_Graphics->GetYw3dDevice();
 
+        // Restore render states.
+        std::map<Yw3dRenderState, uint32_t>::iterator rsItr = m_RenderStates.begin();
+        for (; rsItr != m_RenderStates.end(); ++rsItr)
+        {
+            device->SetRenderState(rsItr->first, rsItr->second);
+        }
+
+        m_RenderStates.clear();
+
+        // Restore vertex format.
+        if (m_ChangedVertexFormat)
+        {
+            device->SetVertexFormat(m_VertexFormat);
+            YW_SAFE_RELEASE(m_VertexFormat);
+            m_ChangedVertexFormat = false;
+        }
+
+        // Restore primitive assembler.
+        if (m_ChangedPrimitiveAssembler)
+        {
+            device->SetPrimitiveAssembler(m_PrimitiveAssembler);
+            YW_SAFE_RELEASE(m_PrimitiveAssembler);
+            m_ChangedPrimitiveAssembler = false;
+        }
+
+        // Restore vertex shader.
+        if (m_ChangedVertexShader)
+        {
+            device->SetVertexShader(m_VertexShader);
+            YW_SAFE_RELEASE(m_VertexFormat);
+            m_ChangedVertexShader = false;
+        }
+
+        // Restore triangle shader.
+        if (m_ChangedTriangleShader)
+        {
+            device->SetTriangleShader(m_TriangleShader);
+            YW_SAFE_RELEASE(m_TriangleShader);
+            m_ChangedTriangleShader = false;
+        }
+
+        // Restore pixel shader.
+        if (m_ChangedPixelShader)
+        {
+            device->SetPixelShader(m_PixelShader);
+            YW_SAFE_RELEASE(m_PixelShader);
+            m_ChangedPixelShader = false;
+        }
+
+        // Restore index buffer.
+        if (m_ChangedIndexBuffer)
+        {
+            device->SetIndexBuffer(m_IndexBuffer);
+            YW_SAFE_RELEASE(m_IndexBuffer);
+            m_ChangedIndexBuffer = false;
+        }
+
+        // Restore vertex stream.
+        for (std::map<uint32_t, VertexStreamInfo>::iterator vsItr = m_VertexStreams.begin(); vsItr != m_VertexStreams.end(); ++vsItr)
+        {
+            device->SetVertexStream(vsItr->first, vsItr->second.vertexBuffer, vsItr->second.offset, vsItr->second.stride);
+            YW_SAFE_RELEASE(vsItr->second.vertexBuffer);
+        }
+
+        m_VertexStreams.clear();
+
+        // Restore textures.
+        for (std::map<uint32_t, IYw3dBaseTexture*>::iterator texItr = m_Textures.begin(); texItr != m_Textures.end(); ++texItr)
+        {
+            device->SetTexture(texItr->first, texItr->second);
+            YW_SAFE_RELEASE(texItr->second);
+        }
+
+        m_Textures.clear();
+
+        // Restore texture sampler state.
+        for (std::map<uint32_t, uint32_t>::iterator texSsItr = m_TextureSamplerStates.begin(); texSsItr != m_TextureSamplerStates.end(); ++texSsItr)
+        {
+            uint32_t samplerNumber = texSsItr->first / (uint32_t)Yw3d_TSS_NumTextureSamplerStates;
+            uint32_t samplerState = texSsItr->first - samplerNumber * (uint32_t)Yw3d_TSS_NumTextureSamplerStates;
+            device->SetTextureSamplerState(samplerNumber, (Yw3dTextureSamplerState)samplerState, texSsItr->second);
+        }
+
+        m_TextureSamplerStates.clear();
+
+        // Restore render target.
+        if (m_ChangedRenderTarget)
+        {
+            device->SetRenderTarget(m_RenderTarget);
+            YW_SAFE_RELEASE(m_RenderTarget);
+            m_ChangedRenderTarget = false;
+        }
+
+        // Restore scissor rect.
+        if (m_ChangedScissorRect)
+        {
+            device->SetScissorRect(m_ScissorRect);
+            m_ChangedScissorRect = false;
+        }
+
+        // Restore camera.
+        if (m_ChangedCamera)
+        {
+            m_Graphics->SetCamera(m_Camera);
+            m_Camera = nullptr;
+            m_ChangedCamera = false;
+        }
     }
 
     Yw3dResult StateBlock::SetRenderState(Yw3dRenderState renderState, uint32_t value)
@@ -293,10 +402,18 @@ namespace yw
 
     void StateBlock::SetCurrentCamera(class Camera* camera)
     {
-        //// Record if not yet saved.
-        //if (!m_ChangedCamera)
-        //{
-        //    m_Camera = m_Graphics->GetCamera();
-        //}
+        // Record if not yet saved.
+        if (!m_ChangedCamera)
+        {
+            m_Camera = m_Graphics->GetCamera();
+            if (camera == m_Camera)
+            {
+                return;
+            }
+
+            m_ChangedCamera = true;
+        }
+
+        m_Graphics->SetCamera(camera);
     }
 }

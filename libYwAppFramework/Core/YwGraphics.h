@@ -25,9 +25,25 @@ namespace yw
             return m_Yw3dDevice;
         }
 
+        inline class Camera* GetCamera()
+        {
+            return m_Camera;
+        }
+
+        inline void SetCamera(class Camera* camera)
+        {
+            m_Camera = camera;
+        }
+
     private:
+        // Yw3d instance.
         Yw3d* m_Yw3d;
+
+        // Yw3d device instance.
         Yw3dDevice* m_Yw3dDevice;
+        
+        // Camera instance.
+        class Camera* m_Camera;
     };
 }
 
