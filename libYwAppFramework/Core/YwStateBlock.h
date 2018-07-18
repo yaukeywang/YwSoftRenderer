@@ -2,7 +2,7 @@
 // YW Soft Renderer 3d device render state control class.
 
 #ifndef __YW_STATE_BLOCK_H__
-#define  __YW_STATE_BLOCK_H__
+#define __YW_STATE_BLOCK_H__
 
 #include <map>
 #include "Yw3d.h"

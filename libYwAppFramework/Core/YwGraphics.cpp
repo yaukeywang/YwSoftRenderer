@@ -2,14 +2,26 @@
 // YW Soft Renderer 3d device graphics class.
 
 #include "YwGraphics.h"
+#include "IYwApplication.h"
+#include "YwStateBlock.h"
 
 namespace yw
 {
-    Graphics::Graphics()
+    Graphics::Graphics(IApplication* application)
     {
     }
 
     Graphics::~Graphics()
     {
+    }
+
+    void Graphics::PushStateBlock()
+    {
+
+    }
+
+    void Graphics::PopStateBlock()
+    {
+
     }
 }

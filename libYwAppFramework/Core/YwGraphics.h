@@ -4,36 +4,60 @@
 #ifndef __YW_GRAPHICS_H__
 #define __YW_GRAPHICS_H__
 
+#include <stack>
 #include "Yw3d.h"
 
 namespace yw
 {
     class Graphics
     {
-    public:
-        Graphics();
+        friend class IApplication;
+        friend class Application;
+        friend class StateBlock;
+        friend class Camera;
+
+    protected:
+        Graphics(class IApplication* application);
         ~Graphics();
 
+    protected:
+        //bool Initialize(const struct CreationFlags& creationFlags);
+
     public:
+        // Get object.
         inline Yw3d* GetYw3d()
         {
             return m_Yw3d;
         }
 
+        // Get device.
         inline Yw3dDevice* GetYw3dDevice()
         {
             return m_Yw3dDevice;
         }
 
+        // Get current camera.
         inline class Camera* GetCamera()
         {
             return m_Camera;
         }
 
+        // Push current render state into stack.
+        void PushStateBlock();
+
+        // Pop current render state from stack.
+        void PopStateBlock();
+
+    protected:
+        // Set current camera.
         inline void SetCamera(class Camera* camera)
         {
             m_Camera = camera;
         }
+
+    protected:
+        // Camera instance.
+        class Camera* m_Camera;
 
     private:
         // Yw3d instance.
@@ -41,9 +65,12 @@ namespace yw
 
         // Yw3d device instance.
         Yw3dDevice* m_Yw3dDevice;
-        
-        // Camera instance.
-        class Camera* m_Camera;
+
+        // Base application class.
+        class IApplication* m_Application;
+
+        // All state block stack.
+        std::stack<class StateBlock*> m_StateBlocks;
     };
 }
 
