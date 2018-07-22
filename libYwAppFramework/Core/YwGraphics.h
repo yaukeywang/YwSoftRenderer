@@ -6,6 +6,7 @@
 
 #include <stack>
 #include "Yw3d.h"
+#include "YwStateBlock.h"
 
 namespace yw
 {
@@ -21,7 +22,7 @@ namespace yw
         ~Graphics();
 
     protected:
-        //bool Initialize(const struct CreationFlags& creationFlags);
+        bool Initialize(const struct ApplicationCreationFlags& creationFlags);
 
     public:
         // Get object.
@@ -37,7 +38,7 @@ namespace yw
         }
 
         // Get current camera.
-        inline class Camera* GetCamera()
+        inline class Camera* GetCurrentCamera()
         {
             return m_Camera;
         }
@@ -48,11 +49,52 @@ namespace yw
         // Pop current render state from stack.
         void PopStateBlock();
 
+        // Set render states.
+        Yw3dResult SetRenderState(Yw3dRenderState renderState, uint32_t value);
+
+        // Set vertex format.
+        Yw3dResult SetVertexFormat(Yw3dVertexFormat* vertexFormat);
+
+        // Set primitive assembler.
+        void SetPrimitiveAssembler(IYw3dPrimitiveAssembler* primitiveAssembler);
+
+        // Set vertex shader.
+        Yw3dResult SetVertexShader(IYw3dVertexShader* vertexShader);
+
+        // Set triangle shader.
+        void SetTriangleShader(IYw3dTriangleShader* triangleShader);
+
+        // Set pixel shader.
+        Yw3dResult SetPixelShader(IYw3dPixelShader* pixelShader);
+
+        // Set index buffer.
+        Yw3dResult SetIndexBuffer(Yw3dIndexBuffer* indexBuffer);
+
+        // Set vertex stream.
+        Yw3dResult SetVertexStream(uint32_t streamNumber, Yw3dVertexBuffer* vertexBuffer, uint32_t offset, uint32_t stride);
+
+        // Set texture of a sampler number.
+        Yw3dResult SetTexture(uint32_t samplerNumber, IYw3dBaseTexture* texture);
+
+        // Set texture sampler state of a sampler number.
+        Yw3dResult SetTextureSamplerState(uint32_t samplerNumber, Yw3dTextureSamplerState textureSamplerState, uint32_t state);
+
+        // Set render target.
+        void SetRenderTarget(Yw3dRenderTarget* renderTarget);
+
+        // Set scissor rect.
+        Yw3dResult SetScissorRect(const Yw3dRect& scissorRect);
+
     protected:
         // Set current camera.
-        inline void SetCamera(class Camera* camera)
+        inline void SetCurrentCamera(class Camera* camera)
         {
-            m_Camera = camera;
+            if (m_StateBlocks.empty())
+            {
+                return;
+            }
+
+            m_StateBlocks.top()->SetCurrentCamera(camera);
         }
 
     protected:
@@ -70,7 +112,7 @@ namespace yw
         class IApplication* m_Application;
 
         // All state block stack.
-        std::stack<class StateBlock*> m_StateBlocks;
+        std::stack<StateBlock*> m_StateBlocks;
     };
 }
 

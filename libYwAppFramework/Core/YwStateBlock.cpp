@@ -133,7 +133,7 @@ namespace yw
         // Restore camera.
         if (m_ChangedCamera)
         {
-            m_Graphics->SetCamera(m_Camera);
+            m_Graphics->SetCurrentCamera(m_Camera);
             m_Camera = nullptr;
             m_ChangedCamera = false;
         }
@@ -405,7 +405,7 @@ namespace yw
         // Record if not yet saved.
         if (!m_ChangedCamera)
         {
-            m_Camera = m_Graphics->GetCamera();
+            m_Camera = m_Graphics->GetCurrentCamera();
             if (camera == m_Camera)
             {
                 return;
@@ -414,6 +414,6 @@ namespace yw
             m_ChangedCamera = true;
         }
 
-        m_Graphics->SetCamera(camera);
+        m_Graphics->SetCurrentCamera(camera);
     }
 }
