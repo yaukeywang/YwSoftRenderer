@@ -287,7 +287,9 @@ namespace yw
         // Height of dimension of the backbuffer in Pixels.
         uint32_t backBufferHeight;
 
+        // Constructor.
         Yw3dDeviceParameters() : deviceWindow(nullptr), windowed(false), fullScreenColorBits(32), backBufferWidth(0), backBufferHeight(0) {}
+        Yw3dDeviceParameters(WindowHandle windowHandle, bool useWindowed, uint32_t colorBits, uint32_t width, uint32_t height) : deviceWindow(windowHandle), windowed(useWindowed), fullScreenColorBits(colorBits), backBufferWidth(width), backBufferHeight(height) {}
     };
 
     // Describes a vertex element.

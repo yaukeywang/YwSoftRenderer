@@ -2,7 +2,7 @@
 // YW Soft Renderer 3d device graphics class.
 
 #include "YwGraphics.h"
-#include "IYwApplication.h"
+#include "YwBaseApplication.h"
 #include "YwStateBlock.h"
 
 namespace yw
@@ -33,11 +33,15 @@ namespace yw
             return false;
         }
 
-        // Initialize Yw3d device parameters - defaulting to 32 bit colors in fullscreen mode.
-        Yw3dDeviceParameters deviceParams;/* =
+        // Initialize Yw3d device parameters - defaulting to 32 bit colors in full screen mode.
+        Yw3dDeviceParameters deviceParams =
         {
-            m_a
-        };*/
+            m_Application->GetWindowHandle(),
+            m_Application->GetWindowed(),
+            32,
+            m_Application->GetWindowWidth(),
+            m_Application->GetWindowHeight()
+        };
 
         if (YW3D_FAILED(m_Yw3d->CreateDevice(&m_Yw3dDevice, &deviceParams)))
         {
