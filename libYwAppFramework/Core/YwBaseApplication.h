@@ -31,7 +31,7 @@ namespace yw
     {
     public:
         IApplication();
-        ~IApplication();
+        virtual ~IApplication();
     };
 }
 
