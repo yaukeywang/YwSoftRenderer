@@ -11,8 +11,15 @@ namespace yw
     class Camera
     {
     public:
-        Camera();
-        ~Camera();
+        // Constructor.
+        Camera(class Graphics* graphics);
+
+        // Destructor.
+        virtual ~Camera();
+
+    public:
+        // Create rendersurface/depthsurface/stencilsurface and replaces set ones+viewport with them -> after calling this you can't change surfaces anymore!
+        bool CreateRenderCamera(uint32_t width, uint32_t height, Yw3dFormat frameBuffer = Yw3d_FMT_R32G32B32F, bool depthBuffer = true, bool stencilBuffer = false);
 
     private:
         // The graphics class as parent.

@@ -30,7 +30,10 @@ namespace yw
     class IApplication
     {
     public:
+        // Constructor.
         IApplication();
+
+        // Destructor.
         virtual ~IApplication();
 
     public:

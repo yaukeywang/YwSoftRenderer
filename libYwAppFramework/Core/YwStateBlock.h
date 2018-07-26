@@ -19,6 +19,7 @@ namespace yw
         StateBlock(class Graphics* graphics);
 
     public:
+        // Destructor.
         ~StateBlock();
 
     public:

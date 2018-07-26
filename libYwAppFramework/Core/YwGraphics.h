@@ -18,7 +18,10 @@ namespace yw
         friend class Camera;
 
     protected:
+        // Constructor.
         Graphics(class IApplication* application);
+
+        // Destructor.
         ~Graphics();
 
     protected:

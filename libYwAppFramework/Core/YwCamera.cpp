@@ -2,10 +2,11 @@
 // YW Soft Renderer camera class.
 
 #include "YwCamera.h"
+#include "YwGraphics.h"
 
 namespace yw
 {
-    Camera::Camera()
+    Camera::Camera(Graphics* graphics)
     {
     }
 
