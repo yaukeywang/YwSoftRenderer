@@ -67,7 +67,7 @@ namespace yw
 
     public:
         // Get parent graphics.
-        inline class Graphics* GetGraphics()
+        inline class Graphics* GetGraphics() const
         {
             return m_Graphics;
         }

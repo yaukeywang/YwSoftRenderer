@@ -29,19 +29,19 @@ namespace yw
 
     public:
         // Get object.
-        inline Yw3d* GetYw3d()
+        inline Yw3d* GetYw3d() const
         {
             return m_Yw3d;
         }
 
         // Get device.
-        inline Yw3dDevice* GetYw3dDevice()
+        inline Yw3dDevice* GetYw3dDevice() const
         {
             return m_Yw3dDevice;
         }
 
         // Get current camera.
-        inline class Camera* GetCurrentCamera()
+        inline class Camera* GetCurrentCamera() const
         {
             return m_Camera;
         }
