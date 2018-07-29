@@ -11,6 +11,14 @@ namespace yw
     class Camera
     {
     public:
+        enum Visibility
+        {
+            Visibility_CompleteOut = 0,
+            Visibility_Partial,
+            Visibility_CompleteIn
+        };
+
+    public:
         // Constructor.
         Camera(class Graphics* graphics);
 
@@ -18,7 +26,7 @@ namespace yw
         virtual ~Camera();
 
     public:
-        // Create rendersurface/depthsurface/stencilsurface and replaces set ones+viewport with them -> after calling this you can't change surfaces anymore!
+        // Create render-surface/depth-surface/stencil-surface and replaces set ones+viewport with them -> after calling this you can't change surfaces anymore!
         bool CreateRenderCamera(uint32_t width, uint32_t height, Yw3dFormat frameBuffer = Yw3d_FMT_R32G32B32F, bool depthBuffer = true, bool stencilBuffer = false);
 
         // Call this before calling CalculateView(), because the projection matrix is needed for frustum calcs!
@@ -26,6 +34,27 @@ namespace yw
 
         // Has to be called after making changes to camera position / rotation.
         void CalculateView();
+
+        // Check if sphere is visible by frustum.
+        // Check does not support Visibility_Partial.
+        Visibility CheckSphereVisible(const Vector3& origin, float radius);
+
+        // Check if box is visible by frustum.
+        Visibility CheckBoxVisible(const Vector3& lower, const Vector3& upper);
+
+        // Clear the buffer.
+        void ClearToSceneColor(const Yw3dRect* rect = nullptr);
+
+        // Begin to render a scene.
+        void BeginRender();
+
+        // Render a specified pass.
+        // RenderPass sets the necessary states to render a specific pass and then calls the scene's render function.
+        // -1 = render all passes.
+        virtual void RenderPass(int32_t pass = -1) = 0;
+
+        // End render a scene.
+        void EndRender(bool presentToScreen = false);
 
     public:
         // Get parent of graphics.
