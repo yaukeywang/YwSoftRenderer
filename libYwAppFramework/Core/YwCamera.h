@@ -27,7 +27,7 @@ namespace yw
 
     public:
         // Create render-surface/depth-surface/stencil-surface and replaces set ones+viewport with them -> after calling this you can't change surfaces anymore!
-        bool CreateRenderCamera(uint32_t width, uint32_t height, Yw3dFormat frameBuffer = Yw3d_FMT_R32G32B32F, bool depthBuffer = true, bool stencilBuffer = false);
+        bool CreateRenderCamera(uint32_t width, uint32_t height, Yw3dFormat frameBufferFormat = Yw3d_FMT_R32G32B32F, bool enableDepthBuffer = true, bool enableStencilBuffer = false);
 
         // Call this before calling CalculateView(), because the projection matrix is needed for frustum calcs!
         void CalculateProjection(float fov, float aspect = 4.0f / 3.0f, float zNear = 0.1f, float zFar = 1.0f);
