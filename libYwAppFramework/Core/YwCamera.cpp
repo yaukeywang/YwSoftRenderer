@@ -140,4 +140,64 @@ namespace yw
     {
 
     }
+
+    void Camera::BuildFrustum()
+    {
+        // Calculating frustum planes.
+        Matrix44 matViewProjection = GetViewMatrix() * GetProjectionMatrix();
+
+        // Left: -w' < x'.
+        m_Frustum[Yw3d_CP_Left] = Plane(
+            matViewProjection._14 + matViewProjection._11,
+            matViewProjection._24 + matViewProjection._21,
+            matViewProjection._34 + matViewProjection._31,
+            matViewProjection._44 + matViewProjection._41
+        );
+
+        // Right: x' < w';
+        m_Frustum[Yw3d_CP_Right] = Plane(
+            matViewProjection._14 - matViewProjection._11,
+            matViewProjection._24 - matViewProjection._21,
+            matViewProjection._34 - matViewProjection._31,
+            matViewProjection._44 - matViewProjection._41
+        );
+
+        // Top: y' < w'.
+        m_Frustum[Yw3d_CP_Top] = Plane(
+            matViewProjection._14 - matViewProjection._12,
+            matViewProjection._24 - matViewProjection._22,
+            matViewProjection._34 - matViewProjection._32,
+            matViewProjection._44 - matViewProjection._42
+        );
+
+        // Bottom: -w' < y'.
+        m_Frustum[Yw3d_CP_Bottom] = Plane(
+            matViewProjection._14 + matViewProjection._12,
+            matViewProjection._24 + matViewProjection._22,
+            matViewProjection._34 + matViewProjection._32,
+            matViewProjection._44 + matViewProjection._42
+        );
+
+        // Near: 0 < z'.
+        m_Frustum[Yw3d_CP_Near] = Plane(
+            matViewProjection._13,
+            matViewProjection._23,
+            matViewProjection._33,
+            matViewProjection._43
+        );
+
+        // Far: z' < w'.
+        m_Frustum[Yw3d_CP_Far] = Plane(
+            matViewProjection._14 - matViewProjection._13,
+            matViewProjection._24 - matViewProjection._23,
+            matViewProjection._34 - matViewProjection._33,
+            matViewProjection._44 - matViewProjection._43
+        );
+
+        // Normalize all frustum planes.
+        for (int i = 0; i < Yw3d_CP_NumFrustumPlanes; i++)
+        {
+            m_Frustum[i].normal.Normalize();
+        }
+    }
 }

@@ -204,11 +204,11 @@ enum Yw3dCubeFaces
 	Yw3d_CF_Negative_Z      // face -z
 };
 
-// Specifies the supported pixelshader types.
+// Specifies the supported pixel shader types.
 enum Yw3dPixelShaderOutput
 {
-	Yw3d_PSO_ColorOnly,     // Specifies that a given pixelshader only outputs color (default). A pixel's depth values will be automatically computed by the rasterizer through interpolation of depth values of a triangle's vertices.
-	Yw3d_PSO_ColorDepth,    // Specifies that a given pixelshader outputs both color and depth. If you want to output only depth use renderstate Yw3d_RS_ColorWriteEnable to disable writing color.
+	Yw3d_PSO_ColorOnly,     // Specifies that a given pixel shader only outputs color (default). A pixel's depth values will be automatically computed by the rasterizer through interpolation of depth values of a triangle's vertices.
+	Yw3d_PSO_ColorDepth,    // Specifies that a given pixel shader outputs both color and depth. If you want to output only depth use renderstate Yw3d_RS_ColorWriteEnable to disable writing color.
 };
 
 // Specifies the type of a particular shader register.
@@ -221,9 +221,10 @@ enum Yw3dShaderRegisterType
 	Yw3d_SRT_Vector4        // Specifies that the register should be treated as a 4-dimensional vector.
 };
 
-// Specifies the frustum cliping planes.
+// Specifies the frustum clipping planes.
 enum Yw3dClippingPlanes
 {
+    // Basic frustum planes.
 	Yw3d_CP_Left = 0,   // Left frustum clipping plane.
 	Yw3d_CP_Right,      // Right frustum clipping plane.
 	Yw3d_CP_Top,        // Top frustum clipping plane.
@@ -231,8 +232,11 @@ enum Yw3dClippingPlanes
 	Yw3d_CP_Near,       // Near frustum clipping plane.
 	Yw3d_CP_Far,        // Far frustum clipping plane.
 
+    // Basic frustum plane number.
+    Yw3d_CP_NumFrustumPlanes,
+
 	// User specified clipping planes.
-	Yw3d_CP_User0,
+	Yw3d_CP_User0 = Yw3d_CP_NumFrustumPlanes,
 	Yw3d_CP_User1,
 	Yw3d_CP_User2,
 	Yw3d_CP_User3,

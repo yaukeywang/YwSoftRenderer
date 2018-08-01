@@ -229,7 +229,7 @@ namespace yw
         Matrix44 m_ProjectionMatrix;
 
         // Frustum plane.
-        Plane m_Frustum[6];
+        Plane m_Frustum[Yw3d_CP_NumFrustumPlanes];
 
         // FOV angle.
         float m_FovAngle;
