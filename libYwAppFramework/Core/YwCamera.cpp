@@ -94,7 +94,26 @@ namespace yw
 
     void Camera::CalculateView()
     {
+        // Note: Matrix44LookAtLH already gives the view matrix.
 
+        // Get translation matrix.
+        Matrix44 matTranslation;
+        Matrix44Translation(matTranslation, -m_Position);
+
+        // Get rotation matrix.
+        Matrix44 matRotation;
+        Matrix44FromQuaternion(matRotation, m_Rotation);
+
+        // Get combined view matrix, this is equal from result of Matrix44LookAtLH.
+        m_ViewMatrix = matTranslation * matRotation;
+
+        // Update axis vector.
+        m_Forward.Set(m_ViewMatrix._13, m_ViewMatrix._23, m_ViewMatrix._33);
+        m_Right.Set(m_ViewMatrix._11, m_ViewMatrix._21, m_ViewMatrix._31);
+        m_Up.Set(m_ViewMatrix._12, m_ViewMatrix._22, m_ViewMatrix._32);
+
+        // Re-Build frustum.
+        BuildFrustum();
     }
 
     Camera::Visibility Camera::CheckSphereVisible(const Vector3& origin, float radius)
