@@ -28,7 +28,7 @@ namespace yw
     public:
         Vector2();
         Vector2(const Vector2& v);
-        Vector2(float nx, float ny);
+        Vector2(const float x, const float y);
         Vector2(const Vector3& v);
         Vector2(const Vector4& v);
 
@@ -50,12 +50,12 @@ namespace yw
         Vector2& operator +=(const Vector2& v);
         Vector2& operator -=(const Vector2& v);
         Vector2& operator *=(const Vector2& v);
-        Vector2& operator *=(float n);
-        Vector2& operator /=(float n);
+        Vector2& operator *=(const float n);
+        Vector2& operator /=(const float n);
         operator Vector3();
         operator Vector4();
 
-        void Set(float nx, float ny);
+        void Set(float x, float y);
         void Set(const Vector2& v);
         void Reset();
         float Length() const;
@@ -75,7 +75,7 @@ namespace yw
     // Vector2 nonmember functions.
 
     // Vector2 multiply number.
-    Vector2 operator *(float n, const Vector2& v);
+    Vector2 operator *(const float n, const Vector2& v);
 
     // Normalize a vector.
     Vector2& Vector2Normalize(Vector2& out, const Vector2& v);
@@ -109,14 +109,14 @@ namespace yw
     public:
         Vector3();
         Vector3(const Vector3& v);
-        Vector3(float nx, float ny, float nz);
+        Vector3(const float x, const float y, const float z);
         Vector3(const Vector2& v);
         Vector3(const Vector4& v);
 
     public:
         // Member functions.
 
-        Vector3& operator =(const float v);
+        Vector3& operator =(const float n);
         Vector3& operator =(const Vector3& v);
         Vector3& operator =(const Vector2& v);
         Vector3& operator =(const Vector4& v);
@@ -127,18 +127,18 @@ namespace yw
         Vector3 operator -(const Vector3& v) const;
         Vector3 operator *(const Vector3& v) const;
         Vector3 operator *(const float n) const;
-        Vector3 operator *(const Matrix33& mat) const;
+        Vector3 operator *(const Matrix33& m) const;
         Vector3 operator /(const float n) const;
         Vector3& operator +=(const Vector3& v);
         Vector3& operator -=(const Vector3& v);
         Vector3& operator *=(const Vector3& v);
-        Vector3& operator *=(float n);
-        Vector3& operator *=(const Matrix33& mat);
-        Vector3& operator /=(float n);
+        Vector3& operator *=(const float n);
+        Vector3& operator *=(const Matrix33& m);
+        Vector3& operator /=(const float n);
         operator Vector2();
         operator Vector4();
 
-        void Set(float nx, float ny, float nz);
+        void Set(float x, float y, float z);
         void Set(const Vector3& v);
         void Reset();
         float Length() const;
@@ -160,7 +160,7 @@ namespace yw
     // Vector3 nonmember functions.
 
     // Vector3 multiply number.
-    inline Vector3 operator *(float n, const Vector3& v);
+    inline Vector3 operator *(const float n, const Vector3& v);
 
     // Normalize a vector.
     Vector3& Vector3Normalize(Vector3& out, const Vector3& v);
@@ -207,14 +207,14 @@ namespace yw
     public:
         Vector4();
         Vector4(const Vector4& v);
-        Vector4(float nx, float ny, float nz, float nw);
+        Vector4(float x, float y, float z, float w);
         Vector4(const Vector2& v);
         Vector4(const Vector3& v);
 
     public:
         // Member functions.
 
-        Vector4& operator =(const float v);
+        Vector4& operator =(const float n);
         Vector4& operator =(const Vector4& v);
         Vector4& operator =(const Vector2& v);
         Vector4& operator =(const Vector3& v);
@@ -225,18 +225,18 @@ namespace yw
         Vector4 operator -(const Vector4& v) const;
         Vector4 operator *(const Vector4& v) const;
         Vector4 operator *(const float n) const;
-        Vector4 operator *(const Matrix44& mat) const;
+        Vector4 operator *(const Matrix44& m) const;
         Vector4 operator /(const float n) const;
-        Vector4& operator +=(const Vector4& n);
-        Vector4& operator -=(const Vector4& n);
-        Vector4& operator *=(const Vector4& n);
+        Vector4& operator +=(const Vector4& v);
+        Vector4& operator -=(const Vector4& v);
+        Vector4& operator *=(const Vector4& v);
         Vector4& operator *=(const float n);
-        Vector4& operator *=(const Matrix44& mat);
+        Vector4& operator *=(const Matrix44& m);
         Vector4& operator /=(const float n);
         operator Vector2();
         operator Vector3();
 
-        void Set(float nx, float ny, float nz, float nw);
+        void Set(float x, float y, float z, float w);
         void Set(const Vector4& v);
         void Reset();
         float Length() const;

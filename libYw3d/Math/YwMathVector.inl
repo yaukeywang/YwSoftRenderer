@@ -24,8 +24,10 @@ namespace yw
     {
     }
 
-    inline Vector2::Vector2(float nx, float ny) : x(nx), y(ny)
+    inline Vector2::Vector2(const float x, const float y)
     {
+        this->x = x;
+        this->y = y;
     }
 
     inline Vector2::Vector2(const Vector3& v) : x(v.x), y(v.y)
@@ -164,7 +166,7 @@ namespace yw
         return *this;
     }
 
-    inline Vector2& Vector2::operator *=(float n)
+    inline Vector2& Vector2::operator *=(const float n)
     {
         x *= n;
         y *= n;
@@ -172,7 +174,7 @@ namespace yw
         return *this;
     }
 
-    inline Vector2& Vector2::operator /=(float n)
+    inline Vector2& Vector2::operator /=(const float n)
     {
         float oneOverO = 1.0f / n;
         x *= oneOverO;
@@ -193,10 +195,10 @@ namespace yw
         return value;
     }
 
-    inline void Vector2::Set(float nx, float ny)
+    inline void Vector2::Set(float x, float y)
     {
-        x = nx;
-        y = ny;
+        this->x = x;
+        this->y = y;
     }
 
     inline void Vector2::Set(const Vector2& v)
@@ -270,7 +272,7 @@ namespace yw
 
     // Non-Member functions.
 
-    inline Vector2 operator *(float n, const Vector2& v)
+    inline Vector2 operator *(const float n, const Vector2& v)
     {
         Vector2 value(n * v.x, n * v.y);
         return value;
@@ -335,8 +337,11 @@ namespace yw
     {
     }
 
-    inline Vector3::Vector3(float nx, float ny, float nz) : x(nx), y(ny), z(nz)
+    inline Vector3::Vector3(const float x, const float y, const float z)
     {
+        this->x = x;
+        this->y = y;
+        this->z = z;
     }
 
     inline Vector3::Vector3(const Vector2& v) : x(v.x), y(v.y), z(0.0f)
@@ -347,9 +352,9 @@ namespace yw
     {
     }
 
-    inline Vector3& Vector3::operator =(const float v)
+    inline Vector3& Vector3::operator =(const float n)
     {
-        x = v;
+        x = n;
         y = 0.0f;
         z = 0.0f;
 
@@ -459,12 +464,12 @@ namespace yw
         return value;
     }
 
-    inline Vector3 Vector3::operator *(const Matrix33& mat) const
+    inline Vector3 Vector3::operator *(const Matrix33& m) const
     {
         Vector3 value(
-            x * mat._11 + y * mat._21 + z * mat._31, 
-            y * mat._12 + y * mat._22 + z * mat._32, 
-            z * mat._13 + y * mat._23 + z * mat._33
+            x * m._11 + y * m._21 + z * m._31, 
+            y * m._12 + y * m._22 + z * m._32, 
+            z * m._13 + y * m._23 + z * m._33
         );
         return value;
     }
@@ -504,7 +509,7 @@ namespace yw
         return *this;
     }
 
-    inline Vector3& Vector3::operator *=(float n)
+    inline Vector3& Vector3::operator *=(const float n)
     {
         x *= n;
         y *= n;
@@ -513,11 +518,11 @@ namespace yw
         return *this;
     }
 
-    inline Vector3& Vector3::operator *=(const Matrix33& mat)
+    inline Vector3& Vector3::operator *=(const Matrix33& m)
     {
-        float nx = x * mat._11 + y * mat._21 + z * mat._31;
-        float ny = y * mat._12 + y * mat._22 + z * mat._32;
-        float nz = z * mat._13 + y * mat._23 + z * mat._33;
+        float nx = x * m._11 + y * m._21 + z * m._31;
+        float ny = y * m._12 + y * m._22 + z * m._32;
+        float nz = z * m._13 + y * m._23 + z * m._33;
 
         x = nx;
         y = ny;
@@ -526,7 +531,7 @@ namespace yw
         return *this;
     }
 
-    inline Vector3& Vector3::operator /=(float n)
+    inline Vector3& Vector3::operator /=(const float n)
     {
         float oneOverO = 1.0f / n;
         x *= oneOverO;
@@ -548,11 +553,11 @@ namespace yw
         return value;
     }
 
-    inline void Vector3::Set(float nx, float ny, float nz)
+    inline void Vector3::Set(float x, float y, float z)
     {
-        x = nx;
-        y = ny;
-        z = nz;
+        this->x = x;
+        this->y = y;
+        this->z = z;
     }
 
     inline void Vector3::Set(const Vector3& v)
@@ -639,7 +644,7 @@ namespace yw
 
     // Nonmember functions.
 
-    inline Vector3 operator *(float n, const Vector3& v)
+    inline Vector3 operator *(const float n, const Vector3& v)
     {
         Vector3 value(n * v.x, n * v.y, n * v.z);
         return value;
@@ -742,8 +747,12 @@ namespace yw
     {
     }
 
-    inline Vector4::Vector4(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
+    inline Vector4::Vector4(float x, float y, float z, float w)
     {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
     }
 
     inline Vector4::Vector4(const Vector2& v) : x(v.x), y(v.y), z(0.0f), w(0.0f)
@@ -754,9 +763,9 @@ namespace yw
     {
     }
 
-    inline Vector4& Vector4::operator =(const float v)
+    inline Vector4& Vector4::operator =(const float n)
     {
-        x = v;
+        x = n;
         y = 0.0f;
         z = 0.0f;
         w = 0.0f;
@@ -882,13 +891,13 @@ namespace yw
         return value;
     }
 
-    inline Vector4 Vector4::operator *(const Matrix44& mat) const
+    inline Vector4 Vector4::operator *(const Matrix44& m) const
     {
         Vector4 value(
-            x * mat._11 + y * mat._21 + z * mat._31 + w * mat._41,
-            y * mat._12 + y * mat._22 + z * mat._32 + w * mat._42,
-            z * mat._13 + y * mat._23 + z * mat._33 + w * mat._43,
-            w * mat._14 + y * mat._24 + z * mat._34 + w * mat._44
+            x * m._11 + y * m._21 + z * m._31 + w * m._41,
+            y * m._12 + y * m._22 + z * m._32 + w * m._42,
+            z * m._13 + y * m._23 + z * m._33 + w * m._43,
+            w * m._14 + y * m._24 + z * m._34 + w * m._44
         );
         return value;
     }
@@ -901,32 +910,32 @@ namespace yw
         return value;
     }
 
-    inline Vector4& Vector4::operator +=(const Vector4& n)
+    inline Vector4& Vector4::operator +=(const Vector4& v)
     {
-        x += n.x;
-        y += n.y;
-        z += n.z;
-        w += n.w;
+        x += v.x;
+        y += v.y;
+        z += v.z;
+        w += v.w;
 
         return *this;
     }
 
-    inline Vector4& Vector4::operator -=(const Vector4& n)
+    inline Vector4& Vector4::operator -=(const Vector4& v)
     {
-        x -= n.x;
-        y -= n.y;
-        z -= n.z;
-        w -= n.w;
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        w -= v.w;
 
         return *this;
     }
 
-    inline Vector4& Vector4::operator *=(const Vector4& n)
+    inline Vector4& Vector4::operator *=(const Vector4& v)
     {
-        x *= n.x;
-        y *= n.y;
-        z *= n.z;
-        w *= n.w;
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+        w *= v.w;
 
         return *this;
     }
@@ -952,12 +961,12 @@ namespace yw
         return *this;
     }
 
-    inline Vector4& Vector4::operator *=(const Matrix44& mat)
+    inline Vector4& Vector4::operator *=(const Matrix44& m)
     {
-        float nx = x * mat._11 + y * mat._21 + z * mat._31 + w * mat._41;
-        float ny = y * mat._12 + y * mat._22 + z * mat._32 + w * mat._42;
-        float nz = z * mat._13 + y * mat._23 + z * mat._33 + w * mat._43;
-        float nw = w * mat._14 + y * mat._24 + z * mat._34 + w * mat._44;
+        float nx = x * m._11 + y * m._21 + z * m._31 + w * m._41;
+        float ny = y * m._12 + y * m._22 + z * m._32 + w * m._42;
+        float nz = z * m._13 + y * m._23 + z * m._33 + w * m._43;
+        float nw = w * m._14 + y * m._24 + z * m._34 + w * m._44;
 
         x = nx;
         y = ny;
@@ -979,12 +988,12 @@ namespace yw
         return value;
     }
 
-    inline void Vector4::Set(float nx, float ny, float nz, float nw)
+    inline void Vector4::Set(float x, float y, float z, float w)
     {
-        x = nx;
-        y = ny;
-        z = nz;
-        w = nw;
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
     }
 
     inline void Vector4::Set(const Vector4& v)
