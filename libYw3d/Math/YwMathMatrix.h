@@ -55,7 +55,7 @@ namespace yw
 
     public:
         Matrix33();
-        Matrix33(const Matrix33& mat);
+        Matrix33(const Matrix33& m);
         Matrix33(
             const float a11, const float a12, const float a13,
             const float a21, const float a22, const float a23,
@@ -65,18 +65,18 @@ namespace yw
     public:
         operator float*();
         operator const float*() const;
-        float operator()(int32_t row, int32_t col) const;
+        float operator()(const int32_t row, int32_t col) const;
         Matrix33 operator +() const;
         Matrix33 operator -() const; //< Returns the inverse of the matrix.
-        Matrix33& operator =(const Matrix33& mat);
-        Matrix33 operator +(const Matrix33 &mat) const;
-        Matrix33 operator -(const Matrix33 &mat) const;
-        Matrix33 operator *(const Matrix33 &mat) const;
+        Matrix33& operator =(const Matrix33& m);
+        Matrix33 operator +(const Matrix33 &m) const;
+        Matrix33 operator -(const Matrix33 &m) const;
+        Matrix33 operator *(const Matrix33 &m) const;
         Matrix33 operator *(const float n) const;
         Matrix33 operator /(const float n) const;
-        Matrix33& operator +=(const Matrix33& mat);
-        Matrix33& operator -=(const Matrix33& mat);
-        Matrix33& operator *=(const Matrix33& mat);
+        Matrix33& operator +=(const Matrix33& m);
+        Matrix33& operator -=(const Matrix33& m);
+        Matrix33& operator *=(const Matrix33& m);
         Matrix33& operator *=(const float n);
         Matrix33& operator /=(const float n);
 
@@ -88,19 +88,19 @@ namespace yw
     // Matrix33 nonmember functions.
 
     // Get the determinant of matrix 4x4.
-    float Matrix33Determinant(const Matrix33& mat);
+    float Matrix33Determinant(const Matrix33& m);
 
     // Get the determinant of matrix exclude row and col.
-    float Matrix33MinorDeterminant(const Matrix33& mat, const int32_t row, const int32_t col);
+    float Matrix33MinorDeterminant(const Matrix33& m, const int32_t row, const int32_t col);
 
     // Get Adjoint of matrix.
-    Matrix33 Matrix33Adjoint(const Matrix33& mat);
+    Matrix33 Matrix33Adjoint(const Matrix33& m);
 
     // Get inverse of matrix.
-    bool Matrix33Inverse(Matrix33& out, const Matrix33& mat);
+    bool Matrix33Inverse(Matrix33& out, const Matrix33& m);
 
     // Get transpose of matrix.
-    Matrix33& Matrix33Transpose(Matrix33& out, const Matrix33& mat);
+    Matrix33& Matrix33Transpose(Matrix33& out, const Matrix33& m);
 
     // Get identity of matrix 4x4.
     Matrix33& Matrix33Identity(Matrix33& out);
@@ -127,7 +127,7 @@ namespace yw
 
     public:
         Matrix44();
-        Matrix44(const Matrix44& mat);
+        Matrix44(const Matrix44& m);
         Matrix44(
             const float a11, const float a12, const float a13, const float a14,
             const float a21, const float a22, const float a23, const float a24,
@@ -138,18 +138,18 @@ namespace yw
     public:
         operator float*();
         operator const float*() const;
-        float operator()(int32_t row, int32_t col) const;
+        float operator()(const int32_t row, const int32_t col) const;
         Matrix44 operator +() const;
         Matrix44 operator -() const; //< Returns the inverse of the matrix.
-        Matrix44& operator =(const Matrix44& mat);
-        Matrix44 operator +(const Matrix44 &mat) const;
-        Matrix44 operator -(const Matrix44 &mat) const;
-        Matrix44 operator *(const Matrix44 &mat) const;
+        Matrix44& operator =(const Matrix44& m);
+        Matrix44 operator +(const Matrix44 &m) const;
+        Matrix44 operator -(const Matrix44 &m) const;
+        Matrix44 operator *(const Matrix44 &m) const;
         Matrix44 operator *(const float n) const;
         Matrix44 operator /(const float n) const;
-        Matrix44& operator +=(const Matrix44& mat);
-        Matrix44& operator -=(const Matrix44& mat);
-        Matrix44& operator *=(const Matrix44& mat);
+        Matrix44& operator +=(const Matrix44& m);
+        Matrix44& operator -=(const Matrix44& m);
+        Matrix44& operator *=(const Matrix44& m);
         Matrix44& operator *=(const float n);
         Matrix44& operator /=(const float n);
 
@@ -161,19 +161,19 @@ namespace yw
     // Matrix44 nonmember functions.
 
     // Get the determinant of matrix 4x4.
-    float Matrix44Determinant(const Matrix44& mat);
+    float Matrix44Determinant(const Matrix44& m);
 
     // Get the determinant of matrix exclude row and col.
-    float Matrix44MinorDeterminant(const Matrix44& mat, const int32_t row, const int32_t col);
+    float Matrix44MinorDeterminant(const Matrix44& m, const int32_t row, const int32_t col);
 
     // Get Adjoint of matrix.
-    Matrix44 Matrix44Adjoint(const Matrix44& mat);
+    Matrix44 Matrix44Adjoint(const Matrix44& m);
 
     // Get inverse of matrix.
-    bool Matrix44Inverse(Matrix44& out, const Matrix44& mat);
+    bool Matrix44Inverse(Matrix44& out, const Matrix44& m);
 
     // Get transpose of matrix.
-    Matrix44& Matrix44Transpose(Matrix44& out, const Matrix44& mat);
+    Matrix44& Matrix44Transpose(Matrix44& out, const Matrix44& m);
 
     // Get identity of matrix 4x4.
     Matrix44& Matrix44Identity(Matrix44& out);
