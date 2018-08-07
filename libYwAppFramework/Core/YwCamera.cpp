@@ -118,7 +118,25 @@ namespace yw
 
     Camera::Visibility Camera::CheckSphereVisible(const Vector3& origin, float radius)
     {
-        return Camera::Visibility_CompleteOut;
+        // Transform origin into world.
+        Vector3 vOrigin;
+        Vector3TransformCoord(vOrigin, origin, GetWorldMatrix());
+
+        // Accounts for scaling matrix! TODO: only enables scales along x-axis.
+        Vector3 vRadius(radius, 0.0f, 0.0f);
+        radius = vRadius.Length();
+
+        // Check each plane.
+        for (int i = 0; i < Yw3d_CP_NumFrustumPlanes; i++)
+        {
+            Plane* frustum = m_Frustum + i;
+            if ((*frustum * vOrigin) < -radius)
+            {
+                return Camera::Visibility_CompleteOut;
+            }
+        }
+
+        return Camera::Visibility_CompleteIn;
     }
 
     Camera::Visibility Camera::CheckBoxVisible(const Vector3& lower, const Vector3& upper)
