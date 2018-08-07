@@ -25,7 +25,7 @@ namespace yw
 
     public:
         Quaternion();
-        Quaternion(float nx, float ny, float nz, float nw);
+        Quaternion(float x, float y, float z, float w);
         Quaternion(const Quaternion& q);
 
     public:
@@ -45,7 +45,7 @@ namespace yw
         Quaternion& operator *=(const float q);
         Quaternion& operator /=(const float q);
 
-        void Set(float nx, float ny, float nz, float nw);
+        void Set(float x, float y, float z, float w);
         void Set(const Quaternion& q);
         float Length() const;
         float SquaredLength() const;
@@ -106,10 +106,10 @@ namespace yw
     Vector3& QuaternionToEuler(Vector3& out, const Quaternion& q); // ZYX euler order conversion.
 
     // Get quaternion from matrix 3x3.
-    Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat);
+    Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& m);
 
     // Get quaternion from matrix 4x4.
-    Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat);
+    Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& m);
 }
 
 #include "YwMathQuaternion.inl"

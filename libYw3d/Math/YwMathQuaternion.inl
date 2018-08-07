@@ -19,8 +19,12 @@ namespace yw
     {
     }
 
-    inline Quaternion::Quaternion(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw)
+    inline Quaternion::Quaternion(float x, float y, float z, float w)
     {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
     }
 
     inline Quaternion::Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z)
@@ -135,12 +139,12 @@ namespace yw
         return *this;
     }
 
-    inline void Quaternion::Set(float nx, float ny, float nz, float nw)
+    inline void Quaternion::Set(float x, float y, float z, float w)
     {
-        x = nx;
-        y = ny;
-        z = nz;
-        w = nw;
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
     }
 
     inline void Quaternion::Set(const Quaternion& q)
@@ -477,13 +481,13 @@ namespace yw
         return out;
     }
 
-    inline Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& mat)
+    inline Quaternion& QuaternionFromMatrix33(Quaternion& out, const Matrix33& m)
     {
         // Calculate the four components.
-        float fourXSquaredMinusl = mat._11 - mat._22 - mat._33;
-        float fourYSquaredMinusl = mat._22 - mat._11 - mat._33;
-        float fourZSquaredMinusl = mat._33 - mat._11 - mat._22;
-        float fourWSquaredMinusl = mat._11 + mat._22 + mat._33;
+        float fourXSquaredMinusl = m._11 - m._22 - m._33;
+        float fourYSquaredMinusl = m._22 - m._11 - m._33;
+        float fourZSquaredMinusl = m._33 - m._11 - m._22;
+        float fourWSquaredMinusl = m._11 + m._22 + m._33;
 
         int32_t biggestIndex = 0;
         float fourBiggestSquaredMinusl = fourWSquaredMinusl;
@@ -514,28 +518,28 @@ namespace yw
         switch (biggestIndex)
         {
         case 0:
-            out.x = (mat._23 - mat._32) * mult;
-            out.y = (mat._31 - mat._13) * mult;
-            out.z = (mat._12 - mat._21) * mult;
+            out.x = (m._23 - m._32) * mult;
+            out.y = (m._31 - m._13) * mult;
+            out.z = (m._12 - m._21) * mult;
             out.w = biggestVal;
             break;
         case 1:
             out.x = biggestVal;
-            out.y = (mat._12 + mat._21) * mult;
-            out.z = (mat._31 + mat._13) * mult;
-            out.w = (mat._23 - mat._32) * mult;
+            out.y = (m._12 + m._21) * mult;
+            out.z = (m._31 + m._13) * mult;
+            out.w = (m._23 - m._32) * mult;
             break;
         case 2:
-            out.x = (mat._12 + mat._21) * mult;
+            out.x = (m._12 + m._21) * mult;
             out.y = biggestVal;
-            out.z = (mat._23 + mat._32) * mult;
-            out.w = (mat._31 - mat._13) * mult;
+            out.z = (m._23 + m._32) * mult;
+            out.w = (m._31 - m._13) * mult;
             break;
         case 3:
-            out.x = (mat._31 + mat._13) * mult;
-            out.y = (mat._23 + mat._32) * mult;
+            out.x = (m._31 + m._13) * mult;
+            out.y = (m._23 + m._32) * mult;
             out.z = biggestVal;
-            out.w = (mat._12 - mat._21) * mult;
+            out.w = (m._12 - m._21) * mult;
             break;
         default:
             out.x = 0.0f;
@@ -548,13 +552,13 @@ namespace yw
         return out;
     }
 
-    inline Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& mat)
+    inline Quaternion& QuaternionFromMatrix44(Quaternion& out, const Matrix44& m)
     {
         // Calculate the four components.
-        float fourXSquaredMinusl = mat._11 - mat._22 - mat._33;
-        float fourYSquaredMinusl = mat._22 - mat._11 - mat._33;
-        float fourZSquaredMinusl = mat._33 - mat._11 - mat._22;
-        float fourWSquaredMinusl = mat._11 + mat._22 + mat._33;
+        float fourXSquaredMinusl = m._11 - m._22 - m._33;
+        float fourYSquaredMinusl = m._22 - m._11 - m._33;
+        float fourZSquaredMinusl = m._33 - m._11 - m._22;
+        float fourWSquaredMinusl = m._11 + m._22 + m._33;
 
         int32_t biggestIndex = 0;
         float fourBiggestSquaredMinusl = fourWSquaredMinusl;
@@ -585,28 +589,28 @@ namespace yw
         switch (biggestIndex)
         {
         case 0:
-            out.x = (mat._23 - mat._32) * mult;
-            out.y = (mat._31 - mat._13) * mult;
-            out.z = (mat._12 - mat._21) * mult;
+            out.x = (m._23 - m._32) * mult;
+            out.y = (m._31 - m._13) * mult;
+            out.z = (m._12 - m._21) * mult;
             out.w = biggestVal;
             break;
         case 1:
             out.x = biggestVal;
-            out.y = (mat._12 + mat._21) * mult;
-            out.z = (mat._31 + mat._13) * mult;
-            out.w = (mat._23 - mat._32) * mult;
+            out.y = (m._12 + m._21) * mult;
+            out.z = (m._31 + m._13) * mult;
+            out.w = (m._23 - m._32) * mult;
             break;
         case 2:
-            out.x = (mat._12 + mat._21) * mult;
+            out.x = (m._12 + m._21) * mult;
             out.y = biggestVal;
-            out.z = (mat._23 + mat._32) * mult;
-            out.w = (mat._31 - mat._13) * mult;
+            out.z = (m._23 + m._32) * mult;
+            out.w = (m._31 - m._13) * mult;
             break;
         case 3:
-            out.x = (mat._31 + mat._13) * mult;
-            out.y = (mat._23 + mat._32) * mult;
+            out.x = (m._31 + m._13) * mult;
+            out.y = (m._23 + m._32) * mult;
             out.z = biggestVal;
-            out.w = (mat._12 - mat._21) * mult;
+            out.w = (m._12 - m._21) * mult;
             break;
         default:
             out.x = 0.0f;

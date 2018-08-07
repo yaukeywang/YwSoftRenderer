@@ -22,8 +22,8 @@ namespace yw
 
     public:
         Plane();
-        Plane(const float na, const float nb, const float nc, const float nd);
-        Plane(const Vector3& n, const float nd);
+        Plane(const float a, const float b, const float c, const float d);
+        Plane(const Vector3& n, const float d);
         Plane(const Plane& p);
 
     public:

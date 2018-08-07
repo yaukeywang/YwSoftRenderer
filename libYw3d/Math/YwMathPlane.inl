@@ -14,14 +14,15 @@ namespace yw
 
     }
 
-    inline Plane::Plane(const float na, const float nb, const float nc, const float nd)
+    inline Plane::Plane(const float a, const float b, const float c, const float d)
     {
-        normal.Set(na, nb, nc);
-        d = nd;
+        normal.Set(a, b, c);
+        this->d = d;
     }
 
-    inline Plane::Plane(const Vector3& n, const float nd) : normal(n), d(nd)
+    inline Plane::Plane(const Vector3& n, const float d) : normal(n)
     {
+        this->d = d;
     }
 
     inline Plane::Plane(const Plane& p) : normal(p.normal), d(p.d)
