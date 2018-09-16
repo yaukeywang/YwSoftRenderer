@@ -141,7 +141,178 @@ namespace yw
 
     Camera::Visibility Camera::CheckBoxVisible(const Vector3& lower, const Vector3& upper)
     {
-        return Camera::Visibility_CompleteOut;
+        // Get world matrix.
+        const Matrix44& worldMatrix = GetWorldMatrix();
+
+        // Get corner vertex.
+        Vector3 vertexA(lower.x, lower.y, lower.z);
+        Vector3TransformCoord(vertexA, vertexA, worldMatrix);
+
+        Vector3 vertexB(upper.x, lower.y, lower.z);
+        Vector3TransformCoord(vertexB, vertexB, worldMatrix);
+
+        Vector3 vertexC(lower.x, upper.y, lower.z);
+        Vector3TransformCoord(vertexC, vertexC, worldMatrix);
+
+        Vector3 vertexD(upper.x, upper.y, lower.z);
+        Vector3TransformCoord(vertexD, vertexD, worldMatrix);
+
+        Vector3 vertexE(lower.x, lower.y, upper.z);
+        Vector3TransformCoord(vertexE, vertexE, worldMatrix);
+
+        Vector3 vertexF(upper.x, lower.y, upper.z);
+        Vector3TransformCoord(vertexF, vertexF, worldMatrix);
+
+        Vector3 vertexG(lower.x, upper.y, upper.z);
+        Vector3TransformCoord(vertexG, vertexG, worldMatrix);
+
+        Vector3 vertexH(upper.x, upper.y, upper.z);
+        Vector3TransformCoord(vertexH, vertexH, worldMatrix);
+
+
+        // Define intersect mode.
+        #define V_IN 1
+        #define V_OUT 2
+        #define V_INTERSECT 3
+        uint8_t mode = 0;
+
+        // Check by each plane.
+        for (int i = 0; i < Yw3d_CP_NumFrustumPlanes; i++)
+        {
+            Plane* frustum = m_Frustum + i;
+
+            // Clear IN-bit
+            mode &= V_OUT;
+
+            if (*frustum * vertexA >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexB >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexC >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexD >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexE >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexF >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexG >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            if (*frustum * vertexH >= 0)
+            {
+                mode |= V_IN;
+            }
+            else
+            {
+                mode |= V_OUT;
+            }
+
+            if (V_INTERSECT == mode)
+            {
+                continue;
+            }
+
+            // Complete in.
+            if (V_IN == mode)
+            {
+                continue;
+            }
+
+            return Visibility_CompleteOut;
+        }
+
+        if (V_INTERSECT == mode)
+        {
+            return Visibility_Partial;
+        }
+        else
+        {
+            return Visibility_CompleteIn;
+        }
     }
 
     void Camera::ClearToSceneColor(const Yw3dRect* rect)
