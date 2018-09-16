@@ -317,17 +317,25 @@ namespace yw
 
     void Camera::ClearToSceneColor(const Yw3dRect* rect)
     {
-
+        Scene* scene = m_Graphics->GetApplication()->GetScene();
+        m_RenderTarget->ClearColorBuffer(scene->GetClearColor(), rect);
+        m_RenderTarget->ClearDepthBuffer(1.0f, rect);
     }
 
     void Camera::BeginRender()
     {
-
+        m_Graphics->PushStateBlock();
+        m_Graphics->SetRenderTarget(m_RenderTarget);
+        m_Graphics->SetCurrentCamera(this);
     }
 
     void Camera::EndRender(bool presentToScreen)
     {
-
+        m_Graphics->PopStateBlock();
+        if (presentToScreen)
+        {
+            m_Graphics->GetYw3dDevice()->Present(m_RenderTarget);
+        }
     }
 
     void Camera::BuildFrustum()

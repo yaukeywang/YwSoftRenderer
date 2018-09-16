@@ -43,7 +43,7 @@ namespace yw
         return m_ColorBuffer->Clear(color, rect);
     }
 
-    Yw3dResult Yw3dRenderTarget::ClearDepthBuffer(const Vector4& depth, const Yw3dRect* rect)
+    Yw3dResult Yw3dRenderTarget::ClearDepthBuffer(const float depth, const Yw3dRect* rect)
     {
         if (NULL == m_DepthBuffer)
         {
@@ -51,7 +51,7 @@ namespace yw
             return Yw3d_E_InvalidFormat;
         }
 
-        return m_DepthBuffer->Clear(depth, rect);
+        return m_DepthBuffer->Clear(Vector4(depth, 0.0f, 0.0f, 0.0f), rect);
     }
 
     Yw3dResult Yw3dRenderTarget::SetColorBuffer(Yw3dSurface* colorBuffer)

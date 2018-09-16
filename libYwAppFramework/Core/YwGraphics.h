@@ -28,6 +28,12 @@ namespace yw
         bool Initialize(const struct ApplicationCreationFlags& creationFlags);
 
     public:
+        // Get application.
+        inline IApplication* GetApplication() const
+        {
+            return m_Application;
+        }
+
         // Get object.
         inline Yw3d* GetYw3d() const
         {

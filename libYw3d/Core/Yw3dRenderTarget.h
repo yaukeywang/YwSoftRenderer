@@ -41,7 +41,7 @@ namespace yw
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidState if no depthbuffer has been set.
         // @return Yw3d_E_InvalidParameters if the clear-rectangle exceeds the depthbuffer's dimensions.
-        Yw3dResult ClearDepthBuffer(const Vector4& depth, const Yw3dRect* rect);
+        Yw3dResult ClearDepthBuffer(const float depth, const Yw3dRect* rect);
 
         // Associates a Yw3dSurface as colorbuffer with this rendertarget, releasing the currently set colorbuffer.
         // Calling this function will increase the internal reference count of the surface.
