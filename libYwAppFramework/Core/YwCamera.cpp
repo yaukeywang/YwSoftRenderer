@@ -3,6 +3,8 @@
 
 #include "YwCamera.h"
 #include "YwGraphics.h"
+#include "YwBaseApplication.h"
+#include "YwScene.h"
 
 namespace yw
 {

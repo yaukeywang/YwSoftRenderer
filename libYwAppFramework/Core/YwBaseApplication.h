@@ -92,6 +92,12 @@ namespace yw
             return m_WindowHeight;
         }
 
+        // Get current scene.
+        inline class Scene* GetScene() const
+        {
+            return m_Scene;
+        }
+
     protected:
         // The window handle
         WindowHandle m_WindowHandle;
@@ -110,6 +116,11 @@ namespace yw
 
         // Window height.
         uint32_t m_WindowHeight;
+
+        // Sub-systems.
+
+        // Scene class.
+        class Scene* m_Scene;
     };
 }
 
