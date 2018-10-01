@@ -46,19 +46,19 @@ project "libYw3d"
 
     files
     { 
-        "libYw3d/*.h",
-        "libYw3d/*.cpp",
-        "libYw3d/Core/*.h",
-        "libYw3d/Core/*.cpp",
-        "libYw3d/Math/*.h",
-        "libYw3d/Math/*.cpp"
+        "libYw3d/Yw*.h",
+        "libYw3d/Yw*.cpp",
+        "libYw3d/Core/Yw3d*.h",
+        "libYw3d/Core/Yw3d*.cpp",
+        "libYw3d/Math/YwMath*.h",
+        "libYw3d/Math/YwMath*.cpp"
     }
 
     vpaths 
     {
-        ["*"] = { "libYw3d/*.h", "libYw3d/*.cpp" },
-        ["Core"] = { "libYw3d/Core/*.h", "libYw3d/Core/*.cpp" },
-        ["Math"] = { "libYw3d/Math/*.h", "libYw3d/Math/*.cpp" }
+        ["*"] = { "libYw3d/Yw*.h", "libYw3d/Yw*.cpp" },
+        ["Core"] = { "libYw3d/Core/Yw3d*.h", "libYw3d/Core/Yw3d*.cpp" },
+        ["Math"] = { "libYw3d/Math/YwMath*.h", "libYw3d/Math/YwMath*.cpp" }
     }
 
     filter { "architecture:x86" }
@@ -89,16 +89,19 @@ project "libYwAppFramework"
 
     files
     { 
-        "libYwAppFramework/*.h",
-        "libYwAppFramework/*.cpp",
-        "libYwAppFramework/Core/*.h",
-        "libYwAppFramework/Core/*.cpp",
+        "libYwAppFramework/Yw*.h",
+        "libYwAppFramework/Yw*.cpp",
+        "libYwAppFramework/Core/Yw*.h",
+        "libYwAppFramework/Core/Yw*.cpp",
+        "libYwAppFramework/ThirdParty/*.h",
+        "libYwAppFramework/ThirdParty/*.cpp"
     }
 
     vpaths 
     {
-        ["*"] = { "libYwAppFramework/*.h", "libYwAppFramework/*.cpp" },
-        ["Core"] = { "libYwAppFramework/Core/*.h", "libYwAppFramework/Core/*.cpp" }
+        ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.cpp" },
+        ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.cpp" },
+        ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.cpp" }
     }
 
     links
