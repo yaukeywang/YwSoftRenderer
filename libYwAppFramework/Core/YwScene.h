@@ -46,4 +46,4 @@ namespace yw
     };
 }
 
-#endif // __YW_SCENE_H__
+#endif // !__YW_SCENE_H__
