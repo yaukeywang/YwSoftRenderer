@@ -80,7 +80,7 @@ namespace yw
     // Floating pointer helper-functions.
 
     // Windows.
-    #ifdef WIN32
+    #if defined(_WIN32) || defined(WIN32)
 
         // Float type header.
         #include <float.h>
@@ -172,7 +172,7 @@ namespace yw
         static hexdouble hd;
         __asm__("fctiw %0, %1" : "=f" (hd.d) : "f" (f));
         return hd.i.lo;
-    #elif defined(WIN32)
+    #elif defined(_WIN32) || defined(WIN32)
         #ifdef _WIN64
             return (int32_t)f;
         #else

@@ -11,7 +11,7 @@
 #include <list>
 #include <wtypes.h>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
     #include <tchar.h>
 #endif
 
@@ -78,7 +78,7 @@ namespace yw
 
 // ------------------------------------------------------------------
 // Log things.
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(WIN32)
     #define OutputDebugString printf
 #endif
 

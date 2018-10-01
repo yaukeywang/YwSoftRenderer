@@ -55,7 +55,7 @@ namespace yw
 
     // ------------------------------------------------------------------
     // Windows platform.
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 
     // The needed header and lib.
     #include <ddraw.h>

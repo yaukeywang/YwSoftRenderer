@@ -14,7 +14,7 @@ namespace yw
         // Window title.
         String windowTitle;
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
         // The window icon.
         HICON icon;
 #endif

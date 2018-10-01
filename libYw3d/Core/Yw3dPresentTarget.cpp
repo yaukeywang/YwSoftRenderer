@@ -37,7 +37,7 @@ namespace yw
 
     // ------------------------------------------------------------------
     // Windows platform.
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 
     Yw3dPresentTargetWindows::Yw3dPresentTargetWindows(Yw3dDevice* device) : 
         IYw3dPresentTarget(device),

@@ -45,7 +45,7 @@ namespace yw
         // Create the present-target.
 
         // NOTE: add support for other platforms here.
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
         m_PresentTarget = new Yw3dPresentTargetWindows(this);
 #endif
 

@@ -10,7 +10,7 @@
 // Platform-dependent definitions and includes.
 
 // Windows platform.
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 #define WIN32_LEAN_AND_MEAN // Restrict inclusions.
 #include <windows.h>
 typedef HWND WindowHandle;  // Define window-handle for the Win32-platform.
