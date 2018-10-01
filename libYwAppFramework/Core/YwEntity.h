@@ -8,18 +8,18 @@
 
 namespace yw
 {
-    class YwEntity
+    class IEntity
     {
         friend class Scene;
 
     public:
         // Constructor.
-        YwEntity(class Scene* scene) : m_Scene(scene) 
+        IEntity(class Scene* scene) : m_Scene(scene)
         {
         }
 
         // Destructor.
-        virtual ~YwEntity()
+        virtual ~IEntity()
         {
             m_Scene = nullptr;
         }

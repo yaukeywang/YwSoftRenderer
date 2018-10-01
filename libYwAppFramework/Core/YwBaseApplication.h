@@ -92,6 +92,12 @@ namespace yw
             return m_WindowHeight;
         }
 
+        // Get current graphics class.
+        inline class Graphics* GetGraphics() const
+        {
+            return m_Graphics;
+        }
+
         // Get current scene.
         inline class Scene* GetScene() const
         {
@@ -118,6 +124,9 @@ namespace yw
         uint32_t m_WindowHeight;
 
         // Sub-systems.
+
+        // Graphics class.
+        class Graphics* m_Graphics;
 
         // Scene class.
         class Scene* m_Scene;
