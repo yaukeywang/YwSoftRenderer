@@ -50,17 +50,17 @@ namespace yw
     };
 }
 
-    // ------------------------------------------------------------------
-    // Platform-dependent code.
+// ------------------------------------------------------------------
+// Platform-dependent code.
 
-    // ------------------------------------------------------------------
-    // Windows platform.
+// ------------------------------------------------------------------
+// Windows platform.
 #if defined(_WIN32) || defined(WIN32)
 
-    // The needed header and lib.
-    #include <ddraw.h>
-    #pragma comment(lib, "ddraw.lib")
-    #pragma comment(lib, "dxguid.lib")
+// The needed header and lib.
+#include <ddraw.h>
+#pragma comment(lib, "ddraw.lib")
+#pragma comment(lib, "dxguid.lib")
 
 namespace yw
 {

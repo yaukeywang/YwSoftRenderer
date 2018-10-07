@@ -18,6 +18,7 @@ namespace yw
     class Scene
     {
         friend class IApplication;
+        friend class Application;
 
     protected:
         // Constructor.

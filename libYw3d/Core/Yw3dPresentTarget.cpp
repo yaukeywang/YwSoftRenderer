@@ -31,20 +31,22 @@ namespace yw
 
         return m_Device;
     }
+}
 
-    // ------------------------------------------------------------------
-    // Platform-dependent code.
+// ------------------------------------------------------------------
+// Platform-dependent code.
 
-    // ------------------------------------------------------------------
-    // Windows platform.
+// ------------------------------------------------------------------
+// Windows platform.
 #if defined(_WIN32) || defined(WIN32)
 
+namespace yw
+{
     Yw3dPresentTargetWindows::Yw3dPresentTargetWindows(Yw3dDevice* device) : 
         IYw3dPresentTarget(device),
         m_DirectDraw(nullptr),
         m_DirectDrawClipper(nullptr),
         m_DDSurfaceLost(false)
-
     {
         m_DirectDrawSurfaces[0] = nullptr;
         m_DirectDrawSurfaces[1] = nullptr;
@@ -396,6 +398,6 @@ namespace yw
             testMask <<= 1;
         }
     }
+}
 
 #endif // End of Windows platform.
-}

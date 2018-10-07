@@ -1,8 +1,8 @@
 // Add by Yaukey at 2018-07-18.
 // YW Soft Renderer application framework base application interface.
 
-#ifndef __I_YW_APPLICATION_H__
-#define __I_YW_APPLICATION_H__
+#ifndef __YW_BASE_APPLICATION_H__
+#define __YW_BASE_APPLICATION_H__
 
 #include "Yw3d.h"
 
@@ -92,6 +92,24 @@ namespace yw
             return m_WindowHeight;
         }
 
+        // Get current fps.
+        inline float GetFPS() const
+        {
+            return m_FPS;
+        }
+
+        // Get current inverse of fps.
+        inline float GetInvFPS() const
+        {
+            return m_InvFPS;
+        }
+
+        // Get elapsed time.
+        inline float GetElapsedTime() const
+        {
+            return m_ElapsedTime;
+        }
+
         // Get current graphics class.
         inline class Graphics* GetGraphics() const
         {
@@ -103,6 +121,10 @@ namespace yw
         {
             return m_Scene;
         }
+
+    protected:
+        // Create all sub-system we need.
+        bool CreateSubSystems(const ApplicationCreationFlags& creationFlags);
 
     protected:
         // The window handle
@@ -123,6 +145,21 @@ namespace yw
         // Window height.
         uint32_t m_WindowHeight;
 
+        // Frame ident.
+        uint32_t m_FrameIdent;
+
+        // The data of application.
+        uint8_t* m_AppData;
+
+        // The fps.
+        float m_FPS;
+
+        // The inverse of fps.
+        float m_InvFPS;
+
+        // The elapsed time.
+        float m_ElapsedTime;
+
         // Sub-systems.
 
         // Graphics class.
@@ -133,5 +170,5 @@ namespace yw
     };
 }
 
-#endif // !__I_YW_APPLICATION_H__
+#endif // !__YW_BASE_APPLICATION_H__
 
