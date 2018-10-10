@@ -153,9 +153,9 @@ project "libYwAppFramework"
 
     vpaths 
     {
-        ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.cpp" },
-        ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.cpp" },
-        ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.cpp" }
+        ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.inl", "libYwAppFramework/Yw*.cpp" },
+        ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.inl", "libYwAppFramework/Core/Yw*.cpp" },
+        ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.cpp" }
     }
 
     links
@@ -168,6 +168,50 @@ project "libYwAppFramework"
 
     filter { "architecture:x86_64" }
         targetdir (builddir .. "/x64/libYwAppFramework")
+
+    filter { "configurations:Debug*" }
+        targetsuffix "D"
+
+project "Demo1Triangle"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/ThirdParty"
+    }
+
+    files
+    { 
+        "Demo1Triangle/YwDemoTriangle.h",
+        "Demo1Triangle/YwDemoTriangle.cpp",
+        "Demo1Triangle/YwDemoTriangleApp.h",
+        "Demo1Triangle/YwDemoTriangleApp.cpp",
+        "Demo1Triangle/YwDemoTriangleCamera.h",
+        "Demo1Triangle/YwDemoTriangleCamera.cpp",
+        "Demo1Triangle/YwDemoTriangleMain.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo1Triangle/Yw*.h", "Demo1Triangle/Yw*.inl", "Demo1Triangle/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    filter { "architecture:x86" }
+        targetdir (builddir .. "/x86/Demo1Triangle")
+
+    filter { "architecture:x86_64" }
+        targetdir (builddir .. "/x64/Demo1Triangle")
 
     filter { "configurations:Debug*" }
         targetsuffix "D"

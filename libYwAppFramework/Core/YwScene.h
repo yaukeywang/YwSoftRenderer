@@ -41,7 +41,7 @@ namespace yw
         // Render with a specified pass.
         void Render(uint32_t pass);
 
-        // Registy entity by name and creatation function.
+        // Registry entity by name and creation function.
         void RegisterEntityType(String typeName, EntityCreateFunction createFunction);
 
         // Create a entity.

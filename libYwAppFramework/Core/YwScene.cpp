@@ -67,7 +67,7 @@ namespace yw
 
             // If true, render scene - graph.
             graphics->PushStateBlock();
-            sceneEntity->m_Entity->FrameMove();
+            sceneEntity->m_Entity->Render(pass);
             graphics->PopStateBlock();
         }
     }

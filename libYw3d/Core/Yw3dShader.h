@@ -24,8 +24,8 @@ namespace yw
         virtual void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput) = 0;
 
         // Returns the type of a particular output register. Member of the enumeration Yw3dShaderRegType; if a given register is not used, return Yw3d_SRT_Unused.
-        // @param[in] register index of register, e [0,YW3D_PIXEL_SHADER_REGISTERS].
-        virtual Yw3dShaderRegisterType GetOutputRegisters(uint32_t register) = 0;
+        // @param[in] shaderRegister index of register, e [0,YW3D_PIXEL_SHADER_REGISTERS].
+        virtual Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister) = 0;
     };
 
     // Defines the triangle shader interface.
@@ -57,7 +57,7 @@ namespace yw
         // Accessible by Yw3dDevice. Returns the type of the pixel shader; member of the enumeration Yw3dPixelShaderOutput. Default: Yw3d_PSO_ColorOnly.
         virtual Yw3dPixelShaderOutput GetShaderOutput() { return Yw3d_PSO_ColorOnly; }
 
-        // Returns true incase support for pixel-killing for Yw3d_PSO_ColorOnly-shader-types shall be enabled.
+        // Returns true in case support for pixel-killing for Yw3d_PSO_ColorOnly-shader-types shall be enabled.
         virtual bool MightKillPixels() { return true; }
 
         // Accessible by Yw3dDevice.

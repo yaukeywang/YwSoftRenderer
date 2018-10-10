@@ -12,12 +12,13 @@ namespace yw
     {
         friend class Scene;
 
-    public:
-        // Constructor.
-        IEntity(class Scene* scene) : m_Scene(scene)
-        {
-        }
+	protected:
+		// Constructor.
+		IEntity(class Scene* scene) : m_Scene(scene)
+		{
+		}
 
+    public:
         // Destructor.
         virtual ~IEntity()
         {
@@ -25,14 +26,14 @@ namespace yw
         }
 
     public:
-        // Returns true if the object has been moved -> scenegraph-care
+        // Returns true if the object has been moved -> scenegraph-care.
         virtual bool FrameMove() = 0;
 
         // Render with a specified pass.
         virtual void Render(int32_t pass) = 0;
 
     public:
-        // Get curent parent scene.
+        // Get current parent scene.
         inline class Scene* GetScene()
         {
             return m_Scene;
