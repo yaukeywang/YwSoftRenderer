@@ -414,6 +414,7 @@ namespace yw
             m_ChangedCamera = true;
         }
 
-        m_Graphics->SetCurrentCamera(camera);
+        // Don't use m_Graphics->SetCurrentCamera(camera), or you will get an infinite loop!
+        m_Graphics->m_Camera = camera;
     }
 }

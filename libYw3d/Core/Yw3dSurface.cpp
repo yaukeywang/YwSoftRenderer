@@ -427,7 +427,7 @@ namespace yw
 
     Yw3dResult Yw3dSurface::LockRect(void** lockedData, const Yw3dRect* lockRect)
     {
-        if (nullptr != lockedData)
+        if (nullptr == lockedData)
         {
             LOGE(_T("Yw3dSurface::LockRect: o_ppData points to null.\n"));
             return Yw3d_E_InvalidParameters;

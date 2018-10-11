@@ -92,6 +92,26 @@ namespace yw
             return m_WindowHeight;
         }
 
+		// Get app data.
+		inline void* GetAppData() const
+		{
+			return m_AppData;
+		}
+
+		// Set app data.
+		inline void SetAppData(void* data, uint32_t length)
+		{
+			YW_SAFE_DELETE(m_AppData);
+			m_AppData = new uint8_t[length];
+			memcpy(m_AppData, data, length);
+		}
+
+		// Get frame ident.
+		inline uint32_t GetFrameIdent() const
+		{
+			return m_FrameIdent;
+		}
+
         // Get current fps.
         inline float GetFPS() const
         {
@@ -145,11 +165,11 @@ namespace yw
         // Window height.
         uint32_t m_WindowHeight;
 
-        // Frame ident.
-        uint32_t m_FrameIdent;
-
         // The data of application.
         uint8_t* m_AppData;
+
+		// Frame ident.
+		uint32_t m_FrameIdent;
 
         // The fps.
         float m_FPS;

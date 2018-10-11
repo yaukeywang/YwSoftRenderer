@@ -48,11 +48,6 @@ namespace yw
         }
     }
 
-    Vector4 Scene::GetClearColor() const
-    {
-        return Vector4::Zero();
-    }
-
     void Scene::Render(uint32_t pass)
     {
         Graphics* graphics = GetApplication()->GetGraphics();

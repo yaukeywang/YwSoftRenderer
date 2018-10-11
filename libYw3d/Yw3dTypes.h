@@ -308,7 +308,7 @@ namespace yw
         // The register of the vertex shader the vertex element's value will be passed to.
         uint32_t shaderRegister;
 
-        Yw3dVertexElement() : stream(-1), type(Yw3d_VET_Vector3), shaderRegister(0) {}
+        //Yw3dVertexElement() : stream(-1), type(Yw3d_VET_Vector3), shaderRegister(0) {}
     };
 
     // Helper-macro for vertex format declaration.

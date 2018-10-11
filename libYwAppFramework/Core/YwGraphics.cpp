@@ -52,7 +52,7 @@ namespace yw
         // Create subsystems.
         PushStateBlock();
 
-        return false;
+        return true;
     }
 
     void Graphics::PushStateBlock()

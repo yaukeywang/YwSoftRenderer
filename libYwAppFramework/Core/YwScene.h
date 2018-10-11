@@ -35,9 +35,6 @@ namespace yw
         void FrameMove();
 
     public:
-        // Get scene clear color.
-        Vector4 GetClearColor() const;
-
         // Render with a specified pass.
         void Render(uint32_t pass);
 
@@ -54,8 +51,20 @@ namespace yw
         // Release entity.
         void ReleaseEntity(HENTITY entityHandle);
 
-        // Light and so on...
-        // ...
+	public:
+		// Light and so on...
+		// ...
+
+		// Get scene clear color.
+		inline Vector4 GetClearColor() const
+		{
+			return m_ClearColor;
+		}
+
+		inline void SetClearColor(Vector4& clearColor)
+		{
+			m_ClearColor = clearColor;
+		}
 
     public:
         // Get parent application.
@@ -79,7 +88,7 @@ namespace yw
         // The parent application.
         class IApplication* m_Application;
 
-        // Add registied entity functions.
+        // Add registry entity functions.
         std::map<String, EntityCreateFunction> m_RegisteredEntityTypes;
 
         // All entities.
@@ -87,6 +96,12 @@ namespace yw
 
         // Total number created entities.
         uint32_t m_NumberCreatedEntities;
+
+		// Light and so on...
+		// ...
+
+		// Clear color.
+		Vector4 m_ClearColor;
     };
 }
 

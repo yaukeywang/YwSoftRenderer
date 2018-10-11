@@ -703,7 +703,7 @@ namespace yw
                 // Init clip plans.
                 for (uint32_t i = 0; i < Yw3d_CP_NumPlanes; i++)
                 {
-                    clippingPlaneEnabled[i] = true;
+                    clippingPlaneEnabled[i] = false;
                 }
             }
         };

@@ -9,53 +9,53 @@
 
 namespace yw
 {
-	class DemoTriangle : public IEntity
-	{
-	public:
-		// Define vertex format.
-		struct Vertexformat
-		{
-			Vector3 m_Position;
-			Vector4 m_Color;
-		};
+    class DemoTriangle : public IEntity
+    {
+    public:
+        // Define vertex format.
+        struct Vertexformat
+        {
+            Vector3 position;
+            Vector4 color;
+        };
 
-	protected:
-		// Constructor.
-		DemoTriangle(class Scene* scene);
+    protected:
+        // Constructor.
+        DemoTriangle(class Scene* scene);
 
-		// Destructor.
-		~DemoTriangle();
+        // Destructor.
+        ~DemoTriangle();
 
-	public:
-		// The instance create function.
-		inline static IEntity* CreateDemoTriangle(class Scene* scene)
-		{
-			return new DemoTriangle(scene);
-		}
+    public:
+        // The instance create function.
+        inline static IEntity* CreateDemoTriangle(class Scene* scene)
+        {
+            return new DemoTriangle(scene);
+        }
 
-		// Initial demo triangle.
-		bool Initialize(const Vector3& pointA, const Vector3& pointB, const Vector3& pointC);
+        // Initial demo triangle.
+        bool Initialize(const Vector3& pointA, const Vector3& pointB, const Vector3& pointC, const Vector4& color);
 
-		// Returns true if the object has been moved -> scenegraph-care.
-		bool FrameMove();
+        // Returns true if the object has been moved -> scenegraph-care.
+        bool FrameMove();
 
-		// Render with a specified pass.
-		void Render(int32_t pass);
+        // Render with a specified pass.
+        void Render(int32_t pass);
 
-	private:
-		// Vertex related.
-		Yw3dVertexFormat* m_VertexFormat;
-		Yw3dVertexBuffer* m_VertexBuffer;
-		Yw3dIndexBuffer* m_IndexBuffer;
+    private:
+        // Vertex related.
+        Yw3dVertexFormat* m_VertexFormat;
+        Yw3dVertexBuffer* m_VertexBuffer;
+        Yw3dIndexBuffer* m_IndexBuffer;
 
-		// Shader related.
-		class DemoTriangleVertexShader* m_VertexShader;
-		class DemoTrianglePixelShader* m_PixelShader;
+        // Shader related.
+        class DemoTriangleVertexShader* m_VertexShader;
+        class DemoTrianglePixelShader* m_PixelShader;
 
-		// Primitive info.
-		uint32_t m_NumVertices;
-		uint32_t m_NumPrimitives;
-	};
+        // Primitive info.
+        uint32_t m_NumVertices;
+        uint32_t m_NumPrimitives;
+    };
 }
 
 #endif // !__YW_DEMO_TRIANGLE_H__

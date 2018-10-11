@@ -41,7 +41,7 @@ namespace yw
 
         // Create buffer by length.
         m_Data = new uint8_t[length];
-        if (nullptr != m_Data)
+        if (nullptr == m_Data)
         {
             LOGE(_T("Yw3dIndexBuffer::Create: out of memory, cannot create vertex buffer.\n"));
             return Yw3d_E_OutOfMemory;

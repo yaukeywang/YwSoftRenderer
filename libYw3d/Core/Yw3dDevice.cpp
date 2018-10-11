@@ -232,7 +232,7 @@ namespace yw
             return Yw3d_E_InvalidParameters;
         }
 
-        if ((Yw3d_PT_TriangleFan != primitiveType) || (Yw3d_PT_TriangleStrip != primitiveType) || (Yw3d_PT_TriangleList != primitiveType))
+        if ((Yw3d_PT_TriangleFan != primitiveType) && (Yw3d_PT_TriangleStrip != primitiveType) && (Yw3d_PT_TriangleList != primitiveType))
         {
             LOGE(_T("Yw3dDevice::DrawIndexedPrimitive: invalid primitive type specified.\n"));
             return Yw3d_E_InvalidParameters;
@@ -1548,7 +1548,7 @@ namespace yw
 
         // Get start vertex index in vertex buffer of each stream.
         const VertexStream* vertexStream = m_VertexStreams;
-        for (uint32_t streamIdx = 0; streamIdx < m_VertexFormat->GetHighestStream(); streamIdx++, vertexStream++)
+        for (uint32_t streamIdx = 0; streamIdx <= m_VertexFormat->GetHighestStream(); streamIdx++, vertexStream++)
         {
             uint32_t vertexOffset = vertexStream->offset + vertexIndex * vertexStream->stride;
             if (vertexOffset >= vertexStream->vertexBuffer->GetLength())
@@ -1581,15 +1581,15 @@ namespace yw
             switch (vertexElement->type)
             {
             case Yw3d_VET_Float:
-                shaderRegister = Yw3dShaderRegister(vertexData[0], 0.0f, 0.0f, 0.0f);
+                shaderRegister = Yw3dShaderRegister(vertexData[0], 0.0f, 0.0f, 1.0f);
                 vertexRawData[vertexElement->stream] += sizeof(float);
                 break;
             case Yw3d_VET_Vector2:
-                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], 0.0f, 0.0f);
+                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], 0.0f, 1.0f);
                 vertexRawData[vertexElement->stream] += sizeof(float) * 2;
                 break;
             case Yw3d_VET_Vector3:
-                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], vertexData[2], 0.0f);
+                shaderRegister = Yw3dShaderRegister(vertexData[0], vertexData[1], vertexData[2], 1.0f);
                 vertexRawData[vertexElement->stream] += sizeof(float) * 3;
                 break;
             case Yw3d_VET_Vector4:
@@ -1610,7 +1610,7 @@ namespace yw
 
     Yw3dResult Yw3dDevice::FetchVertex(Yw3dVertexCacheEntry** vertexCacheEntry, uint32_t vertexIndex)
     {
-        if ((nullptr != vertexCacheEntry) && ((*vertexCacheEntry)->vertexIndex == vertexIndex))
+        if ((nullptr != *vertexCacheEntry) && ((*vertexCacheEntry)->vertexIndex == vertexIndex))
         {
             (*vertexCacheEntry)->fetchTime = m_FetchedVertices++;
             return Yw3d_S_OK;
@@ -2462,7 +2462,7 @@ namespace yw
             }
 
             // Rasterize a single scan line.
-            for (; iY[0] < iY[1]; fX[0] += deltaX[0], fX[1] += deltaX[1])
+            for (; iY[0] < iY[1]; iY[0]++, fX[0] += deltaX[0], fX[1] += deltaX[1])
             {
                 const int32_t iX[2] = { ftol(ceilf(fX[0])), ftol(ceilf(fX[1])) };
                 //const float preStepX = (float)iX[0] - fX[0];

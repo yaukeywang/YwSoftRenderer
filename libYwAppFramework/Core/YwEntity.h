@@ -34,12 +34,12 @@ namespace yw
 
     public:
         // Get current parent scene.
-        inline class Scene* GetScene()
+        inline class Scene* GetScene() const
         {
             return m_Scene;
         }
 
-    private:
+	protected:
         class Scene* m_Scene;
     };
 }
