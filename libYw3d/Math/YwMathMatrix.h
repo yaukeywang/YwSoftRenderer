@@ -164,89 +164,115 @@ namespace yw
     float Matrix44Determinant(const Matrix44& m);
 
     // Get the determinant of matrix exclude row and col.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixdeterminant
     float Matrix44MinorDeterminant(const Matrix44& m, const int32_t row, const int32_t col);
 
     // Get Adjoint of matrix.
     Matrix44 Matrix44Adjoint(const Matrix44& m);
 
     // Get inverse of matrix.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixinverse
     bool Matrix44Inverse(Matrix44& out, const Matrix44& m);
 
     // Get transpose of matrix.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixtranspose
     Matrix44& Matrix44Transpose(Matrix44& out, const Matrix44& m);
 
     // Get identity of matrix 4x4.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixidentity
     Matrix44& Matrix44Identity(Matrix44& out);
 
     // Get matrix from quaternion.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationquaternion
     Matrix44& Matrix44FromQuaternion(Matrix44& out, const Quaternion& q);
 
     // Construct a matrix with translation.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixtranslation
     Matrix44& Matrix44Translation(Matrix44& out, const float x, const float y, const float z);
 
     // Construct a matrix with translation.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixtranslation
     Matrix44& Matrix44Translation(Matrix44& out, const Vector3& translation);
 
     // Construct a matrix scale with x, y and z.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixscaling
     Matrix44& Matrix44Scaling(Matrix44& out, const float x, const float y, const float z);
 
     // Construct a matrix scale with x, y and z.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixscaling
     Matrix44& Matrix44Scaling(Matrix44& out, const Vector3& scale);
 
     // Construct a matrix rotate with x axis with euler theta.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationx
     Matrix44& Matrix44RotationX(Matrix44& out, const float thetaX);
 
     // Construct a matrix rotate with y axis with euler theta.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationy
     Matrix44& Matrix44RotationY(Matrix44& out, const float thetaY);
 
     // Construct a matrix rotate with z axis with euler theta.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationz
     Matrix44& Matrix44RotationZ(Matrix44& out, const float thetaZ);
 
     // Builds a matrix that rotates around an arbitrary axis.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationaxis
     Matrix44& Matrix44RotationAxis(Matrix44& out, const Vector3& axis, const float angle);
 
     // Construct a matrix rotate with x, y and z axis with euler theta.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationyawpitchroll
     Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const float yaw, const float pitch, const float roll);
 
     // Construct a matrix rotate with x, y and z axis with euler theta.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixrotationyawpitchroll
     Matrix44& Matrix44RotationYawPitchRoll(Matrix44& out, const Vector3& rotation);
 
     // Construct a world transform matrix formed by position, rotation and scale.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixtransformation
     Matrix44& Matrix44Transformation(Matrix44& out, const Vector3& scaling, const Quaternion& rotation, const Vector3& translation);
 
     // Construct a look at matrix at left hand axis.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixlookatlh
     Matrix44& Matrix44LookAtLH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up);
 
     // Construct a look at matrix at right hand axis.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixlookatrh
     Matrix44& Matrix44LookAtRH(Matrix44& out, const Vector3& eye, const Vector3& at, const Vector3& up);
 
     // Construct perspective matrix at left hand axis.
-    // https://msdn.microsoft.com/en-us/library/windows/desktop/ee418867(v=vs.85).aspx
+    // https://docs.microsoft.com/zh-cn/windows/desktop/DxTechArts/the-direct3d-transformation-pipeline
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixperspectivefovlh
     Matrix44& Matrix44PerspectiveFovLH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf);
 
     // Construct perspective matrix at right hand axis.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixperspectivefovrh
     Matrix44& Matrix44PerspectiveFovRH(Matrix44& out, const float fovy, const float aspect, const float zn, const float zf);
 
     // Builds a left-handed orthographic projection matrix.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixortholh
     Matrix44& Matrix44OrthoLH(Matrix44& out, const float w, const float h, const float zn, const float zf);
 
     // Builds a right - handed orthographic projection matrix.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixorthorh
     Matrix44& Matrix44OrthoRH(Matrix44& out, const float w, const float h, const float zn, const float zf);
 
     // Builds a left-handed perspective projection matrix
     // All the parameters of the D3DXMatrixPerspectiveLH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixperspectivelh
     Matrix44& Matrix44PerspectiveLH(Matrix44& out, const float w, const float h, const float zn, const float zf);
 
     // Builds a right-handed perspective projection matrix.
     // All the parameters of the Matrix44PerspectiveRH function are distances in camera space.The parameters describe the dimensions of the view volume.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixperspectiverh
     Matrix44& Matrix44PerspectiveRH(Matrix44& out, const float w, const float h, const float zn, const float zf);
 
     // Builds a customized, left-handed perspective projection matrix.
     // All the parameters of the Matrix44PerspectiveOffCenterLH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixperspectiveoffcenterlh
     Matrix44& Matrix44PerspectiveOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
 
     // Builds a customized, right-handed perspective projection matrix.
     // All the parameters of the Matrix44PerspectiveOffCenterRH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixperspectiveoffcenterrh
     Matrix44& Matrix44PerspectiveOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
 
     // Builds a customized, left-handed orthographic projection matrix.
@@ -254,6 +280,7 @@ namespace yw
     // To create the same projection using Matrix44OrthoOffCenterLH, use the following values: l = -w/2, r = w/2, b = -h/2, and t = h/2.
     // Matrix44OrthoOffCenterLH(out, -w/2, w/2, -h/2, h/2, zn, zf)
     // All the parameters of the Matrix44OrthoOffCenterLH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixorthooffcenterlh
     Matrix44& Matrix44OrthoOffCenterLH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
 
     // Builds a customized, right-handed orthographic projection matrix.
@@ -261,10 +288,11 @@ namespace yw
     // To create the same projection using Matrix44OrthoOffCenterRH, use the following values: l = -w/2, r = w/2, b = -h/2, and t = h/2.
     // Matrix44OrthoOffCenterRH(out, -w/2, w/2, -h/2, h/2, zn, zf)
     // All the parameters of the Matrix44OrthoOffCenterRH function are distances in camera space. The parameters describe the dimensions of the view volume.
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3d9/d3dxmatrixorthooffcenterrh
     Matrix44& Matrix44OrthoOffCenterRH(Matrix44& out, const float l, const float r, const float b, const float t, const float zn, const float zf);
 
     // Builds a viewport transform matrix.
-    // https://msdn.microsoft.com/en-us/library/windows/desktop/bb206341(v=vs.85).aspx
+    // https://docs.microsoft.com/zh-cn/windows/desktop/direct3d9/viewports-and-clipping
     Matrix44& Matrix44Viewport(Matrix44& out, const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const float zn, const float zf);
 }
 
