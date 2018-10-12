@@ -2239,7 +2239,7 @@ namespace yw
 
         // Delta x and delta y in screen-space.
         const float deltaX[2] = { position1.x - position0.x, position2.x - position0.x };
-        const float deltaY[2] = { position1.y - position0.y, position2.y - position0.x };
+        const float deltaY[2] = { position1.y - position0.y, position2.y - position0.y };
         const float deltaZ[2] = { position1.z - position0.z, position2.z - position0.z };
         const float deltaW[2] = { position1.w - position0.w, position2.w - position0.w };
 
