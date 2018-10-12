@@ -1390,7 +1390,13 @@ namespace yw
         // Todo: Add more checks.
         // ...
 
-        // Initialize internal  render-info structure.
+        // Initialize internal render-info structure.
+
+        // Store output register types in the internal render-info structure.
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++)
+        {
+            m_RenderInfo.vsOutputRegisterTypes[regIdx] = m_VertexShader->GetOutputRegisters(regIdx);
+        }
 
         // Store color buffer related states.
         colorBuffer = m_RenderTarget->AcquireColorBuffer();
@@ -1999,8 +2005,8 @@ namespace yw
         // Prepare triangle for homogenous clipping.
         uint32_t numVertices = 3;
         memcpy(&m_ClipVertices[0], vsOutput0, sizeof(Yw3dVSOutput));
-        memcpy(&m_ClipVertices[1], vsOutput0, sizeof(Yw3dVSOutput));
-        memcpy(&m_ClipVertices[2], vsOutput0, sizeof(Yw3dVSOutput));
+        memcpy(&m_ClipVertices[1], vsOutput1, sizeof(Yw3dVSOutput));
+        memcpy(&m_ClipVertices[2], vsOutput2, sizeof(Yw3dVSOutput));
         m_NextFreeClipVertex = 3;
 
         uint32_t stage = 0;

@@ -174,7 +174,7 @@ namespace yw
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetPixelShader(m_PixelShader);
 
-        //device->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
+        device->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
         device->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_None);
         device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, m_NumVertices, 0, m_NumPrimitives);
     }
