@@ -925,9 +925,9 @@ namespace yw
     {
         Vector4 value(
             x * m._11 + y * m._21 + z * m._31 + w * m._41,
-            y * m._12 + y * m._22 + z * m._32 + w * m._42,
-            z * m._13 + y * m._23 + z * m._33 + w * m._43,
-            w * m._14 + y * m._24 + z * m._34 + w * m._44
+            x * m._12 + y * m._22 + z * m._32 + w * m._42,
+            x * m._13 + y * m._23 + z * m._33 + w * m._43,
+            x * m._14 + y * m._24 + z * m._34 + w * m._44
         );
         return value;
     }
@@ -994,9 +994,9 @@ namespace yw
     inline Vector4& Vector4::operator *=(const Matrix44& m)
     {
         float nx = x * m._11 + y * m._21 + z * m._31 + w * m._41;
-        float ny = y * m._12 + y * m._22 + z * m._32 + w * m._42;
-        float nz = z * m._13 + y * m._23 + z * m._33 + w * m._43;
-        float nw = w * m._14 + y * m._24 + z * m._34 + w * m._44;
+        float ny = x * m._12 + y * m._22 + z * m._32 + w * m._42;
+        float nz = x * m._13 + y * m._23 + z * m._33 + w * m._43;
+        float nw = x * m._14 + y * m._24 + z * m._34 + w * m._44;
 
         x = nx;
         y = ny;
