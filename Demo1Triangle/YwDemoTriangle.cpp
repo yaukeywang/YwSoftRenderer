@@ -165,6 +165,7 @@ namespace yw
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
         Matrix44RotationY(matWorld, GetScene()->GetApplication()->GetElapsedTime() * 3.0f);
+        //Matrix44RotationY(matWorld, 180.0f * DEG_TO_RAD);
         camera->SetWorldMatrix(matWorld);
 
         // This should be from device.

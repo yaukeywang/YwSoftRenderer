@@ -51,7 +51,7 @@ namespace yw
         DemoTriangle* demoTriangle = (DemoTriangle*)GetScene()->GetEntity(m_DemoTriangleHandle);
         if (!demoTriangle->Initialize(
             Vector3(-1.0f, 0.0f, 0.0f), Vector4::Red(),
-            Vector3(0.0f, 1.41421f, 0.0f), Vector4::Green(),
+            Vector3(0.0f, sqrtf(3.0f), 0.0f), Vector4::Green(),
             Vector3(1.0f, 0.0f, 0.0f), Vector4::Blue()
         ))
         {
