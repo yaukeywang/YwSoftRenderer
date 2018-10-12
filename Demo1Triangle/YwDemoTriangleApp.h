@@ -37,6 +37,9 @@ namespace yw
 
         // The demo triangle entity handle.
         HENTITY m_DemoTriangleHandle;
+
+        // Window caption text update time.
+        float m_UpdateTextTime;
     };
 }
 

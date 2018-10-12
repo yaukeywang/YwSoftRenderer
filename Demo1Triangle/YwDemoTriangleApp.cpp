@@ -11,7 +11,8 @@ namespace yw
 {
     DemoTriangleApp::DemoTriangleApp() :
         m_Camera(nullptr),
-        m_DemoTriangleHandle(0)
+        m_DemoTriangleHandle(0),
+        m_UpdateTextTime(0.0f)
     {
 
     }
@@ -49,12 +50,9 @@ namespace yw
 
         DemoTriangle* demoTriangle = (DemoTriangle*)GetScene()->GetEntity(m_DemoTriangleHandle);
         if (!demoTriangle->Initialize(
-            Vector3(-1.0f, 0.0f, 0.0f), 
-            Vector4::Red(),
-            Vector3(0.0f, 1.41421f, 0.0f), 
-            Vector4::Green(),
-            Vector3(1.0f, 0.0f, 0.0f),
-            Vector4::Blue()
+            Vector3(-1.0f, 0.0f, 0.0f), Vector4::Red(),
+            Vector3(0.0f, 1.41421f, 0.0f), Vector4::Green(),
+            Vector3(1.0f, 0.0f, 0.0f), Vector4::Blue()
         ))
         {
             return false;
@@ -71,25 +69,30 @@ namespace yw
 
     void DemoTriangleApp::FrameMove()
     {
-        if (GetFrameIdent() % 12 == 0)
+        float elapsedTime = GetElapsedTime();
+        if (elapsedTime - m_UpdateTextTime > 0.5f)
         {
+            // Tag caption text update time.
+            m_UpdateTextTime = elapsedTime;
+
+            // Update window caption text.
             #if defined(_WIN32) || defined(WIN32)
                 #ifdef _UNICODE
                     wchar_t szCaption[256];
-                    swprintf(szCaption, L"DemoTriangle, FPS: %3.1f", GetFPS());
+                    swprintf(szCaption, L"DemoTriangle, FPS: %3.2f", GetFPS());
                 #else
                     char szCaption[256];
-                    sprintf(szCaption, "DemoTriangle, FPS: %3.1f", GetFPS());
+                    sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());
                 #endif
 
                 SetWindowText(GetWindowHandle(), szCaption);
             #elif LINUX_X11
                 char szCaption[256];
-                sprintf(szCaption, "DemoTriangle, FPS: %3.1f", GetFPS());
+                sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());
                 XStoreName((Display*)GetDisplay(), GetWindowHandle(), szCaption);
             #elif __amigaos4__
                 static char szCaption[256];
-                sprintf(szCaption, "DemoTriangle, FPS: %3.1f", GetFPS());
+                sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());
                 IIntuition->SetWindowTitles(GetWindowHandle(), szCaption, szCaption);
             #endif
         }

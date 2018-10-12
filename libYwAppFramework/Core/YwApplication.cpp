@@ -92,7 +92,7 @@ namespace yw
             Sleep(1);
         }
 
-        // End of appliation loop = termination of program.
+        // End of application loop = termination of program.
 
         // Destroy world.
         DestroyWorld();
