@@ -19,7 +19,7 @@ namespace yw
         void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
         {
             // The projection vertex position.
-            position = vsShaderInput[0] * GetMatrix(Yw3d_SC_Matrix_WVP);
+            position = vsShaderInput[0] * (*GetWVPMatrix());
 
             // Vertex color.
             vsShaderOutput[0] = vsShaderInput[1];
@@ -164,13 +164,14 @@ namespace yw
 
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
+        Matrix44RotationY(matWorld, GetScene()->GetApplication()->GetElapsedTime() * 3.0f);
         camera->SetWorldMatrix(matWorld);
 
         // This should be from device.
-        m_VertexShader->SetMatrix(Yw3d_SC_Matrix_World, camera->GetWorldMatrix());
-        m_VertexShader->SetMatrix(Yw3d_SC_Matrix_View, camera->GetViewMatrix());
-        m_VertexShader->SetMatrix(Yw3d_SC_Matrix_Projection, camera->GetProjectionMatrix());
-        m_VertexShader->SetMatrix(Yw3d_SC_Matrix_WVP, camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix());
+        device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
+        device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
+        device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
+        device->SetTransform(Yw3d_TS_WVP, &(camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix()));
 
         graphics->SetVertexFormat(m_VertexFormat);
         graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(Vertexformat));

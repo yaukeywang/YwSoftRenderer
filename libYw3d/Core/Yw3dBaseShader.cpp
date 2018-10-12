@@ -66,12 +66,44 @@ namespace yw
         return m_MatrixConstants[index];
     }
 
+    const Matrix44* IYw3dBaseShader::GetWorldMatrix() const
+    {
+        const Matrix44* matWorld = nullptr;
+        m_Device->GetTransform(Yw3d_TS_World, matWorld);
+
+        return matWorld;
+    }
+
+    const Matrix44* IYw3dBaseShader::GetViewMatrix() const
+    {
+        const Matrix44* matView = nullptr;
+        m_Device->GetTransform(Yw3d_TS_View, matView);
+
+        return matView;
+    }
+
+    const Matrix44* IYw3dBaseShader::GetProjectionMatrix() const
+    {
+        const Matrix44* matProj = nullptr;
+        m_Device->GetTransform(Yw3d_TS_Projection, matProj);
+
+        return matProj;
+    }
+
+    const Matrix44* IYw3dBaseShader::GetWVPMatrix() const
+    {
+        const Matrix44* matWVP = nullptr;
+        m_Device->GetTransform(Yw3d_TS_WVP, matWVP);
+
+        return matWVP;
+    }
+
     void IYw3dBaseShader::SetDevice(Yw3dDevice* device)
     {
         m_Device = device;
     }
 
-	Yw3dResult IYw3dBaseShader::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
+    Yw3dResult IYw3dBaseShader::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
     {
         if (nullptr == m_Device)
         {

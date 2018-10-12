@@ -645,7 +645,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::SetTransform(Yw3dTransformState transformState, const Matrix44& value)
+    Yw3dResult Yw3dDevice::SetTransform(Yw3dTransformState transformState, const Matrix44* value)
     {
         if (transformState >= Yw3d_TS_NumTransformState)
         {
@@ -653,19 +653,26 @@ namespace yw
             return Yw3d_E_InvalidParameters;
         }
 
-        m_TransformState[transformState] = value;
+        if (nullptr == value)
+        {
+            LOGE(_T("Yw3dDevice::SetTransform: invalid transform value.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_TransformState[transformState] = *value;
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::GetTransform(Yw3dTransformState transformState, Matrix44& value)
+    Yw3dResult Yw3dDevice::GetTransform(Yw3dTransformState transformState, const Matrix44*& value)
     {
+        value = nullptr;
         if (transformState >= Yw3d_TS_NumTransformState)
         {
             LOGE(_T("Yw3dDevice::SetTransform: invalid transform state.\n"));
             return Yw3d_E_InvalidParameters;
         }
 
-        value = m_TransformState[transformState];
+        value = &m_TransformState[transformState];
         return Yw3d_S_OK;
     }
 

@@ -42,6 +42,18 @@ namespace yw
         // @param[in] index index of the constant.
         const Matrix44& GetMatrix(uint32_t index) const;
 
+        // Returns the world matrix.
+        const Matrix44* GetWorldMatrix() const;
+
+        // Returns the view matrix.
+        const Matrix44* GetViewMatrix() const;
+
+        // Returns the projection matrix.
+        const Matrix44* GetProjectionMatrix() const;
+
+        // Returns the combined matrix of world, view and projection.
+        const Matrix44* GetWVPMatrix() const;
+
     protected:
         // Accessible by Yw3dDevice - Sets the rendering-device.
         // @param[in] device the device.

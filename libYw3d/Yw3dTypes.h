@@ -45,8 +45,10 @@ const uint32_t YW3D_CLIP_VERTEX_CACHE_SIZE = 20;    // Specifies the amount of c
 // Defines the transform states.
 enum Yw3dTransformState
 {
-    Yw3d_TS_View = 0,           // Identifies the transformation matrix being set as the view transformation matrix. The default value is the identity matrix.
+    Yw3d_TS_World = 0,          // Identifies the transform matrix to set for the world matrix at index. Multiple world matrices are used only for vertex blending. Otherwise only YW3D_TS_World is used.
+    Yw3d_TS_View,               // Identifies the transformation matrix being set as the view transformation matrix. The default value is the identity matrix.
     Yw3d_TS_Projection,         // Identifies the transformation matrix being set as the projection transformation matrix. The default value is the identity matrix.
+    Yw3d_TS_WVP,                // The combine of YW3D_TS_World, Yw3d_TS_View and Yw3d_TS_Projection.
 
     Yw3d_TS_NumTransformState,
 };
@@ -174,15 +176,6 @@ enum Yw3dVertexelEmentType
     Yw3d_VET_Vector2,       // Specifies two floats. The vertex element is expanded to vector4(float, float, 0, 1) and mapped to a vertex shader input register.
     Yw3d_VET_Vector3,       // Specifies three floats. The vertex element is expanded to vector4(float, float, float, 1) and mapped to a vertex shader input register.
     Yw3d_VET_Vector4        // Specifies four floats. The vertex element is directly mapped to a vertex shader input register.
-};
-
-// Specifies indices for commonly used shader constants.
-enum Yw3dShaderConstant
-{
-	Yw3d_SC_Matrix_World = 0,       // World matrix for vertex transformation.
-	Yw3d_SC_Matrix_View = 1,        // View matrix for vertex transformation.
-	Yw3d_SC_Matrix_Projection = 2,  // Projection matrix for vertex transformation.
-	Yw3d_SC_Matrix_WVP = 3,         // Concatenated world, view and projection matrix for vertex transformation.
 };
 
 // Specifies the available types of vectors used for sampling different textures.
