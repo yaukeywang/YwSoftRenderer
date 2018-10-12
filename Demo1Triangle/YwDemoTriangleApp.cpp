@@ -37,7 +37,7 @@ namespace yw
         m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
-        GetScene()->SetClearColor(Vector4(0.0f, 0.0f, 0.5f, 0.0f));
+        GetScene()->SetClearColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
         // Registry a demo triangle entity and create an instance.
         GetScene()->RegisterEntityType(_T("DemoTriangle"), DemoTriangle::CreateDemoTriangle);
@@ -48,7 +48,14 @@ namespace yw
         }
 
         DemoTriangle* demoTriangle = (DemoTriangle*)GetScene()->GetEntity(m_DemoTriangleHandle);
-        if (!demoTriangle->Initialize(Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f)))
+        if (!demoTriangle->Initialize(
+            Vector3(-1.0f, 0.0f, 0.0f), 
+            Vector4::Red(),
+            Vector3(0.0f, 1.41421f, 0.0f), 
+            Vector4::Green(),
+            Vector3(1.0f, 0.0f, 0.0f),
+            Vector4::Blue()
+        ))
         {
             return false;
         }

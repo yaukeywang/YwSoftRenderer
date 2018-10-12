@@ -642,6 +642,36 @@ namespace yw
         return forward;
     }
 
+    inline Vector3 Vector3::Red()
+    {
+        Vector3 red(1.0f, 0.0f, 0.0f);
+        return red;
+    }
+
+    inline Vector3 Vector3::Green()
+    {
+        Vector3 green(0.0f, 1.0f, 0.0f);
+        return green;
+    }
+
+    inline Vector3 Vector3::Blue()
+    {
+        Vector3 blue(0.0f, 0.0f, 1.0f);
+        return blue;
+    }
+
+    inline Vector3 Vector3::Black()
+    {
+        Vector3 black(0.0f, 0.0f, 0.0f);
+        return black;
+    }
+
+    inline Vector3 Vector3::White()
+    {
+        Vector3 white(1.0f, 1.0f, 1.0f);
+        return white;
+    }
+
     // Nonmember functions.
 
     inline Vector3 operator *(const float n, const Vector3& v)
@@ -1052,6 +1082,36 @@ namespace yw
     {
         Vector4 one(1.0f, 1.0f, 1.0f, 1.0f);
         return one;
+    }
+
+    inline Vector4 Vector4::Red()
+    {
+        Vector4 red(1.0f, 0.0f, 0.0f, 1.0f);
+        return red;
+    }
+
+    inline Vector4 Vector4::Green()
+    {
+        Vector4 green(0.0f, 1.0f, 0.0f, 1.0f);
+        return green;
+    }
+
+    inline Vector4 Vector4::Blue()
+    {
+        Vector4 blue(0.0f, 0.0f, 1.0f, 1.0f);
+        return blue;
+    }
+
+    inline Vector4 Vector4::Black()
+    {
+        Vector4 black(0.0f, 0.0f, 0.0f, 1.0f);
+        return black;
+    }
+
+    inline Vector4 Vector4::White()
+    {
+        Vector4 white(1.0f, 1.0f, 1.0f, 1.0f);
+        return white;
     }
 
     // Nonmember functions.

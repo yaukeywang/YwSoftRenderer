@@ -23,12 +23,16 @@ namespace yw
     {
         m_Parent->AddRef();
 
+        // Copy device parameters.
         memcpy(&m_DeviceParameters, deviceParameters, sizeof(Yw3dDeviceParameters));
+
+        // Initialize important internal variables.
         memset(m_RenderStates, 0, Yw3d_RS_NumRenderStates * sizeof(uint32_t));
         memset(m_ClipVertices, 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput));
         memset(m_ClipVerticesStages[0], 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput*));
         memset(m_ClipVerticesStages[1], 0, YW3D_CLIP_VERTEX_CACHE_SIZE * sizeof(Yw3dVSOutput*));
 
+        // Set some default values.
         SetDefaultRenderStates();
         SetDefaultTextureSamplerStates();
         SetDefaultClippingPlanes();

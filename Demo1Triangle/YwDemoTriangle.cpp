@@ -85,7 +85,11 @@ namespace yw
         YW_SAFE_RELEASE(m_PixelShader);
     }
 
-    bool DemoTriangle::Initialize(const Vector3& pointA, const Vector3& pointB, const Vector3& pointC, const Vector4& color)
+    bool DemoTriangle::Initialize(
+        const Vector3& pointA, const Vector4& colorA,
+        const Vector3& pointB, const Vector4& colorB,
+        const Vector3& pointC, const Vector4& colorC
+    )
     {
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
@@ -129,11 +133,11 @@ namespace yw
 
         // Combine data.
         vertexFormat[0].position = pointA;
-        vertexFormat[0].color = color;
+        vertexFormat[0].color = colorA;
         vertexFormat[1].position = pointB;
-        vertexFormat[1].color = color;
+        vertexFormat[1].color = colorB;
         vertexFormat[2].position = pointC;
-        vertexFormat[2].color = color;
+        vertexFormat[2].color = colorC;
 
         indices[0] = 0;
         indices[1] = 1;
@@ -174,7 +178,7 @@ namespace yw
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetPixelShader(m_PixelShader);
 
-        device->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
+        //device->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
         device->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_None);
         device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, m_NumVertices, 0, m_NumPrimitives);
     }

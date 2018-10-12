@@ -34,7 +34,11 @@ namespace yw
         }
 
         // Initial demo triangle.
-        bool Initialize(const Vector3& pointA, const Vector3& pointB, const Vector3& pointC, const Vector4& color);
+        bool Initialize(
+            const Vector3& pointA, const Vector4& colorA,
+            const Vector3& pointB, const Vector4& colorB,
+            const Vector3& pointC, const Vector4& colorC
+        );
 
         // Returns true if the object has been moved -> scenegraph-care.
         bool FrameMove();

@@ -698,13 +698,16 @@ namespace yw
             RenderInfo() : 
                 frameData(nullptr), colorFloats(4), colorBufferPitch(0), colorWriteEnabled(true), 
                 depthData(nullptr), depthBufferPitch(0), depthCompare(Yw3d_CMP_Less), depthWriteEnabled(true), 
-                fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0)
+                fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0), viewportRect()
             {
+                // Init shader register types.
+                memset(vsInputRegisterTypes, 0, sizeof(vsInputRegisterTypes));
+                memset(vsOutputRegisterTypes, 0, sizeof(vsOutputRegisterTypes));
+
                 // Init clip plans.
-                for (uint32_t i = 0; i < Yw3d_CP_NumPlanes; i++)
-                {
-                    clippingPlaneEnabled[i] = false;
-                }
+                memset(clippingPlanes, 0, sizeof(clippingPlanes));
+                memset(clippingPlaneEnabled, 0, sizeof(clippingPlaneEnabled));
+                memset(scissorPlanes, 0, sizeof(scissorPlanes));
             }
         };
 

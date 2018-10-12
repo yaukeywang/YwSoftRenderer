@@ -9,9 +9,8 @@
 
 namespace yw
 {
-    inline Plane::Plane() : d(0.0f)
+    inline Plane::Plane() : normal(), d(0.0f)
     {
-
     }
 
     inline Plane::Plane(const float a, const float b, const float c, const float d)

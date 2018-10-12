@@ -155,12 +155,17 @@ namespace yw
         static Vector3 Up();
         static Vector3 Back();
         static Vector3 Forward();
+        static Vector3 Red();
+        static Vector3 Green();
+        static Vector3 Blue();
+        static Vector3 Black();
+        static Vector3 White();
     };
 
     // Vector3 nonmember functions.
 
     // Vector3 multiply number.
-    inline Vector3 operator *(const float n, const Vector3& v);
+    Vector3 operator *(const float n, const Vector3& v);
 
     // Normalize a vector.
     Vector3& Vector3Normalize(Vector3& out, const Vector3& v);
@@ -248,8 +253,13 @@ namespace yw
 
         // Static functions.
 
-        inline static Vector4 Zero();
-        inline static Vector4 One();
+        static Vector4 Zero();
+        static Vector4 One();
+        static Vector4 Red();
+        static Vector4 Green();
+        static Vector4 Blue();
+        static Vector4 Black();
+        static Vector4 White();
     };
 
     // Vector4 nonmember functions.
