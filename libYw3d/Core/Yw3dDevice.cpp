@@ -2490,12 +2490,11 @@ namespace yw
         };
 
         // Begin rasterization.
-        float fX[2] = { posA.x, posA.x };
+        float fX[2] = { posA.x, posA.x };   // x1 -> x2.
+        uint32_t iY[2] = { 0, 0 };          // y1 -> y2;
+        float deltaX[2] = { 0.0f, 0.0f };   // left slope -> right slope.
         for (uint32_t triPart = 0; triPart < 2; triPart++)
         {
-            uint32_t iY[2] = { 0, 0 };
-            float deltaX[2] = { 0.0f, 0.0f };
-
             switch (triPart)
             {
             case 0: // Draw upper triangle-part.
