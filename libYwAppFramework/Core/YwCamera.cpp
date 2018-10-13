@@ -45,6 +45,11 @@ namespace yw
         // Get 3d device.
         Yw3dDevice* device = m_Graphics->GetYw3dDevice();
 
+        // Set the viewport.
+        Matrix44 matViewport;
+        Matrix44Viewport(matViewport, 0, 0, width, height, 0.0f, 1.0f);
+        device->SetViewportMatrix(&matViewport);
+
         // Create the render texture.
         Yw3dSurface* colorBuffer = nullptr;
         if (YW3D_FAILED(device->CreateSurface(&colorBuffer, width, height, frameBufferFormat)))
@@ -62,11 +67,6 @@ namespace yw
                 return false;
             }
         }
-
-        // Set the viewport.
-        Matrix44 matViewport;
-        Matrix44Viewport(matViewport, 0, 0, width, height, 0.0f, 1.0f);
-        m_RenderTarget->SetViewportMatrix(matViewport);
 
         // Set color buffer and depth buffer.
         m_RenderTarget->SetColorBuffer(colorBuffer);

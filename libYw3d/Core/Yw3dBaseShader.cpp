@@ -69,7 +69,10 @@ namespace yw
     const Matrix44* IYw3dBaseShader::GetWorldMatrix() const
     {
         const Matrix44* matWorld = nullptr;
-        m_Device->GetTransform(Yw3d_TS_World, matWorld);
+        if (YW3D_FAILED(m_Device->GetTransform(Yw3d_TS_World, matWorld)))
+        {
+            return nullptr;
+        }
 
         return matWorld;
     }
@@ -77,7 +80,10 @@ namespace yw
     const Matrix44* IYw3dBaseShader::GetViewMatrix() const
     {
         const Matrix44* matView = nullptr;
-        m_Device->GetTransform(Yw3d_TS_View, matView);
+        if (YW3D_FAILED(m_Device->GetTransform(Yw3d_TS_View, matView)))
+        {
+            return nullptr;
+        }
 
         return matView;
     }
@@ -85,7 +91,10 @@ namespace yw
     const Matrix44* IYw3dBaseShader::GetProjectionMatrix() const
     {
         const Matrix44* matProj = nullptr;
-        m_Device->GetTransform(Yw3d_TS_Projection, matProj);
+        if (YW3D_FAILED(m_Device->GetTransform(Yw3d_TS_Projection, matProj)))
+        {
+            return nullptr;
+        }
 
         return matProj;
     }
@@ -93,7 +102,10 @@ namespace yw
     const Matrix44* IYw3dBaseShader::GetWVPMatrix() const
     {
         const Matrix44* matWVP = nullptr;
-        m_Device->GetTransform(Yw3d_TS_WVP, matWVP);
+        if (YW3D_FAILED(m_Device->GetTransform(Yw3d_TS_WVP, matWVP)))
+        {
+            return nullptr;
+        }
 
         return matWVP;
     }

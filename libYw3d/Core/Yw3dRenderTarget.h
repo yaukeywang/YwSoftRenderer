@@ -63,12 +63,8 @@ namespace yw
         // Returns a pointer to the rendertarget's depthbuffer. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
         class Yw3dSurface* AcquireDepthBuffer();
 
-        // Sets the rendertarget's viewport matrix.
-        // @param[in] viewportMatrix the viewport matrix.
-        void SetViewportMatrix(const Matrix44& viewportMatrix);
-
         // Returns the rendertarget's viewport matrix.
-        const Matrix44& GetViewportMatrix() const;
+        const Matrix44* GetViewportMatrix() const;
 
     private:
         // Pointer to parent.
@@ -79,9 +75,6 @@ namespace yw
 
         // Pointer to the depthbuffer.
         class Yw3dSurface* m_DepthBuffer;
-
-        // Viewport matrix.
-        Matrix44 m_ViewportMatrix;
     };
 }
 

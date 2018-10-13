@@ -177,17 +177,24 @@ namespace yw
 
         // Sets a transform state.
         // @param[in] transformState member of the enumeration Yw3dTransformState.
-        // @param[in] value value to be set.
+        // @param[in] transform value to be set.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        Yw3dResult SetTransform(Yw3dTransformState transformState, const Matrix44* value);
+        Yw3dResult SetTransform(Yw3dTransformState transformState, const Matrix44* transform);
 
         // Gets a transform state.
         // @param[in] transformState member of the enumeration Yw3dTransformState.
-        // @param[in] value value receives the value of the transform state.
+        // @param[in] transform value receives the value of the transform state.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        Yw3dResult GetTransform(Yw3dTransformState transformState, const Matrix44*& value);
+        Yw3dResult GetTransform(Yw3dTransformState transformState, const Matrix44*& transform);
+
+        // Sets the viewport matrix.
+        // @param[in] viewportMatrix the viewport matrix.
+        Yw3dResult SetViewportMatrix(const Matrix44* viewportMatrix);
+
+        // Returns the viewport matrix.
+        Yw3dResult GetViewportMatrix(const Matrix44*& viewportMatrix) const;
 
         // Sets a renderstate.
         // @param[in] renderState member of the enumeration Yw3dRenderState.
@@ -592,6 +599,9 @@ namespace yw
 
         // The transform state.
         Matrix44 m_TransformState[Yw3d_TS_NumTransformState];
+
+        // The viewport matrix.
+        Matrix44 m_ViewportMatrix;
 
         // The render state.
         uint32_t m_RenderStates[Yw3d_RS_NumRenderStates];

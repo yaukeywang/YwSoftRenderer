@@ -136,13 +136,14 @@ namespace yw
         return m_DepthBuffer;
     }
 
-    void Yw3dRenderTarget::SetViewportMatrix(const Matrix44& viewportMatrix)
+    const Matrix44* Yw3dRenderTarget::GetViewportMatrix() const
     {
-        m_ViewportMatrix = viewportMatrix;
-    }
+        const Matrix44* viewportMatrix = nullptr;
+        if (YW3D_FAILED(m_Device->GetViewportMatrix(viewportMatrix)))
+        {
+            return nullptr;
+        }
 
-    const Matrix44& Yw3dRenderTarget::GetViewportMatrix() const
-    {
-        return m_ViewportMatrix;
+        return viewportMatrix;
     }
 }

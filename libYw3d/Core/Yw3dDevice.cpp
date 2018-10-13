@@ -645,7 +645,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::SetTransform(Yw3dTransformState transformState, const Matrix44* value)
+    Yw3dResult Yw3dDevice::SetTransform(Yw3dTransformState transformState, const Matrix44* transform)
     {
         if (transformState >= Yw3d_TS_NumTransformState)
         {
@@ -653,26 +653,44 @@ namespace yw
             return Yw3d_E_InvalidParameters;
         }
 
-        if (nullptr == value)
+        if (nullptr == transform)
         {
             LOGE(_T("Yw3dDevice::SetTransform: invalid transform value.\n"));
             return Yw3d_E_InvalidParameters;
         }
 
-        m_TransformState[transformState] = *value;
+        m_TransformState[transformState] = *transform;
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::GetTransform(Yw3dTransformState transformState, const Matrix44*& value)
+    Yw3dResult Yw3dDevice::GetTransform(Yw3dTransformState transformState, const Matrix44*& transform)
     {
-        value = nullptr;
+        transform = nullptr;
         if (transformState >= Yw3d_TS_NumTransformState)
         {
             LOGE(_T("Yw3dDevice::SetTransform: invalid transform state.\n"));
             return Yw3d_E_InvalidParameters;
         }
 
-        value = &m_TransformState[transformState];
+        transform = &m_TransformState[transformState];
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::SetViewportMatrix(const Matrix44* viewportMatrix)
+    {
+        if (nullptr == viewportMatrix)
+        {
+            LOGE(_T("Yw3dDevice::SetViewportMatrix: invalid viewport matrix value.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        m_ViewportMatrix = *viewportMatrix;
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::GetViewportMatrix(const Matrix44*& viewportMatrix) const
+    {
+        viewportMatrix = &m_ViewportMatrix;
         return Yw3d_S_OK;
     }
 
@@ -1248,12 +1266,11 @@ namespace yw
         }
 
         // Set viewport for this triangle info.
-        const Matrix44& viewportMatrix = m_RenderTarget->GetViewportMatrix();
         Yw3dRect& triangleViewport = m_RenderInfo.viewportRect;
-        triangleViewport.left = (uint32_t)(viewportMatrix._41 - viewportMatrix._11);
-        triangleViewport.right = (uint32_t)(viewportMatrix._41 + viewportMatrix._11);
-        triangleViewport.top = (uint32_t)(viewportMatrix._42 + viewportMatrix._22);
-        triangleViewport.bottom = (uint32_t)(viewportMatrix._42 - viewportMatrix._22);
+        triangleViewport.left = (uint32_t)(m_ViewportMatrix._41 - m_ViewportMatrix._11);
+        triangleViewport.right = (uint32_t)(m_ViewportMatrix._41 + m_ViewportMatrix._11);
+        triangleViewport.top = (uint32_t)(m_ViewportMatrix._42 + m_ViewportMatrix._22);
+        triangleViewport.bottom = (uint32_t)(m_ViewportMatrix._42 - m_ViewportMatrix._22);
 
         // Check validation of triangle viewport.
         if ((triangleViewport.left >= triangleViewport.right) || (triangleViewport.top >= triangleViewport.bottom))
@@ -1962,14 +1979,13 @@ namespace yw
         // Check area of triangle in screen space.
         {
             Vector4 pos[3] = { vsOutput0->position, vsOutput1->position, vsOutput2->position };
-
             for (uint32_t vertexIdx = 0; vertexIdx < 3; vertexIdx++)
             {
                 // TODO: should actually be clipped to view frustum.
 
                 // Project vertex position + scale to rendertarget's viewport.
                 pos[vertexIdx].Homogenize();
-                pos[vertexIdx] *= m_RenderTarget->GetViewportMatrix();
+                pos[vertexIdx] *= m_ViewportMatrix;
             }
 
             const Vector3 v0To1 = (Vector3)pos[1] - (Vector3)pos[0];
@@ -2212,13 +2228,15 @@ namespace yw
             return;
         }
 
+        // Project vertex into homogenous space.
         const float invW = 1.0f / vsOutput->position.w;
         vsOutput->position.x *= invW;
         vsOutput->position.y *= invW;
         vsOutput->position.z *= invW;
         vsOutput->position.w = 1.0f;
 
-        vsOutput->position *= m_RenderTarget->GetViewportMatrix();
+        // Project vertex into screen space.
+        vsOutput->position *= m_ViewportMatrix;
 
         // Divide shader output registers by w(1/z); this way we can interpolate them linearly while rasterizing ...
         vsOutput->position.w = invW;
