@@ -34,7 +34,7 @@ namespace yw
         m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 1.0f, 1000.0f);
 
         // Calculation view matrix.
-        m_Camera->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+        m_Camera->SetPosition(Vector3(0.0f, 5.0f, -10.0f));
         m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
