@@ -36,6 +36,7 @@ namespace yw
         SetDefaultRenderStates();
         SetDefaultTextureSamplerStates();
         SetDefaultClippingPlanes();
+        SetDefaultRenderTarget();
     }
 
     Yw3dDevice::~Yw3dDevice()
@@ -85,8 +86,18 @@ namespace yw
         return m_DeviceParameters;
     }
 
-    Yw3dResult Yw3dDevice::Present(Yw3dRenderTarget* renderTarget)
+    Yw3dResult Yw3dDevice::Clear(const Yw3dRect* rect, const Vector4& color, float depth, uint32_t stencil)
     {
+        m_RenderTarget->ClearColorBuffer(color, rect);
+        m_RenderTarget->ClearDepthBuffer(depth, rect);
+        // Clear stencil buffer.
+
+        return Yw3d_S_OK;
+    }
+
+    Yw3dResult Yw3dDevice::Present()
+    {
+        Yw3dRenderTarget* renderTarget = m_RenderTarget;
         if (nullptr == renderTarget)
         {
            LOGE(_T("Yw3dDevice::Present: parameter renderTarget points to null.\n"));
@@ -627,7 +638,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget)
+    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat format)
     {
         if (nullptr == renderTarget)
         {
@@ -641,6 +652,32 @@ namespace yw
             LOGE(_T("Yw3dDevice::CreateRenderTarget: out of memory, cannot create rendertarget.\n"));
             return Yw3d_E_OutOfMemory;
         }
+
+        // Create the color buffer.
+        Yw3dSurface* colorBuffer = nullptr;
+        if (YW3D_FAILED(CreateSurface(&colorBuffer, width, height, format)))
+        {
+            LOGE(_T("Yw3dDevice::CreateRenderTarget: can not create color buffer for render target.\n"));
+            return Yw3d_E_InvalidParameters;
+        }
+
+        // Create the depth texture.
+        Yw3dSurface* depthBuffer = nullptr;
+        if (YW3D_FAILED(CreateSurface(&depthBuffer, width, height, format)))
+        {
+            YW_SAFE_RELEASE(colorBuffer);
+            LOGE(_T("Yw3dDevice::CreateRenderTarget: can not create depth buffer for render target.\n"));
+
+            return Yw3d_E_InvalidParameters;
+        }
+
+        // Set color buffer and depth buffer.
+        (*renderTarget)->SetColorBuffer(colorBuffer);
+        (*renderTarget)->SetDepthBuffer(depthBuffer);
+
+        // Decrease the references of buffer.
+        YW_SAFE_RELEASE(colorBuffer);
+        YW_SAFE_RELEASE(depthBuffer);
 
         return Yw3d_S_OK;
     }
@@ -1236,6 +1273,16 @@ namespace yw
         for (uint32_t planeIdx = Yw3d_CP_Left; planeIdx <= Yw3d_CP_Far; planeIdx++)
         {
             m_RenderInfo.clippingPlaneEnabled[planeIdx] = true;
+        }
+    }
+
+    void Yw3dDevice::SetDefaultRenderTarget()
+    {
+        // Create a default render target.
+        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F)))
+        {
+            LOGE(_T("Yw3dDevice::SetDefaultRenderTarget: can not create a default render target.\n"));
+            return;
         }
     }
 

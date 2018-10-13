@@ -16,11 +16,6 @@ namespace yw
         m_NearClippingPlane(0.1f),
         m_FarClippingPlane(1.0f)
     {
-        if (YW3D_FAILED(m_Graphics->GetYw3dDevice()->CreateRenderTarget(&m_RenderTarget)))
-        {
-            m_RenderTarget = nullptr;
-        }
-
         // Identity all matrices.
         Matrix44Identity(m_WorldMatrix);
         Matrix44Identity(m_ViewMatrix);
@@ -32,10 +27,9 @@ namespace yw
 
     Camera::~Camera()
     {
-        YW_SAFE_RELEASE(m_RenderTarget);
     }
 
-    bool Camera::CreateRenderCamera(uint32_t width, uint32_t height, Yw3dFormat frameBufferFormat, bool enableDepthBuffer, bool enableStencilBuffer)
+    bool Camera::CreateRenderCamera(uint32_t width, uint32_t height)
     {
         if (m_LockedSurfacesViewport)
         {
@@ -49,32 +43,6 @@ namespace yw
         Matrix44 matViewport;
         Matrix44Viewport(matViewport, 0, 0, width, height, 0.0f, 1.0f);
         device->SetViewportMatrix(&matViewport);
-
-        // Create the render texture.
-        Yw3dSurface* colorBuffer = nullptr;
-        if (YW3D_FAILED(device->CreateSurface(&colorBuffer, width, height, frameBufferFormat)))
-        {
-            return false;
-        }
-
-        // Create the depth texture.
-        Yw3dSurface* depthBuffer = nullptr;
-        if (enableDepthBuffer)
-        {
-            if (YW3D_FAILED(device->CreateSurface(&depthBuffer, width, height, Yw3d_FMT_R32F)))
-            {
-                YW_SAFE_RELEASE(colorBuffer);
-                return false;
-            }
-        }
-
-        // Set color buffer and depth buffer.
-        m_RenderTarget->SetColorBuffer(colorBuffer);
-        m_RenderTarget->SetDepthBuffer(depthBuffer);
-
-        // Decrease the references of buffer.
-        YW_SAFE_RELEASE(colorBuffer);
-        YW_SAFE_RELEASE(depthBuffer);
 
         // Don't allow any more changes to surfaces/viewport!
         m_LockedSurfacesViewport = true;
@@ -319,15 +287,12 @@ namespace yw
 
     void Camera::ClearToSceneColor(const Yw3dRect* rect)
     {
-        Scene* scene = m_Graphics->GetApplication()->GetScene();
-        m_RenderTarget->ClearColorBuffer(scene->GetClearColor(), rect);
-        m_RenderTarget->ClearDepthBuffer(1.0f, rect);
+        m_Graphics->GetYw3dDevice()->Clear(rect, m_Graphics->GetApplication()->GetScene()->GetClearColor(), 1.0f, 0);
     }
 
     void Camera::BeginRender()
     {
         m_Graphics->PushStateBlock();
-        m_Graphics->SetRenderTarget(m_RenderTarget);
         m_Graphics->SetCurrentCamera(this);
     }
 
@@ -336,7 +301,7 @@ namespace yw
         m_Graphics->PopStateBlock();
         if (presentToScreen)
         {
-            m_Graphics->GetYw3dDevice()->Present(m_RenderTarget);
+            m_Graphics->GetYw3dDevice()->Present();
         }
     }
 

@@ -44,14 +44,15 @@ namespace yw
         // ------------------------------------------------------------------
         // Drawing.
 
+        Yw3dResult Clear(const Yw3dRect* rect, const Vector4& color, float depth, uint32_t stencil);
+
         // Presents the contents of a given rendertarget's colorbuffer.
-        // @param[in] renderTarget the rendertarget to be presented.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_InvalidFormat if an invalid format was encountered.
         // @return Yw3d_E_InvalidState if an invalid state was encountered.
         // @return Yw3d_E_Unknown if a present-target related problem was encountered.
-        Yw3dResult Present(class Yw3dRenderTarget* renderTarget);
+        Yw3dResult Present();
 
         // Renders nonindexed primitives of the specified type from the currently set vertex streams.
         // @param[in] primitiveType member of the enumeration Yw3dPrimitiveType, specifies the primitive's type.
@@ -126,7 +127,7 @@ namespace yw
         // @param[in] width width of the texture in pixels.
         // @param[in] height height of the texture in pixels.
         // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
-        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
+        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -136,7 +137,7 @@ namespace yw
         // @param[out] cubeTexture receives a pointer to the created texture.
         // @param[in] edgeLength edge length of the texture in pixels.
         // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
-        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
+        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -147,7 +148,7 @@ namespace yw
         // @param[in] width width of the volume in pixels.
         // @param[in] height height of the volume in pixels.
         // @param[in] depth depth of the volume in pixels.
-        // @param[in] format format of the new surface. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
+        // @param[in] format format of the new surface. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -159,7 +160,7 @@ namespace yw
         // @param[in] height height of the texture in pixels.
         // @param[in] depth depth of the texture in pixels.
         // @param[in] mipLevels number of miplevels of the new texture; specify 0 to create a full mip-chain.
-        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat; either Yw3d_FMT_INDEX16 or Yw3d_FMT_INDEX32.
+        // @param[in] format format of the new texture. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
@@ -167,10 +168,13 @@ namespace yw
 
         // Creates a render target.
         // @param[out] renderTarget receives a pointer to the created render target.
+        // @param[in] width width of the volume in pixels.
+        // @param[in] height height of the volume in pixels.
+        // @param[in] format format of the new surface. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
-        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget);
+        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat format);
 
         // ------------------------------------------------------------------
         // State management.
@@ -372,6 +376,9 @@ namespace yw
 
         // Initializes the frustum clipping planes.
         void SetDefaultClippingPlanes();
+
+        // Initialize the default render target.
+        void SetDefaultRenderTarget();
 
         // Prepares internal structure with information used for rendering.
         // Checks if all necessary objects (vertexbuffer, vertex format, etc.) have been set + if renderstates are valid.
