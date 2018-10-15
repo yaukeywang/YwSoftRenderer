@@ -20,7 +20,7 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [ ] Maybe a `Shader Compiler and Runtime` support.
 - [ ] Going on.
 
-### Example
+### Examples
 
-- Demo 1: Triangle
+#### Demo 1: Triangle
 ![Demo 1 Triangle](Demo-1-Triangle.png)
