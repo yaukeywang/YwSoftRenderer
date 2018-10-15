@@ -11,14 +11,15 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] Math support.
 - [x] Base rasterization and rendering stuffs as [Muli3D](http://muli3d.sourceforge.net/) supported.
 - [x] [Premake5](https://premake.github.io/) support.
-- [ ] `Input` module.
+- [ ] `Input` module. [Going on...]
 - [ ] `Mesh Data Loading` module.
 - [ ] `Texture Data Loading` module.
 - [ ] `Log` module.
 - [ ] `Stencil Buffer` support.
+- [ ] `Linux` support
 - [ ] `Mac OS X` support.
 - [ ] Maybe a `Shader Compiler and Runtime` support.
-- [ ] Going on.
+- [ ] Something unknown...
 
 ### Examples
 
