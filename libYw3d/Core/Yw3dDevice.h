@@ -170,11 +170,12 @@ namespace yw
         // @param[out] renderTarget receives a pointer to the created render target.
         // @param[in] width width of the volume in pixels.
         // @param[in] height height of the volume in pixels.
-        // @param[in] format format of the new surface. Member of the enumeration Yw3dFormat.
+        // @param[in] colorFormat format of color buffer of the new surface. Member of the enumeration Yw3dFormat.
+        // @param[in] depthFormat format of depth buffer of the new surface. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
-        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat format);
+        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat = Yw3d_FMT_R32F);
 
         // ------------------------------------------------------------------
         // State management.

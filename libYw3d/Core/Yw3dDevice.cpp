@@ -638,7 +638,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat format)
+    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat)
     {
         if (nullptr == renderTarget)
         {
@@ -655,7 +655,7 @@ namespace yw
 
         // Create the color buffer.
         Yw3dSurface* colorBuffer = nullptr;
-        if (YW3D_FAILED(CreateSurface(&colorBuffer, width, height, format)))
+        if (YW3D_FAILED(CreateSurface(&colorBuffer, width, height, colorFormat)))
         {
             LOGE(_T("Yw3dDevice::CreateRenderTarget: can not create color buffer for render target.\n"));
             return Yw3d_E_InvalidParameters;
@@ -663,7 +663,7 @@ namespace yw
 
         // Create the depth texture.
         Yw3dSurface* depthBuffer = nullptr;
-        if (YW3D_FAILED(CreateSurface(&depthBuffer, width, height, format)))
+        if (YW3D_FAILED(CreateSurface(&depthBuffer, width, height, depthFormat)))
         {
             YW_SAFE_RELEASE(colorBuffer);
             LOGE(_T("Yw3dDevice::CreateRenderTarget: can not create depth buffer for render target.\n"));
@@ -1279,7 +1279,7 @@ namespace yw
     void Yw3dDevice::SetDefaultRenderTarget()
     {
         // Create a default render target.
-        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F)))
+        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F, Yw3d_FMT_R32F)))
         {
             LOGE(_T("Yw3dDevice::SetDefaultRenderTarget: can not create a default render target.\n"));
             return;
