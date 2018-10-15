@@ -44,11 +44,16 @@
 *.suo
 
 # Directories
+*.vs
 /.vs
 /.vscode
 /ipch
+*Debug
 /Debug
+*x64
 /x64
 /Code/.vs
 /Code/ipch
 /Bin
+/Build
+/Workspace
