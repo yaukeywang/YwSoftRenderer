@@ -137,6 +137,7 @@ project "libYwAppFramework"
         "libYwAppFramework/Core/YwApplication.cpp",
         "libYwAppFramework/Core/YwBaseApplication.h",
         "libYwAppFramework/Core/YwBaseApplication.cpp",
+        "libYwAppFramework/Core/YwBaseInput.",
         "libYwAppFramework/Core/YwCamera.h",
         "libYwAppFramework/Core/YwCamera.cpp",
         "libYwAppFramework/Core/YwEntity.h",
