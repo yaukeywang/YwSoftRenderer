@@ -24,6 +24,9 @@ namespace yw
             m_Application = nullptr;
         }
 
+    protected:
+        virtual bool Initialize() = 0;
+
     public:
         // Get parent application.
         inline class IApplication* GetApplication() const
@@ -31,23 +34,26 @@ namespace yw
             return m_Application;
         }
 
+        // Update logic.
+        virtual void Update() = 0;
+
         // Get if key down.
-        virtual bool KeyDown(uint32_t keyCode) = 0;
+        virtual bool KeyDown(char keyCode) = 0;
 
         // Get if key up.
-        virtual bool KeyUp(uint32_t keyCode) = 0;
+        virtual bool KeyUp(char keyCode) = 0;
 
         // Get if mouse down.
-        virtual bool MouseButtonDown(uint32_t keyCode, int32_t xPos, int32_t yPos) = 0;
+        virtual bool MouseButtonDown(uint32_t keyCode) = 0;
 
         // Get if mouse up.
-        virtual bool MouseButtonUp(uint32_t keyCode, int32_t xPos, int32_t yPos) = 0;
+        virtual bool MouseButtonUp(uint32_t keyCode) = 0;
 
         // Get mouse movement.
-        virtual void GetMouseMovement(int32_t& deltaX, int32_t& deltaY) = 0;
+        virtual void GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const = 0;
 
         // Get mouse wheel movement.
-        virtual int GetMouseWheelMovement() = 0;
+        virtual int GetMouseWheelMovement() const = 0;
 
     protected:
         // The parent application class.
