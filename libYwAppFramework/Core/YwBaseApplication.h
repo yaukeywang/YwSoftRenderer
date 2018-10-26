@@ -130,6 +130,12 @@ namespace yw
             return m_ElapsedTime;
         }
 
+        // Get input system.
+        inline class IInput* GetInput() const
+        {
+            return m_Input;
+        }
+
         // Get current graphics class.
         inline class Graphics* GetGraphics() const
         {
@@ -181,6 +187,9 @@ namespace yw
         float m_ElapsedTime;
 
         // Sub-systems.
+
+        // Input system.
+        class IInput* m_Input;
 
         // Graphics class.
         class Graphics* m_Graphics;

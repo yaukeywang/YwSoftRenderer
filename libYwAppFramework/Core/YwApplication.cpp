@@ -2,6 +2,7 @@
 // YW Soft Renderer application framework for platform-dependent implementation.
 
 #include "YwApplication.h"
+#include "YwInput.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
 
@@ -112,7 +113,7 @@ namespace yw
         ++m_FrameIdent;
 
         // Get latest keyboard and mouse state.
-        // Update input module.
+        m_Input->Update();
 
         // Update basic logic frame move.
         FrameMove();
