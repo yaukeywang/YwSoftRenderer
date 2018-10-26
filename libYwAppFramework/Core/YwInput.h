@@ -35,7 +35,13 @@ namespace yw
         // Destructor.
         ~YwInputWindows();
 
+    protected:
+        bool Initialize();
+
     public:
+        // Update logic.
+        void Update();
+
         // Get if key down.
         inline bool KeyDown(char keyCode)
         {
