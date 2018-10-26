@@ -160,7 +160,8 @@ namespace yw
         QueryPerformanceCounter(&currentTime);
 
         float timeDifference = (float)(currentTime.QuadPart - m_LastTime.QuadPart);
-        m_ElapsedTime += timeDifference / (float)m_TicksPerSecond.QuadPart;
+        m_DeltaTime = timeDifference / (float)m_TicksPerSecond.QuadPart;
+        m_ElapsedTime += m_DeltaTime;
         m_FPS = (float)m_TicksPerSecond.QuadPart / timeDifference;
 
         m_InvFPS = 1.0f / m_FPS;

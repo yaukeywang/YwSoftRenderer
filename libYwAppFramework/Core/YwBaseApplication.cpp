@@ -17,6 +17,7 @@ namespace yw
         m_FPS(0.0f),
         m_InvFPS(0.0f),
         m_ElapsedTime(0.0f),
+        m_DeltaTime(0.0f),
         m_FrameIdent(0),
         m_AppData(nullptr),
         m_Input(nullptr),

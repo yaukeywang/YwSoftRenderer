@@ -130,6 +130,12 @@ namespace yw
             return m_ElapsedTime;
         }
 
+        // Get delta time.
+        inline float GetDeltaTime() const
+        {
+            return m_DeltaTime;
+        }
+
         // Get input system.
         inline class IInput* GetInput() const
         {
@@ -185,6 +191,9 @@ namespace yw
 
         // The elapsed time.
         float m_ElapsedTime;
+
+        // The delta time.
+        float m_DeltaTime;
 
         // Sub-systems.
 
