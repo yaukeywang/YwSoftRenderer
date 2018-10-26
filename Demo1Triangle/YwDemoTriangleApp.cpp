@@ -4,6 +4,7 @@
 #include "YwDemoTriangleApp.h"
 #include "YwDemoTriangle.h"
 #include "YwDemoTriangleCamera.h"
+#include "YwInput.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
 
@@ -12,7 +13,8 @@ namespace yw
     DemoTriangleApp::DemoTriangleApp() :
         m_Camera(nullptr),
         m_DemoTriangleHandle(0),
-        m_UpdateTextTime(0.0f)
+        m_UpdateTextTime(0.0f),
+        m_RotateAngle(0.0f)
     {
 
     }
@@ -96,6 +98,19 @@ namespace yw
                 IIntuition->SetWindowTitles(GetWindowHandle(), szCaption, szCaption);
             #endif
         }
+
+        // Update rotation angle.
+        if (m_Input->MouseButtonDown(0))
+        {
+            int32_t deltaX = 0;
+            int32_t deltaY = 0;
+            m_Input->GetMouseMovement(&deltaX, &deltaY);
+            m_RotateAngle -= (float)deltaX * 0.015f;
+        }
+        else
+        {
+            m_RotateAngle += GetDeltaTime() * 3.0f;
+        }
     }
 
     void DemoTriangleApp::Render()
@@ -109,5 +124,10 @@ namespace yw
         m_Camera->ClearToSceneColor();
         m_Camera->RenderPass(-1);
         m_Camera->EndRender(true);
+    }
+
+    float DemoTriangleApp::GetRotationAngle() const
+    {
+        return m_RotateAngle;
     }
 }

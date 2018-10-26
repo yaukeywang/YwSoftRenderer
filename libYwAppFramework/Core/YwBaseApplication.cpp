@@ -2,6 +2,7 @@
 // YW Soft Renderer application framework base application interface.
 
 #include "YwBaseApplication.h"
+#include "YwInput.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
 
@@ -16,8 +17,10 @@ namespace yw
         m_FPS(0.0f),
         m_InvFPS(0.0f),
         m_ElapsedTime(0.0f),
+        m_DeltaTime(0.0f),
         m_FrameIdent(0),
         m_AppData(nullptr),
+        m_Input(nullptr),
         m_Graphics(nullptr),
         m_Scene(nullptr)
     {
@@ -26,6 +29,7 @@ namespace yw
 
     IApplication::~IApplication()
     {
+        YW_SAFE_DELETE(m_Input);
         YW_SAFE_DELETE(m_Graphics);
         YW_SAFE_DELETE(m_Scene);
         YW_SAFE_DELETE_ARRAY(m_AppData);
@@ -33,6 +37,21 @@ namespace yw
 
     bool IApplication::CreateSubSystems(const ApplicationCreationFlags& creationFlags)
     {
+        // Create input. NOTE: add support for other platforms here.
+#if defined(_WIN32) || defined(WIN32)
+        m_Input = new YwInputWindows(this);
+#elif LINUX_X11
+        m_Input = new YwInputLinux(this);
+#elif __amigaos4__
+        m_Input = new YwInputAmigaOS4(this);
+#endif
+
+        // Init input.
+        if (!m_Input->Initialize())
+        {
+            return false;
+        }
+
         // Create graphics.
         m_Graphics = new Graphics(this);
         if ((nullptr == m_Graphics) || !m_Graphics->Initialize(creationFlags))

@@ -31,6 +31,10 @@ namespace yw
         // Render objects.
         void Render();
 
+    public:
+        // Current rotation angle.
+        float GetRotationAngle() const;
+
     private:
         // Current camera.
         class DemoTriangleCamera* m_Camera;
@@ -40,6 +44,9 @@ namespace yw
 
         // Window caption text update time.
         float m_UpdateTextTime;
+
+        // The rotation angle.
+        float m_RotateAngle;
     };
 }
 

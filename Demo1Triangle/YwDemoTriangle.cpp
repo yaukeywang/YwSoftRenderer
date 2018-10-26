@@ -2,6 +2,7 @@
 // YW Soft Renderer demo triangle class.
 
 #include "YwDemoTriangle.h"
+#include "YwDemoTriangleApp.h"
 #include "YwDemoTriangleCamera.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
@@ -164,7 +165,7 @@ namespace yw
 
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
-        Matrix44RotationY(matWorld, GetScene()->GetApplication()->GetElapsedTime() * 3.0f);
+        Matrix44RotationY(matWorld, ((DemoTriangleApp*)(GetScene()->GetApplication()))->GetRotationAngle());
         //Matrix44RotationY(matWorld, 180.0f * DEG_TO_RAD);
         camera->SetWorldMatrix(matWorld);
 

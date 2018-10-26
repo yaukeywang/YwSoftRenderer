@@ -130,6 +130,18 @@ namespace yw
             return m_ElapsedTime;
         }
 
+        // Get delta time.
+        inline float GetDeltaTime() const
+        {
+            return m_DeltaTime;
+        }
+
+        // Get input system.
+        inline class IInput* GetInput() const
+        {
+            return m_Input;
+        }
+
         // Get current graphics class.
         inline class Graphics* GetGraphics() const
         {
@@ -180,7 +192,13 @@ namespace yw
         // The elapsed time.
         float m_ElapsedTime;
 
+        // The delta time.
+        float m_DeltaTime;
+
         // Sub-systems.
+
+        // Input system.
+        class IInput* m_Input;
 
         // Graphics class.
         class Graphics* m_Graphics;

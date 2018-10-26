@@ -52,13 +52,9 @@ namespace yw
         // NOTE: add support for other platforms here.
 #if defined(_WIN32) || defined(WIN32)
         m_PresentTarget = new Yw3dPresentTargetWindows(this);
-#endif
-
-#ifdef LINUX_X11
+#elif LINUX_X11
         m_PresentTarget = new Yw3dPresentTargetLinuxX11(this);
-#endif
-
-#ifdef __amigaos4__
+#elif __amigaos4__
         m_PresentTarget = new Yw3dPresentTargetAmigaOS4(this);
 #endif
 
