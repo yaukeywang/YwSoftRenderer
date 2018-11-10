@@ -60,6 +60,15 @@ enum Yw3dRenderState
 	Yw3d_RS_ZWriteEnable,   // Set this to true(default) to enable writing to the depth-buffer during rasterization. If no depth-buffer is available or has been disabled by setting Yw3d_RS_ZEnable to false, this renderstate has no effect.
 	Yw3d_RS_ZFunc,          // Compare-function used for depth-buffer. Set this renderstate to a member of the enumeration Yw3dCompareFunction. Default: Yw3d_CMP_Less.
 
+    Yw3d_RS_StencilEnable,      // bool enable/disable stenciling.
+    Yw3d_RS_StencilFail,        // D3DSTENCILOP to do if stencil test fails.
+    Yw3d_RS_StencilZFail,       // D3DSTENCILOP to do if stencil test passes and Z test fails.
+    Yw3d_RS_StencilPass,        // D3DSTENCILOP to do if both stencil and Z tests pass.
+    Yw3d_RS_StencilFunc,        // D3DCMPFUNC fn. Stencil Test passes if ((ref & mask) stencilfn (stencil & mask)) is true.
+    Yw3d_RS_StencilRef,         // Reference value used in stencil test.
+    Yw3d_RS_StencilMask,        // Mask value used in stencil test.
+    Yw3d_RS_StencilWriteMask,   // Write mask applied to values written to stencil buffer.
+
 	Yw3d_RS_ColorWriteEnable,   // Set this to true(default) to enable writing to the color-buffer during rasteriation. If no color-buffer is available this renderstate has no effect.
 	Yw3d_RS_FillMode,           // FillMode. Set this renderstate to a member of the enumeration Yw3dFill. Default: Yw3d_Fill_Solid.
 
