@@ -101,6 +101,19 @@ enum Yw3dCompareFunction
     Yw3d_CMP_Always			// Compares will always pass.
 };
 
+// Defines the stencil operation.
+enum Yw3dStencilOperaton
+{
+    Yw3d_StencilOp_Keep,        // Specifies to not change the stencil buffer.(that is, keep the value currently there)
+    Yw3d_StencilOp_Zero,        // Specifies to set the stencil buffer entry to zero.
+    Yw3d_StencilOp_Replace,     // REPLACE¡ªSpecifies to replace the stencil buffer entry with the stencil reference value.
+    Yw3d_StencilOp_IncrSat,     // Specifies to increment the stencil buffer entry. If the incremented value exceeds the maximum allowed value, we clamp the entry to that maximum.
+    Yw3d_StencilOp_DecrSat,     // Specifies to decrement the stencil buffer entry.If the decremented value is less than zero, we clamp the entry to zero.
+    Yw3d_StencilOp_Invert,      // Specifies to invert the bits of the stencil buffer entry.
+    Yw3d_StencilOp_Incr,        // Specifies to increment the stencil buffer entry. If the incremented value exceeds the maximum allowed value, we wrap to zero.
+    Yw3d_StencilOp_Decr         // Specifies to decrement the stencil buffer entry.If the decremented value is less than zero, we wrap to the maximum allowed value.
+};
+
 // Defines the supported culling modes.
 enum Yw3dCull
 {
