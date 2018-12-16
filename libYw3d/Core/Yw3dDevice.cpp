@@ -86,7 +86,7 @@ namespace yw
     {
         m_RenderTarget->ClearColorBuffer(color, rect);
         m_RenderTarget->ClearDepthBuffer(depth, rect);
-        // Clear stencil buffer.
+        m_RenderTarget->ClearStencilBuffer(stencil, rect);
 
         return Yw3d_S_OK;
     }
