@@ -691,12 +691,34 @@ namespace yw
             // Stencil info.
 
             // Holds a pointer to the stencilbuffer data.
-            //float* stencilData;
+            float* stencilData;
 
             // Stencilbuffer width * 1 (stencilbuffers may only contain a single float); pitch in multiples of sizeof(float).
-            //uint32_t stencilBufferPitch;
+            uint32_t stencilBufferPitch;
 
-            //...
+            // Stencil operation when stencil test pass.
+            Yw3dStencilOperaton stencilOperatonPass;
+
+            // Stencil operation when stencil test fail.
+            Yw3dStencilOperaton stencilOperatonFail;
+
+            // Stencil operation when z test fail.
+            Yw3dStencilOperaton stencilOperatonZFail;
+
+            // Stencil compare function.
+            Yw3dCompareFunction stencilCompareFunction;
+
+            // Stencil reference value.
+            uint32_t stencilReference;
+
+            // Stencil mask value.
+            uint32_t stencilMask;
+
+            // Stencil write mask value.
+            uint32_t stencilWriteMask;
+
+            // True if stencil buffer has been enabled.
+            bool stencilEnable;
 
             // ------------------------------------------------------------------
             // Rasterize info.
@@ -728,6 +750,9 @@ namespace yw
             RenderInfo() : 
                 frameData(nullptr), colorFloats(4), colorBufferPitch(0), colorWriteEnabled(true), 
                 depthData(nullptr), depthBufferPitch(0), depthCompare(Yw3d_CMP_Less), depthWriteEnabled(true), 
+                stencilData(nullptr), stencilBufferPitch(0), 
+                stencilOperatonPass(Yw3d_StencilOp_Keep), stencilOperatonFail(Yw3d_StencilOp_Keep), stencilOperatonZFail(Yw3d_StencilOp_Keep), 
+                stencilCompareFunction(Yw3d_CMP_Always), stencilReference(0), stencilMask(0x000000ff), stencilWriteMask(0x000000ff), stencilEnable(false), 
                 fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0), viewportRect()
             {
                 // Init shader register types.

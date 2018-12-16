@@ -1233,6 +1233,15 @@ namespace yw
         SetRenderState(Yw3d_RS_ZWriteEnable, true);
         SetRenderState(Yw3d_RS_ZFunc, Yw3d_CMP_Less);
 
+        SetRenderState(Yw3d_RS_StencilEnable, false);
+        SetRenderState(Yw3d_RS_StencilFail, Yw3d_StencilOp_Keep);
+        SetRenderState(Yw3d_RS_StencilZFail, Yw3d_StencilOp_Keep);
+        SetRenderState(Yw3d_RS_StencilPass, Yw3d_StencilOp_Keep);
+        SetRenderState(Yw3d_RS_StencilFunc, Yw3d_CMP_Always);
+        SetRenderState(Yw3d_RS_StencilRef, 0);
+        SetRenderState(Yw3d_RS_StencilMask, 0x000000ff);
+        SetRenderState(Yw3d_RS_StencilWriteMask, 0x000000ff);
+
         SetRenderState(Yw3d_RS_ColorWriteEnable, true);
         SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
@@ -1335,12 +1344,20 @@ namespace yw
             return Yw3d_E_InvalidState;
         }
 
-        // Get color and depth buffer.
+        // Get color buffer, depth buffer and stencil buffer.
         Yw3dSurface* colorBuffer = m_RenderTarget->AcquireColorBuffer();
-        Yw3dSurface* depthBuffer = m_RenderTarget->AcquireDepthBuffer();
+        Yw3dSurface* depthBuffer = m_RenderStates[Yw3d_RS_ZEnable] ? m_RenderTarget->AcquireDepthBuffer() : nullptr;
+        Yw3dSurface* stencilBuffer = m_RenderStates[Yw3d_RS_StencilEnable] ? m_RenderTarget->AcquireStencilBuffer() : nullptr;
         if ((nullptr == colorBuffer) && (nullptr == depthBuffer))
         {
             LOGE(_T("Yw3dDevice::PreRender: render target has no associated frame buffer and depth buffer.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check if we need stencil buffer.
+        if (m_RenderStates[Yw3d_RS_StencilEnable] && (nullptr == stencilBuffer))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: render target has no associated stencil buffer but stencil is enabled.\n"));
             return Yw3d_E_InvalidState;
         }
 
@@ -1350,6 +1367,7 @@ namespace yw
             LOGE(_T("Yw3dDevice::PreRender: color buffer's dimensions are smaller than set viewport.\n"));
             YW_SAFE_RELEASE(colorBuffer);
             YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(stencilBuffer);
 
             return Yw3d_E_InvalidState;
         }
@@ -1360,12 +1378,25 @@ namespace yw
             LOGE(_T("Yw3dDevice::PreRender: depth buffer's dimensions are smaller than set viewport.\n"));
             YW_SAFE_RELEASE(colorBuffer);
             YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(stencilBuffer);
+
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check stencil buffer with viewport.
+        if ((nullptr != stencilBuffer) && ((stencilBuffer->GetWidth() < triangleViewport.right) || (stencilBuffer->GetHeight() < triangleViewport.bottom)))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: stencil buffer's dimensions are smaller than set viewport.\n"));
+            YW_SAFE_RELEASE(colorBuffer);
+            YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(stencilBuffer);
 
             return Yw3d_E_InvalidState;
         }
 
         YW_SAFE_RELEASE(colorBuffer);
         YW_SAFE_RELEASE(depthBuffer);
+        YW_SAFE_RELEASE(stencilBuffer);
 
         // Check vertex stream.
         const VertexStream* curVertexStream = m_VertexStreams;
@@ -1546,8 +1577,58 @@ namespace yw
             m_RenderInfo.depthWriteEnabled = false;
         }
 
+        // Get stencil buffer related states.
+        stencilBuffer = m_RenderStates[Yw3d_RS_StencilEnable] ? m_RenderTarget->AcquireStencilBuffer() : nullptr;
+        if (nullptr != stencilBuffer)
+        {
+            Yw3dResult resBuffer = stencilBuffer->LockRect((void**)&m_RenderInfo.stencilData, nullptr);
+            if (YW3D_FAILED(resBuffer))
+            {
+                LOGI(_T("Yw3dDevice::PreRender: couldn't access stencil buffer.\n"));
+                if (nullptr != m_RenderInfo.frameData)
+                {
+                    colorBuffer->UnlockRect();
+                }
+
+                if (nullptr != m_RenderInfo.depthData)
+                {
+                    depthBuffer->UnlockRect();
+                }
+
+                YW_SAFE_RELEASE(colorBuffer);
+                YW_SAFE_RELEASE(depthBuffer);
+                YW_SAFE_RELEASE(stencilBuffer);
+
+                return resBuffer;
+            }
+
+            m_RenderInfo.stencilBufferPitch = stencilBuffer->GetWidth();
+            m_RenderInfo.stencilOperatonPass = (Yw3dStencilOperaton)m_RenderStates[Yw3d_RS_StencilPass];
+            m_RenderInfo.stencilOperatonFail = (Yw3dStencilOperaton)m_RenderStates[Yw3d_RS_StencilFail];
+            m_RenderInfo.stencilOperatonZFail = (Yw3dStencilOperaton)m_RenderStates[Yw3d_RS_StencilZFail];
+            m_RenderInfo.stencilCompareFunction = (Yw3dCompareFunction)m_RenderStates[Yw3d_RS_StencilFunc];
+            m_RenderInfo.stencilReference = m_RenderStates[Yw3d_RS_StencilRef];
+            m_RenderInfo.stencilMask = m_RenderStates[Yw3d_RS_StencilMask];
+            m_RenderInfo.stencilWriteMask = m_RenderStates[Yw3d_RS_StencilWriteMask];
+            m_RenderInfo.stencilEnable = m_RenderStates[Yw3d_RS_StencilEnable] ? true : false;
+        }
+        else
+        {
+            m_RenderInfo.stencilData = nullptr;
+            m_RenderInfo.stencilBufferPitch = 0;
+            m_RenderInfo.stencilOperatonPass = Yw3d_StencilOp_Keep;
+            m_RenderInfo.stencilOperatonFail = Yw3d_StencilOp_Keep;
+            m_RenderInfo.stencilOperatonZFail = Yw3d_StencilOp_Keep;
+            m_RenderInfo.stencilCompareFunction = Yw3d_CMP_Always;
+            m_RenderInfo.stencilReference = 0;
+            m_RenderInfo.stencilMask = 0x000000ff;
+            m_RenderInfo.stencilWriteMask = 0x000000ff;
+            m_RenderInfo.stencilEnable = false;
+        }
+
         YW_SAFE_RELEASE(colorBuffer);
         YW_SAFE_RELEASE(depthBuffer);
+        YW_SAFE_RELEASE(stencilBuffer);
 
         // Reset pixel-counter to 0.
         m_RenderInfo.renderedPixels = 0;
@@ -1619,6 +1700,18 @@ namespace yw
             }
 
             YW_SAFE_RELEASE(depthBuffer)
+        }
+
+        // Unlock and release stencil buffer.
+        if (nullptr != m_RenderInfo.stencilData)
+        {
+            Yw3dSurface* stencilBuffer = m_RenderTarget->AcquireStencilBuffer();
+            if (nullptr != stencilBuffer)
+            {
+                stencilBuffer->UnlockRect();
+            }
+
+            YW_SAFE_RELEASE(stencilBuffer)
         }
 
         // Clear current device associated with used shaders.
