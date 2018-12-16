@@ -10,7 +10,8 @@ namespace yw
     Yw3dRenderTarget::Yw3dRenderTarget(Yw3dDevice* device) :
         m_Device(device),
         m_ColorBuffer(nullptr),
-        m_DepthBuffer(nullptr)
+        m_DepthBuffer(nullptr),
+        m_StencilBuffer(nullptr)
     {
         m_Device->AddRef();
     }
@@ -20,6 +21,7 @@ namespace yw
         YW_SAFE_RELEASE(m_ColorBuffer);
         YW_SAFE_RELEASE(m_DepthBuffer);
         YW_SAFE_RELEASE(m_Device);
+        YW_SAFE_RELEASE(m_StencilBuffer);
     }
 
     Yw3dDevice* Yw3dRenderTarget::AcquireDevice()
@@ -52,6 +54,17 @@ namespace yw
         }
 
         return m_DepthBuffer->Clear(Vector4(depth, 0.0f, 0.0f, 0.0f), rect);
+    }
+
+    Yw3dResult Yw3dRenderTarget::ClearStencilBuffer(const float stencil, const Yw3dRect* rect)
+    {
+        if (NULL == m_StencilBuffer)
+        {
+            LOGE(_T("CMuli3DRenderTarget::ClearDepthBuffer: no depthbuffer has been set.\n"));
+            return Yw3d_E_InvalidFormat;
+        }
+
+        return m_StencilBuffer->Clear(Vector4(stencil, 0.0f, 0.0f, 0.0f), rect);
     }
 
     Yw3dResult Yw3dRenderTarget::SetColorBuffer(Yw3dSurface* colorBuffer)
@@ -116,6 +129,37 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    Yw3dResult Yw3dRenderTarget::SetStencilBuffer(Yw3dSurface* stencilBuffer)
+    {
+        if (nullptr != stencilBuffer)
+        {
+            if (Yw3d_FMT_R32F != stencilBuffer->GetFormat())
+            {
+                LOGE(_T("Yw3dRenderTarget::SetStencilBuffer: invalid stencilbuffer format.\n"));
+                return Yw3d_E_InvalidFormat;
+            }
+
+            if (nullptr != m_ColorBuffer)
+            {
+                if ((m_ColorBuffer->GetWidth() != stencilBuffer->GetWidth()) || (m_ColorBuffer->GetHeight() != stencilBuffer->GetHeight()))
+                {
+                    LOGE(_T("Yw3dRenderTarget::SetStencilBuffer: stencilbuffer and framebuffer dimensions are not equal.\n"));
+                    return Yw3d_E_InvalidFormat;
+                }
+            }
+        }
+
+        // Release old buffer and assign new buffer.
+        YW_SAFE_RELEASE(m_StencilBuffer);
+        m_StencilBuffer = stencilBuffer;
+        if (nullptr != stencilBuffer)
+        {
+            stencilBuffer->AddRef();
+        }
+
+        return Yw3d_S_OK;
+    }
+
     Yw3dSurface* Yw3dRenderTarget::AcquireColorBuffer()
     {
         if (nullptr != m_ColorBuffer)
@@ -134,6 +178,16 @@ namespace yw
         }
 
         return m_DepthBuffer;
+    }
+
+    Yw3dSurface* Yw3dRenderTarget::AcquireStencilBuffer()
+    {
+        if (nullptr != m_StencilBuffer)
+        {
+            m_StencilBuffer->AddRef();
+        }
+
+        return m_StencilBuffer;
     }
 
     const Matrix44* Yw3dRenderTarget::GetViewportMatrix() const

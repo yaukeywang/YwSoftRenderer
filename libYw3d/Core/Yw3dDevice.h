@@ -172,10 +172,11 @@ namespace yw
         // @param[in] height height of the volume in pixels.
         // @param[in] colorFormat format of color buffer of the new surface. Member of the enumeration Yw3dFormat.
         // @param[in] depthFormat format of depth buffer of the new surface. Member of the enumeration Yw3dFormat.
+        // @param[in] Yw3dFormat stencilFormat format of stencil buffer of the new surface. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
-        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat = Yw3d_FMT_R32F);
+        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat = Yw3d_FMT_R32F, Yw3dFormat stencilFormat = Yw3d_FMT_R32F);
 
         // ------------------------------------------------------------------
         // State management.
@@ -685,6 +686,17 @@ namespace yw
 
             // True if writing to the depthbuffer has been enabled + if a depthbuffer is available.
             bool depthWriteEnabled;
+
+            // ------------------------------------------------------------------
+            // Stencil info.
+
+            // Holds a pointer to the stencilbuffer data.
+            //float* stencilData;
+
+            // Stencilbuffer width * 1 (stencilbuffers may only contain a single float); pitch in multiples of sizeof(float).
+            //uint32_t stencilBufferPitch;
+
+            //...
 
             // ------------------------------------------------------------------
             // Rasterize info.

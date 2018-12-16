@@ -634,7 +634,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat)
+    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat, Yw3dFormat stencilFormat)
     {
         if (nullptr == renderTarget)
         {
@@ -667,13 +667,26 @@ namespace yw
             return Yw3d_E_InvalidParameters;
         }
 
+        // Create the stencil buffer.
+        Yw3dSurface* stencilBuffer = nullptr;
+        if (YW3D_FAILED(CreateSurface(&stencilBuffer, width, height, stencilFormat)))
+        {
+            YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(colorBuffer);
+            LOGE(_T("Yw3dDevice::CreateRenderTarget: can not create stencil buffer for render target.\n"));
+
+            return Yw3d_E_InvalidParameters;
+        }
+
         // Set color buffer and depth buffer.
         (*renderTarget)->SetColorBuffer(colorBuffer);
         (*renderTarget)->SetDepthBuffer(depthBuffer);
+        (*renderTarget)->SetStencilBuffer(stencilBuffer);
 
         // Decrease the references of buffer.
         YW_SAFE_RELEASE(colorBuffer);
         YW_SAFE_RELEASE(depthBuffer);
+        YW_SAFE_RELEASE(stencilBuffer);
 
         return Yw3d_S_OK;
     }
@@ -1275,7 +1288,7 @@ namespace yw
     void Yw3dDevice::SetDefaultRenderTarget()
     {
         // Create a default render target.
-        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F, Yw3d_FMT_R32F)))
+        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             LOGE(_T("Yw3dDevice::SetDefaultRenderTarget: can not create a default render target.\n"));
             return;
