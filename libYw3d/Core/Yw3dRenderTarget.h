@@ -44,12 +44,12 @@ namespace yw
         Yw3dResult ClearDepthBuffer(const float depth, const Yw3dRect* rect);
 
         // Clears the stencilbuffer, which is associated with this rendertarget, to a given depth-value.
-        // @param[in] depth depth to clear the stencilbuffer to.
+        // @param[in] stencil stencil to clear the stencilbuffer to.
         // @param[in] rect rectangle to restrict clearing to.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidState if no stencilbuffer has been set.
         // @return Yw3d_E_InvalidParameters if the clear-rectangle exceeds the stencilbuffer's dimensions.
-        Yw3dResult ClearStencilBuffer(const float stencil, const Yw3dRect* rect);
+        Yw3dResult ClearStencilBuffer(const uint32_t stencil, const Yw3dRect* rect);
 
         // Associates a Yw3dSurface as colorbuffer with this rendertarget, releasing the currently set colorbuffer.
         // Calling this function will increase the internal reference count of the surface.

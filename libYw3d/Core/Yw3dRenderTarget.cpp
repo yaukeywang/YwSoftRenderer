@@ -56,7 +56,7 @@ namespace yw
         return m_DepthBuffer->Clear(Vector4(depth, 0.0f, 0.0f, 0.0f), rect);
     }
 
-    Yw3dResult Yw3dRenderTarget::ClearStencilBuffer(const float stencil, const Yw3dRect* rect)
+    Yw3dResult Yw3dRenderTarget::ClearStencilBuffer(const uint32_t stencil, const Yw3dRect* rect)
     {
         if (NULL == m_StencilBuffer)
         {
@@ -64,7 +64,10 @@ namespace yw
             return Yw3d_E_InvalidFormat;
         }
 
-        return m_StencilBuffer->Clear(Vector4(stencil, 0.0f, 0.0f, 0.0f), rect);
+        float value = 0.0f;
+        uint32_t* uintValue = (uint32_t*)(&value);
+        *uintValue = stencil;
+        return m_StencilBuffer->Clear(Vector4(value, 0.0f, 0.0f, 0.0f), rect);
     }
 
     Yw3dResult Yw3dRenderTarget::SetColorBuffer(Yw3dSurface* colorBuffer)

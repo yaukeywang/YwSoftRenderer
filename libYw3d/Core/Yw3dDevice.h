@@ -38,13 +38,20 @@ namespace yw
         // Returns a pointer to the Muli3D instance. Calling this function will increase the internal reference count of the Muli3D instance. Failure to call Release() when finished using the pointer will result in a memory leak.
         Yw3d* AcquireYw3d();
 
-        // Returns the device parameters.
+        // Get the device parameters.
+        // @return the device parameters.
         const Yw3dDeviceParameters& GetDeviceParameters() const;
 
         // ------------------------------------------------------------------
         // Drawing.
 
-        Yw3dResult Clear(const Yw3dRect* rect, const Vector4& color, float depth, uint32_t stencil);
+        // Presents the contents of a given rendertarget's colorbuffer.
+        // @return rect the clear rect.
+        // @return color the clear color for color buffer.
+        // @return depth the clear depth value.
+        // @return stencil the clear stencil value.
+        // @return Yw3d_S_OK if clearing succeed.
+        Yw3dResult Clear(const Yw3dRect* rect, const Vector4& color, const float depth, const uint32_t stencil);
 
         // Presents the contents of a given rendertarget's colorbuffer.
         // @return Yw3d_S_OK if the function succeeds.
@@ -551,6 +558,24 @@ namespace yw
         // @param[in] vsOutput interpolated vertex data, already divided by position w component.
         void DrawPixel_ColorDepth(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
 
+        // Perform a stencil test for a pixel.
+        // @param[in,out] stencil the pointer to the current stencil value.
+        // @param[in] reference stencil test reference value.
+        // @param[in] mask stencil test mask value.
+        // @param[in] writeMask stencil write mask value.
+        // @param[in] compare stencil compare function.
+        // @param[in] operatonFail stencil failed operation value.
+        // @return if stencil test passed or not.
+        bool PerformPixelStencilTest(uint32_t* stencil, uint32_t reference, uint32_t mask, uint32_t writeMask, Yw3dCompareFunction compare, Yw3dStencilOperaton operatonFail);
+        
+        // Calculate a stencil value to write, applied by the write mask.
+        // @param[in,out] stencil the pointer to the current stencil value.
+        // @param[in] reference stencil test reference value.
+        // @param[in] writeMask stencil write mask value.
+        // @param[in] operatonFail stencil failed operation value.
+        // @return new stencil to write.
+        uint32_t CalculatePixelStencilValue(uint32_t stencil, uint32_t reference, uint32_t writeMask, Yw3dStencilOperaton operation);
+
     private:
         // ------------------------------------------------------------------
 
@@ -696,17 +721,17 @@ namespace yw
             // Stencilbuffer width * 1 (stencilbuffers may only contain a single float); pitch in multiples of sizeof(float).
             uint32_t stencilBufferPitch;
 
-            // Stencil operation when stencil test pass.
+            // Stencil operation when stencil test pass (Both stencil and depth pass).
             Yw3dStencilOperaton stencilOperatonPass;
 
             // Stencil operation when stencil test fail.
             Yw3dStencilOperaton stencilOperatonFail;
 
-            // Stencil operation when z test fail.
+            // Stencil operation when z test fail (Stencil pass and z fail).
             Yw3dStencilOperaton stencilOperatonZFail;
 
-            // Stencil compare function.
-            Yw3dCompareFunction stencilCompareFunction;
+            // Stencil compare-function.
+            Yw3dCompareFunction stencilCompare;
 
             // Stencil reference value.
             uint32_t stencilReference;
@@ -718,7 +743,7 @@ namespace yw
             uint32_t stencilWriteMask;
 
             // True if stencil buffer has been enabled.
-            bool stencilEnable;
+            bool stencilEnabled;
 
             // ------------------------------------------------------------------
             // Rasterize info.
@@ -752,7 +777,7 @@ namespace yw
                 depthData(nullptr), depthBufferPitch(0), depthCompare(Yw3d_CMP_Less), depthWriteEnabled(true), 
                 stencilData(nullptr), stencilBufferPitch(0), 
                 stencilOperatonPass(Yw3d_StencilOp_Keep), stencilOperatonFail(Yw3d_StencilOp_Keep), stencilOperatonZFail(Yw3d_StencilOp_Keep), 
-                stencilCompareFunction(Yw3d_CMP_Always), stencilReference(0), stencilMask(0x000000ff), stencilWriteMask(0x000000ff), stencilEnable(false), 
+                stencilCompare(Yw3d_CMP_Always), stencilReference(0), stencilMask(0x000000ff), stencilWriteMask(0x000000ff), stencilEnabled(false),
                 fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0), viewportRect()
             {
                 // Init shader register types.
