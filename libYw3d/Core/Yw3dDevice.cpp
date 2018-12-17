@@ -2794,148 +2794,22 @@ namespace yw
             switch (m_RenderInfo.depthCompare)
             {
             case Yw3d_CMP_Never:
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    return;
-                }
+                YW3D_STENCIL_UPDATE_IF_ZFAIL(stencilPassed, stencilDataPointer, m_RenderInfo)
+                return;
             case Yw3d_CMP_Equal:
-                if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION)
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Pass.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                    }
-
-                    break;
-                }
-                else
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    continue;
-                }
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(fabsf(depth - *depthData) < YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
             case Yw3d_CMP_NotEqual:
-                if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION)
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Pass.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                    }
-
-                    break;
-                }
-                else
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    continue;
-                }
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(fabsf(depth - *depthData) >= YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
             case Yw3d_CMP_Less:
-                if (depth < *depthData)
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Pass.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                    }
-
-                    break;
-                }
-                else
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    continue;
-                }
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth < *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
             case Yw3d_CMP_LessEqual:
-                if (depth <= *depthData)
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Pass.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                    }
-
-                    break;
-                }
-                else
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    continue; 
-                }
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth <= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
             case Yw3d_CMP_Greater: 
-                if (depth > *depthData) 
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Pass.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                    }
-
-                    break; 
-                }
-                else 
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    continue;
-                }
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth > *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
             case Yw3d_CMP_GreaterEqual: 
-                if (depth >= *depthData) 
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Pass.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                    }
-
-                    break; 
-                }
-                else
-                {
-                    if (stencilPassed)
-                    {
-                        // Stencil Z Fail.
-                        *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonZFail);
-                    }
-
-                    continue; 
-                }
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth >= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
             case Yw3d_CMP_Always:
-                if (stencilPassed)
-                {
-                    // Stencil Pass.
-                    *stencilDataPointer = CalculatePixelStencilValue(*stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilOperatonPass);
-                }
-
+                YW3D_STENCIL_UPDATE_IF_PASS(stencilPassed, stencilDataPointer, m_RenderInfo)
                 break;
             default:
                 break; // Can not happen.
