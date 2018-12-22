@@ -2780,12 +2780,8 @@ namespace yw
         for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, (nullptr != stencilData) ? stencilData++ : stencilData, StepXVSOutputFromGradient(vsOutput))
         {
             // Do stencil compare if stencil is enabled.
-            bool stencilPassed = false;
             uint32_t* stencilDataPointer = (uint32_t*)stencilData;
-            if (m_RenderInfo.stencilEnabled)
-            {
-                stencilPassed = PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail);
-            }
+            bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
 
             // Get depth of current pixel.
             float depth = vsOutput->position.z;
@@ -2815,6 +2811,12 @@ namespace yw
                 break; // Can not happen.
             }
 
+            // Check if we need to skip this pixel because of stencil test fail.
+            if (m_RenderInfo.stencilEnabled && !stencilPassed)
+            {
+                continue;
+            }
+
             // Passed depth test - update depthbuffer!
             if (m_RenderInfo.depthWriteEnabled)
             {
@@ -2822,7 +2824,7 @@ namespace yw
             }
 
             // Update color buffer.
-            if (m_RenderInfo.colorWriteEnabled && (!m_RenderInfo.stencilEnabled || (m_RenderInfo.stencilEnabled && stencilPassed)))
+            if (m_RenderInfo.colorWriteEnabled)
             {
                 // Get only shader register data only.
                 // Note: psInput now only contains valid register data, position etc. are not initialized!
@@ -2875,25 +2877,47 @@ namespace yw
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
+        float* stencilData = m_RenderInfo.stencilEnabled ? m_RenderInfo.stencilData + (y * m_RenderInfo.stencilBufferPitch + x1) : nullptr;
 
         // Start to render each pixel.
-        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, StepXVSOutputFromGradient(vsOutput))
+        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, (nullptr != stencilData) ? stencilData++ : stencilData, StepXVSOutputFromGradient(vsOutput))
         {
+            // Do stencil compare if stencil is enabled.
+            
+            uint32_t* stencilDataPointer = (uint32_t*)stencilData;
+            bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
+
             // Get depth of current pixel.
             float depth = vsOutput->position.z;
 
             // Perform depth test.
             switch (m_RenderInfo.depthCompare)
             {
-            case Yw3d_CMP_Never: return;
-            case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else continue;
-            case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else continue;
-            case Yw3d_CMP_Less: if (depth < *depthData) break; else continue;
-            case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else continue;
-            case Yw3d_CMP_Greater: if (depth > *depthData) break; else continue;
-            case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else continue;
-            case Yw3d_CMP_Always: break;
+            case Yw3d_CMP_Never:
+                YW3D_STENCIL_UPDATE_IF_ZFAIL(stencilPassed, stencilDataPointer, m_RenderInfo)
+                return;
+            case Yw3d_CMP_Equal:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(fabsf(depth - *depthData) < YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_NotEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(fabsf(depth - *depthData) >= YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Less:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth < *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_LessEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth <= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Greater:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth > *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_GreaterEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depth >= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Always:
+                YW3D_STENCIL_UPDATE_IF_PASS(stencilPassed, stencilDataPointer, m_RenderInfo)
+                break;
             default: break; // Can not happen.
+            }
+
+            // Check if we need to skip this pixel because of stencil test fail.
+            if (m_RenderInfo.stencilEnabled && !stencilPassed)
+            {
+                continue;
             }
 
             // Only update color and depth buffer when pixel is not killed.
