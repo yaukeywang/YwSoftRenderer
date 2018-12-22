@@ -194,6 +194,51 @@ namespace yw
         return tmp;
     #endif
     }
+
+    // ------------------------------------------------------------------
+    // Internal helper macro.
+
+    // Stencil test helper macro.
+
+    // Stencil Pass an Z-Test Pass.
+    #define YW3D_STENCIL_UPDATE_IF_PASS(flag, dataPtr, renderInfo) \
+        if ((flag)) \
+        { \
+            *(dataPtr) = CalculatePixelStencilValue(*(dataPtr), (renderInfo).stencilReference, (renderInfo).stencilWriteMask, (renderInfo).stencilOperatonPass); \
+        }
+
+    // Stencil Pass and Z-Test Fail.
+    #define YW3D_STENCIL_UPDATE_IF_ZFAIL(flag, dataPtr, renderInfo) \
+        if ((flag)) \
+        { \
+            *(dataPtr) = CalculatePixelStencilValue(*(dataPtr), (renderInfo).stencilReference, (renderInfo).stencilWriteMask, (renderInfo).stencilOperatonZFail); \
+        }
+
+    // Depth test and stencil update helper macro, continue if depth test failed.
+    #define YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depthFlag, stencilFlag, stencilDataPtr, renderInfo) \
+        if ((depthFlag)) \
+        { \
+            YW3D_STENCIL_UPDATE_IF_PASS((stencilFlag), (stencilDataPtr), (renderInfo)) \
+            break; \
+        } \
+        else \
+        { \
+            YW3D_STENCIL_UPDATE_IF_ZFAIL((stencilFlag), (stencilDataPtr), (renderInfo)) \
+            continue; \
+        }
+
+    // Depth test and stencil update helper macro, return if depth test failed.
+    #define YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(depthFlag, stencilFlag, stencilDataPtr, renderInfo) \
+        if ((depthFlag)) \
+        { \
+            YW3D_STENCIL_UPDATE_IF_PASS((stencilFlag), (stencilDataPtr), (renderInfo)) \
+            break; \
+        } \
+        else \
+        { \
+            YW3D_STENCIL_UPDATE_IF_ZFAIL((stencilFlag), (stencilDataPtr), (renderInfo)) \
+            return; \
+        }
 }
 
 #endif // !__YW_3D_BASE_H__

@@ -38,13 +38,20 @@ namespace yw
         // Returns a pointer to the Muli3D instance. Calling this function will increase the internal reference count of the Muli3D instance. Failure to call Release() when finished using the pointer will result in a memory leak.
         Yw3d* AcquireYw3d();
 
-        // Returns the device parameters.
+        // Get the device parameters.
+        // @return the device parameters.
         const Yw3dDeviceParameters& GetDeviceParameters() const;
 
         // ------------------------------------------------------------------
         // Drawing.
 
-        Yw3dResult Clear(const Yw3dRect* rect, const Vector4& color, float depth, uint32_t stencil);
+        // Presents the contents of a given rendertarget's colorbuffer.
+        // @return rect the clear rect.
+        // @return color the clear color for color buffer.
+        // @return depth the clear depth value.
+        // @return stencil the clear stencil value.
+        // @return Yw3d_S_OK if clearing succeed.
+        Yw3dResult Clear(const Yw3dRect* rect, const Vector4& color, const float depth, const uint32_t stencil);
 
         // Presents the contents of a given rendertarget's colorbuffer.
         // @return Yw3d_S_OK if the function succeeds.
@@ -172,10 +179,11 @@ namespace yw
         // @param[in] height height of the volume in pixels.
         // @param[in] colorFormat format of color buffer of the new surface. Member of the enumeration Yw3dFormat.
         // @param[in] depthFormat format of depth buffer of the new surface. Member of the enumeration Yw3dFormat.
+        // @param[in] Yw3dFormat stencilFormat format of stencil buffer of the new surface. Member of the enumeration Yw3dFormat.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
-        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat = Yw3d_FMT_R32F);
+        Yw3dResult CreateRenderTarget(class Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat = Yw3d_FMT_R32F, Yw3dFormat stencilFormat = Yw3d_FMT_R32F);
 
         // ------------------------------------------------------------------
         // State management.
@@ -515,21 +523,21 @@ namespace yw
         // @param[in] vsOutput1 vertex B.
         void RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1);
 
-        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer. Does not support pixel-killing.
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; performs the pixel stencil test and writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer. Does not support pixel-killing.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] x1 left position in rendertarget along x-axis.
         // @param[in] x2 right position in rendertarget along x-axis.
         // @param[in,out] vsOutput interpolated vertex data.
         void RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
-        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer.
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; performs the pixel stencil test and writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] x1 left position in rendertarget along x-axis.
         // @param[in] x2 right position in rendertarget along x-axis.
         // @param[in,out] io_pVSOutput interpolated vertex data.
         void RasterizeScanline_ColorOnly_MightKillPixels(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
-        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer.
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer. Does not support stencil test.
         // @note Early depth-testing is disabled, which may lead to worse performance because regardless of the depth value the pixel shader will always be called for a given pixel.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] x1 left position in rendertarget along x-axis.
@@ -537,18 +545,36 @@ namespace yw
         // @param[in,out] io_pVSOutput interpolated vertex data.
         void RasterizeScanline_ColorDepth(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
 
-        // Draws a single pixels. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been interpolated from the vertices to the depth buffer. Does not support pixel-killing.
+        // Draws a single pixels. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; performs the pixel stencil test and writes the pixel depth, which has been interpolated from the vertices to the depth buffer. Does not support pixel-killing.
         // @param[in] x position in rendertarget along x-axis.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] vsOutput interpolated vertex data, already divided by position w component.
         void DrawPixel_ColorOnly(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
 
-        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer.
+        // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer. Does not support stencil test.
         // @note Early depth-testing is disabled, which may lead to worse performance because regardless of the depth value the pixel shader will always be called for a given pixel.
         // @param[in] x position in rendertarget along x-axis.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] vsOutput interpolated vertex data, already divided by position w component.
         void DrawPixel_ColorDepth(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
+
+        // Perform a stencil test for a pixel.
+        // @param[in,out] stencil the pointer to the current stencil value.
+        // @param[in] reference stencil test reference value.
+        // @param[in] mask stencil test mask value.
+        // @param[in] writeMask stencil write mask value.
+        // @param[in] compare stencil compare function.
+        // @param[in] operatonFail stencil failed operation value.
+        // @return if stencil test passed or not.
+        bool PerformPixelStencilTest(uint32_t* stencil, uint32_t reference, uint32_t mask, uint32_t writeMask, Yw3dCompareFunction compare, Yw3dStencilOperaton operatonFail);
+        
+        // Calculate a stencil value to write, applied by the write mask.
+        // @param[in,out] stencil the pointer to the current stencil value.
+        // @param[in] reference stencil test reference value.
+        // @param[in] writeMask stencil write mask value.
+        // @param[in] operatonFail stencil failed operation value.
+        // @return new stencil to write.
+        uint32_t CalculatePixelStencilValue(uint32_t stencil, uint32_t reference, uint32_t writeMask, Yw3dStencilOperaton operation);
 
     private:
         // ------------------------------------------------------------------
@@ -687,6 +713,39 @@ namespace yw
             bool depthWriteEnabled;
 
             // ------------------------------------------------------------------
+            // Stencil info.
+
+            // Holds a pointer to the stencilbuffer data.
+            float* stencilData;
+
+            // Stencilbuffer width * 1 (stencilbuffers may only contain a single float); pitch in multiples of sizeof(float).
+            uint32_t stencilBufferPitch;
+
+            // Stencil operation when stencil test pass (Both stencil and depth pass).
+            Yw3dStencilOperaton stencilOperatonPass;
+
+            // Stencil operation when stencil test fail.
+            Yw3dStencilOperaton stencilOperatonFail;
+
+            // Stencil operation when z test fail (Stencil pass and z fail).
+            Yw3dStencilOperaton stencilOperatonZFail;
+
+            // Stencil compare-function.
+            Yw3dCompareFunction stencilCompare;
+
+            // Stencil reference value.
+            uint32_t stencilReference;
+
+            // Stencil mask value.
+            uint32_t stencilMask;
+
+            // Stencil write mask value.
+            uint32_t stencilWriteMask;
+
+            // True if stencil buffer has been enabled.
+            bool stencilEnabled;
+
+            // ------------------------------------------------------------------
             // Rasterize info.
 
             // Rasterization-function for scanlines (triangle-drawing).
@@ -716,6 +775,9 @@ namespace yw
             RenderInfo() : 
                 frameData(nullptr), colorFloats(4), colorBufferPitch(0), colorWriteEnabled(true), 
                 depthData(nullptr), depthBufferPitch(0), depthCompare(Yw3d_CMP_Less), depthWriteEnabled(true), 
+                stencilData(nullptr), stencilBufferPitch(0), 
+                stencilOperatonPass(Yw3d_StencilOp_Keep), stencilOperatonFail(Yw3d_StencilOp_Keep), stencilOperatonZFail(Yw3d_StencilOp_Keep), 
+                stencilCompare(Yw3d_CMP_Always), stencilReference(0), stencilMask(0x000000ff), stencilWriteMask(0x000000ff), stencilEnabled(false),
                 fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0), viewportRect()
             {
                 // Init shader register types.

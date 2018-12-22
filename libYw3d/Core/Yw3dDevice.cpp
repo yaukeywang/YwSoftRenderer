@@ -82,11 +82,11 @@ namespace yw
         return m_DeviceParameters;
     }
 
-    Yw3dResult Yw3dDevice::Clear(const Yw3dRect* rect, const Vector4& color, float depth, uint32_t stencil)
+    Yw3dResult Yw3dDevice::Clear(const Yw3dRect* rect, const Vector4& color, const float depth, const uint32_t stencil)
     {
         m_RenderTarget->ClearColorBuffer(color, rect);
         m_RenderTarget->ClearDepthBuffer(depth, rect);
-        // Clear stencil buffer.
+        m_RenderTarget->ClearStencilBuffer(stencil, rect);
 
         return Yw3d_S_OK;
     }
@@ -634,7 +634,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat)
+    Yw3dResult Yw3dDevice::CreateRenderTarget(Yw3dRenderTarget** renderTarget, uint32_t width, uint32_t height, Yw3dFormat colorFormat, Yw3dFormat depthFormat, Yw3dFormat stencilFormat)
     {
         if (nullptr == renderTarget)
         {
@@ -667,13 +667,26 @@ namespace yw
             return Yw3d_E_InvalidParameters;
         }
 
+        // Create the stencil buffer.
+        Yw3dSurface* stencilBuffer = nullptr;
+        if (YW3D_FAILED(CreateSurface(&stencilBuffer, width, height, stencilFormat)))
+        {
+            YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(colorBuffer);
+            LOGE(_T("Yw3dDevice::CreateRenderTarget: can not create stencil buffer for render target.\n"));
+
+            return Yw3d_E_InvalidParameters;
+        }
+
         // Set color buffer and depth buffer.
         (*renderTarget)->SetColorBuffer(colorBuffer);
         (*renderTarget)->SetDepthBuffer(depthBuffer);
+        (*renderTarget)->SetStencilBuffer(stencilBuffer);
 
         // Decrease the references of buffer.
         YW_SAFE_RELEASE(colorBuffer);
         YW_SAFE_RELEASE(depthBuffer);
+        YW_SAFE_RELEASE(stencilBuffer);
 
         return Yw3d_S_OK;
     }
@@ -1220,6 +1233,15 @@ namespace yw
         SetRenderState(Yw3d_RS_ZWriteEnable, true);
         SetRenderState(Yw3d_RS_ZFunc, Yw3d_CMP_Less);
 
+        SetRenderState(Yw3d_RS_StencilEnable, false);
+        SetRenderState(Yw3d_RS_StencilFail, Yw3d_StencilOp_Keep);
+        SetRenderState(Yw3d_RS_StencilZFail, Yw3d_StencilOp_Keep);
+        SetRenderState(Yw3d_RS_StencilPass, Yw3d_StencilOp_Keep);
+        SetRenderState(Yw3d_RS_StencilFunc, Yw3d_CMP_Always);
+        SetRenderState(Yw3d_RS_StencilRef, 0);
+        SetRenderState(Yw3d_RS_StencilMask, 0x000000ff);
+        SetRenderState(Yw3d_RS_StencilWriteMask, 0x000000ff);
+
         SetRenderState(Yw3d_RS_ColorWriteEnable, true);
         SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
@@ -1275,7 +1297,7 @@ namespace yw
     void Yw3dDevice::SetDefaultRenderTarget()
     {
         // Create a default render target.
-        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F, Yw3d_FMT_R32F)))
+        if (YW3D_FAILED(CreateRenderTarget(&m_RenderTarget, m_DeviceParameters.backBufferWidth, m_DeviceParameters.backBufferHeight, Yw3d_FMT_R32G32B32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             LOGE(_T("Yw3dDevice::SetDefaultRenderTarget: can not create a default render target.\n"));
             return;
@@ -1322,12 +1344,20 @@ namespace yw
             return Yw3d_E_InvalidState;
         }
 
-        // Get color and depth buffer.
+        // Get color buffer, depth buffer and stencil buffer.
         Yw3dSurface* colorBuffer = m_RenderTarget->AcquireColorBuffer();
-        Yw3dSurface* depthBuffer = m_RenderTarget->AcquireDepthBuffer();
+        Yw3dSurface* depthBuffer = m_RenderStates[Yw3d_RS_ZEnable] ? m_RenderTarget->AcquireDepthBuffer() : nullptr;
+        Yw3dSurface* stencilBuffer = m_RenderStates[Yw3d_RS_StencilEnable] ? m_RenderTarget->AcquireStencilBuffer() : nullptr;
         if ((nullptr == colorBuffer) && (nullptr == depthBuffer))
         {
             LOGE(_T("Yw3dDevice::PreRender: render target has no associated frame buffer and depth buffer.\n"));
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check if we need stencil buffer.
+        if (m_RenderStates[Yw3d_RS_StencilEnable] && (nullptr == stencilBuffer))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: render target has no associated stencil buffer but stencil is enabled.\n"));
             return Yw3d_E_InvalidState;
         }
 
@@ -1337,6 +1367,7 @@ namespace yw
             LOGE(_T("Yw3dDevice::PreRender: color buffer's dimensions are smaller than set viewport.\n"));
             YW_SAFE_RELEASE(colorBuffer);
             YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(stencilBuffer);
 
             return Yw3d_E_InvalidState;
         }
@@ -1347,12 +1378,25 @@ namespace yw
             LOGE(_T("Yw3dDevice::PreRender: depth buffer's dimensions are smaller than set viewport.\n"));
             YW_SAFE_RELEASE(colorBuffer);
             YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(stencilBuffer);
+
+            return Yw3d_E_InvalidState;
+        }
+
+        // Check stencil buffer with viewport.
+        if ((nullptr != stencilBuffer) && ((stencilBuffer->GetWidth() < triangleViewport.right) || (stencilBuffer->GetHeight() < triangleViewport.bottom)))
+        {
+            LOGE(_T("Yw3dDevice::PreRender: stencil buffer's dimensions are smaller than set viewport.\n"));
+            YW_SAFE_RELEASE(colorBuffer);
+            YW_SAFE_RELEASE(depthBuffer);
+            YW_SAFE_RELEASE(stencilBuffer);
 
             return Yw3d_E_InvalidState;
         }
 
         YW_SAFE_RELEASE(colorBuffer);
         YW_SAFE_RELEASE(depthBuffer);
+        YW_SAFE_RELEASE(stencilBuffer);
 
         // Check vertex stream.
         const VertexStream* curVertexStream = m_VertexStreams;
@@ -1533,8 +1577,58 @@ namespace yw
             m_RenderInfo.depthWriteEnabled = false;
         }
 
+        // Get stencil buffer related states.
+        stencilBuffer = m_RenderStates[Yw3d_RS_StencilEnable] ? m_RenderTarget->AcquireStencilBuffer() : nullptr;
+        if (nullptr != stencilBuffer)
+        {
+            Yw3dResult resBuffer = stencilBuffer->LockRect((void**)&m_RenderInfo.stencilData, nullptr);
+            if (YW3D_FAILED(resBuffer))
+            {
+                LOGI(_T("Yw3dDevice::PreRender: couldn't access stencil buffer.\n"));
+                if (nullptr != m_RenderInfo.frameData)
+                {
+                    colorBuffer->UnlockRect();
+                }
+
+                if (nullptr != m_RenderInfo.depthData)
+                {
+                    depthBuffer->UnlockRect();
+                }
+
+                YW_SAFE_RELEASE(colorBuffer);
+                YW_SAFE_RELEASE(depthBuffer);
+                YW_SAFE_RELEASE(stencilBuffer);
+
+                return resBuffer;
+            }
+
+            m_RenderInfo.stencilBufferPitch = stencilBuffer->GetWidth();
+            m_RenderInfo.stencilOperatonPass = (Yw3dStencilOperaton)m_RenderStates[Yw3d_RS_StencilPass];
+            m_RenderInfo.stencilOperatonFail = (Yw3dStencilOperaton)m_RenderStates[Yw3d_RS_StencilFail];
+            m_RenderInfo.stencilOperatonZFail = (Yw3dStencilOperaton)m_RenderStates[Yw3d_RS_StencilZFail];
+            m_RenderInfo.stencilCompare = (Yw3dCompareFunction)m_RenderStates[Yw3d_RS_StencilFunc];
+            m_RenderInfo.stencilReference = m_RenderStates[Yw3d_RS_StencilRef];
+            m_RenderInfo.stencilMask = m_RenderStates[Yw3d_RS_StencilMask];
+            m_RenderInfo.stencilWriteMask = m_RenderStates[Yw3d_RS_StencilWriteMask];
+            m_RenderInfo.stencilEnabled = m_RenderStates[Yw3d_RS_StencilEnable] ? true : false;
+        }
+        else
+        {
+            m_RenderInfo.stencilData = nullptr;
+            m_RenderInfo.stencilBufferPitch = 0;
+            m_RenderInfo.stencilOperatonPass = Yw3d_StencilOp_Keep;
+            m_RenderInfo.stencilOperatonFail = Yw3d_StencilOp_Keep;
+            m_RenderInfo.stencilOperatonZFail = Yw3d_StencilOp_Keep;
+            m_RenderInfo.stencilCompare = Yw3d_CMP_Always;
+            m_RenderInfo.stencilReference = 0;
+            m_RenderInfo.stencilMask = 0x000000ff;
+            m_RenderInfo.stencilWriteMask = 0x000000ff;
+            m_RenderInfo.stencilEnabled = false;
+        }
+
         YW_SAFE_RELEASE(colorBuffer);
         YW_SAFE_RELEASE(depthBuffer);
+        YW_SAFE_RELEASE(stencilBuffer);
 
         // Reset pixel-counter to 0.
         m_RenderInfo.renderedPixels = 0;
@@ -1606,6 +1700,18 @@ namespace yw
             }
 
             YW_SAFE_RELEASE(depthBuffer)
+        }
+
+        // Unlock and release stencil buffer.
+        if (nullptr != m_RenderInfo.stencilData)
+        {
+            Yw3dSurface* stencilBuffer = m_RenderTarget->AcquireStencilBuffer();
+            if (nullptr != stencilBuffer)
+            {
+                stencilBuffer->UnlockRect();
+            }
+
+            YW_SAFE_RELEASE(stencilBuffer)
         }
 
         // Clear current device associated with used shaders.
@@ -2668,25 +2774,47 @@ namespace yw
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
+        float* stencilData = m_RenderInfo.stencilEnabled ? m_RenderInfo.stencilData + (y * m_RenderInfo.stencilBufferPitch + x1) : nullptr;
 
         // Start to render each pixel.
-        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, StepXVSOutputFromGradient(vsOutput))
+        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, (nullptr != stencilData) ? stencilData++ : stencilData, StepXVSOutputFromGradient(vsOutput))
         {
+            // Do stencil compare if stencil is enabled.
+            uint32_t* stencilDataPointer = (uint32_t*)stencilData;
+            bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
+
             // Get depth of current pixel.
             float depth = vsOutput->position.z;
 
             // Perform depth test.
             switch (m_RenderInfo.depthCompare)
             {
-            case Yw3d_CMP_Never: return;
-            case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else continue;
-            case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else continue;
-            case Yw3d_CMP_Less: if (depth < *depthData) break; else continue;
-            case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else continue;
-            case Yw3d_CMP_Greater: if (depth > *depthData) break; else continue;
-            case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else continue;
-            case Yw3d_CMP_Always: break;
-            default: break; // Can not happen.
+            case Yw3d_CMP_Never:
+                YW3D_STENCIL_UPDATE_IF_ZFAIL(stencilPassed, stencilDataPointer, m_RenderInfo)
+                return;
+            case Yw3d_CMP_Equal:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(fabsf(depth - *depthData) < YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_NotEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(fabsf(depth - *depthData) >= YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Less:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth < *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_LessEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth <= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Greater: 
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth > *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_GreaterEqual: 
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth >= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Always:
+                YW3D_STENCIL_UPDATE_IF_PASS(stencilPassed, stencilDataPointer, m_RenderInfo)
+                break;
+            default:
+                break; // Can not happen.
+            }
+
+            // Check if we need to skip this pixel because of stencil test fail.
+            if (m_RenderInfo.stencilEnabled && !stencilPassed)
+            {
+                continue;
             }
 
             // Passed depth test - update depthbuffer!
@@ -2749,25 +2877,47 @@ namespace yw
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
+        float* stencilData = m_RenderInfo.stencilEnabled ? m_RenderInfo.stencilData + (y * m_RenderInfo.stencilBufferPitch + x1) : nullptr;
 
         // Start to render each pixel.
-        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, StepXVSOutputFromGradient(vsOutput))
+        for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, (nullptr != stencilData) ? stencilData++ : stencilData, StepXVSOutputFromGradient(vsOutput))
         {
+            // Do stencil compare if stencil is enabled.
+            
+            uint32_t* stencilDataPointer = (uint32_t*)stencilData;
+            bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
+
             // Get depth of current pixel.
             float depth = vsOutput->position.z;
 
             // Perform depth test.
             switch (m_RenderInfo.depthCompare)
             {
-            case Yw3d_CMP_Never: return;
-            case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else continue;
-            case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else continue;
-            case Yw3d_CMP_Less: if (depth < *depthData) break; else continue;
-            case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else continue;
-            case Yw3d_CMP_Greater: if (depth > *depthData) break; else continue;
-            case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else continue;
-            case Yw3d_CMP_Always: break;
+            case Yw3d_CMP_Never:
+                YW3D_STENCIL_UPDATE_IF_ZFAIL(stencilPassed, stencilDataPointer, m_RenderInfo)
+                return;
+            case Yw3d_CMP_Equal:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(fabsf(depth - *depthData) < YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_NotEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(fabsf(depth - *depthData) >= YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Less:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth < *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_LessEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth <= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Greater:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth > *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_GreaterEqual:
+                YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depth >= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+            case Yw3d_CMP_Always:
+                YW3D_STENCIL_UPDATE_IF_PASS(stencilPassed, stencilDataPointer, m_RenderInfo)
+                break;
             default: break; // Can not happen.
+            }
+
+            // Check if we need to skip this pixel because of stencil test fail.
+            if (m_RenderInfo.stencilEnabled && !stencilPassed)
+            {
+                continue;
             }
 
             // Only update color and depth buffer when pixel is not killed.
@@ -2921,6 +3071,11 @@ namespace yw
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x);
+        float* stencilData = m_RenderInfo.stencilEnabled ? m_RenderInfo.stencilData + (y * m_RenderInfo.stencilBufferPitch + x) : nullptr;
+
+        // Do stencil compare if stencil is enabled.
+        uint32_t* stencilDataPointer = (uint32_t*)stencilData;
+        bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
 
         // Get depth of current pixel.
         float depth = vsOutput->position.z;
@@ -2928,15 +3083,32 @@ namespace yw
         // Perform depth test.
         switch (m_RenderInfo.depthCompare)
         {
-        case Yw3d_CMP_Never: return;
-        case Yw3d_CMP_Equal: if (fabsf(depth - *depthData) < YW_FLOAT_PRECISION) break; else return;
-        case Yw3d_CMP_NotEqual: if (fabsf(depth - *depthData) >= YW_FLOAT_PRECISION) break; else return;
-        case Yw3d_CMP_Less: if (depth < *depthData) break; else return;
-        case Yw3d_CMP_LessEqual: if (depth <= *depthData) break; else return;
-        case Yw3d_CMP_Greater: if (depth > *depthData) break; else return;
-        case Yw3d_CMP_GreaterEqual: if (depth >= *depthData) break; else return;
-        case Yw3d_CMP_Always: break;
-        default: break; // Can not happen.
+        case Yw3d_CMP_Never:
+            YW3D_STENCIL_UPDATE_IF_ZFAIL(stencilPassed, stencilDataPointer, m_RenderInfo)
+            return;
+        case Yw3d_CMP_Equal:
+            YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(fabsf(depth - *depthData) < YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+        case Yw3d_CMP_NotEqual:
+            YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(fabsf(depth - *depthData) >= YW_FLOAT_PRECISION, stencilPassed, stencilDataPointer, m_RenderInfo)
+        case Yw3d_CMP_Less:
+            YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(depth < *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+        case Yw3d_CMP_LessEqual:
+            YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(depth <= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+        case Yw3d_CMP_Greater:
+            YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(depth > *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+        case Yw3d_CMP_GreaterEqual:
+            YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(depth >= *depthData, stencilPassed, stencilDataPointer, m_RenderInfo)
+        case Yw3d_CMP_Always:
+            YW3D_STENCIL_UPDATE_IF_PASS(stencilPassed, stencilDataPointer, m_RenderInfo)
+            break;
+        default:
+            break; // Can not happen.
+        }
+
+        // Check if we need to skip this pixel because of stencil test fail.
+        if (m_RenderInfo.stencilEnabled && !stencilPassed)
+        {
+            return;
         }
 
         // Passed depth test - update depthbuffer!
@@ -3061,5 +3233,99 @@ namespace yw
         }
 
         m_RenderInfo.renderedPixels++;
+    }
+
+    bool Yw3dDevice::PerformPixelStencilTest(uint32_t* stencil, uint32_t reference, uint32_t mask, uint32_t writeMask, Yw3dCompareFunction compare, Yw3dStencilOperaton operatonFail)
+    {
+        bool stencilPassed = false;
+        uint32_t lhs = reference & mask;
+        uint32_t rhs = (*stencil) & mask;
+        switch (compare)
+        {
+        case Yw3d_CMP_Never:
+            stencilPassed = false;
+            break;
+        case Yw3d_CMP_Equal:
+            stencilPassed = (lhs == rhs);
+            break;
+        case Yw3d_CMP_NotEqual:
+            stencilPassed = (lhs != rhs);
+            break;
+        case Yw3d_CMP_Less:
+            stencilPassed = (lhs < rhs);
+            break;
+        case Yw3d_CMP_LessEqual:
+            stencilPassed = (lhs <= rhs);
+            break;
+        case Yw3d_CMP_Greater:
+            stencilPassed = (lhs > rhs);
+            break;
+        case Yw3d_CMP_GreaterEqual:
+            stencilPassed = (lhs >= rhs);
+            break;
+        case Yw3d_CMP_Always:
+            stencilPassed = true;
+            break;
+        default: // Can not happen.
+            break;
+        }
+
+        if (!stencilPassed)
+        {
+            // Stencil Fail.
+            *stencil = CalculatePixelStencilValue(*stencil, reference, writeMask, operatonFail);
+        }
+
+        return stencilPassed;
+    }
+
+    uint32_t Yw3dDevice::CalculatePixelStencilValue(uint32_t stencil, uint32_t reference, uint32_t writeMask, Yw3dStencilOperaton operation)
+    {
+        uint32_t result = stencil;
+        switch (operation)
+        {
+        case Yw3d_StencilOp_Keep:
+            result = stencil & writeMask;
+            break;
+        case Yw3d_StencilOp_Zero:
+            result = 0;
+            break;
+        case Yw3d_StencilOp_Replace:
+            result = reference & writeMask;
+            break;
+        case Yw3d_StencilOp_IncrSat:
+            {
+                result = stencil + 1;
+                result = (result > writeMask) ? writeMask : result;
+            }
+            break;
+        case Yw3d_StencilOp_DecrSat:
+            {
+                result = stencil - 1;
+                result = (result < 0) ? 0 : result;
+            }
+            break;
+        case Yw3d_StencilOp_Invert:
+            {
+                result = (~stencil) & writeMask;
+            }
+            break;
+        case Yw3d_StencilOp_Incr:
+            {
+                result = stencil + 1;
+                result = (result > writeMask) ? 0 : result;
+            }
+            break;
+        case Yw3d_StencilOp_Decr:
+            {
+                result = stencil - 1;
+                result = (result < 0) ? writeMask : result;
+            }
+            break;
+        default: // Can not happen.
+            break;
+        }
+
+        return result;
     }
 }

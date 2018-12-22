@@ -43,6 +43,14 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if the clear-rectangle exceeds the depthbuffer's dimensions.
         Yw3dResult ClearDepthBuffer(const float depth, const Yw3dRect* rect);
 
+        // Clears the stencilbuffer, which is associated with this rendertarget, to a given depth-value.
+        // @param[in] stencil stencil to clear the stencilbuffer to.
+        // @param[in] rect rectangle to restrict clearing to.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidState if no stencilbuffer has been set.
+        // @return Yw3d_E_InvalidParameters if the clear-rectangle exceeds the stencilbuffer's dimensions.
+        Yw3dResult ClearStencilBuffer(const uint32_t stencil, const Yw3dRect* rect);
+
         // Associates a Yw3dSurface as colorbuffer with this rendertarget, releasing the currently set colorbuffer.
         // Calling this function will increase the internal reference count of the surface.
         // @param[in] colorBuffer new colorbuffer.
@@ -57,11 +65,21 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if an invalid format was encountered.
         Yw3dResult SetDepthBuffer(class Yw3dSurface* depthBuffer);
 
+        // Associates a CMuli3DSurface as stencilbuffer with this rendertarget, releasing the currently set stencilbuffer.
+        // Calling this function will increase the internal reference count of the surface.
+        // @param[in] stencilbuffer new stencilbuffer.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if an invalid format was encountered.
+        Yw3dResult SetStencilBuffer(class Yw3dSurface* stencilBuffer);
+
         // Returns a pointer to the rendertarget's colorbuffer. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
         class Yw3dSurface* AcquireColorBuffer();
 
         // Returns a pointer to the rendertarget's depthbuffer. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
         class Yw3dSurface* AcquireDepthBuffer();
+
+        // Returns a pointer to the rendertarget's stencilbuffer. Calling this function will increase the internal reference count of the texture. Failure to call Release() when finished using the pointer will result in a memory leak.
+        class Yw3dSurface* AcquireStencilBuffer();
 
         // Returns the rendertarget's viewport matrix.
         const Matrix44* GetViewportMatrix() const;
@@ -75,6 +93,9 @@ namespace yw
 
         // Pointer to the depthbuffer.
         class Yw3dSurface* m_DepthBuffer;
+
+        // Pointer to the stencilbuffer.
+        class Yw3dSurface* m_StencilBuffer;
     };
 }
 
