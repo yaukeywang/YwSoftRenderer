@@ -12,8 +12,8 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] Base rasterization and rendering stuffs as [Muli3D](http://muli3d.sourceforge.net/) supported.
 - [x] [Premake5](https://premake.github.io/) support.
 - [x] `Input` module.
-- [ ] `Stencil Buffer` support. [Going on...]
-- [ ] `State Block` optimize with pooling.
+- [x] `Stencil Buffer` support.
+- [ ] `State Block` optimize with pooling. [Going on...]
 - [ ] `Mesh Data Loading` module.
 - [ ] `Texture Data Loading` module.
 - [ ] `Log` module.
