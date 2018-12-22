@@ -222,8 +222,8 @@ enum Yw3dCubeFaces
 // Specifies the supported pixel shader types.
 enum Yw3dPixelShaderOutput
 {
-	Yw3d_PSO_ColorOnly,     // Specifies that a given pixel shader only outputs color (default). A pixel's depth values will be automatically computed by the rasterizer through interpolation of depth values of a triangle's vertices.
-	Yw3d_PSO_ColorDepth,    // Specifies that a given pixel shader outputs both color and depth. If you want to output only depth use renderstate Yw3d_RS_ColorWriteEnable to disable writing color.
+	Yw3d_PSO_ColorOnly,     // Specifies that a given pixel shader only outputs color (default). A pixel's depth values will be automatically computed by the rasterizer through interpolation of depth values of a triangle's vertices. Stencil buffer test is also supported.
+	Yw3d_PSO_ColorDepth,    // Specifies that a given pixel shader outputs both color and depth. If you want to output only depth use renderstate Yw3d_RS_ColorWriteEnable to disable writing color. Stencil buffer test is not supported.
 };
 
 // Specifies the type of a particular shader register.
