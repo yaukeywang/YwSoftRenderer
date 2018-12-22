@@ -214,8 +214,8 @@ namespace yw
             *(dataPtr) = CalculatePixelStencilValue(*(dataPtr), (renderInfo).stencilReference, (renderInfo).stencilWriteMask, (renderInfo).stencilOperatonZFail); \
         }
 
-    // Depth and stencil helper macro.
-    #define YW3D_DEPTH_TEST_AND_STENCIL_UPDATE(depthFlag, stencilFlag, stencilDataPtr, renderInfo) \
+    // Depth test and stencil update helper macro, continue if depth test failed.
+    #define YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_CONTINUE(depthFlag, stencilFlag, stencilDataPtr, renderInfo) \
         if ((depthFlag)) \
         { \
             YW3D_STENCIL_UPDATE_IF_PASS((stencilFlag), (stencilDataPtr), (renderInfo)) \
@@ -225,6 +225,19 @@ namespace yw
         { \
             YW3D_STENCIL_UPDATE_IF_ZFAIL((stencilFlag), (stencilDataPtr), (renderInfo)) \
             continue; \
+        }
+
+    // Depth test and stencil update helper macro, return if depth test failed.
+    #define YW3D_DEPTH_TEST_AND_STENCIL_UPDATE_FAIL_TO_RETURN(depthFlag, stencilFlag, stencilDataPtr, renderInfo) \
+        if ((depthFlag)) \
+        { \
+            YW3D_STENCIL_UPDATE_IF_PASS((stencilFlag), (stencilDataPtr), (renderInfo)) \
+            break; \
+        } \
+        else \
+        { \
+            YW3D_STENCIL_UPDATE_IF_ZFAIL((stencilFlag), (stencilDataPtr), (renderInfo)) \
+            return; \
         }
 }
 
