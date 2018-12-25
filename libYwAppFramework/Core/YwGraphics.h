@@ -106,6 +106,12 @@ namespace yw
             m_StateBlocks.top()->SetCurrentCamera(camera);
         }
 
+        // Allocate a state block.
+        StateBlock* AllocateStateBlock();
+
+        // Release a state block.
+        void ReleaseStateBlock(StateBlock* stateBlock);
+
     protected:
         // Camera instance.
         class Camera* m_Camera;
@@ -122,6 +128,9 @@ namespace yw
 
         // All state block stack.
         std::stack<StateBlock*> m_StateBlocks;
+
+        // State block pool.
+        std::list<StateBlock*> m_StateBlockPool;
     };
 }
 

@@ -16,11 +16,21 @@ namespace yw
 
     Graphics::~Graphics()
     {
+        // Pop and release all state blocks.
         while (!m_StateBlocks.empty())
         {
             PopStateBlock();
         }
 
+        // Release state blocks in pool.
+        while (!m_StateBlockPool.empty())
+        {
+            StateBlock* block = m_StateBlockPool.front();
+            m_StateBlockPool.pop_front();
+            YW_SAFE_DELETE(block);
+        }
+
+        // Release device.
         YW_SAFE_RELEASE(m_Yw3dDevice);
         YW_SAFE_RELEASE(m_Yw3d);
     }
@@ -57,7 +67,7 @@ namespace yw
 
     void Graphics::PushStateBlock()
     {
-        StateBlock* newStateBlock = new StateBlock(this);
+        StateBlock* newStateBlock = AllocateStateBlock();
         m_StateBlocks.push(newStateBlock);
     }
 
@@ -65,7 +75,7 @@ namespace yw
     {
         if (!m_StateBlocks.empty())
         {
-            YW_SAFE_DELETE(m_StateBlocks.top());
+            ReleaseStateBlock(m_StateBlocks.top());
             m_StateBlocks.pop();
         }
     }
@@ -188,5 +198,31 @@ namespace yw
         }
 
         return m_StateBlocks.top()->SetScissorRect(scissorRect);
+    }
+
+    StateBlock* Graphics::AllocateStateBlock()
+    {
+        StateBlock* stateBlock = nullptr;
+        if (m_StateBlockPool.empty())
+        {
+            stateBlock = new StateBlock(this);
+        }
+        else
+        {
+            stateBlock = m_StateBlockPool.front();
+            m_StateBlockPool.pop_front();
+        }
+
+        return stateBlock;
+    }
+
+    void Graphics::ReleaseStateBlock(StateBlock* stateBlock)
+    {
+        if (nullptr == stateBlock)
+        {
+            return;
+        }
+
+        m_StateBlockPool.push_back(stateBlock);
     }
 }
