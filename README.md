@@ -13,8 +13,8 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] [Premake5](https://premake.github.io/) support.
 - [x] `Input` module.
 - [x] `Stencil Buffer` support.
-- [ ] `State Block` optimize with pooling. [Going on...]
-- [ ] `Mesh Data Loading` module.
+- [x] `State Block` optimize with pooling.
+- [ ] `Mesh Data Loading` module. **[Working on...]**
 - [ ] `Texture Data Loading` module.
 - [ ] `Log` module.
 - [ ] `Linux` support
