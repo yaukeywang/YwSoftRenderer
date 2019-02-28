@@ -15,7 +15,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 int main()
 // Mac OSX platform.
 #elif defined(_MAC_OSX)
-#error "Main entry is not implemented!"
+int main()
+//#error "Main entry is not implemented!"
 #elif defined(__amigaos4__) || defined(_AMIGAOS4)
 // AmigaOS platform.
 int main(int argc, char** argv)

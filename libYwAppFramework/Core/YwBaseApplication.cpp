@@ -44,7 +44,7 @@ namespace yw
         m_Input = new YwInputLinux(this);
 #elif defined(_MAC_OSX)
         m_Input = nullptr;
-        #error "Input is not implemented!"
+        //#error "Input is not implemented!"
 #elif defined(__amigaos4__) || defined(_AMIGAOS4)
         m_Input = new YwInputAmigaOS4(this);
 #endif

@@ -183,7 +183,7 @@ namespace yw
         }
 
         // Generate by each mip level.
-        for (uint32_t level = srcLevel + 1; level < m_MipLevels; level)
+        for (uint32_t level = srcLevel + 1; level < m_MipLevels; level++)
         {
             // Lock mip surface data on source data.
             const float* srcData = nullptr;

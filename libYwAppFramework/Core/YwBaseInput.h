@@ -4,6 +4,7 @@
 #ifndef __YW_BASE_INPUT_H__
 
 #include <stdint.h>
+#include "Yw3d.h"
 
 namespace yw
 {

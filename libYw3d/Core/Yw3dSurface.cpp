@@ -507,7 +507,6 @@ namespace yw
 
         // Update surface if partial locked.
         const uint32_t lockWidth = m_PartialLockRect.right - m_PartialLockRect.left;
-        const uint32_t lockHeight = m_PartialLockRect.bottom - m_PartialLockRect.top;
         const uint32_t surfaceFloatCount = GetFormatFloats();
 
         float* curLockedData = m_PartialLockData;

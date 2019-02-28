@@ -40,7 +40,8 @@ namespace yw
         m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
-        GetScene()->SetClearColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        Vector4 clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GetScene()->SetClearColor(clearColor);
 
         // Registry a demo triangle entity and create an instance.
         GetScene()->RegisterEntityType(_T("DemoTriangle"), DemoTriangle::CreateDemoTriangle);
@@ -93,7 +94,7 @@ namespace yw
                 sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());
                 XStoreName((Display*)GetDisplay(), GetWindowHandle(), szCaption);
             #elif defined(_MAC_OSX)
-                #error "Window caption is not implemented!"
+                //#error "Window caption is not implemented!"
             #elif defined(__amigaos4__) || defined(_AMIGAOS4)
                 static char szCaption[256];
                 sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());

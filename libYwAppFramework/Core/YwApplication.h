@@ -78,5 +78,121 @@ namespace yw
 
 #endif // End of Windows platform.
 
+// ------------------------------------------------------------------
+// Linux platform.
+#if defined(LINUX_X11) || defined(_LINUX)
+
+namespace yw
+{
+    class Application : public IApplication
+    {
+    public:
+        // Constructor.
+        Application();
+        
+        // Destructor.
+        virtual ~Application();
+        
+    public:
+        // Initialize application by parameters.
+        bool Initialize(const ApplicationCreationFlags& creationFlags);
+        
+        // Application' s main loop entry.
+        int    Run();
+        
+        // Create world.
+        virtual bool CreateWorld() = 0;
+        
+        // Destroy world.
+        virtual void DestroyWorld() = 0;
+        
+        // Update logic frame move.
+        virtual void FrameMove() = 0;
+        
+        // Render objects.
+        virtual void Render() = 0;
+        
+    public:
+        static Application* GetApplication();
+        
+    private:
+        // Begin each frame.
+        void BeginFrame();
+        
+        // Check messages of this frame.
+        bool CheckMessages();
+        
+        // End this frame.
+        void EndFrame();
+        
+    private:
+        //
+        
+    private:
+        // The global application instance.
+        static Application* m_sApplication;
+    };
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Mac OSX platform.
+#if defined(_MAC_OSX)
+
+namespace yw
+{
+    class Application : public IApplication
+    {
+    public:
+        // Constructor.
+        Application();
+        
+        // Destructor.
+        virtual ~Application();
+        
+    public:
+        // Initialize application by parameters.
+        bool Initialize(const ApplicationCreationFlags& creationFlags);
+        
+        // Application' s main loop entry.
+        int    Run();
+        
+        // Create world.
+        virtual bool CreateWorld() = 0;
+        
+        // Destroy world.
+        virtual void DestroyWorld() = 0;
+        
+        // Update logic frame move.
+        virtual void FrameMove() = 0;
+        
+        // Render objects.
+        virtual void Render() = 0;
+        
+    public:
+        static Application* GetApplication();
+        
+    private:
+        // Begin each frame.
+        void BeginFrame();
+        
+        // Check messages of this frame.
+        bool CheckMessages();
+        
+        // End this frame.
+        void EndFrame();
+        
+    private:
+        //
+        
+    private:
+        // The global application instance.
+        static Application* m_sApplication;
+    };
+}
+
+#endif
+
 #endif // !__YW_APPLICATION_H__
 

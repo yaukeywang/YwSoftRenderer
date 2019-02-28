@@ -26,7 +26,7 @@ typedef Window WindowHandle;    // Define window-handle for the Linux-platform.
 // Mac OSX platform.
 #if defined(_MAC_OSX)
 typedef void* WindowHandle;     // Define window-handle for the MacOSX-platform.
-#error "WindowHandle is not implemented!"
+//#error "WindowHandle is not implemented!"
 #endif
 
 // AmigaOS platform.

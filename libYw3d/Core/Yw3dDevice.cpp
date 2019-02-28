@@ -1,4 +1,4 @@
-﻿// Add by Yaukey at 2018-01-30.
+// Add by Yaukey at 2018-01-30.
 // YW Soft Renderer 3d device class.
 
 #include "Yw3dCore.h"
@@ -1726,8 +1726,8 @@ namespace yw
     Yw3dResult Yw3dDevice::DecodeVertexStream(Yw3dVSInput& vertexShaderInput, uint32_t vertexIndex)
     {
         // Raw vertex data cache for each stream.
-        const byte* vertexRawData[YW3D_MAX_VERTEX_STREAMS];
-        memset(vertexRawData, 0, sizeof(byte) * YW3D_MAX_VERTEX_STREAMS);
+        const uint8_t* vertexRawData[YW3D_MAX_VERTEX_STREAMS];
+        memset(vertexRawData, 0, sizeof(uint8_t) * YW3D_MAX_VERTEX_STREAMS);
 
         // Get start vertex index in vertex buffer of each stream.
         const VertexStream* vertexStream = m_VertexStreams;

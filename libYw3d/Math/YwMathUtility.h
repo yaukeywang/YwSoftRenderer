@@ -9,7 +9,15 @@
 namespace yw
 {
     // Float compare precision.
-    #define YW_FLOAT_PRECISION FLT_EPSILON
+    #if defined(_WIN32) || defined(WIN32)
+        #define YW_FLOAT_PRECISION FLT_EPSILON
+    #elif defined(LINUX_X11) || defined(_LINUX)
+        #define YW_FLOAT_PRECISION __FLT_EPSILON__
+    #elif defined(_MAC_OSX)
+        #define YW_FLOAT_PRECISION __FLT_EPSILON__
+    #elif defined(__amigaos4__) || defined(_AMIGAOS4)
+        #define YW_FLOAT_PRECISION __FLT_EPSILON__
+    #endif
 
     // Math pi.
     #define YW_PI 3.1415926f

@@ -44,14 +44,13 @@ namespace yw
         }
 
         // Initialize Yw3d device parameters - defaulting to 32 bit colors in full screen mode.
-        Yw3dDeviceParameters deviceParams =
-        {
+        Yw3dDeviceParameters deviceParams(
             m_Application->GetWindowHandle(),
             m_Application->GetWindowed(),
             32,
             m_Application->GetWindowWidth(),
             m_Application->GetWindowHeight()
-        };
+        );
 
         if (YW3D_FAILED(m_Yw3d->CreateDevice(&m_Yw3dDevice, &deviceParams)))
         {

@@ -267,7 +267,7 @@ namespace yw
                     float* sliceData = &m_Data[zIdx * m_Width * m_Height];
                     for (uint32_t yIdx = clearBox.top; yIdx < clearBox.bottom; yIdx++)
                     {
-                        float* curData = &m_Data[yIdx * m_Width + clearBox.left];
+                        float* curData = &sliceData[yIdx * m_Width + clearBox.left];
                         for (uint32_t xIdx = clearBox.left; xIdx < clearBox.right; xIdx++, curData++)
                         {
                             *curData = color.x;

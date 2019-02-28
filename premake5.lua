@@ -22,6 +22,12 @@ solution "YwSoftRenderer"
     filter { "system:windows" }
         defines { "_CRT_SECURE_NO_WARNINGS" }
 
+    filter { "system:linux" }
+        defines { "_LINUX" }
+
+   filter { "system:macosx" }
+        defines { "_MAC_OSX" }
+
     filter { "configurations:Debug*" }
         defines { "DEBUG" }
 
