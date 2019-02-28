@@ -13,7 +13,7 @@ namespace yw
     struct Matrix33;
     struct Matrix44;
 
-    // Quaternion 2 class.
+    // Quaternion class.
     struct Quaternion
     {
     public:

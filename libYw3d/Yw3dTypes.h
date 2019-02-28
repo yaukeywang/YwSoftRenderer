@@ -11,21 +11,28 @@
 
 // Windows platform.
 #if defined(_WIN32) || defined(WIN32)
-#define WIN32_LEAN_AND_MEAN // Restrict inclusions.
+#define WIN32_LEAN_AND_MEAN     // Restrict inclusions.
 #include <windows.h>
-typedef HWND WindowHandle;  // Define window-handle for the Win32-platform.
+typedef HWND WindowHandle;      // Define window-handle for the Win32-platform.
 #endif
 
 // Linux platform.
-#ifdef LINUX_X11
+#if defined(LINUX_X11) || defined(_LINUX)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 typedef Window WindowHandle;    // Define window-handle for the Linux-platform.
 #endif
 
 // Mac OSX platform.
-#ifdef OSX
-typedef xxx WindowHandle;   // Define window-handle for the Linux-platform.
+#if defined(_MAC_OSX)
+typedef void* WindowHandle;     // Define window-handle for the MacOSX-platform.
+#error "WindowHandle is not implemented!"
+#endif
+
+// AmigaOS platform.
+#if defined(__amigaos4__) || defined(_AMIGAOS4)
+#include <intuition/intuition.h>
+typedef struct Window* windowhandle; // Define window-handle for the AmigaOS-platform.
 #endif
 
 // ------------------------------------------------------------------

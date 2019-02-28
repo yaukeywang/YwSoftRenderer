@@ -9,10 +9,10 @@
 #include <stdint.h>
 #include <vector>
 #include <list>
-#include <wtypes.h>
 
 #if defined(_WIN32) || defined(WIN32)
     #include <tchar.h>
+    #include <wtypes.h>
 #endif
 
 #ifndef __amigaos4__
@@ -63,12 +63,10 @@
 namespace yw
 {
 	#ifndef _UNICODE
-	    #define std_tstring(x) std::##x
+        typedef std::string String;
 	#else
-	    #define std_tstring(x) std::w##x
+        typedef std::wstring String;
 	#endif // !_UNICODE
-
-	typedef std_tstring(string) String;
 }
 
 // ------------------------------------------------------------------

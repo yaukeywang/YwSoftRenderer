@@ -88,11 +88,13 @@ namespace yw
                 #endif
 
                 SetWindowText(GetWindowHandle(), szCaption);
-            #elif LINUX_X11
+            #elif defined(LINUX_X11) || defined(_LINUX)
                 char szCaption[256];
                 sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());
                 XStoreName((Display*)GetDisplay(), GetWindowHandle(), szCaption);
-            #elif __amigaos4__
+            #elif defined(_MAC_OSX)
+                #error "Window caption is not implemented!"
+            #elif defined(__amigaos4__) || defined(_AMIGAOS4)
                 static char szCaption[256];
                 sprintf(szCaption, "DemoTriangle, FPS: %3.2f", GetFPS());
                 IIntuition->SetWindowTitles(GetWindowHandle(), szCaption, szCaption);
