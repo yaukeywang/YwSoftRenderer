@@ -15,7 +15,7 @@ namespace yw
     public:
         union
         {
-            struct { Vector3 normal; float d; };
+            struct { Vector3 normal; float w; };
             struct { float a; float b; float c; float d; };
             Vector4 p;
         };

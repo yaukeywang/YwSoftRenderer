@@ -9,41 +9,49 @@
 
 namespace yw
 {
-    inline Plane::Plane() : normal(), d(0.0f)
+    inline Plane::Plane() : a(0.0f), b(0.0f), c(0.0f), d(0.0f)
     {
     }
 
     inline Plane::Plane(const float a, const float b, const float c, const float d)
     {
-        normal.Set(a, b, c);
+        this->a = a;
+        this->b = b;
+        this->c = c;
         this->d = d;
     }
 
     inline Plane::Plane(const Vector3& n, const float d) : normal(n)
     {
-        this->d = d;
+        this->w = d;
     }
 
-    inline Plane::Plane(const Plane& p) : normal(p.normal), d(p.d)
+    inline Plane::Plane(const Plane& p)
     {
+        this->a = p.a;
+        this->b = p.b;
+        this->c = p.c;
+        this->d = p.d;
     }
 
     inline const Plane& Plane::operator =(const Plane& p)
     {
-        normal = p.normal;
-        d = p.d;
+        this->a = p.a;
+        this->b = p.b;
+        this->c = p.c;
+        this->d = p.d;
 
         return *this;
     }
 
     inline Plane::operator float*()
     {
-        return &normal.x;
+        return &a;
     }
 
     inline Plane::operator const float*() const
     {
-        return &normal.x;
+        return &a;
     }
 
     inline Plane Plane::operator +() const
@@ -53,17 +61,17 @@ namespace yw
 
     inline Plane Plane::operator -() const
     {
-        return Plane(-normal, d);
+        return Plane(-normal, w);
     }
 
     inline float Plane::operator *(const Vector3& v) const
     {
-        return Vector3Dot(normal, v) + d;
+        return Vector3Dot(normal, v) + w;
     }
 
     inline float Plane::operator *(const Vector4& v) const
     {
-        return Vector3Dot(normal, v) + d * v.w;
+        return Vector3Dot(normal, v) + w * v.w;
     }
 }
 
