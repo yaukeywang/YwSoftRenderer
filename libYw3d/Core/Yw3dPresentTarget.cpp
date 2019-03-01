@@ -405,9 +405,83 @@ namespace yw
 // ------------------------------------------------------------------
 // Linux platform.
 #if defined(LINUX_X11) || defined(_LINUX)
+
+namespace yw
+{
+    Yw3dPresentTargetLinux::Yw3dPresentTargetLinux(Yw3dDevice* device) :
+        IYw3dPresentTarget(device)
+    {
+    }
+
+    Yw3dPresentTargetLinux::~Yw3dPresentTargetLinux()
+    {
+    }
+
+    Yw3dResult Yw3dPresentTargetLinux::Create()
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dPresentTargetLinux::Present(const float* source, uint32_t floats)
+    {
+        return Yw3d_E_Unknown;
+    }
+}
+
 #endif
 
 // ------------------------------------------------------------------
 // Mac OSX platform.
 #if defined(_MAC_OSX)
+
+namespace yw
+{
+    Yw3dPresentTargetMacOSX::Yw3dPresentTargetMacOSX(Yw3dDevice* device) :
+        IYw3dPresentTarget(device)
+    {
+    }
+
+    Yw3dPresentTargetMacOSX::~Yw3dPresentTargetMacOSX()
+    {
+    }
+
+    Yw3dResult Yw3dPresentTargetMacOSX::Create()
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dPresentTargetMacOSX::Present(const float* source, uint32_t floats)
+    {
+        return Yw3d_E_Unknown;
+    }
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Amiga OS 4 platform.
+#if defined(__amigaos4__) || (_AMIGAOS4)
+
+namespace yw
+{
+    Yw3dPresentTargetAmigaOS4::Yw3dPresentTargetAmigaOS4(Yw3dDevice* device) :
+        IYw3dPresentTarget(device)
+    {
+    }
+
+    Yw3dPresentTargetAmigaOS4::~Yw3dPresentTargetAmigaOS4()
+    {
+    }
+
+    Yw3dResult Yw3dPresentTargetAmigaOS4::Create()
+    {
+        return Yw3d_E_Unknown;
+    }
+
+    Yw3dResult Yw3dPresentTargetAmigaOS4::Present(const float* source, uint32_t floats)
+    {
+        return Yw3d_E_Unknown;
+    }
+}
+
 #endif

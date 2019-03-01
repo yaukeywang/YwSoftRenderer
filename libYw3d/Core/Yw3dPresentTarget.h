@@ -127,11 +127,121 @@ namespace yw
 // ------------------------------------------------------------------
 // Linux platform.
 #if defined(LINUX_X11) || defined(_LINUX)
+
+namespace yw
+{
+    // This class defines a Yw3d present target for the Linux-platform.
+    class Yw3dPresentTargetLinux : IYw3dPresentTarget
+    {
+        friend class Yw3dDevice;
+
+    protected:
+        // Accessible by Yw3dDevice which is the only class that may create a present target.
+        // @param[in] device a pointer to the parent Yw3dDevice-object.
+        Yw3dPresentTargetLinux(class Yw3dDevice* device);
+
+        // Accessible by IBase. The destructor is called when the reference count reaches zero.
+        ~Yw3dPresentTargetLinux();
+
+    public:
+        // Creates and initializes the present target.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_Unknown if a presenttarget-specific problem was encountered.
+        Yw3dResult Create();
+
+        // Presents the contents of a given rendertarget's colorbuffer.
+        // @param[in] source pointer to the data of the colorbuffer to be presented (backbuffer dimensions).
+        // @param[in] floats format of the data (number of float32s).
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidFormat if an invalid format was encountered.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        // @return Yw3d_E_Unknown if a present-target related problem was encountered.
+        Yw3dResult Present(const float* source, uint32_t floats);
+    };
+}
+
 #endif
 
 // ------------------------------------------------------------------
 // Mac OSX platform.
 #if defined(_MAC_OSX)
+
+namespace yw
+{
+    // This class defines a Yw3d present target for the Linux-platform.
+    class Yw3dPresentTargetMacOSX : IYw3dPresentTarget
+    {
+        friend class Yw3dDevice;
+
+    protected:
+        // Accessible by Yw3dDevice which is the only class that may create a present target.
+        // @param[in] device a pointer to the parent Yw3dDevice-object.
+        Yw3dPresentTargetMacOSX(class Yw3dDevice* device);
+
+        // Accessible by IBase. The destructor is called when the reference count reaches zero.
+        ~Yw3dPresentTargetMacOSX();
+
+    public:
+        // Creates and initializes the present target.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_Unknown if a presenttarget-specific problem was encountered.
+        Yw3dResult Create();
+
+        // Presents the contents of a given rendertarget's colorbuffer.
+        // @param[in] source pointer to the data of the colorbuffer to be presented (backbuffer dimensions).
+        // @param[in] floats format of the data (number of float32s).
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidFormat if an invalid format was encountered.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        // @return Yw3d_E_Unknown if a present-target related problem was encountered.
+        Yw3dResult Present(const float* source, uint32_t floats);
+    };
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Amiga OS 4 platform.
+#if defined(__amigaos4__) || (_AMIGAOS4)
+
+namespace yw
+{
+    // This class defines a Yw3d present target for the Linux-platform.
+    class Yw3dPresentTargetAmigaOS4 : IYw3dPresentTarget
+    {
+        friend class Yw3dDevice;
+
+    protected:
+        // Accessible by Yw3dDevice which is the only class that may create a present target.
+        // @param[in] device a pointer to the parent Yw3dDevice-object.
+        Yw3dPresentTargetAmigaOS4(class Yw3dDevice* device);
+
+        // Accessible by IBase. The destructor is called when the reference count reaches zero.
+        ~Yw3dPresentTargetAmigaOS4();
+
+    public:
+        // Creates and initializes the present target.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_Unknown if a presenttarget-specific problem was encountered.
+        Yw3dResult Create();
+
+        // Presents the contents of a given rendertarget's colorbuffer.
+        // @param[in] source pointer to the data of the colorbuffer to be presented (backbuffer dimensions).
+        // @param[in] floats format of the data (number of float32s).
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
+        // @return Yw3d_E_InvalidFormat if an invalid format was encountered.
+        // @return Yw3d_E_InvalidState if an invalid state was encountered.
+        // @return Yw3d_E_Unknown if a present-target related problem was encountered.
+        Yw3dResult Present(const float* source, uint32_t floats);
+    };
+}
+
 #endif
 
 #endif // __YW_3D_PRESENT_TARGET_H__

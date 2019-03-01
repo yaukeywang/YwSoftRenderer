@@ -53,7 +53,9 @@ namespace yw
 #if defined(_WIN32) || defined(WIN32)
         m_PresentTarget = new Yw3dPresentTargetWindows(this);
 #elif defined(LINUX_X11) || defined(_LINUX)
-        m_PresentTarget = new Yw3dPresentTargetLinuxX11(this);
+        m_PresentTarget = new Yw3dPresentTargetLinux(this);
+#elif defined(_MAC_OSX)
+        m_PresentTarget = new Yw3dPresentTargetMacOSX(this);
 #elif defined(__amigaos4__) || (_AMIGAOS4)
         m_PresentTarget = new Yw3dPresentTargetAmigaOS4(this);
 #endif
