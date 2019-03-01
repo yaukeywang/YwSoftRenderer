@@ -98,3 +98,25 @@ namespace yw
 }
 
 #endif // End of Windows platform.
+
+// ------------------------------------------------------------------
+// Linux platform.
+#if defined(LINUX_X11) || defined(_LINUX)
+
+namespace yw
+{
+
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Mac OSX platform.
+#if defined(_MAC_OSX)
+
+namespace yw
+{
+
+}
+
+#endif

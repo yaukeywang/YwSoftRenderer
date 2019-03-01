@@ -8,6 +8,7 @@
 
 namespace yw
 {
+    // The base camera class.
     class Camera
     {
     public:

@@ -16,6 +16,7 @@
 
 namespace yw
 {
+    // The base application of this platform.
     class Application : public IApplication
     {
     public:
@@ -84,6 +85,7 @@ namespace yw
 
 namespace yw
 {
+    // The base application of this platform.
     class Application : public IApplication
     {
     public:
@@ -142,6 +144,7 @@ namespace yw
 
 namespace yw
 {
+    // The base application of this platform.
     class Application : public IApplication
     {
     public:

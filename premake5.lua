@@ -131,7 +131,9 @@ project "libYwAppFramework"
 
     includedirs
     {
-        "libYw3d"
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math"
     }
 
     files
@@ -156,6 +158,10 @@ project "libYwAppFramework"
         "libYwAppFramework/Core/YwStateBlock.h",
         "libYwAppFramework/Core/YwStateBlock.cpp",
 
+        "libYwAppFramework/IO/YwMeshLoader.h",
+        "libYwAppFramework/IO/YwMeshLoaderObj.h",
+        "libYwAppFramework/IO/YwMeshLoaderObj.cpp",
+
         --"libYwAppFramework/ThirdParty/*.h",
         --"libYwAppFramework/ThirdParty/*.cpp"
     }
@@ -164,6 +170,7 @@ project "libYwAppFramework"
     {
         ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.inl", "libYwAppFramework/Yw*.cpp" },
         ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.inl", "libYwAppFramework/Core/Yw*.cpp" },
+        ["IO"] = { "libYwAppFramework/IO/Yw*.h", "libYwAppFramework/IO/Yw*.inl", "libYwAppFramework/IO/Yw*.cpp" },
         ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.cpp" }
     }
 
@@ -189,8 +196,11 @@ project "Demo1Triangle"
     includedirs
     {
         "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
         "libYwAppFramework",
         "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
         "libYwAppFramework/ThirdParty"
     }
 

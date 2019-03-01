@@ -23,6 +23,7 @@
 
 namespace yw
 {
+    // The input class for windows.
     class YwInputWindows : public IInput
     {
         friend class IApplication;
@@ -105,5 +106,27 @@ namespace yw
 }
 
 #endif // End of Windows platform.
+
+// ------------------------------------------------------------------
+// Linux platform.
+#if defined(LINUX_X11) || defined(_LINUX)
+
+namespace yw
+{
+
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Mac OSX platform.
+#if defined(_MAC_OSX)
+
+namespace yw
+{
+
+}
+
+#endif
 
 #endif // !__YW_INPUT_H__

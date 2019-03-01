@@ -14,6 +14,7 @@ namespace yw
         friend class Application;
 
     protected:
+        // The base constructor.
         IInput(class IApplication* application)
         {
             m_Application = application;

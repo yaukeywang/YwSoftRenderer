@@ -9,7 +9,7 @@
 
 namespace yw
 {
-    // The state block class.
+    // The state block class, better control of graphics states.
     class StateBlock
     {
         friend class Graphics;
