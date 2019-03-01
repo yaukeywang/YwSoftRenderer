@@ -1118,7 +1118,7 @@ namespace yw
             }
         default:
             color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-            LOGE(_T("CMuli3DDevice::SampleTexture: invalid texture-sampling input!\n"));
+            LOGE(_T("Yw3dDevice::SampleTexture: invalid texture-sampling input!\n"));
             return Yw3d_E_InvalidState;
         }
 

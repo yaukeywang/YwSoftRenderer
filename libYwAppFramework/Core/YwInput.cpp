@@ -105,7 +105,54 @@ namespace yw
 
 namespace yw
 {
-
+    YwInputLinux::YwInputLinux(IApplication* application) :
+        IInput(application)
+    {
+    }
+    
+    YwInputLinux::~YwInputLinux()
+    {
+    }
+    
+    bool YwInputLinux::Initialize()
+    {
+        return false;
+    }
+    
+    void YwInputLinux::Update()
+    {
+        
+    }
+    
+    bool YwInputLinux::KeyDown(char keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputLinux::KeyUp(char keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputLinux::MouseButtonDown(uint32_t keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputLinux::MouseButtonUp(uint32_t keyCode)
+    {
+        return false;
+    }
+    
+    void YwInputLinux::GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const
+    {
+        
+    }
+    
+    int YwInputLinux::GetMouseWheelMovement() const
+    {
+        return 0;
+    }
 }
 
 #endif
@@ -116,7 +163,112 @@ namespace yw
 
 namespace yw
 {
+    YwInputMacOSX::YwInputMacOSX(IApplication* application) :
+        IInput(application)
+    {
+    }
+    
+    YwInputMacOSX::~YwInputMacOSX()
+    {
+    }
+    
+    bool YwInputMacOSX::Initialize()
+    {
+        return false;
+    }
+    
+    void YwInputMacOSX::Update()
+    {
+        
+    }
+    
+    bool YwInputMacOSX::KeyDown(char keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputMacOSX::KeyUp(char keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputMacOSX::MouseButtonDown(uint32_t keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputMacOSX::MouseButtonUp(uint32_t keyCode)
+    {
+        return false;
+    }
+    
+    void YwInputMacOSX::GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const
+    {
+        
+    }
+    
+    int YwInputMacOSX::GetMouseWheelMovement() const
+    {
+        return 0;
+    }
+}
 
+#endif
+
+// ------------------------------------------------------------------
+// Amiga OS 4 platform.
+#if defined(__amigaos4__) || (_AMIGAOS4)
+
+namespace yw
+{
+    YwInputAmigaOS4::YwInputAmigaOS4(IApplication* application) :
+        IInput(application)
+    {
+    }
+    
+    YwInputAmigaOS4::~YwInputAmigaOS4()
+    {
+    }
+    
+    bool YwInputAmigaOS4::Initialize()
+    {
+        return false;
+    }
+    
+    void YwInputAmigaOS4::Update()
+    {
+        
+    }
+    
+    bool YwInputAmigaOS4::KeyDown(char keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputAmigaOS4::KeyUp(char keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputMacOSX::MouseButtonDown(uint32_t keyCode)
+    {
+        return false;
+    }
+    
+    bool YwInputMacOSX::MouseButtonUp(uint32_t keyCode)
+    {
+        return false;
+    }
+    
+    void YwInputAmigaOS4::GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const
+    {
+        
+    }
+    
+    int YwInputAmigaOS4::GetMouseWheelMovement() const
+    {
+        return 0;
+    }
 }
 
 #endif

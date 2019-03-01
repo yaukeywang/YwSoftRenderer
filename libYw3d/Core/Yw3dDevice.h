@@ -35,7 +35,7 @@ namespace yw
         // ------------------------------------------------------------------
         // Base setting.
 
-        // Returns a pointer to the Muli3D instance. Calling this function will increase the internal reference count of the Muli3D instance. Failure to call Release() when finished using the pointer will result in a memory leak.
+        // Returns a pointer to the Yw3d instance. Calling this function will increase the internal reference count of the Yw3d instance. Failure to call Release() when finished using the pointer will result in a memory leak.
         Yw3d* AcquireYw3d();
 
         // Get the device parameters.

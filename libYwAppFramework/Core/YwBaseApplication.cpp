@@ -43,8 +43,7 @@ namespace yw
 #elif defined(LINUX_X11) || defined(_LINUX)
         m_Input = new YwInputLinux(this);
 #elif defined(_MAC_OSX)
-        m_Input = nullptr;
-        //#error "Input is not implemented!"
+        m_Input = new YwInputMacOSX(this);
 #elif defined(__amigaos4__) || defined(_AMIGAOS4)
         m_Input = new YwInputAmigaOS4(this);
 #endif

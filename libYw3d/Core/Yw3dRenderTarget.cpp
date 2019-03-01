@@ -49,7 +49,7 @@ namespace yw
     {
         if (NULL == m_DepthBuffer)
         {
-            LOGE(_T("CMuli3DRenderTarget::ClearDepthBuffer: no depthbuffer has been set.\n"));
+            LOGE(_T("Yw3dRenderTarget::ClearDepthBuffer: no depthbuffer has been set.\n"));
             return Yw3d_E_InvalidFormat;
         }
 
@@ -60,7 +60,7 @@ namespace yw
     {
         if (NULL == m_StencilBuffer)
         {
-            LOGE(_T("CMuli3DRenderTarget::ClearDepthBuffer: no depthbuffer has been set.\n"));
+            LOGE(_T("Yw3dRenderTarget::ClearDepthBuffer: no depthbuffer has been set.\n"));
             return Yw3d_E_InvalidFormat;
         }
 

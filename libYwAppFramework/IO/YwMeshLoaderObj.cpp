@@ -5,5 +5,18 @@
 
 namespace yw
 {
-
+    MeshLoaderObj::MeshLoaderObj()
+    {
+        
+    }
+    
+    MeshLoaderObj::~MeshLoaderObj()
+    {
+        
+    }
+    
+    bool MeshLoaderObj::Load(const String& fileName)
+    {
+        return false;
+    }
 }
