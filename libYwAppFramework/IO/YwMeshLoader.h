@@ -9,6 +9,40 @@
 
 namespace yw
 {
+    // Mesh triangle.
+    class MeshTriangle
+    {
+        // Vertex index array.
+        std::vector<int32_t> m_VertexIndices;
+
+        // Normal index array.
+        std::vector<int32_t> m_NormalIndices;
+
+        // First layer uv array.
+        std::vector<int32_t> m_UVIndices;
+
+        // Second layer uv array.
+        std::vector<int32_t> m_UV2Indices;
+
+        // Constructor.
+        MeshTriangle() {}
+    };
+
+    // The group object in a mesh.
+    class MeshGroup
+    {
+        // Name of this group.
+        StringA m_Name;
+
+        // All triangles.
+        std::vector<MeshTriangle> m_Triangles;
+
+        // Used material. (Not Implemented Yet!)
+        void* m_Material;
+
+        MeshGroup() : m_Material(nullptr) {}
+    };
+
     // Base mesh loader class.
     class IMeshLoader
     {

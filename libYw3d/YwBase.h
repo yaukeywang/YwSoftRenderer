@@ -1,4 +1,4 @@
-// Add by Yaukey at 2010-11-01.
+// Add by Yaukey at 2018-11-01.
 // YW Soft Renderer some utility things.
 
 #ifndef __YW_BASE_H__
@@ -62,10 +62,14 @@
 // String.
 namespace yw
 {
+    // String define.
+    typedef std::string StringA;
+    typedef std::wstring StringW;
+
 	#ifndef _UNICODE
-        typedef std::string String;
+        typedef StringA String;
 	#else
-        typedef std::wstring String;
+        typedef StringW String;
 	#endif // !_UNICODE
 }
 
