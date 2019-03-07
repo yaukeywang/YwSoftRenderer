@@ -50,10 +50,10 @@ namespace yw
     
     void MeshLoaderObj::FirstPass(class Mesh* mesh, FILE* objFile)
     {
-        uint32_t numvertices = 0;           /* number of vertices in model */
-        uint32_t numnormals = 0;            /* number of normals in model */
-        uint32_t numtexcoords = 0;          /* number of texcoords in model */
-        uint32_t numtriangles = 0;          /* number of triangles in model */
+        uint32_t numVertices = 0;           /* number of vertices in model */
+        uint32_t numNormals = 0;            /* number of normals in model */
+        uint32_t numTexcoords = 0;          /* number of texcoords in model */
+        uint32_t numTriangles = 0;          /* number of triangles in model */
         
         MeshGroup* defaultMeshGroup = new MeshGroup("default");
         mesh->m_MeshGroups.push_back(defaultMeshGroup);
