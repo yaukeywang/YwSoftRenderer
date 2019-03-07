@@ -48,6 +48,7 @@ project "libYw3d"
 
     includedirs
     {
+        "libYw3d",
         "libYw3d/Core",
         "libYw3d/Math"
     }
@@ -136,6 +137,7 @@ project "libYwAppFramework"
         "libYw3d",
         "libYw3d/Core",
         "libYw3d/Math",
+        "libYwAppFramework",
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/ThirdParty"
