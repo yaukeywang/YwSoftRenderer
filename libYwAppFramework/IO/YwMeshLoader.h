@@ -20,7 +20,7 @@ namespace yw
         virtual ~IMeshLoader() {}
 
     public:
-        // Load mesh data from a file, classes devired from this need to implement their own.
+        // Load mesh data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the mesh file.
         // @return Mesh pointer of the loaded mesh, null if failed.
         virtual class Mesh* Load(const StringA& fileName) = 0;

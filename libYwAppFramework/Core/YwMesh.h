@@ -10,7 +10,7 @@
 namespace yw
 {
     // Mesh triangle.
-    class MeshTriangle
+    struct MeshTriangle
     {
         // Vertex index array.
         std::vector<int32_t> m_VertexIndices;
@@ -29,19 +29,31 @@ namespace yw
     };
     
     // The group object in a mesh.
-    class MeshGroup
+    struct MeshGroup
     {
         // Name of this group.
         StringA m_Name;
         
         // All triangles.
-        std::vector<MeshTriangle> m_Triangles;
+        std::vector<MeshTriangle*> m_Triangles;
         
         // Used material. (Not Implemented Yet!)
         void* m_Material;
         
         // Constructor.
-        MeshGroup() : m_Material(nullptr) {}
+        MeshGroup(StringA groupName) : m_Name(groupName), m_Material(nullptr) {}
+
+        // Destructor.
+        ~MeshGroup()
+        {
+            for (int i = 0; i < m_Triangles.size(); i++)
+            {
+                MeshTriangle* meshTriangle = m_Triangles[i];
+                YW_SAFE_DELETE(meshTriangle);
+            }
+
+            m_Triangles.clear();
+        }
     };
     
     // The mesh info.
@@ -54,7 +66,10 @@ namespace yw
         // Destructor.
         ~Mesh();
 
-    private:
+    public:
+        MeshGroup* AddGroup(StringA& groupName, MeshGroup* meshGroup);
+
+    public:
         // The mesh name.
         StringA m_MeshName;
         
@@ -74,7 +89,7 @@ namespace yw
         std::vector<Vector2> m_SecondaryTexcoords;
         
         // All mesh groups.
-        std::vector<MeshGroup> m_MeshGroups;
+        std::vector<MeshGroup*> m_MeshGroups;
         
         // The position of the mesh.
         Vector3 m_Position;
