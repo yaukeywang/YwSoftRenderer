@@ -6,7 +6,8 @@
 
 namespace yw
 {
-    Mesh::Mesh()
+    Mesh::Mesh() :
+        m_Triangles(0)
     {
     }
 

@@ -86,7 +86,10 @@ namespace yw
         std::vector<Vector2> m_Texcoords;
         
         // All 2nd uv coordinates.
-        std::vector<Vector2> m_SecondaryTexcoords;
+        std::vector<Vector2> m_Texcoord2s;
+
+        // Total triangles of all triangles in each group.
+        int32_t m_Triangles;
         
         // All mesh groups.
         std::vector<MeshGroup*> m_MeshGroups;

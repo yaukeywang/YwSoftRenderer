@@ -82,37 +82,57 @@ namespace yw
 // Log things.
 #if !defined(_WIN32) && !defined(WIN32)
     #define OutputDebugString printf
+#else
+    #if !defined(OutputDebugString)
+        #define OutputDebugString
+    #endif
 #endif
 
 #ifndef LOG
+    #define LOG_A(x, ...)
+    #define LOG_W(x, ...)
     #define LOG(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGF
+    #define LOGF_A(x, ...)
+    #define LOGF_W(x, ...)
     #define LOGF(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGI
+    #define LOGI_A(x, ...)
+    #define LOGI_W(x, ...)
     #define LOGI(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGIF
+    #define LOGIF_A(x, ...)
+    #define LOGIF_W(x, ...)
     #define LOGIF(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGW
+    #define LOGW_A(x, ...)
+    #define LOGW_W(x, ...)
     #define LOGW(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGWF
-    #define LOGWF(x) OutputDebugString(x)
+    #define LOGWF_A(x, ...)
+    #define LOGWF_W(x, ...)
+    #define LOGWF(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGE
-    #define LOGE(x) OutputDebugString(x)
+    #define LOGE_A(x, ...)
+    #define LOGE_W(x, ...)
+    #define LOGE(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGEF
+    #define LOGEF_A(x, ...)
+    #define LOGEF_W(x, ...)
     #define LOGEF(x) OutputDebugString(x)
 #endif
 

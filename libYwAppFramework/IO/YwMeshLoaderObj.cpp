@@ -18,7 +18,7 @@ namespace yw
     
     MeshLoaderObj::~MeshLoaderObj()
     {
-        
+        // Release each group.
     }
     
     Mesh* MeshLoaderObj::Load(const StringA& fileName)
@@ -55,141 +55,138 @@ namespace yw
         uint32_t numTexcoords = 0;          /* number of texcoords in model */
         uint32_t numTriangles = 0;          /* number of triangles in model */
         
+        /* make a default group */
         MeshGroup* defaultMeshGroup = new MeshGroup("default");
         mesh->m_MeshGroups.push_back(defaultMeshGroup);
         
-#if 0
-
-        GLMgroup* group;                /* current group */
+        /* current group */
+        MeshGroup* group = defaultMeshGroup;
         int v, n, t;
         char buf[128];
 
-        /* make a default group */
-        group = glmAddGroup(model, "default");
-
-        numvertices = numnormals = numtexcoords = numtriangles = 0;
-        while (fscanf(file, "%s", buf) != EOF) {
+        numVertices = numNormals = numTexcoords = numTriangles = 0;
+        while (fscanf(objFile, "%s", buf) != EOF)
+        {
             switch (buf[0]) {
             case '#':               /* comment */
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 break;
             case 'v':               /* v, vn, vt */
                 switch (buf[1]) {
                 case '\0':          /* vertex */
                     /* eat up rest of line */
-                    fgets(buf, sizeof(buf), file);
-                    numvertices++;
+                    fgets(buf, sizeof(buf), objFile);
+                    numVertices++;
                     break;
                 case 'n':           /* normal */
                     /* eat up rest of line */
-                    fgets(buf, sizeof(buf), file);
-                    numnormals++;
+                    fgets(buf, sizeof(buf), objFile);
+                    numNormals++;
                     break;
                 case 't':           /* texcoord */
                     /* eat up rest of line */
-                    fgets(buf, sizeof(buf), file);
-                    numtexcoords++;
+                    fgets(buf, sizeof(buf), objFile);
+                    numTexcoords++;
                     break;
                 default:
-                    printf("glmFirstPass(): Unknown token \"%s\".\n", buf);
+                    LOGE_A("FirstPass(): Unknown token \"%s\".\n", buf);
                     exit(1);
                     break;
                 }
                 break;
             case 'm':
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 sscanf(buf, "%s %s", buf, buf);
-                model->mtllibname = strdup(buf);
-                glmReadMTL(model, buf);
+                mesh->m_MaterialName = strdup(buf);
+                ReadMTL(mesh, buf);
                 break;
             case 'u':
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 break;
             case 'g':               /* group */
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
-#if SINGLE_STRING_GROUP_NAMES
+                fgets(buf, sizeof(buf), objFile);
+#if MESH_OBJ_LOAD_SINGLE_STRING_GROUP_NAMES
                 sscanf(buf, "%s", buf);
 #else
                 buf[strlen(buf) - 1] = '\0';  /* nuke '\n' */
 #endif
-                group = glmAddGroup(model, buf);
+                group = new MeshGroup(buf);
+                mesh->m_MeshGroups.push_back(group);
                 break;
             case 'f':               /* face */
                 v = n = t = 0;
-                fscanf(file, "%s", buf);
+                fscanf(objFile, "%s", buf);
                 /* can be one of %d, %d//%d, %d/%d, %d/%d/%d %d//%d */
-                if (strstr(buf, "//")) {
+                if (strstr(buf, "//")) 
+                {
                     /* v//n */
                     sscanf(buf, "%d//%d", &v, &n);
-                    fscanf(file, "%d//%d", &v, &n);
-                    fscanf(file, "%d//%d", &v, &n);
-                    numtriangles++;
-                    group->numtriangles++;
-                    while (fscanf(file, "%d//%d", &v, &n) > 0) {
-                        numtriangles++;
-                        group->numtriangles++;
+                    fscanf(objFile, "%d//%d", &v, &n);
+                    fscanf(objFile, "%d//%d", &v, &n);
+                    numTriangles++;
+                    group->m_Triangles.push_back(nullptr);
+                    while (fscanf(objFile, "%d//%d", &v, &n) > 0) 
+                    {
+                        numTriangles++;
+                        group->m_Triangles.push_back(nullptr);
                     }
                 }
-                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) {
+                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) 
+                {
                     /* v/t/n */
-                    fscanf(file, "%d/%d/%d", &v, &t, &n);
-                    fscanf(file, "%d/%d/%d", &v, &t, &n);
-                    numtriangles++;
-                    group->numtriangles++;
-                    while (fscanf(file, "%d/%d/%d", &v, &t, &n) > 0) {
-                        numtriangles++;
-                        group->numtriangles++;
+                    fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    numTriangles++;
+                    group->m_Triangles.push_back(nullptr);
+                    while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0) 
+                    {
+                        numTriangles++;
+                        group->m_Triangles.push_back(nullptr);
                     }
                 }
-                else if (sscanf(buf, "%d/%d", &v, &t) == 2) {
+                else if (sscanf(buf, "%d/%d", &v, &t) == 2) 
+                {
                     /* v/t */
-                    fscanf(file, "%d/%d", &v, &t);
-                    fscanf(file, "%d/%d", &v, &t);
-                    numtriangles++;
-                    group->numtriangles++;
-                    while (fscanf(file, "%d/%d", &v, &t) > 0) {
-                        numtriangles++;
-                        group->numtriangles++;
+                    fscanf(objFile, "%d/%d", &v, &t);
+                    fscanf(objFile, "%d/%d", &v, &t);
+                    numTriangles++;
+                    group->m_Triangles.push_back(nullptr);
+                    while (fscanf(objFile, "%d/%d", &v, &t) > 0) 
+                    {
+                        numTriangles++;
+                        group->m_Triangles.push_back(nullptr);
                     }
                 }
-                else {
+                else 
+                {
                     /* v */
-                    fscanf(file, "%d", &v);
-                    fscanf(file, "%d", &v);
-                    numtriangles++;
-                    group->numtriangles++;
-                    while (fscanf(file, "%d", &v) > 0) {
-                        numtriangles++;
-                        group->numtriangles++;
+                    fscanf(objFile, "%d", &v);
+                    fscanf(objFile, "%d", &v);
+                    numTriangles++;
+                    group->m_Triangles.push_back(nullptr);
+                    while (fscanf(objFile, "%d", &v) > 0)
+                    {
+                        numTriangles++;
+                        group->m_Triangles.push_back(nullptr);
                     }
                 }
                 break;
 
             default:
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 break;
             }
         }
 
         /* set the stats in the model structure */
-        model->numvertices = numvertices;
-        model->numnormals = numnormals;
-        model->numtexcoords = numtexcoords;
-        model->numtriangles = numtriangles;
-
-        /* allocate memory for the triangles in each group */
-        group = model->groups;
-        while (group) {
-            group->triangles = (GLuint*)malloc(sizeof(GLuint) * group->numtriangles);
-            group->numtriangles = 0;
-            group = group->next;
-        }
-
-#endif
+        mesh->m_Vertices.resize(numVertices);
+        mesh->m_Normals.resize(numNormals);
+        mesh->m_Texcoords.resize(numTexcoords);
+        mesh->m_Triangles = numTriangles;
     }
     
     void MeshLoaderObj::SecondPass(class Mesh* mesh, FILE* objFile)

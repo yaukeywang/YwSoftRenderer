@@ -36,6 +36,9 @@ namespace yw
         
         // Second pass of process.
         void SecondPass(class Mesh* mesh, FILE* objFile);
+
+        // Read material.
+        void ReadMTL(class Mesh* mesh, StringA name);
     };
 }
 
