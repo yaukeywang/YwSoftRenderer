@@ -192,65 +192,60 @@ namespace yw
     void MeshLoaderObj::SecondPass(class Mesh* mesh, FILE* objFile)
     {
 #if 0
+        uint32_t numVertices = 0;        /* number of vertices in model */
+        uint32_t numNormals = 0;         /* number of normals in model */
+        uint32_t numTexcoords = 0;       /* number of texcoords in model */
+        uint32_t numTriangles = 0;       /* number of triangles in model */
 
-
-        GLuint numvertices;        /* number of vertices in model */
-        GLuint numnormals;         /* number of normals in model */
-        GLuint numtexcoords;       /* number of texcoords in model */
-        GLuint numtriangles;       /* number of triangles in model */
-        GLfloat* vertices;         /* array of vertices  */
-        GLfloat* normals;          /* array of normals */
-        GLfloat* texcoords;        /* array of texture coordinates */
-        GLMgroup* group;           /* current group pointer */
-        GLuint material;           /* current material */
+        // Used for parsing data.
         int v, n, t;
         char buf[128];
 
         /* set the pointer shortcuts */
-        vertices = model->vertices;
-        normals = model->normals;
-        texcoords = model->texcoords;
-        group = model->groups;
+        Vector3* vertices = &(mesh->m_Vertices[0]);         /* array of vertices  */
+        Vector3* normals = &(mesh->m_Normals[0]);           /* array of normals */
+        Vector2* texcoords = &(mesh->m_Texcoords[0]);       /* array of texture coordinates */
+        MeshGroup*group = mesh->m_MeshGroups.front();       /* current material */
 
         /* on the second pass through the file, read all the data into the
         allocated arrays */
-        numvertices = numnormals = numtexcoords = 1;
-        numtriangles = 0;
-        material = 0;
-        while (fscanf(file, "%s", buf) != EOF) {
+        numVertices = numNormals = numTexcoords = 1;
+        numTriangles = 0;
+        while (fscanf(objFile, "%s", buf) != EOF) {
             switch (buf[0]) {
             case '#':               /* comment */
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 break;
             case 'v':               /* v, vn, vt */
                 switch (buf[1]) {
                 case '\0':          /* vertex */
-                    fscanf(file, "%f %f %f",
-                        &vertices[3 * numvertices + 0],
-                        &vertices[3 * numvertices + 1],
-                        &vertices[3 * numvertices + 2]);
-                    numvertices++;
+                    fscanf(objFile, "%f %f %f",
+                        &(vertices[numVertices].x),
+                        &(vertices[numVertices].y),
+                        &(vertices[numVertices].z));
+                    numVertices++;
                     break;
                 case 'n':           /* normal */
-                    fscanf(file, "%f %f %f",
-                        &normals[3 * numnormals + 0],
-                        &normals[3 * numnormals + 1],
-                        &normals[3 * numnormals + 2]);
-                    numnormals++;
+                    fscanf(objFile, "%f %f %f",
+                        &(normals[numNormals].x),
+                        &(normals[numNormals].y),
+                        &(normals[numNormals].z));
+                    numNormals++;
                     break;
                 case 't':           /* texcoord */
-                    fscanf(file, "%f %f",
-                        &texcoords[2 * numtexcoords + 0],
-                        &texcoords[2 * numtexcoords + 1]);
-                    numtexcoords++;
+                    fscanf(objFile, "%f %f",
+                        &(texcoords[numTexcoords].x),
+                        &(texcoords[numTexcoords].y));
+                    numTexcoords++;
                     break;
                 }
                 break;
             case 'u':
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 sscanf(buf, "%s %s", buf, buf);
-                group->material = material = glmFindMaterial(model, buf);
+                group->m_Material = nullptr; // Need to implement material.
+                //group->material = material = glmFindMaterial(model, buf);
                 break;
             case 'g':               /* group */
                 /* eat up rest of line */
@@ -270,95 +265,95 @@ namespace yw
                 if (strstr(buf, "//")) {
                     /* v//n */
                     sscanf(buf, "%d//%d", &v, &n);
-                    T(numtriangles).vindices[0] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).nindices[0] = n < 0 ? n + numnormals : n;
+                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).nindices[0] = n < 0 ? n + numNormals : n;
                     fscanf(file, "%d//%d", &v, &n);
-                    T(numtriangles).vindices[1] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).nindices[1] = n < 0 ? n + numnormals : n;
+                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).nindices[1] = n < 0 ? n + numNormals : n;
                     fscanf(file, "%d//%d", &v, &n);
-                    T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).nindices[2] = n < 0 ? n + numnormals : n;
-                    group->triangles[group->numtriangles++] = numtriangles;
-                    numtriangles++;
+                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
+                    group->triangles[group->numtriangles++] = numTriangles;
+                    numTriangles++;
                     while (fscanf(file, "%d//%d", &v, &n) > 0) {
-                        T(numtriangles).vindices[0] = T(numtriangles - 1).vindices[0];
-                        T(numtriangles).nindices[0] = T(numtriangles - 1).nindices[0];
-                        T(numtriangles).vindices[1] = T(numtriangles - 1).vindices[2];
-                        T(numtriangles).nindices[1] = T(numtriangles - 1).nindices[2];
-                        T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                        T(numtriangles).nindices[2] = n < 0 ? n + numnormals : n;
-                        group->triangles[group->numtriangles++] = numtriangles;
-                        numtriangles++;
+                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
+                        T(numTriangles).nindices[0] = T(numTriangles - 1).nindices[0];
+                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
+                        T(numTriangles).nindices[1] = T(numTriangles - 1).nindices[2];
+                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                        T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
+                        group->triangles[group->numtriangles++] = numTriangles;
+                        numTriangles++;
                     }
                 }
                 else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) {
                     /* v/t/n */
-                    T(numtriangles).vindices[0] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).tindices[0] = t < 0 ? t + numtexcoords : t;
-                    T(numtriangles).nindices[0] = n < 0 ? n + numnormals : n;
+                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).tindices[0] = t < 0 ? t + numTexcoords : t;
+                    T(numTriangles).nindices[0] = n < 0 ? n + numNormals : n;
                     fscanf(file, "%d/%d/%d", &v, &t, &n);
-                    T(numtriangles).vindices[1] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).tindices[1] = t < 0 ? t + numtexcoords : t;
-                    T(numtriangles).nindices[1] = n < 0 ? n + numnormals : n;
+                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).tindices[1] = t < 0 ? t + numTexcoords : t;
+                    T(numTriangles).nindices[1] = n < 0 ? n + numNormals : n;
                     fscanf(file, "%d/%d/%d", &v, &t, &n);
-                    T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).tindices[2] = t < 0 ? t + numtexcoords : t;
-                    T(numtriangles).nindices[2] = n < 0 ? n + numnormals : n;
-                    group->triangles[group->numtriangles++] = numtriangles;
-                    numtriangles++;
+                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
+                    T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
+                    group->triangles[group->numtriangles++] = numTriangles;
+                    numTriangles++;
                     while (fscanf(file, "%d/%d/%d", &v, &t, &n) > 0) {
-                        T(numtriangles).vindices[0] = T(numtriangles - 1).vindices[0];
-                        T(numtriangles).tindices[0] = T(numtriangles - 1).tindices[0];
-                        T(numtriangles).nindices[0] = T(numtriangles - 1).nindices[0];
-                        T(numtriangles).vindices[1] = T(numtriangles - 1).vindices[2];
-                        T(numtriangles).tindices[1] = T(numtriangles - 1).tindices[2];
-                        T(numtriangles).nindices[1] = T(numtriangles - 1).nindices[2];
-                        T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                        T(numtriangles).tindices[2] = t < 0 ? t + numtexcoords : t;
-                        T(numtriangles).nindices[2] = n < 0 ? n + numnormals : n;
-                        group->triangles[group->numtriangles++] = numtriangles;
-                        numtriangles++;
+                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
+                        T(numTriangles).tindices[0] = T(numTriangles - 1).tindices[0];
+                        T(numTriangles).nindices[0] = T(numTriangles - 1).nindices[0];
+                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
+                        T(numTriangles).tindices[1] = T(numTriangles - 1).tindices[2];
+                        T(numTriangles).nindices[1] = T(numTriangles - 1).nindices[2];
+                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                        T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
+                        T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
+                        group->triangles[group->numtriangles++] = numTriangles;
+                        numTriangles++;
                     }
                 }
                 else if (sscanf(buf, "%d/%d", &v, &t) == 2) {
                     /* v/t */
-                    T(numtriangles).vindices[0] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).tindices[0] = t < 0 ? t + numtexcoords : t;
+                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).tindices[0] = t < 0 ? t + numTexcoords : t;
                     fscanf(file, "%d/%d", &v, &t);
-                    T(numtriangles).vindices[1] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).tindices[1] = t < 0 ? t + numtexcoords : t;
+                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).tindices[1] = t < 0 ? t + numTexcoords : t;
                     fscanf(file, "%d/%d", &v, &t);
-                    T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                    T(numtriangles).tindices[2] = t < 0 ? t + numtexcoords : t;
-                    group->triangles[group->numtriangles++] = numtriangles;
-                    numtriangles++;
+                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                    T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
+                    group->triangles[group->numtriangles++] = numTriangles;
+                    numTriangles++;
                     while (fscanf(file, "%d/%d", &v, &t) > 0) {
-                        T(numtriangles).vindices[0] = T(numtriangles - 1).vindices[0];
-                        T(numtriangles).tindices[0] = T(numtriangles - 1).tindices[0];
-                        T(numtriangles).vindices[1] = T(numtriangles - 1).vindices[2];
-                        T(numtriangles).tindices[1] = T(numtriangles - 1).tindices[2];
-                        T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                        T(numtriangles).tindices[2] = t < 0 ? t + numtexcoords : t;
-                        group->triangles[group->numtriangles++] = numtriangles;
-                        numtriangles++;
+                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
+                        T(numTriangles).tindices[0] = T(numTriangles - 1).tindices[0];
+                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
+                        T(numTriangles).tindices[1] = T(numTriangles - 1).tindices[2];
+                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                        T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
+                        group->triangles[group->numtriangles++] = numTriangles;
+                        numTriangles++;
                     }
                 }
                 else {
                     /* v */
                     sscanf(buf, "%d", &v);
-                    T(numtriangles).vindices[0] = v < 0 ? v + numvertices : v;
+                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
                     fscanf(file, "%d", &v);
-                    T(numtriangles).vindices[1] = v < 0 ? v + numvertices : v;
+                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
                     fscanf(file, "%d", &v);
-                    T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                    group->triangles[group->numtriangles++] = numtriangles;
-                    numtriangles++;
+                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                    group->triangles[group->numtriangles++] = numTriangles;
+                    numTriangles++;
                     while (fscanf(file, "%d", &v) > 0) {
-                        T(numtriangles).vindices[0] = T(numtriangles - 1).vindices[0];
-                        T(numtriangles).vindices[1] = T(numtriangles - 1).vindices[2];
-                        T(numtriangles).vindices[2] = v < 0 ? v + numvertices : v;
-                        group->triangles[group->numtriangles++] = numtriangles;
-                        numtriangles++;
+                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
+                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
+                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
+                        group->triangles[group->numtriangles++] = numTriangles;
+                        numTriangles++;
                     }
                 }
                 break;
