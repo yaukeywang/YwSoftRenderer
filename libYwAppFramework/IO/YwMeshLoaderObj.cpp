@@ -205,7 +205,8 @@ namespace yw
         Vector3* vertices = &(mesh->m_Vertices[0]);         /* array of vertices  */
         Vector3* normals = &(mesh->m_Normals[0]);           /* array of normals */
         Vector2* texcoords = &(mesh->m_Texcoords[0]);       /* array of texture coordinates */
-        MeshGroup*group = mesh->m_MeshGroups.front();       /* current material */
+        MeshGroup*group = mesh->m_MeshGroups.front();       /* current group pointer */
+        void* material = nullptr;                           /* current material (Need to implement) */
 
         /* on the second pass through the file, read all the data into the
         allocated arrays */
@@ -249,18 +250,20 @@ namespace yw
                 break;
             case 'g':               /* group */
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
 #if SINGLE_STRING_GROUP_NAMES
                 sscanf(buf, "%s", buf);
 #else
                 buf[strlen(buf) - 1] = '\0';  /* nuke '\n' */
 #endif
-                group = glmFindGroup(model, buf);
-                group->material = material;
+                group = mesh->FindGroup(buf);
+                group->m_Material = nullptr; // Need to implement material.
+                //group = glmFindGroup(model, buf);
+                //group->material = material;
                 break;
             case 'f':               /* face */
                 v = n = t = 0;
-                fscanf(file, "%s", buf);
+                fscanf(objFile, "%s", buf);
                 /* can be one of %d, %d//%d, %d/%d, %d/%d/%d %d//%d */
                 if (strstr(buf, "//")) {
                     /* v//n */

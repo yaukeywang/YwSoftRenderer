@@ -21,4 +21,32 @@ namespace yw
 
         m_MeshGroups.clear();
     }
+
+    MeshGroup* Mesh::AddGroup(const StringA& groupName, MeshGroup* meshGroup)
+    {
+        MeshGroup* group = FindGroup(groupName);
+        if (nullptr == group)
+        {
+            m_MeshGroups.push_back(meshGroup);
+            return meshGroup;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    MeshGroup* Mesh::FindGroup(const StringA& groupName)
+    {
+        for (int i = 0; i < (int)m_MeshGroups.size(); i++)
+        {
+            MeshGroup* group = m_MeshGroups[i];
+            if (groupName == group->m_Name)
+            {
+                return group;
+            }
+        }
+
+        return nullptr;
+    }
 }

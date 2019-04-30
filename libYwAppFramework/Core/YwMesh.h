@@ -67,7 +67,8 @@ namespace yw
         ~Mesh();
 
     public:
-        MeshGroup* AddGroup(StringA& groupName, MeshGroup* meshGroup);
+        MeshGroup* AddGroup(const StringA& groupName, MeshGroup* meshGroup);
+        MeshGroup* FindGroup(const StringA& groupName);
 
     public:
         // The mesh name.
