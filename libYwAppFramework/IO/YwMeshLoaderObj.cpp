@@ -188,10 +188,14 @@ namespace yw
         mesh->m_Vertices.resize(numVertices);
         mesh->m_Normals.resize(numNormals);
         mesh->m_Texcoords.resize(numTexcoords);
+        mesh->m_Texcoord2s.resize(numTexcoords);
+        //mesh->m_Triangles.resize(numTriangles);
+        assert((uint32_t)mesh->m_Triangles.size() != numTriangles);
     }
     
     void MeshLoaderObj::SecondPass(class Mesh* mesh, FILE* objFile)
     {
+        // Helper to read triangle in mesh.
         #define TRIANGLE(x) (mesh->m_Triangles[(x)])
 
         uint32_t numVertices = 0;        /* number of vertices in model */
@@ -371,12 +375,12 @@ namespace yw
         }
 
 #if 0
-        /* announce the memory requirements */
-        printf(" Memory: %d bytes\n",
-            numvertices * 3 * sizeof(GLfloat) +
-            numnormals * 3 * sizeof(GLfloat) * (numnormals ? 1 : 0) +
-            numtexcoords * 3 * sizeof(GLfloat) * (numtexcoords ? 1 : 0) +
-            numtriangles * sizeof(GLMtriangle));
+        /* Announce the memory requirements. (Minimum required) */
+        printf("Obj Mesh Memory: %d bytes\n",
+            numVertices * 3 * sizeof(Vector3) +
+            numNormals * 3 * sizeof(Vector3) * (numNormals ? 1 : 0) +
+            numTexcoords * 3 * sizeof(Vector2) * (numTexcoords ? 1 : 0) +
+            numTriangles * sizeof(MeshTriangle));
 #endif
     }
 }

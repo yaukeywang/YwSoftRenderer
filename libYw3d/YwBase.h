@@ -91,13 +91,13 @@ namespace yw
 #ifndef LOG
     #define LOG_A(x, ...)
     #define LOG_W(x, ...)
-    #define LOG(x) OutputDebugString(x)
+    #define LOG(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGF
     #define LOGF_A(x, ...)
     #define LOGF_W(x, ...)
-    #define LOGF(x) OutputDebugString(x)
+    #define LOGF(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGI
@@ -109,13 +109,13 @@ namespace yw
 #ifndef LOGIF
     #define LOGIF_A(x, ...)
     #define LOGIF_W(x, ...)
-    #define LOGIF(x) OutputDebugString(x)
+    #define LOGIF(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGW
     #define LOGW_A(x, ...)
     #define LOGW_W(x, ...)
-    #define LOGW(x) OutputDebugString(x)
+    #define LOGW(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGWF
