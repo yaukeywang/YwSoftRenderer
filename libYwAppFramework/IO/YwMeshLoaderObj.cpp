@@ -383,4 +383,9 @@ namespace yw
             numTriangles * sizeof(MeshTriangle));
 #endif
     }
+
+    void MeshLoaderObj::ReadMTL(class Mesh* mesh, StringA name)
+    {
+
+    }
 }

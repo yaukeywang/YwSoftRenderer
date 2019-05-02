@@ -38,6 +38,7 @@ namespace yw
         void SecondPass(class Mesh* mesh, FILE* objFile);
 
         // Read material.
+        // $Implement.
         void ReadMTL(class Mesh* mesh, StringA name);
     };
 }
