@@ -13,19 +13,35 @@ namespace yw
     struct MeshTriangle
     {
         // Vertex index array.
-        std::vector<int32_t> m_VertexIndices;
+        int32_t m_VertexIndices[3];
         
         // Normal index array.
-        std::vector<int32_t> m_NormalIndices;
+        int32_t m_NormalIndices[3];
         
         // First layer uv array.
-        std::vector<int32_t> m_UVIndices;
+        int32_t m_TexcoordsIndices[3];
         
         // Second layer uv array.
-        std::vector<int32_t> m_UV2Indices;
+        int32_t m_Texcoords2Indices[3];
+
+        // index of triangle facet normal.
         
         // Constructor.
-        MeshTriangle() {}
+        MeshTriangle()
+        {
+            for (int32_t i = 0; i < 3; i++)
+            {
+                m_VertexIndices[i] = -1;
+                m_NormalIndices[i] = -1;
+                m_TexcoordsIndices[i] = -1;
+                m_Texcoords2Indices[i] = -1;
+            }
+        }
+
+        // Destructor.
+        ~MeshTriangle()
+        {
+        }
     };
     
     // The group object in a mesh.
@@ -34,8 +50,8 @@ namespace yw
         // Name of this group.
         StringA m_Name;
         
-        // All triangles.
-        std::vector<MeshTriangle*> m_Triangles;
+        // All triangle indices.
+        std::vector<uint32_t> m_Triangles;
         
         // Used material. (Not Implemented Yet!)
         void* m_Material;
@@ -46,13 +62,9 @@ namespace yw
         // Destructor.
         ~MeshGroup()
         {
-            for (int i = 0; i < m_Triangles.size(); i++)
-            {
-                MeshTriangle* meshTriangle = m_Triangles[i];
-                YW_SAFE_DELETE(meshTriangle);
-            }
-
+            m_Name.clear();
             m_Triangles.clear();
+            YW_SAFE_DELETE(m_Material);
         }
     };
     
@@ -89,8 +101,8 @@ namespace yw
         // All 2nd uv coordinates.
         std::vector<Vector2> m_Texcoord2s;
 
-        // Total triangles of all triangles in each group.
-        int32_t m_Triangles;
+        // All triangles.
+        std::vector<MeshTriangle*> m_Triangles;
         
         // All mesh groups.
         std::vector<MeshGroup*> m_MeshGroups;

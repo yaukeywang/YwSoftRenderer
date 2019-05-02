@@ -13,6 +13,7 @@ namespace yw
 
     Mesh::~Mesh()
     {
+        // Clear all group.
         for (size_t i = 0; i < m_MeshGroups.size(); i++)
         {
             MeshGroup* meshGroup = m_MeshGroups[i];
@@ -20,6 +21,15 @@ namespace yw
         }
 
         m_MeshGroups.clear();
+
+        // Clear all triangles.
+        for (size_t i = 0; i < m_Triangles.size(); i++)
+        {
+            MeshTriangle* meshTriangle = m_Triangles[i];
+            YW_SAFE_DELETE(meshTriangle);
+        }
+
+        m_Triangles.clear();
     }
 
     MeshGroup* Mesh::AddGroup(const StringA& groupName, MeshGroup* meshGroup)
@@ -38,7 +48,7 @@ namespace yw
 
     MeshGroup* Mesh::FindGroup(const StringA& groupName)
     {
-        for (int i = 0; i < (int)m_MeshGroups.size(); i++)
+        for (int32_t i = 0; i < (int32_t)m_MeshGroups.size(); i++)
         {
             MeshGroup* group = m_MeshGroups[i];
             if (groupName == group->m_Name)

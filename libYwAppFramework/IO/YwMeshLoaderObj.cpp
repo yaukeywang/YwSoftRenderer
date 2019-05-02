@@ -9,6 +9,9 @@
 #include "YwMesh.h"
 #include "YwMeshLoaderObj.h"
 
+// warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
+#pragma warning(disable:4996)
+
 namespace yw
 {
     MeshLoaderObj::MeshLoaderObj() : IMeshLoader()
@@ -127,37 +130,37 @@ namespace yw
                     fscanf(objFile, "%d//%d", &v, &n);
                     fscanf(objFile, "%d//%d", &v, &n);
                     numTriangles++;
-                    group->m_Triangles.push_back(nullptr);
-                    while (fscanf(objFile, "%d//%d", &v, &n) > 0) 
+                    mesh->m_Triangles.push_back(new MeshTriangle());
+                    while (fscanf(objFile, "%d//%d", &v, &n) > 0)
                     {
                         numTriangles++;
-                        group->m_Triangles.push_back(nullptr);
+                        mesh->m_Triangles.push_back(new MeshTriangle());
                     }
                 }
-                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) 
+                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3)
                 {
                     /* v/t/n */
                     fscanf(objFile, "%d/%d/%d", &v, &t, &n);
                     fscanf(objFile, "%d/%d/%d", &v, &t, &n);
                     numTriangles++;
-                    group->m_Triangles.push_back(nullptr);
-                    while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0) 
+                    mesh->m_Triangles.push_back(new MeshTriangle());
+                    while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0)
                     {
                         numTriangles++;
-                        group->m_Triangles.push_back(nullptr);
+                        mesh->m_Triangles.push_back(new MeshTriangle());
                     }
                 }
-                else if (sscanf(buf, "%d/%d", &v, &t) == 2) 
+                else if (sscanf(buf, "%d/%d", &v, &t) == 2)
                 {
                     /* v/t */
                     fscanf(objFile, "%d/%d", &v, &t);
                     fscanf(objFile, "%d/%d", &v, &t);
                     numTriangles++;
-                    group->m_Triangles.push_back(nullptr);
-                    while (fscanf(objFile, "%d/%d", &v, &t) > 0) 
+                    mesh->m_Triangles.push_back(new MeshTriangle());
+                    while (fscanf(objFile, "%d/%d", &v, &t) > 0)
                     {
                         numTriangles++;
-                        group->m_Triangles.push_back(nullptr);
+                        mesh->m_Triangles.push_back(new MeshTriangle());
                     }
                 }
                 else 
@@ -166,15 +169,14 @@ namespace yw
                     fscanf(objFile, "%d", &v);
                     fscanf(objFile, "%d", &v);
                     numTriangles++;
-                    group->m_Triangles.push_back(nullptr);
+                    mesh->m_Triangles.push_back(new MeshTriangle());
                     while (fscanf(objFile, "%d", &v) > 0)
                     {
                         numTriangles++;
-                        group->m_Triangles.push_back(nullptr);
+                        mesh->m_Triangles.push_back(new MeshTriangle());
                     }
                 }
                 break;
-
             default:
                 /* eat up rest of line */
                 fgets(buf, sizeof(buf), objFile);
@@ -186,12 +188,12 @@ namespace yw
         mesh->m_Vertices.resize(numVertices);
         mesh->m_Normals.resize(numNormals);
         mesh->m_Texcoords.resize(numTexcoords);
-        mesh->m_Triangles = numTriangles;
     }
     
     void MeshLoaderObj::SecondPass(class Mesh* mesh, FILE* objFile)
     {
-#if 0
+        #define TRIANGLE(x) (mesh->m_Triangles[(x)])
+
         uint32_t numVertices = 0;        /* number of vertices in model */
         uint32_t numNormals = 0;         /* number of normals in model */
         uint32_t numTexcoords = 0;       /* number of texcoords in model */
@@ -268,94 +270,94 @@ namespace yw
                 if (strstr(buf, "//")) {
                     /* v//n */
                     sscanf(buf, "%d//%d", &v, &n);
-                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).nindices[0] = n < 0 ? n + numNormals : n;
-                    fscanf(file, "%d//%d", &v, &n);
-                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).nindices[1] = n < 0 ? n + numNormals : n;
-                    fscanf(file, "%d//%d", &v, &n);
-                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
-                    group->triangles[group->numtriangles++] = numTriangles;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n < 0 ? n + numNormals : n;
+                    fscanf(objFile, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n < 0 ? n + numNormals : n;
+                    fscanf(objFile, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                    group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
-                    while (fscanf(file, "%d//%d", &v, &n) > 0) {
-                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
-                        T(numTriangles).nindices[0] = T(numTriangles - 1).nindices[0];
-                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
-                        T(numTriangles).nindices[1] = T(numTriangles - 1).nindices[2];
-                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                        T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
-                        group->triangles[group->numtriangles++] = numTriangles;
+                    while (fscanf(objFile, "%d//%d", &v, &n) > 0) {
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                        group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
                     }
                 }
                 else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) {
                     /* v/t/n */
-                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).tindices[0] = t < 0 ? t + numTexcoords : t;
-                    T(numTriangles).nindices[0] = n < 0 ? n + numNormals : n;
-                    fscanf(file, "%d/%d/%d", &v, &t, &n);
-                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).tindices[1] = t < 0 ? t + numTexcoords : t;
-                    T(numTriangles).nindices[1] = n < 0 ? n + numNormals : n;
-                    fscanf(file, "%d/%d/%d", &v, &t, &n);
-                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
-                    T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
-                    group->triangles[group->numtriangles++] = numTriangles;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n < 0 ? n + numNormals : n;
+                    fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n < 0 ? n + numNormals : n;
+                    fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                    group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
-                    while (fscanf(file, "%d/%d/%d", &v, &t, &n) > 0) {
-                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
-                        T(numTriangles).tindices[0] = T(numTriangles - 1).tindices[0];
-                        T(numTriangles).nindices[0] = T(numTriangles - 1).nindices[0];
-                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
-                        T(numTriangles).tindices[1] = T(numTriangles - 1).tindices[2];
-                        T(numTriangles).nindices[1] = T(numTriangles - 1).nindices[2];
-                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                        T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
-                        T(numTriangles).nindices[2] = n < 0 ? n + numNormals : n;
-                        group->triangles[group->numtriangles++] = numTriangles;
+                    while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0) {
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                        TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                        TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                        TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                        group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
                     }
                 }
                 else if (sscanf(buf, "%d/%d", &v, &t) == 2) {
                     /* v/t */
-                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).tindices[0] = t < 0 ? t + numTexcoords : t;
-                    fscanf(file, "%d/%d", &v, &t);
-                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).tindices[1] = t < 0 ? t + numTexcoords : t;
-                    fscanf(file, "%d/%d", &v, &t);
-                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                    T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
-                    group->triangles[group->numtriangles++] = numTriangles;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
+                    fscanf(objFile, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t < 0 ? t + numTexcoords : t;
+                    fscanf(objFile, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                    group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
-                    while (fscanf(file, "%d/%d", &v, &t) > 0) {
-                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
-                        T(numTriangles).tindices[0] = T(numTriangles - 1).tindices[0];
-                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
-                        T(numTriangles).tindices[1] = T(numTriangles - 1).tindices[2];
-                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                        T(numTriangles).tindices[2] = t < 0 ? t + numTexcoords : t;
-                        group->triangles[group->numtriangles++] = numTriangles;
+                    while (fscanf(objFile, "%d/%d", &v, &t) > 0) {
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                        group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
                     }
                 }
                 else {
                     /* v */
                     sscanf(buf, "%d", &v);
-                    T(numTriangles).vindices[0] = v < 0 ? v + numVertices : v;
-                    fscanf(file, "%d", &v);
-                    T(numTriangles).vindices[1] = v < 0 ? v + numVertices : v;
-                    fscanf(file, "%d", &v);
-                    T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                    group->triangles[group->numtriangles++] = numTriangles;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    fscanf(objFile, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    fscanf(objFile, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
-                    while (fscanf(file, "%d", &v) > 0) {
-                        T(numTriangles).vindices[0] = T(numTriangles - 1).vindices[0];
-                        T(numTriangles).vindices[1] = T(numTriangles - 1).vindices[2];
-                        T(numTriangles).vindices[2] = v < 0 ? v + numVertices : v;
-                        group->triangles[group->numtriangles++] = numTriangles;
+                    while (fscanf(objFile, "%d", &v) > 0) {
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
                     }
                 }
@@ -363,7 +365,7 @@ namespace yw
 
             default:
                 /* eat up rest of line */
-                fgets(buf, sizeof(buf), file);
+                fgets(buf, sizeof(buf), objFile);
                 break;
             }
         }
@@ -375,8 +377,6 @@ namespace yw
             numnormals * 3 * sizeof(GLfloat) * (numnormals ? 1 : 0) +
             numtexcoords * 3 * sizeof(GLfloat) * (numtexcoords ? 1 : 0) +
             numtriangles * sizeof(GLMtriangle));
-#endif
-
 #endif
     }
 }
