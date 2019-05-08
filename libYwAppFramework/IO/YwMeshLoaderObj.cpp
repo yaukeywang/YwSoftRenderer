@@ -404,8 +404,10 @@ namespace yw
 
         /* allocate memory for the new facet normals */
         mesh->m_FacetNormals.resize(mesh->m_Triangles.size());
-        for (int32_t i = 0; i < (int32_t)mesh->m_Triangles.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Triangles.size(); i++)
         {
+            mesh->m_Triangles[i]->m_FacetNormalIndex = i;
+
             Vector3 u = mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[1]] - mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[0]];
             Vector3 v = mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[2]] - mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[0]];
 
@@ -414,9 +416,167 @@ namespace yw
         }
     }
 
-    void MeshLoaderObj::CalculateVertexNormals(Mesh* mesh)
+    void MeshLoaderObj::CalculateVertexNormals(Mesh* mesh, float angle)
     {
+#if 0
+        //GLMnode* node;
+        GLMnode* tail;
+        //GLMnode** members;
+        GLfloat* normals;
+        GLuint numnormals;
+        GLfloat average[3];
+        //GLfloat dot;
+        //GLuint i, avg;
 
+        assert(nullptr != mesh);
+        assert(mesh->m_FacetNormals.size() > 0);
+
+        /* calculate the cosine of the angle (in degrees) */
+        float cos_angle = cos(angle * YW_PI / 180.0);
+
+        /* nuke any previous normals */
+        mesh->m_Normals.clear();
+        //if (model->normals)
+        //    free(model->normals);
+
+        /* allocate space for new normals */
+        mesh->m_Normals.resize(mesh->m_Triangles.size() * 3);
+        //model->numnormals = model->numtriangles * 3; /* 3 normals per triangle */
+        //model->normals = (GLfloat*)malloc(sizeof(GLfloat) * 3 * (model->numnormals + 1));
+
+        /* allocate a structure that will hold a linked list of triangle indices for each vertex */
+        std::vector<Node*> members(mesh->m_Vertices.size(), nullptr);
+        //members = (GLMnode**)malloc(sizeof(GLMnode*) * (model->numvertices + 1));
+        //for (i = 1; i <= model->numvertices; i++)
+        //    members[i] = NULL;
+
+        /* for every triangle, create a node for each vertex in it */
+        for (uint32_t i = 0; i < mesh->m_Triangles.size(); i++)
+        {
+            Node* node = new Node();
+            node->m_Index = i;
+            node->m_Next = members[TRIANGLE(i)->m_VertexIndices[0]];
+            members[TRIANGLE(i)->m_VertexIndices[0]] = node;
+
+            node = new Node();
+            node->m_Index = i;
+            node->m_Next = members[TRIANGLE(i)->m_VertexIndices[1]];
+            members[TRIANGLE(i)->m_VertexIndices[1]] = node;
+
+            node = new Node();
+            node->m_Index = i;
+            node->m_Next = members[TRIANGLE(i)->m_VertexIndices[2]];
+            members[TRIANGLE(i)->m_VertexIndices[2]] = node;
+        }
+
+        /* calculate the average normal for each vertex */
+        uint32_t numNormals = 1;
+        for (uint32_t i = 0; i <= (uint32_t)mesh->m_Vertices.size(); i++)
+        {
+            /* calculate an average normal for this vertex by averaging the
+                facet normal of every triangle this vertex is in */
+            Node* node = members[i];
+            if (nullptr == node)
+            {
+                LOGE(_T("glmVertexNormals(): vertex w/o a triangle\n"));
+                return;
+            }
+
+            Vector3 average;
+            //average[0] = 0.0; average[1] = 0.0; average[2] = 0.0;
+            uint32_t avg = 0;
+            while (nullptr != node)
+            {
+                /* only average if the dot product of the angle between the two
+                facet normals is greater than the cosine of the threshold
+                angle -- or, said another way, the angle between the two
+                    facet normals is less than (or equal to) the threshold angle */
+                float dot = Vector3Dot(mesh->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex],
+                    mesh->m_FacetNormals[TRIANGLE(members[i]->m_Index)->m_FacetNormalIndex]);
+                if (dot > cos_angle)
+                {
+                    node->averaged = GL_TRUE;
+                    average[0] += model->facetnorms[3 * T(node->index).findex + 0];
+                    average[1] += model->facetnorms[3 * T(node->index).findex + 1];
+                    average[2] += model->facetnorms[3 * T(node->index).findex + 2];
+                    avg = 1;            /* we averaged at least one normal! */
+                }
+                else {
+                    node->averaged = GL_FALSE;
+                }
+                node = node->next;
+            }
+
+            if (avg) {
+                /* normalize the averaged normal */
+                glmNormalize(average);
+
+                /* add the normal to the vertex normals list */
+                model->normals[3 * numNormals + 0] = average[0];
+                model->normals[3 * numNormals + 1] = average[1];
+                model->normals[3 * numNormals + 2] = average[2];
+                avg = numNormals;
+                numNormals++;
+            }
+
+            /* set the normal of this vertex in each triangle it is in */
+            node = members[i];
+            while (node) {
+                if (node->averaged) {
+                    /* if this node was averaged, use the average normal */
+                    if (T(node->index).vindices[0] == i)
+                        T(node->index).nindices[0] = avg;
+                    else if (T(node->index).vindices[1] == i)
+                        T(node->index).nindices[1] = avg;
+                    else if (T(node->index).vindices[2] == i)
+                        T(node->index).nindices[2] = avg;
+                }
+                else {
+                    /* if this node wasn't averaged, use the facet normal */
+                    model->normals[3 * numNormals + 0] =
+                        model->facetnorms[3 * T(node->index).findex + 0];
+                    model->normals[3 * numNormals + 1] =
+                        model->facetnorms[3 * T(node->index).findex + 1];
+                    model->normals[3 * numNormals + 2] =
+                        model->facetnorms[3 * T(node->index).findex + 2];
+                    if (T(node->index).vindices[0] == i)
+                        T(node->index).nindices[0] = numNormals;
+                    else if (T(node->index).vindices[1] == i)
+                        T(node->index).nindices[1] = numNormals;
+                    else if (T(node->index).vindices[2] == i)
+                        T(node->index).nindices[2] = numNormals;
+                    numNormals++;
+                }
+                node = node->next;
+            }
+        }
+
+        model->numNormals = numNormals - 1;
+
+        /* free the member information */
+        for (i = 1; i <= model->numvertices; i++) {
+            node = members[i];
+            while (node) {
+                tail = node;
+                node = node->next;
+                free(tail);
+            }
+        }
+        free(members);
+
+        /* pack the normals array (we previously allocated the maximum
+        number of normals that could possibly be created (numtriangles *
+        3), so get rid of some of them (usually alot unless none of the
+        facet normals were averaged)) */
+        normals = model->normals;
+        model->normals = (GLfloat*)malloc(sizeof(GLfloat) * 3 * (model->numnormals + 1));
+        for (i = 1; i <= model->numnormals; i++) {
+            model->normals[3 * i + 0] = normals[3 * i + 0];
+            model->normals[3 * i + 1] = normals[3 * i + 1];
+            model->normals[3 * i + 2] = normals[3 * i + 2];
+        }
+        free(normals);
+#endif
     }
 
     void MeshLoaderObj::ReadMTL(Mesh* mesh, StringA name)

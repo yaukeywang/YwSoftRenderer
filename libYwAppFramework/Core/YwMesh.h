@@ -13,28 +13,30 @@ namespace yw
     struct MeshTriangle
     {
         // Vertex index array.
-        int32_t m_VertexIndices[3];
+        uint32_t m_VertexIndices[3];
         
         // Normal index array.
-        int32_t m_NormalIndices[3];
+        uint32_t m_NormalIndices[3];
         
         // First layer uv array.
-        int32_t m_TexcoordsIndices[3];
+        uint32_t m_TexcoordsIndices[3];
         
         // Second layer uv array.
-        int32_t m_Texcoords2Indices[3];
+        uint32_t m_Texcoords2Indices[3];
 
-        // index of triangle facet normal.
+        // Facet normal index of triangle.
+        uint32_t m_FacetNormalIndex;
         
         // Constructor.
         MeshTriangle()
         {
             for (int32_t i = 0; i < 3; i++)
             {
-                m_VertexIndices[i] = -1;
-                m_NormalIndices[i] = -1;
-                m_TexcoordsIndices[i] = -1;
-                m_Texcoords2Indices[i] = -1;
+                m_VertexIndices[i] = 0;
+                m_NormalIndices[i] = 0;
+                m_TexcoordsIndices[i] = 0;
+                m_Texcoords2Indices[i] = 0;
+                m_FacetNormalIndex = 0;
             }
         }
 

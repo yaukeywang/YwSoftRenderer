@@ -41,11 +41,27 @@ namespace yw
         void CalculateFacetNormals(class Mesh* mesh);
 
         // Calculate vertex normals.
-        void CalculateVertexNormals(class Mesh* mesh);
+        void CalculateVertexNormals(class Mesh* mesh, float angle);
 
         // Read material.
         // $Implement.
         void ReadMTL(class Mesh* mesh, StringA name);
+
+    private:
+        /* _GLMnode: general purpose node */
+        struct Node
+        {
+            uint32_t m_Index;
+            bool m_Averaged;
+            Node* m_Next;
+
+            Node()
+            {
+                m_Index = 0;
+                m_Averaged = false;
+                m_Next = nullptr;
+            }
+        };
     };
 }
 
