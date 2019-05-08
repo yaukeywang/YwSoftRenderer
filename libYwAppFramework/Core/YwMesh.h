@@ -91,6 +91,9 @@ namespace yw
         
         // All mesh vertices.
         std::vector<Vector3> m_Vertices;
+
+        // All mesh normals.
+        std::vector<Vector3> m_FacetNormals;
         
         // All mesh normals.
         std::vector<Vector3> m_Normals;

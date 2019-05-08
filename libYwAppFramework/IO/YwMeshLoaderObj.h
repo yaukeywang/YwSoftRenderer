@@ -37,6 +37,12 @@ namespace yw
         // Second pass of process.
         void SecondPass(class Mesh* mesh, FILE* objFile);
 
+        // Calculate facet normals.
+        void CalculateFacetNormals(class Mesh* mesh);
+
+        // Calculate vertex normals.
+        void CalculateVertexNormals(class Mesh* mesh);
+
         // Read material.
         // $Implement.
         void ReadMTL(class Mesh* mesh, StringA name);

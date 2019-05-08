@@ -14,6 +14,9 @@
 
 namespace yw
 {
+    // Helper to read triangle in mesh.
+    #define TRIANGLE(x) (mesh->m_Triangles[(x)])
+
     MeshLoaderObj::MeshLoaderObj() : IMeshLoader()
     {
         
@@ -51,7 +54,7 @@ namespace yw
         return objMesh;
     }
     
-    void MeshLoaderObj::FirstPass(class Mesh* mesh, FILE* objFile)
+    void MeshLoaderObj::FirstPass(Mesh* mesh, FILE* objFile)
     {
         uint32_t numVertices = 0;           /* number of vertices in model */
         uint32_t numNormals = 0;            /* number of normals in model */
@@ -70,7 +73,8 @@ namespace yw
         numVertices = numNormals = numTexcoords = numTriangles = 0;
         while (fscanf(objFile, "%s", buf) != EOF)
         {
-            switch (buf[0]) {
+            switch (buf[0]) 
+            {
             case '#':               /* comment */
                 /* eat up rest of line */
                 fgets(buf, sizeof(buf), objFile);
@@ -193,11 +197,8 @@ namespace yw
         assert((uint32_t)mesh->m_Triangles.size() != numTriangles);
     }
     
-    void MeshLoaderObj::SecondPass(class Mesh* mesh, FILE* objFile)
+    void MeshLoaderObj::SecondPass(Mesh* mesh, FILE* objFile)
     {
-        // Helper to read triangle in mesh.
-        #define TRIANGLE(x) (mesh->m_Triangles[(x)])
-
         uint32_t numVertices = 0;        /* number of vertices in model */
         uint32_t numNormals = 0;         /* number of normals in model */
         uint32_t numTexcoords = 0;       /* number of texcoords in model */
@@ -218,14 +219,17 @@ namespace yw
         allocated arrays */
         numVertices = numNormals = numTexcoords = 1;
         numTriangles = 0;
-        while (fscanf(objFile, "%s", buf) != EOF) {
-            switch (buf[0]) {
+        while (fscanf(objFile, "%s", buf) != EOF) 
+        {
+            switch (buf[0]) 
+            {
             case '#':               /* comment */
                 /* eat up rest of line */
                 fgets(buf, sizeof(buf), objFile);
                 break;
             case 'v':               /* v, vn, vt */
-                switch (buf[1]) {
+                switch (buf[1]) 
+                {
                 case '\0':          /* vertex */
                     fscanf(objFile, "%f %f %f",
                         &(vertices[numVertices].x),
@@ -271,7 +275,8 @@ namespace yw
                 v = n = t = 0;
                 fscanf(objFile, "%s", buf);
                 /* can be one of %d, %d//%d, %d/%d, %d/%d/%d %d//%d */
-                if (strstr(buf, "//")) {
+                if (strstr(buf, "//")) 
+                {
                     /* v//n */
                     sscanf(buf, "%d//%d", &v, &n);
                     TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
@@ -284,7 +289,8 @@ namespace yw
                     TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
-                    while (fscanf(objFile, "%d//%d", &v, &n) > 0) {
+                    while (fscanf(objFile, "%d//%d", &v, &n) > 0) 
+                    {
                         TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
                         TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
                         TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
@@ -295,7 +301,8 @@ namespace yw
                         numTriangles++;
                     }
                 }
-                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) {
+                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3) 
+                {
                     /* v/t/n */
                     TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
@@ -310,7 +317,8 @@ namespace yw
                     TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
-                    while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0) {
+                    while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0) 
+                    {
                         TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
                         TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
@@ -324,7 +332,8 @@ namespace yw
                         numTriangles++;
                     }
                 }
-                else if (sscanf(buf, "%d/%d", &v, &t) == 2) {
+                else if (sscanf(buf, "%d/%d", &v, &t) == 2) 
+                {
                     /* v/t */
                     TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
@@ -347,7 +356,8 @@ namespace yw
                         numTriangles++;
                     }
                 }
-                else {
+                else 
+                {
                     /* v */
                     sscanf(buf, "%d", &v);
                     TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
@@ -384,7 +394,32 @@ namespace yw
 #endif
     }
 
-    void MeshLoaderObj::ReadMTL(class Mesh* mesh, StringA name)
+    void MeshLoaderObj::CalculateFacetNormals(Mesh* mesh)
+    {
+        assert(nullptr != mesh);
+        assert(mesh->m_Vertices.size() > 0);
+
+        /* clobber any old facet normals */
+        mesh->m_FacetNormals.clear();
+
+        /* allocate memory for the new facet normals */
+        mesh->m_FacetNormals.resize(mesh->m_Triangles.size());
+        for (int32_t i = 0; i < (int32_t)mesh->m_Triangles.size(); i++)
+        {
+            Vector3 u = mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[1]] - mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[0]];
+            Vector3 v = mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[2]] - mesh->m_Vertices[TRIANGLE(i)->m_VertexIndices[0]];
+
+            Vector3Cross(mesh->m_FacetNormals[i], u, v);
+            Vector3Normalize(mesh->m_FacetNormals[i], mesh->m_FacetNormals[i]);
+        }
+    }
+
+    void MeshLoaderObj::CalculateVertexNormals(Mesh* mesh)
+    {
+
+    }
+
+    void MeshLoaderObj::ReadMTL(Mesh* mesh, StringA name)
     {
 
     }
