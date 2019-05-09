@@ -420,11 +420,11 @@ namespace yw
     {
 #if 0
         //GLMnode* node;
-        GLMnode* tail;
+        //GLMnode* tail;
         //GLMnode** members;
-        GLfloat* normals;
-        GLuint numnormals;
-        GLfloat average[3];
+        //GLfloat* normals;
+        //GLuint numnormals;
+        //GLfloat average[3];
         //GLfloat dot;
         //GLuint i, avg;
 
@@ -470,7 +470,7 @@ namespace yw
         }
 
         /* calculate the average normal for each vertex */
-        uint32_t numNormals = 1;
+        uint32_t numNormals = 0;
         for (uint32_t i = 0; i <= (uint32_t)mesh->m_Vertices.size(); i++)
         {
             /* calculate an average normal for this vertex by averaging the
@@ -495,59 +495,82 @@ namespace yw
                     mesh->m_FacetNormals[TRIANGLE(members[i]->m_Index)->m_FacetNormalIndex]);
                 if (dot > cos_angle)
                 {
-                    node->averaged = GL_TRUE;
-                    average[0] += model->facetnorms[3 * T(node->index).findex + 0];
-                    average[1] += model->facetnorms[3 * T(node->index).findex + 1];
-                    average[2] += model->facetnorms[3 * T(node->index).findex + 2];
+                    node->m_Averaged = true;
+                    average += mesh->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
+                    //average[0] += model->facetnorms[3 * T(node->index).findex + 0];
+                    //average[1] += model->facetnorms[3 * T(node->index).findex + 1];
+                    //average[2] += model->facetnorms[3 * T(node->index).findex + 2];
                     avg = 1;            /* we averaged at least one normal! */
                 }
-                else {
-                    node->averaged = GL_FALSE;
+                else 
+                {
+                    node->m_Averaged = false;
                 }
-                node = node->next;
+
+                node = node->m_Next;
             }
 
-            if (avg) {
+            if (avg)
+            {
                 /* normalize the averaged normal */
-                glmNormalize(average);
+                Vector3Normalize(average, average);
 
                 /* add the normal to the vertex normals list */
-                model->normals[3 * numNormals + 0] = average[0];
-                model->normals[3 * numNormals + 1] = average[1];
-                model->normals[3 * numNormals + 2] = average[2];
+                mesh->m_Normals[numNormals] = average;
+                //model->normals[3 * numNormals + 0] = average[0];
+                //model->normals[3 * numNormals + 1] = average[1];
+                //model->normals[3 * numNormals + 2] = average[2];
                 avg = numNormals;
                 numNormals++;
             }
 
             /* set the normal of this vertex in each triangle it is in */
             node = members[i];
-            while (node) {
-                if (node->averaged) {
+            while (node)
+            {
+                if (node->m_Averaged)
+                {
                     /* if this node was averaged, use the average normal */
-                    if (T(node->index).vindices[0] == i)
-                        T(node->index).nindices[0] = avg;
-                    else if (T(node->index).vindices[1] == i)
-                        T(node->index).nindices[1] = avg;
-                    else if (T(node->index).vindices[2] == i)
-                        T(node->index).nindices[2] = avg;
+                    if (TRIANGLE(node->m_Index)->m_VertexIndices[0] == i)
+                    {
+                        TRIANGLE(node->m_Index)->m_NormalIndices[0] = avg;
+                    }
+                    else if (TRIANGLE(node->m_Index)->m_VertexIndices[1] == i)
+                    {
+                        TRIANGLE(node->m_Index)->m_NormalIndices[1] = avg;
+                    }
+                    else if (TRIANGLE(node->m_Index)->m_VertexIndices[2] == i)
+                    {
+                        TRIANGLE(node->m_Index)->m_NormalIndices[2] = avg;
+                    }
                 }
-                else {
+                else
+                {
                     /* if this node wasn't averaged, use the facet normal */
-                    model->normals[3 * numNormals + 0] =
-                        model->facetnorms[3 * T(node->index).findex + 0];
-                    model->normals[3 * numNormals + 1] =
-                        model->facetnorms[3 * T(node->index).findex + 1];
-                    model->normals[3 * numNormals + 2] =
-                        model->facetnorms[3 * T(node->index).findex + 2];
-                    if (T(node->index).vindices[0] == i)
-                        T(node->index).nindices[0] = numNormals;
-                    else if (T(node->index).vindices[1] == i)
-                        T(node->index).nindices[1] = numNormals;
-                    else if (T(node->index).vindices[2] == i)
-                        T(node->index).nindices[2] = numNormals;
+                    mesh->m_Normals[numNormals] = mesh->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
+                    //model->normals[3 * numNormals + 0] =
+                    //    model->facetnorms[3 * T(node->index).findex + 0];
+                    //model->normals[3 * numNormals + 1] =
+                    //    model->facetnorms[3 * T(node->index).findex + 1];
+                    //model->normals[3 * numNormals + 2] =
+                    //    model->facetnorms[3 * T(node->index).findex + 2];
+                    if (TRIANGLE(node->m_Index)->m_VertexIndices[0] == i)
+                    {
+                        TRIANGLE(node->m_Index)->m_NormalIndices[0] = numNormals;
+                    }
+                    else if (TRIANGLE(node->m_Index)->m_VertexIndices[1] == i)
+                    {
+                        TRIANGLE(node->m_Index)->m_NormalIndices[1] = numNormals;
+                    }
+                    else if (TRIANGLE(node->m_Index)->m_VertexIndices[2] == i)
+                    {
+                        TRIANGLE(node->m_Index)->m_NormalIndices[2] = numNormals;
+                    }
+
                     numNormals++;
                 }
-                node = node->next;
+
+                node = node->m_Next;
             }
         }
 

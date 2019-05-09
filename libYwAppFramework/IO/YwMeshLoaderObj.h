@@ -48,19 +48,14 @@ namespace yw
         void ReadMTL(class Mesh* mesh, StringA name);
 
     private:
-        /* _GLMnode: general purpose node */
+        /* Node: general purpose node. */
         struct Node
         {
             uint32_t m_Index;
             bool m_Averaged;
             Node* m_Next;
 
-            Node()
-            {
-                m_Index = 0;
-                m_Averaged = false;
-                m_Next = nullptr;
-            }
+            Node() : m_Index(0), m_Averaged(false), m_Next(nullptr) {}
         };
     };
 }
