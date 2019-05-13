@@ -67,7 +67,9 @@ namespace yw
         
         /* current group */
         MeshGroup* group = defaultMeshGroup;
-        int v, n, t;
+        int32_t v = 0;
+        int32_t n = 0;
+        int32_t t = 0;
         char buf[128];
 
         numVertices = numNormals = numTexcoords = numTriangles = 0;
@@ -205,7 +207,9 @@ namespace yw
         uint32_t numTriangles = 0;       /* number of triangles in model */
 
         // Used for parsing data.
-        int v, n, t;
+        int32_t v = 0;
+        int32_t n = 0;
+        int32_t t = 0;
         char buf[128];
 
         /* set the pointer shortcuts */
@@ -418,40 +422,23 @@ namespace yw
 
     void MeshLoaderObj::CalculateVertexNormals(Mesh* mesh, float angle)
     {
-#if 0
-        //GLMnode* node;
-        //GLMnode* tail;
-        //GLMnode** members;
-        //GLfloat* normals;
-        //GLuint numnormals;
-        //GLfloat average[3];
-        //GLfloat dot;
-        //GLuint i, avg;
-
         assert(nullptr != mesh);
         assert(mesh->m_FacetNormals.size() > 0);
 
         /* calculate the cosine of the angle (in degrees) */
-        float cos_angle = cos(angle * YW_PI / 180.0);
+        float cos_angle = (float)cos(angle * YW_PI / 180.0);
 
         /* nuke any previous normals */
         mesh->m_Normals.clear();
-        //if (model->normals)
-        //    free(model->normals);
 
         /* allocate space for new normals */
-        mesh->m_Normals.resize(mesh->m_Triangles.size() * 3);
-        //model->numnormals = model->numtriangles * 3; /* 3 normals per triangle */
-        //model->normals = (GLfloat*)malloc(sizeof(GLfloat) * 3 * (model->numnormals + 1));
+        std::vector<Vector3> normals(mesh->m_Triangles.size() * 3);
 
         /* allocate a structure that will hold a linked list of triangle indices for each vertex */
         std::vector<Node*> members(mesh->m_Vertices.size(), nullptr);
-        //members = (GLMnode**)malloc(sizeof(GLMnode*) * (model->numvertices + 1));
-        //for (i = 1; i <= model->numvertices; i++)
-        //    members[i] = NULL;
 
         /* for every triangle, create a node for each vertex in it */
-        for (uint32_t i = 0; i < mesh->m_Triangles.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Triangles.size(); i++)
         {
             Node* node = new Node();
             node->m_Index = i;
@@ -483,7 +470,6 @@ namespace yw
             }
 
             Vector3 average;
-            //average[0] = 0.0; average[1] = 0.0; average[2] = 0.0;
             uint32_t avg = 0;
             while (nullptr != node)
             {
@@ -497,9 +483,6 @@ namespace yw
                 {
                     node->m_Averaged = true;
                     average += mesh->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
-                    //average[0] += model->facetnorms[3 * T(node->index).findex + 0];
-                    //average[1] += model->facetnorms[3 * T(node->index).findex + 1];
-                    //average[2] += model->facetnorms[3 * T(node->index).findex + 2];
                     avg = 1;            /* we averaged at least one normal! */
                 }
                 else 
@@ -516,10 +499,7 @@ namespace yw
                 Vector3Normalize(average, average);
 
                 /* add the normal to the vertex normals list */
-                mesh->m_Normals[numNormals] = average;
-                //model->normals[3 * numNormals + 0] = average[0];
-                //model->normals[3 * numNormals + 1] = average[1];
-                //model->normals[3 * numNormals + 2] = average[2];
+                normals[numNormals] = average;
                 avg = numNormals;
                 numNormals++;
             }
@@ -547,13 +527,7 @@ namespace yw
                 else
                 {
                     /* if this node wasn't averaged, use the facet normal */
-                    mesh->m_Normals[numNormals] = mesh->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
-                    //model->normals[3 * numNormals + 0] =
-                    //    model->facetnorms[3 * T(node->index).findex + 0];
-                    //model->normals[3 * numNormals + 1] =
-                    //    model->facetnorms[3 * T(node->index).findex + 1];
-                    //model->normals[3 * numNormals + 2] =
-                    //    model->facetnorms[3 * T(node->index).findex + 2];
+                    normals[numNormals] = mesh->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
                     if (TRIANGLE(node->m_Index)->m_VertexIndices[0] == i)
                     {
                         TRIANGLE(node->m_Index)->m_NormalIndices[0] = numNormals;
@@ -574,32 +548,33 @@ namespace yw
             }
         }
 
-        model->numNormals = numNormals - 1;
+        //model->numNormals = numNormals - 1;
 
         /* free the member information */
-        for (i = 1; i <= model->numvertices; i++) {
-            node = members[i];
-            while (node) {
-                tail = node;
-                node = node->next;
-                free(tail);
+        for (uint32_t i = 0; i <= (uint32_t)members.size(); i++)
+        {
+            Node* node = members[i];
+            while (nullptr != node)
+            {
+                Node* tail = node;
+                node = node->m_Next;
+                YW_SAFE_DELETE(tail);
             }
         }
-        free(members);
+
+        members.clear();
 
         /* pack the normals array (we previously allocated the maximum
         number of normals that could possibly be created (numtriangles *
         3), so get rid of some of them (usually alot unless none of the
         facet normals were averaged)) */
-        normals = model->normals;
-        model->normals = (GLfloat*)malloc(sizeof(GLfloat) * 3 * (model->numnormals + 1));
-        for (i = 1; i <= model->numnormals; i++) {
-            model->normals[3 * i + 0] = normals[3 * i + 0];
-            model->normals[3 * i + 1] = normals[3 * i + 1];
-            model->normals[3 * i + 2] = normals[3 * i + 2];
+        mesh->m_Normals.resize(numNormals);
+        for (uint32_t i = 1; i <= numNormals; i++)
+        {
+            mesh->m_Normals[i] = normals[i];
         }
-        free(normals);
-#endif
+
+        normals.clear();
     }
 
     void MeshLoaderObj::ReadMTL(Mesh* mesh, StringA name)
