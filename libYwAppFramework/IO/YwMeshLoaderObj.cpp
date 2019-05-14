@@ -17,7 +17,10 @@ namespace yw
     // Helper to read triangle in mesh.
     #define TRIANGLE(x) (mesh->m_Triangles[(x)])
 
-    MeshLoaderObj::MeshLoaderObj() : IMeshLoader()
+    MeshLoaderObj::MeshLoaderObj() : 
+        IMeshLoader(),
+        m_CalculateNormals(false),
+        m_CalculateNormalAngle(90.0f)
     {
         
     }
@@ -47,6 +50,15 @@ namespace yw
         
         // Second pass to organize data.
         SecondPass(objMesh, objFile);
+
+        // Calculate facet normals is necessary.
+        CalculateFacetNormals(objMesh);
+
+        // Calculate normal if this obj file does not contains any normal.
+        if (m_CalculateNormals || (objMesh->m_Normals.size() <= 0))
+        {
+            CalculateVertexNormals(objMesh, m_CalculateNormalAngle);
+        }
         
         /* Close the file. */
         fclose(objFile);

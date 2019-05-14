@@ -25,7 +25,7 @@ namespace yw
         ~MeshLoaderObj();
         
     public:
-        // Load mesh data from a file, classes devired from this need to implement their own.
+        // Load mesh data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the mesh file.
         // @return Mesh pointer of the loaded mesh, null if failed.
         class Mesh* Load(const StringA& fileName);
@@ -57,6 +57,10 @@ namespace yw
 
             Node() : m_Index(0), m_Averaged(false), m_Next(nullptr) {}
         };
+
+    private:
+        bool m_CalculateNormals;
+        float m_CalculateNormalAngle;
     };
 }
 
