@@ -160,16 +160,16 @@ project "libYwAppFramework"
         "libYwAppFramework/Core/YwGraphics.cpp",
         "libYwAppFramework/Core/YwInput.h",
         "libYwAppFramework/Core/YwInput.cpp",
-        "libYwAppFramework/Core/YwMesh.h",
-        "libYwAppFramework/Core/YwMesh.cpp",
+        "libYwAppFramework/Core/YwModel.h",
+        "libYwAppFramework/Core/YwModel.cpp",
         "libYwAppFramework/Core/YwScene.h",
         "libYwAppFramework/Core/YwScene.cpp",
         "libYwAppFramework/Core/YwStateBlock.h",
         "libYwAppFramework/Core/YwStateBlock.cpp",
 
-        "libYwAppFramework/IO/YwMeshLoader.h",
-        "libYwAppFramework/IO/YwMeshLoaderObj.h",
-        "libYwAppFramework/IO/YwMeshLoaderObj.cpp",
+        "libYwAppFramework/IO/YwModelLoader.h",
+        "libYwAppFramework/IO/YwModelLoaderObj.h",
+        "libYwAppFramework/IO/YwModelLoaderObj.cpp",
 
         --"libYwAppFramework/ThirdParty/*.h",
         --"libYwAppFramework/ThirdParty/*.cpp"

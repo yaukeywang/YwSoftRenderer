@@ -10,7 +10,7 @@
 namespace yw
 {
     // Mesh triangle.
-    struct MeshTriangle
+    struct ModelTriangle
     {
         // Vertex index array.
         uint32_t m_VertexIndices[3];
@@ -28,7 +28,7 @@ namespace yw
         uint32_t m_FacetNormalIndex;
         
         // Constructor.
-        MeshTriangle()
+        ModelTriangle()
         {
             for (int32_t i = 0; i < 3; i++)
             {
@@ -41,13 +41,13 @@ namespace yw
         }
 
         // Destructor.
-        ~MeshTriangle()
+        ~ModelTriangle()
         {
         }
     };
     
     // The group object in a mesh.
-    struct MeshGroup
+    struct ModelGroup
     {
         // Name of this group.
         StringA m_Name;
@@ -59,10 +59,10 @@ namespace yw
         void* m_Material;
         
         // Constructor.
-        MeshGroup(StringA groupName) : m_Name(groupName), m_Material(nullptr) {}
+        ModelGroup(StringA groupName) : m_Name(groupName), m_Material(nullptr) {}
 
         // Destructor.
-        ~MeshGroup()
+        ~ModelGroup()
         {
             m_Name.clear();
             m_Triangles.clear();
@@ -71,18 +71,18 @@ namespace yw
     };
     
     // The mesh info.
-    class Mesh
+    class Model
     {
     public:
         // Constructor.
-        Mesh();
+        Model();
         
         // Destructor.
-        ~Mesh();
+        ~Model();
 
     public:
-        MeshGroup* AddGroup(const StringA& groupName, MeshGroup* meshGroup);
-        MeshGroup* FindGroup(const StringA& groupName);
+        ModelGroup* AddGroup(const StringA& groupName, ModelGroup* meshGroup);
+        ModelGroup* FindGroup(const StringA& groupName);
 
     public:
         // The mesh name.
@@ -107,10 +107,10 @@ namespace yw
         std::vector<Vector2> m_Texcoord2s;
 
         // All triangles.
-        std::vector<MeshTriangle*> m_Triangles;
+        std::vector<ModelTriangle*> m_Triangles;
         
         // All mesh groups.
-        std::vector<MeshGroup*> m_MeshGroups;
+        std::vector<ModelGroup*> m_Groups;
         
         // The position of the mesh.
         Vector3 m_Position;

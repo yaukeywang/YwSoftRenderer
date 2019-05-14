@@ -4,48 +4,48 @@
 // Nate Robins, 1997, 2000
 // nate@pobox.com, http://www.pobox.com/~nate
 // Wavefront OBJ model file format reader/writer/manipulator.
-// YW mesh loader for obj file class.
+// YW model loader for obj file class.
 
-#ifndef __YW_MESH_LOADER_OBJ_H__
-#define __YW_MESH_LOADER_OBJ_H__
+#ifndef __YW_MODEL_LOADER_OBJ_H__
+#define __YW_MODEL_LOADER_OBJ_H__
 
 #include <stdio.h>
-#include "YwMeshLoader.h"
+#include "YwModelLoader.h"
 
 namespace yw
 {
-    // Base mesh loader class.
-    class MeshLoaderObj : public IMeshLoader
+    // Base model loader class.
+    class ModelLoaderObj : public IModelLoader
     {
     public:
         // Constructor.
-        MeshLoaderObj();
+        ModelLoaderObj();
         
         // Destructor.
-        ~MeshLoaderObj();
+        ~ModelLoaderObj();
         
     public:
-        // Load mesh data from a file, classes derived from this need to implement their own.
-        // @param[in] fileName the full path of the mesh file.
-        // @return Mesh pointer of the loaded mesh, null if failed.
-        class Mesh* Load(const StringA& fileName);
+        // Load model data from a file, classes derived from this need to implement their own.
+        // @param[in] fileName the full path of the model file.
+        // @return Model pointer of the loaded model, null if failed.
+        class Model* Load(const StringA& fileName);
         
     private:
         // First pass of process.
-        void FirstPass(class Mesh* mesh, FILE* objFile);
+        void FirstPass(class Model* model, FILE* objFile);
         
         // Second pass of process.
-        void SecondPass(class Mesh* mesh, FILE* objFile);
+        void SecondPass(class Model* model, FILE* objFile);
 
         // Calculate facet normals.
-        void CalculateFacetNormals(class Mesh* mesh);
+        void CalculateFacetNormals(class Model* model);
 
         // Calculate vertex normals.
-        void CalculateVertexNormals(class Mesh* mesh, float angle);
+        void CalculateVertexNormals(class Model* model, float angle);
 
         // Read material.
         // $Implement.
-        void ReadMTL(class Mesh* mesh, StringA name);
+        void ReadMTL(class Model* model, StringA name);
 
     private:
         /* Node: general purpose node. */
@@ -64,4 +64,4 @@ namespace yw
     };
 }
 
-#endif // !__YW_MESH_LOADER_OBJ_H__
+#endif // !__YW_MODEL_LOADER_OBJ_H__

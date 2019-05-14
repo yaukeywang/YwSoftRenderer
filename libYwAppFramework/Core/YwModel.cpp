@@ -2,42 +2,42 @@
 // YW Soft Renderer mesh struct.
 
 #include "YwBase.h"
-#include "YwMesh.h"
+#include "YwModel.h"
 
 namespace yw
 {
-    Mesh::Mesh() :
+    Model::Model() :
         m_Triangles(0)
     {
     }
 
-    Mesh::~Mesh()
+    Model::~Model()
     {
         // Clear all group.
-        for (size_t i = 0; i < m_MeshGroups.size(); i++)
+        for (size_t i = 0; i < m_Groups.size(); i++)
         {
-            MeshGroup* meshGroup = m_MeshGroups[i];
+            ModelGroup* meshGroup = m_Groups[i];
             YW_SAFE_DELETE(meshGroup);
         }
 
-        m_MeshGroups.clear();
+        m_Groups.clear();
 
         // Clear all triangles.
         for (size_t i = 0; i < m_Triangles.size(); i++)
         {
-            MeshTriangle* meshTriangle = m_Triangles[i];
+            ModelTriangle* meshTriangle = m_Triangles[i];
             YW_SAFE_DELETE(meshTriangle);
         }
 
         m_Triangles.clear();
     }
 
-    MeshGroup* Mesh::AddGroup(const StringA& groupName, MeshGroup* meshGroup)
+    ModelGroup* Model::AddGroup(const StringA& groupName, ModelGroup* meshGroup)
     {
-        MeshGroup* group = FindGroup(groupName);
+        ModelGroup* group = FindGroup(groupName);
         if (nullptr == group)
         {
-            m_MeshGroups.push_back(meshGroup);
+            m_Groups.push_back(meshGroup);
             return meshGroup;
         }
         else
@@ -46,11 +46,11 @@ namespace yw
         }
     }
 
-    MeshGroup* Mesh::FindGroup(const StringA& groupName)
+    ModelGroup* Model::FindGroup(const StringA& groupName)
     {
-        for (int32_t i = 0; i < (int32_t)m_MeshGroups.size(); i++)
+        for (int32_t i = 0; i < (int32_t)m_Groups.size(); i++)
         {
-            MeshGroup* group = m_MeshGroups[i];
+            ModelGroup* group = m_Groups[i];
             if (groupName == group->m_Name)
             {
                 return group;
