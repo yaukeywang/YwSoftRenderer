@@ -113,7 +113,7 @@ namespace yw
         std::vector<ModelGroup*> m_Groups;
         
         // The position of the mesh.
-        Vector3 m_Position;
+        //Vector3 m_Position;
     };
 }
 
