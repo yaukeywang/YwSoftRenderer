@@ -208,7 +208,7 @@ namespace yw
         model->m_Texcoords.resize(numTexcoords);
         model->m_Texcoord2s.resize(numTexcoords);
         //model->m_Triangles.resize(numTriangles);
-        assert((uint32_t)model->m_Triangles.size() != numTriangles);
+        assert((uint32_t)model->m_Triangles.size() == numTriangles);
     }
     
     void ModelLoaderObj::SecondPass(Model* model, FILE* objFile)
@@ -233,7 +233,7 @@ namespace yw
 
         /* on the second pass through the file, read all the data into the
         allocated arrays */
-        numVertices = numNormals = numTexcoords = 1;
+        numVertices = numNormals = numTexcoords = 0;
         numTriangles = 0;
         while (fscanf(objFile, "%s", buf) != EOF) 
         {
@@ -477,7 +477,7 @@ namespace yw
             Node* node = members[i];
             if (nullptr == node)
             {
-                LOGE(_T("glmVertexNormals(): vertex w/o a triangle\n"));
+                LOGE(_T("CalculateVertexNormals(): vertex w/o a triangle\n"));
                 return;
             }
 
