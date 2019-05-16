@@ -76,12 +76,8 @@ namespace yw
         uint32_t numTexcoords = 0;          /* number of texcoords in model */
         uint32_t numTriangles = 0;          /* number of triangles in model */
         
-        /* make a default group */
-        ModelGroup* defaultGroup = new ModelGroup("default");
-        model->m_Groups.push_back(defaultGroup);
-        
         /* current group */
-        ModelGroup* group = defaultGroup;
+        ModelGroup* group = nullptr;
         int32_t v = 0;
         int32_t n = 0;
         int32_t t = 0;
@@ -212,6 +208,14 @@ namespace yw
         model->m_Texcoord2s.resize(numTexcoords);
         //model->m_Triangles.resize(numTriangles);
         assert((uint32_t)model->m_Triangles.size() == numTriangles);
+
+        // Create a default group if no group found.
+        if (model->m_Groups.size() <= 0)
+        {
+            /* make a default group */
+            ModelGroup* defaultGroup = new ModelGroup("default");
+            model->m_Groups.push_back(defaultGroup);
+        }
     }
     
     void ModelLoaderObj::SecondPass(Model* model, FILE* objFile)
@@ -228,10 +232,10 @@ namespace yw
         char buf[128];
 
         /* set the pointer shortcuts */
-        Vector3* vertices = &(model->m_Vertices[0]);         /* array of vertices  */
-        Vector3* normals = &(model->m_Normals[0]);           /* array of normals */
-        Vector2* texcoords = &(model->m_Texcoords[0]);       /* array of texture coordinates */
-        ModelGroup*group = model->m_Groups.front();       /* current group pointer */
+        Vector3* vertices = &(model->m_Vertices[0]);        /* array of vertices  */
+        Vector3* normals = &(model->m_Normals[0]);          /* array of normals */
+        Vector2* texcoords = &(model->m_Texcoords[0]);      /* array of texture coordinates */
+        ModelGroup* group = model->m_Groups.front();        /* current group pointer */
         void* material = nullptr;                           /* current material (Need to implement) */
 
         /* on the second pass through the file, read all the data into the
@@ -506,6 +510,8 @@ namespace yw
             if (nullptr == node)
             {
                 LOGE(_T("CalculateVertexNormals(): vertex w/o a triangle\n"));
+                assert(false);
+
                 return;
             }
 
