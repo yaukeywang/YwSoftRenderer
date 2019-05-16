@@ -37,6 +37,9 @@ namespace yw
         // Second pass of process.
         void SecondPass(class Model* model, FILE* objFile);
 
+        // Normalize model mesh indices from 1-based to 0-based.
+        void NormalizeIndices(class Model* model);
+
         // Calculate facet normals.
         void CalculateFacetNormals(class Model* model);
 

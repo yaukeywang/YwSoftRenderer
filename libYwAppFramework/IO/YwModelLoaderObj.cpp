@@ -51,6 +51,9 @@ namespace yw
         // Second pass to organize data.
         SecondPass(objModel, objFile);
 
+        // Normalize model mesh indices from 1-based to 0-based.
+        NormalizeIndices(objModel);
+
         // Calculate facet normals is necessary.
         CalculateFacetNormals(objModel);
 
@@ -410,6 +413,30 @@ namespace yw
 #endif
     }
 
+    void ModelLoaderObj::NormalizeIndices(class Model* model)
+    {
+        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        {
+            ModelTriangle* triangle = model->m_Triangles[i];
+
+            triangle->m_VertexIndices[0] -= 1;
+            triangle->m_VertexIndices[1] -= 1;
+            triangle->m_VertexIndices[2] -= 1;
+
+            triangle->m_NormalIndices[0] -= 1;
+            triangle->m_NormalIndices[1] -= 1;
+            triangle->m_NormalIndices[2] -= 1;
+
+            triangle->m_TexcoordsIndices[0] -= 1;
+            triangle->m_TexcoordsIndices[1] -= 1;
+            triangle->m_TexcoordsIndices[2] -= 1;
+
+            triangle->m_Texcoords2Indices[0] -= 1;
+            triangle->m_Texcoords2Indices[1] -= 1;
+            triangle->m_Texcoords2Indices[2] -= 1;
+        }
+    }
+
     void ModelLoaderObj::CalculateFacetNormals(Model* model)
     {
         assert(nullptr != model);
@@ -427,8 +454,9 @@ namespace yw
             Vector3 u = model->m_Vertices[TRIANGLE(i)->m_VertexIndices[1]] - model->m_Vertices[TRIANGLE(i)->m_VertexIndices[0]];
             Vector3 v = model->m_Vertices[TRIANGLE(i)->m_VertexIndices[2]] - model->m_Vertices[TRIANGLE(i)->m_VertexIndices[0]];
 
-            Vector3Cross(model->m_FacetNormals[i], u, v);
-            Vector3Normalize(model->m_FacetNormals[i], model->m_FacetNormals[i]);
+            Vector3& facetNormal = model->m_FacetNormals[i];
+            Vector3Cross(facetNormal, u, v);
+            Vector3Normalize(facetNormal, facetNormal);
         }
     }
 
@@ -470,7 +498,7 @@ namespace yw
 
         /* calculate the average normal for each vertex */
         uint32_t numNormals = 0;
-        for (uint32_t i = 0; i <= (uint32_t)model->m_Vertices.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)model->m_Vertices.size(); i++)
         {
             /* calculate an average normal for this vertex by averaging the
                 facet normal of every triangle this vertex is in */
@@ -563,7 +591,7 @@ namespace yw
         //model->numNormals = numNormals - 1;
 
         /* free the member information */
-        for (uint32_t i = 0; i <= (uint32_t)members.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)model->m_Vertices.size(); i++)
         {
             Node* node = members[i];
             while (nullptr != node)
@@ -581,7 +609,7 @@ namespace yw
         3), so get rid of some of them (usually alot unless none of the
         facet normals were averaged)) */
         model->m_Normals.resize(numNormals);
-        for (uint32_t i = 1; i <= numNormals; i++)
+        for (uint32_t i = 0; i < numNormals; i++)
         {
             model->m_Normals[i] = normals[i];
         }
