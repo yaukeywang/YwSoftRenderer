@@ -33,9 +33,11 @@ namespace yw
     private:
         // First pass of process.
         void FirstPass(class Model* model, FILE* objFile);
+        void FirstPassRawData(Model* model, const char* objData);
         
         // Second pass of process.
         void SecondPass(class Model* model, FILE* objFile);
+        void SecondPassRawData(class Model* model, const char* objData);
 
         // Normalize model mesh indices from 1-based to 0-based.
         void NormalizeIndices(class Model* model);

@@ -44,6 +44,19 @@ namespace yw
         
         // Make a first pass through the file to get a count of the number of vertices, normals, texcoords & triangles.
         FirstPass(objModel, objFile);
+
+        //fseek(objFile, 0, SEEK_END);
+        //uint32_t iSize = ftell(objFile);
+        //rewind(objFile);
+
+        //uint8_t* o_ppData = new uint8_t[iSize + 1];
+        //iSize = (uint32_t)fread(o_ppData, 1, iSize, objFile);
+
+        //o_ppData[iSize] = 0;
+
+        //Model* testMode = new Model();
+        //FirstPassRawData(testMode, (const char*)o_ppData);
+        //SecondPassRawData(testMode, (const char*)o_ppData);
         
         /* rewind to beginning of file and read in the data this pass */
         rewind(objFile);
@@ -67,6 +80,390 @@ namespace yw
         fclose(objFile);
         
         return objModel;
+    }
+
+    void ModelLoaderObj::FirstPassRawData(Model* model, const char* objData)
+    {
+        uint32_t numVertices = 0;           /* number of vertices in model */
+        uint32_t numNormals = 0;            /* number of normals in model */
+        uint32_t numTexcoords = 0;          /* number of texcoords in model */
+        uint32_t numTriangles = 0;          /* number of triangles in model */
+
+        /* current group */
+        ModelGroup* group = nullptr;
+
+        // Used for parsing face data.
+        int32_t v = 0;
+        int32_t n = 0;
+        int32_t t = 0;
+
+        // Used for reading temp buffer.
+        char buf[128];
+        memset(buf, 0, sizeof(buf));
+
+        const char* curPos = objData;
+        while (0 != *curPos)
+        {
+            switch (*curPos)
+            {
+            case '#':               /* comment */
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                break;
+            case 'v':               /* v, vn, vt */
+                curPos++;
+                switch (*curPos) 
+                {
+                case ' ':          /* vertex */
+                    /* eat up rest of line */
+                    //fgets(buf, sizeof(buf), objFile);
+                    numVertices++;
+                    break;
+                case 'n':           /* normal */
+                    /* eat up rest of line */
+                    //fgets(buf, sizeof(buf), objFile);
+                    numNormals++;
+                    break;
+                case 't':           /* texcoord */
+                    /* eat up rest of line */
+                    //fgets(buf, sizeof(buf), objFile);
+                    numTexcoords++;
+                    break;
+                default:
+                    LOGE_A(_T("FirstPass(): Unknown token \"%s\".\n", buf));
+                    exit(1);
+                    break;
+                }
+                break;
+            case 'm':
+                //fgets(buf, sizeof(buf), objFile);
+                sscanf(curPos, "%s %s", buf, buf);
+                model->m_MaterialName = buf;
+                ReadMTL(model, buf);
+                break;
+            case 'u':
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                break;
+            case 'g':               /* group */
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                //curPos += 2;
+                sscanf(curPos, "%s %s", buf, buf);
+                group = new ModelGroup(buf);
+                model->m_Groups.push_back(group);
+                break;
+            case 'f':               /* face */
+                curPos++; // Move to whit space.
+                curPos++; // Move to face.
+                sscanf(curPos, "%s", buf);
+                /* can be one of %d, %d//%d, %d/%d, %d/%d/%d %d//%d */
+                if (strstr(buf, "//"))
+                {
+                    /* v//n */
+                    //sscanf(buf, "%d//%d", &v, &n);
+                    //fscanf(objFile, "%d//%d", &v, &n);
+                    //fscanf(objFile, "%d//%d", &v, &n);
+                    numTriangles++;
+                    model->m_Triangles.push_back(new ModelTriangle());
+                    //while (fscanf(objFile, "%d//%d", &v, &n) > 0)
+                    //{
+                    //    numTriangles++;
+                    //    model->m_Triangles.push_back(new ModelTriangle());
+                    //}
+                }
+                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3)
+                {
+                    /* v/t/n */
+                    //fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    //fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    numTriangles++;
+                    model->m_Triangles.push_back(new ModelTriangle());
+                    //while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0)
+                    //{
+                    //    numTriangles++;
+                    //    model->m_Triangles.push_back(new ModelTriangle());
+                    //}
+                }
+                else if (sscanf(buf, "%d/%d", &v, &t) == 2)
+                {
+                    /* v/t */
+                    //fscanf(objFile, "%d/%d", &v, &t);
+                    //fscanf(objFile, "%d/%d", &v, &t);
+                    numTriangles++;
+                    model->m_Triangles.push_back(new ModelTriangle());
+                    //while (fscanf(objFile, "%d/%d", &v, &t) > 0)
+                    //{
+                    //    numTriangles++;
+                    //    model->m_Triangles.push_back(new ModelTriangle());
+                    //}
+                }
+                else
+                {
+                    /* v */
+                    //fscanf(objFile, "%d", &v);
+                    //fscanf(objFile, "%d", &v);
+                    numTriangles++;
+                    model->m_Triangles.push_back(new ModelTriangle());
+                    //while (fscanf(objFile, "%d", &v) > 0)
+                    //{
+                    //    numTriangles++;
+                    //    model->m_Triangles.push_back(new ModelTriangle());
+                    //}
+                }
+                break;
+            default:
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                break;
+            }
+
+            // Advance to next line.
+            while (0 != *curPos)
+            {
+                if ('\n' == *curPos++)
+                {
+                    break;
+                }
+            }
+        }
+
+        /* set the stats in the model structure */
+        model->m_Vertices.resize(numVertices);
+        model->m_Normals.resize(numNormals);
+        model->m_Texcoords.resize(numTexcoords);
+        model->m_Texcoord2s.resize(numTexcoords);
+        //model->m_Triangles.resize(numTriangles);
+        assert((uint32_t)model->m_Triangles.size() == numTriangles);
+
+        // Create a default group if no group found.
+        if (model->m_Groups.size() <= 0)
+        {
+            /* make a default group */
+            ModelGroup* defaultGroup = new ModelGroup("default");
+            model->m_Groups.push_back(defaultGroup);
+        }
+    }
+
+    void ModelLoaderObj::SecondPassRawData(class Model* model, const char* objData)
+    {
+        uint32_t numVertices = 0;        /* number of vertices in model */
+        uint32_t numNormals = 0;         /* number of normals in model */
+        uint32_t numTexcoords = 0;       /* number of texcoords in model */
+        uint32_t numTriangles = 0;       /* number of triangles in model */
+
+        // Used for reading temp buffer.
+        char buf[128];
+        memset(buf, 0, sizeof(buf));
+
+        // Used for parsing face data.
+        int32_t v[3] = { 0, 0, 0 };
+        int32_t n[3] = { 0, 0, 0 };
+        int32_t t[3] = { 0, 0, 0 };
+
+        /* set the pointer shortcuts */
+        Vector3* vertices = &(model->m_Vertices[0]);        /* array of vertices  */
+        Vector3* normals = &(model->m_Normals[0]);          /* array of normals */
+        Vector2* texcoords = &(model->m_Texcoords[0]);      /* array of texture coordinates */
+        ModelGroup* group = model->m_Groups.front();        /* current group pointer */
+        void* material = nullptr;                           /* current material (Need to implement) */
+
+        /* on the second pass through the file, read all the data into the
+        allocated arrays */
+        numTriangles = 0;
+        const char* curPos = objData;
+        while (0 != *curPos)
+        {
+            switch (*curPos)
+            {
+            case '#':               /* comment */
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                break;
+            case 'v':               /* v, vn, vt */
+                curPos++;
+                switch (*curPos++)
+                {
+                case ' ':          /* vertex */
+                    sscanf(curPos, "%f %f %f",
+                        &(vertices[numVertices].x),
+                        &(vertices[numVertices].y),
+                        &(vertices[numVertices].z));
+                    numVertices++;
+                    break;
+                case 'n':           /* normal */
+                    sscanf(curPos, "%f %f %f",
+                        &(normals[numNormals].x),
+                        &(normals[numNormals].y),
+                        &(normals[numNormals].z));
+                    numNormals++;
+                    break;
+                case 't':           /* texcoord */
+                    sscanf(curPos, "%f %f",
+                        &(texcoords[numTexcoords].x),
+                        &(texcoords[numTexcoords].y));
+                    numTexcoords++;
+                    break;
+                }
+                break;
+            case 'u':
+                //fgets(buf, sizeof(buf), objFile);
+                sscanf(curPos, "%s %s", buf, buf);
+                material = nullptr; // Find material.
+                group->m_Material = nullptr; // Need to implement material. Material is 'buf'.
+                //group->material = material = glmFindMaterial(model, buf);
+                break;
+            case 'g':               /* group */
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                sscanf(curPos, "%s %s", buf, buf);
+//#if SINGLE_STRING_GROUP_NAMES
+//                sscanf(buf, "%s", buf);
+//#else
+//                buf[strlen(buf) - 1] = '\0';  /* nuke '\n' */
+//#endif
+                group = model->FindGroup(buf);
+                group->m_Material = material; // Need to implement material.
+                //group = glmFindGroup(model, buf);
+                //group->material = material;
+                break;
+            case 'f':               /* face */
+                curPos++; // Move to whit space.
+                curPos++; // Move to face.
+                sscanf(curPos, "%s", buf);
+                /* can be one of %d, %d//%d, %d/%d, %d/%d/%d %d//%d */
+                if (strstr(buf, "//"))
+                {
+                    /* v//n */
+                    sscanf(curPos, "%d//%d %d//%d %d//%d", &v[0], &n[0], &v[1], &n[1], &v[2], &n[2]);
+
+                    //sscanf(buf, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n[0] < 0 ? n[0] + numNormals : n[0];
+                    //fscanf(objFile, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n[1] < 0 ? n[1] + numNormals : n[1];
+                    //fscanf(objFile, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n[2] < 0 ? n[2] + numNormals : n[2];
+
+                    group->m_Triangles.push_back(numTriangles);
+                    numTriangles++;
+                    //while (fscanf(objFile, "%d//%d", &v, &n) > 0)
+                    //{
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                    //    TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                    //    TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    //    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                    //    group->m_Triangles.push_back(numTriangles);
+                    //    numTriangles++;
+                    //}
+                }
+                else if (sscanf(curPos, "%d/%d/%d %d/%d/%d %d/%d/%d", &v[0], &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]) == 9)
+                {
+                    /* v/t/n */
+                    //sscanf(buf, "%d/%d/%d %d/%d/%d %d/%d/%d", &v, &t, &n, &v1, &t1, &n1, &v2, &t2, &n2);
+
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t[0] < 0 ? t[0] + numTexcoords : t[0];
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n[0] < 0 ? n[0] + numNormals : n[0];
+                    //fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t[1] < 0 ? t[1] + numTexcoords : t[1];
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n[1] < 0 ? n[1] + numNormals : n[1];
+                    //fscanf(objFile, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t[2] < 0 ? t[2] + numTexcoords : t[2];
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n[2] < 0 ? n[2] + numNormals : n[2];
+                    group->m_Triangles.push_back(numTriangles);
+                    numTriangles++;
+                    //while (fscanf(objFile, "%d/%d/%d", &v, &t, &n) > 0)
+                    //{
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                    //    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                    //    TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                    //    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                    //    TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    //    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                    //    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                    //    group->m_Triangles.push_back(numTriangles);
+                    //    numTriangles++;
+                    //}
+                }
+                else if (sscanf(curPos, "%d/%d %d/%d %d/%d", &v[0], &t[0], &v[1], &t[1], &v[2], &t[2]) == 6)
+                {
+                    /* v/t */
+                    //sscanf(buf, "%d/%d", &v, &t);
+
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t[0] < 0 ? t[0] + numTexcoords : t[0];
+                    //fscanf(objFile, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t[1] < 0 ? t[1] + numTexcoords : t[1];
+                    //fscanf(objFile, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t[2] < 0 ? t[2] + numTexcoords : t[2];
+                    group->m_Triangles.push_back(numTriangles);
+                    numTriangles++;
+                    //while (fscanf(objFile, "%d/%d", &v, &t) > 0) {
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                    //    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                    //    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    //    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                    //    group->m_Triangles.push_back(numTriangles);
+                    //    numTriangles++;
+                    //}
+                }
+                else
+                {
+                    /* v */
+                    sscanf(curPos, "%d %d %d", &v[0], &v[1], &v[2]);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
+                    //fscanf(objFile, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
+                    //fscanf(objFile, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
+                    group->m_Triangles.push_back(numTriangles);
+                    numTriangles++;
+                    //while (fscanf(objFile, "%d", &v) > 0) {
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                    //    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    //    group->m_Triangles.push_back(numTriangles);
+                    //    numTriangles++;
+                    //}
+                }
+                break;
+            default:
+                /* eat up rest of line */
+                //fgets(buf, sizeof(buf), objFile);
+                break;
+            }
+
+            // Advance to next line.
+            while (0 != *curPos)
+            {
+                if ('\n' == *curPos++)
+                {
+                    break;
+                }
+            }
+        }
+
+#if 0
+        /* Announce the memory requirements. (Minimum required) */
+        printf("Obj Model Memory: %d bytes\n",
+            numVertices * 3 * sizeof(Vector3) +
+            numNormals * 3 * sizeof(Vector3) * (numNormals ? 1 : 0) +
+            numTexcoords * 3 * sizeof(Vector2) * (numTexcoords ? 1 : 0) +
+            numTriangles * sizeof(ModelTriangle));
+#endif
     }
     
     void ModelLoaderObj::FirstPass(Model* model, FILE* objFile)
