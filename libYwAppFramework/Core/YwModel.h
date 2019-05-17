@@ -85,8 +85,8 @@ namespace yw
         ModelGroup* FindGroup(const StringA& groupName);
 
     public:
-        // The mesh name.
-        StringA m_MeshName;
+        // The model name.
+        StringA m_Name;
         
         // Material name.
         StringA m_MaterialName;

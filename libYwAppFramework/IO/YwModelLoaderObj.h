@@ -20,6 +20,9 @@ namespace yw
     public:
         // Constructor.
         ModelLoaderObj();
+
+        // Constructor with params.
+        ModelLoaderObj(bool translateVertex, bool calculateNormals, float calculateNormalAngle);
         
         // Destructor.
         ~ModelLoaderObj();
@@ -31,13 +34,14 @@ namespace yw
         class Model* Load(const StringA& fileName);
         
     private:
+        // $TEMP: Read data from obj file.
+        const char* ReadDataFromFile(const StringA& fileName);
+
         // First pass of process.
-        void FirstPass(class Model* model, FILE* objFile);
-        void FirstPassRawData(Model* model, const char* objData);
+        void FirstPass(Model* model, const char* objData);
         
         // Second pass of process.
-        void SecondPass(class Model* model, FILE* objFile);
-        void SecondPassRawData(class Model* model, const char* objData);
+        void SecondPass(class Model* model, const char* objData);
 
         // Normalize model mesh indices from 1-based to 0-based.
         void NormalizeIndices(class Model* model);
@@ -64,7 +68,13 @@ namespace yw
         };
 
     private:
+        // Translate verex postion from obj file or not.
+        bool m_TranslateVertex;
+
+        // Calculate normal or not.
         bool m_CalculateNormals;
+
+        // The angle of calculating normal.
         float m_CalculateNormalAngle;
     };
 }
