@@ -22,7 +22,7 @@ namespace yw
         ModelLoaderObj();
 
         // Constructor with params.
-        ModelLoaderObj(bool translateVertex, bool calculateNormals, float calculateNormalAngle);
+        ModelLoaderObj(bool calculateNormals, float calculateNormalAngle);
         
         // Destructor.
         ~ModelLoaderObj();
@@ -36,6 +36,9 @@ namespace yw
     private:
         // $TEMP: Read data from obj file.
         const char* ReadDataFromFile(const StringA& fileName);
+
+        // Load Wavefront-Obj form data.
+        void LoadWavefrontObjFormData(Model* model, const char* objData, bool calculateNormals, float calculateNormalAngle);
 
         // First pass of process.
         void FirstPass(Model* model, const char* objData);
@@ -51,6 +54,9 @@ namespace yw
 
         // Calculate vertex normals.
         void CalculateVertexNormals(class Model* model, float angle);
+
+        // Calculate vertex tangent.
+        void CalculateVertexTangent(class Model* model);
 
         // Read material.
         // $Implement.
@@ -68,9 +74,6 @@ namespace yw
         };
 
     private:
-        // Translate verex postion from obj file or not.
-        bool m_TranslateVertex;
-
         // Calculate normal or not.
         bool m_CalculateNormals;
 

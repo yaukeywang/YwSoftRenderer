@@ -19,16 +19,14 @@ namespace yw
 
     ModelLoaderObj::ModelLoaderObj() : 
         IModelLoader(),
-        m_TranslateVertex(false),
         m_CalculateNormals(false),
         m_CalculateNormalAngle(90.0f)
     {
         
     }
 
-    ModelLoaderObj::ModelLoaderObj(bool translateVertex, bool calculateNormals, float calculateNormalAngle) :
+    ModelLoaderObj::ModelLoaderObj(bool calculateNormals, float calculateNormalAngle) :
         IModelLoader(),
-        m_TranslateVertex(translateVertex),
         m_CalculateNormals(calculateNormals),
         m_CalculateNormalAngle(calculateNormalAngle)
     {
@@ -38,6 +36,27 @@ namespace yw
     ModelLoaderObj::~ModelLoaderObj()
     {
         // Release each group.
+    }
+    
+    Model* ModelLoaderObj::Load(const StringA& fileName)
+    {
+        // Alloc a model class.
+        Model* objModel = new Model();
+        
+        // Read data from file.
+        const char* objData = ReadDataFromFile(fileName);
+        if (nullptr == objData)
+        {
+            return nullptr;
+        }
+        
+        // Try to load obj model from data.
+        LoadWavefrontObjFormData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
+        
+        // Release file data.
+        YW_SAFE_DELETE_ARRAY(objData);
+        
+        return objModel;
     }
 
     const char* ModelLoaderObj::ReadDataFromFile(const StringA& fileName)
@@ -66,7 +85,7 @@ namespace yw
         // Process data.
         objData[fileSize] = 0;
 
-        #if !(defined(_WIN32) || defined(WIN32))
+#if !(defined(_WIN32) || defined(WIN32))
         {
             char* temp = new char[fileSize + 1];
             strcpy(temp, objData);
@@ -90,26 +109,16 @@ namespace yw
             // Release temp data.
             YW_SAFE_DELETE_ARRAY(temp);
         }
-        #endif
+#endif
 
         return objData;
     }
-    
-    Model* ModelLoaderObj::Load(const StringA& fileName)
+
+    void ModelLoaderObj::LoadWavefrontObjFormData(Model* objModel, const char* objData, bool calculateNormals, float calculateNormalAngle)
     {
-        // Alloc a model class.
-        Model* objModel = new Model();
-        
-        // Read data from file.
-        const char* objData = ReadDataFromFile(fileName);
-        if (nullptr == objData)
-        {
-            return nullptr;
-        }
-        
         // Make a first pass through the file to get a count of the number of vertices, normals, texcoords & triangles.
         FirstPass(objModel, objData);
-        
+
         // Second pass to organize data.
         SecondPass(objModel, objData);
 
@@ -120,15 +129,13 @@ namespace yw
         CalculateFacetNormals(objModel);
 
         // Calculate normal if this obj file does not contains any normal.
-        if (m_CalculateNormals || (objModel->m_Normals.size() <= 0))
+        if (calculateNormals || (objModel->m_Normals.size() <= 0))
         {
-            CalculateVertexNormals(objModel, m_CalculateNormalAngle);
+            CalculateVertexNormals(objModel, calculateNormalAngle);
         }
-        
-        // Release file data.
-        YW_SAFE_DELETE_ARRAY(objData);
-        
-        return objModel;
+
+        // Calculate facet and vertex tangents.
+        CalculateVertexTangent(objModel);
     }
 
     void ModelLoaderObj::FirstPass(Model* model, const char* objData)
@@ -247,6 +254,7 @@ namespace yw
         model->m_Texcoord2s.resize(numTexcoords);
         //model->m_Triangles.resize(numTriangles);
         assert((uint32_t)model->m_Triangles.size() == numTriangles);
+        model->m_Tangents.resize(numVertices);
 
         // Create a default group if no group found.
         if (model->m_Groups.size() <= 0)
@@ -626,6 +634,32 @@ namespace yw
         }
 
         normals.clear();
+    }
+
+    void ModelLoaderObj::CalculateVertexTangent(class Model* model)
+    {
+        // Calculate triangle tangent vector.
+        // TODO: average tangents of shared vertices.
+        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        {
+            const ModelTriangle* triangle = TRIANGLE(i);
+
+            const Vector3& v0 = model->m_Vertices[triangle->m_VertexIndices[0]];
+            const Vector3& v1 = model->m_Vertices[triangle->m_VertexIndices[1]];
+            const Vector3& v2 = model->m_Vertices[triangle->m_VertexIndices[2]];
+
+            const float texCoordY0 = model->m_Texcoords[triangle->m_TexcoordsIndices[0]].y;
+            const float texCoordY1 = model->m_Texcoords[triangle->m_TexcoordsIndices[1]].y;
+            const float texCoordY2 = model->m_Texcoords[triangle->m_TexcoordsIndices[2]].y;
+
+            const Vector3 deltaVertex[2] = { v1 - v0, v2 - v0 };
+            const float deltaTexCoordY[2] = { texCoordY1 - texCoordY0, texCoordY2 - texCoordY0 };
+            const Vector3 tangent = (deltaVertex[0] * deltaTexCoordY[1] - deltaVertex[1] * deltaTexCoordY[0]).Normalize();
+            
+            model->m_Tangents[triangle->m_VertexIndices[0]] = tangent;
+            model->m_Tangents[triangle->m_VertexIndices[1]] = tangent;
+            model->m_Tangents[triangle->m_VertexIndices[2]] = tangent;
+        }
     }
 
     void ModelLoaderObj::ReadMTL(Model* model, StringA name)

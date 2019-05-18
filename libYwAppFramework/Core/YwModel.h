@@ -106,6 +106,9 @@ namespace yw
         // All 2nd uv coordinates.
         std::vector<Vector2> m_Texcoord2s;
 
+        // All vertex tangents.
+        std::vector<Vector3> m_Tangents;
+
         // All triangles.
         std::vector<ModelTriangle*> m_Triangles;
         
