@@ -136,6 +136,9 @@ namespace yw
 
         // Calculate facet and vertex tangents.
         CalculateVertexTangent(objModel);
+
+        // Process secondary texture coordinates.
+        ProcessSecondardTextureCoordinates(objModel);
     }
 
     void ModelLoaderObj::FirstPass(Model* model, const char* objData)
@@ -662,8 +665,17 @@ namespace yw
         }
     }
 
+    void ModelLoaderObj::ProcessSecondardTextureCoordinates(class Model* model)
+    {
+        assert(model->m_Texcoords.size() == model->m_Texcoord2s.size());
+        for (int32_t i = 0; i < (int32_t)model->m_Texcoords.size(); i++)
+        {
+            model->m_Texcoord2s[i] = model->m_Texcoords[i];
+        }
+    }
+
     void ModelLoaderObj::ReadMTL(Model* model, StringA name)
     {
-
+        // Read material.
     }
 }

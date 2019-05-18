@@ -58,6 +58,9 @@ namespace yw
         // Calculate vertex tangent.
         void CalculateVertexTangent(class Model* model);
 
+        // Process secondary texture coordinates.
+        void ProcessSecondardTextureCoordinates(class Model* model);
+
         // Read material.
         // $Implement.
         void ReadMTL(class Model* model, StringA name);
