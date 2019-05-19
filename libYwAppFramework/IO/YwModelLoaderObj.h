@@ -31,7 +31,7 @@ namespace yw
         // Load model data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the model file.
         // @return Model pointer of the loaded model, null if failed.
-        class Model* Load(const StringA& fileName);
+        bool Load(const StringA& fileName, class Model** model);
         
     private:
         // $TEMP: Read data from obj file.
@@ -59,7 +59,7 @@ namespace yw
         void CalculateVertexTangent(class Model* model);
 
         // Process secondary texture coordinates.
-        void ProcessSecondardTextureCoordinates(class Model* model);
+        void ProcessOtherData(class Model* model);
 
         // Read material.
         // $Implement.

@@ -6,6 +6,7 @@
 
 #include "YwBase.h"
 #include "YwMath.h"
+#include "Yw3d.h"
 
 namespace yw
 {
@@ -81,8 +82,15 @@ namespace yw
         ~Model();
 
     public:
+        // Add a group.
         ModelGroup* AddGroup(const StringA& groupName, ModelGroup* meshGroup);
+
+        // Find a gtoup.
         ModelGroup* FindGroup(const StringA& groupName);
+
+    public:
+        // Create all vertex related data.
+        bool CreateVertexData(Yw3dDevice* device);
 
     public:
         // The model name.
@@ -109,6 +117,9 @@ namespace yw
         // All vertex tangents.
         std::vector<Vector3> m_Tangents;
 
+        // Add vertex colors.
+        std::vector<Vector4> m_Colors;
+
         // All triangles.
         std::vector<ModelTriangle*> m_Triangles;
         
@@ -117,6 +128,34 @@ namespace yw
         
         // The position of the mesh.
         //Vector3 m_Position;
+
+        // ------------------------------------------------------------------
+        // Data for graphics device.
+
+    public:
+        // Define vertex format.
+        struct Vertexformat
+        {
+            Vector3 position;
+            Vector3 normal;
+            Vector3 tangent;
+            Vector4 color;
+            Vector2 texcoord;
+            Vector2 texcoord2;
+            Vertexformat() {}
+        };
+
+        // Vertex element declaration.
+        static Yw3dVertexElement s_VertexDeclaration[6];
+
+        // The vertex format.
+        Yw3dVertexFormat* m_VertexFormat;
+
+        // The vertex buffer.
+        Yw3dVertexBuffer* m_VertexBuffer;
+
+        // The index buffer for each group.
+        std::vector<Yw3dIndexBuffer*> m_IndexBuffers;
     };
 }
 

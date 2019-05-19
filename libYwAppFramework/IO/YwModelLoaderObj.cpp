@@ -38,11 +38,13 @@ namespace yw
         // Release each group.
     }
     
-    Model* ModelLoaderObj::Load(const StringA& fileName)
+    bool ModelLoaderObj::Load(const StringA& fileName, Model** model)
     {
-        // Alloc a model class.
-        Model* objModel = new Model();
-        
+        if ((fileName.length() <= 0) || (nullptr == model))
+        {
+            return false;
+        }
+
         // Read data from file.
         const char* objData = ReadDataFromFile(fileName);
         if (nullptr == objData)
@@ -51,12 +53,13 @@ namespace yw
         }
         
         // Try to load obj model from data.
+        Model* objModel = *model;
         LoadWavefrontObjFormData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
         
         // Release file data.
         YW_SAFE_DELETE_ARRAY(objData);
         
-        return objModel;
+        return true;
     }
 
     const char* ModelLoaderObj::ReadDataFromFile(const StringA& fileName)
@@ -138,7 +141,7 @@ namespace yw
         CalculateVertexTangent(objModel);
 
         // Process secondary texture coordinates.
-        ProcessSecondardTextureCoordinates(objModel);
+        ProcessOtherData(objModel);
     }
 
     void ModelLoaderObj::FirstPass(Model* model, const char* objData)
@@ -258,6 +261,7 @@ namespace yw
         //model->m_Triangles.resize(numTriangles);
         assert((uint32_t)model->m_Triangles.size() == numTriangles);
         model->m_Tangents.resize(numVertices);
+        model->m_Colors.resize(numVertices);
 
         // Create a default group if no group found.
         if (model->m_Groups.size() <= 0)
@@ -665,12 +669,23 @@ namespace yw
         }
     }
 
-    void ModelLoaderObj::ProcessSecondardTextureCoordinates(class Model* model)
+    void ModelLoaderObj::ProcessOtherData(class Model* model)
     {
+        assert(model->m_Vertices.size() == model->m_Normals.size());
+        assert(model->m_Vertices.size() == model->m_Texcoords.size());
+        assert(model->m_Vertices.size() == model->m_Texcoord2s.size());
+        assert(model->m_Vertices.size() == model->m_Tangents.size());
+        assert(model->m_Vertices.size() == model->m_Colors.size());
+
         assert(model->m_Texcoords.size() == model->m_Texcoord2s.size());
         for (int32_t i = 0; i < (int32_t)model->m_Texcoords.size(); i++)
         {
             model->m_Texcoord2s[i] = model->m_Texcoords[i];
+        }
+
+        for (int32_t i = 0; i < (int32_t)model->m_Colors.size(); i++)
+        {
+            model->m_Colors[i] = Vector4::White();
         }
     }
 

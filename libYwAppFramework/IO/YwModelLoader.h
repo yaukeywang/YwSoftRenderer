@@ -22,8 +22,9 @@ namespace yw
     public:
         // Load model data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the model file.
+        // @param[out] model the loaded data to fill.
         // @return Model pointer of the loaded model, null if failed.
-        virtual class Model* Load(const StringA& fileName) = 0;
+        virtual bool Load(const StringA& fileName, class Model** model) = 0;
     };
 }
 
