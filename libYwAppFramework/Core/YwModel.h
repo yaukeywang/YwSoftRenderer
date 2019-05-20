@@ -83,9 +83,9 @@ namespace yw
 
     public:
         // Add a group.
-        ModelGroup* AddGroup(const StringA& groupName, ModelGroup* meshGroup);
+        ModelGroup* AddGroup(const StringA& groupName);
 
-        // Find a gtoup.
+        // Find a group.
         ModelGroup* FindGroup(const StringA& groupName);
 
     public:

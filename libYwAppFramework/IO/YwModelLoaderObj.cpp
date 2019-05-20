@@ -205,8 +205,7 @@ namespace yw
             case 'g':               /* group */
                 /* eat up rest of line */
                 sscanf(curPos, "%s %s", buf, buf);
-                group = new ModelGroup(buf);
-                model->m_Groups.push_back(group);
+                group = model->AddGroup(buf);
                 break;
             case 'f':               /* face */
                 curPos += 2; // Move to face start position, skipping the white space.
@@ -260,8 +259,6 @@ namespace yw
         model->m_Texcoord2s.resize(numTexcoords);
         //model->m_Triangles.resize(numTriangles);
         assert((uint32_t)model->m_Triangles.size() == numTriangles);
-        model->m_Tangents.resize(numVertices);
-        model->m_Colors.resize(numVertices);
 
         // Create a default group if no group found.
         if (model->m_Groups.size() <= 0)
@@ -450,14 +447,22 @@ namespace yw
             triangle->m_NormalIndices[0] -= 1;
             triangle->m_NormalIndices[1] -= 1;
             triangle->m_NormalIndices[2] -= 1;
+        }
 
-            triangle->m_TexcoordsIndices[0] -= 1;
-            triangle->m_TexcoordsIndices[1] -= 1;
-            triangle->m_TexcoordsIndices[2] -= 1;
+        if (model->m_Texcoords.size() > 0)
+        {
+            for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+            {
+                ModelTriangle* triangle = model->m_Triangles[i];
 
-            triangle->m_Texcoords2Indices[0] -= 1;
-            triangle->m_Texcoords2Indices[1] -= 1;
-            triangle->m_Texcoords2Indices[2] -= 1;
+                triangle->m_TexcoordsIndices[0] -= 1;
+                triangle->m_TexcoordsIndices[1] -= 1;
+                triangle->m_TexcoordsIndices[2] -= 1;
+
+                triangle->m_Texcoords2Indices[0] -= 1;
+                triangle->m_Texcoords2Indices[1] -= 1;
+                triangle->m_Texcoords2Indices[2] -= 1;
+            }
         }
     }
 
@@ -645,6 +650,15 @@ namespace yw
 
     void ModelLoaderObj::CalculateVertexTangent(class Model* model)
     {
+        // Skip if no texture coordinates data.
+        if (model->m_Texcoords.size() <= 0)
+        {
+            return;
+        }
+
+        // Alloc model tangents space.
+        model->m_Tangents.resize(model->m_Vertices.size());
+
         // Calculate triangle tangent vector.
         // TODO: average tangents of shared vertices.
         for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
@@ -675,20 +689,6 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)model->m_Texcoords.size(); i++)
         {
             model->m_Texcoord2s[i] = model->m_Texcoords[i];
-        }
-
-        for (int32_t i = 0; i < (int32_t)model->m_Colors.size(); i++)
-        {
-            model->m_Colors[i] = Vector4::White();
-        }
-
-        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
-        {
-            ModelTriangle* triangle = model->m_Triangles[i];
-            for (int32_t j = 0; j < 3; j++)
-            {
-                triangle->m_Texcoords2Indices[j] = triangle->m_TexcoordsIndices[j];
-            }
         }
     }
 

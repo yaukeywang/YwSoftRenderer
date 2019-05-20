@@ -7,7 +7,8 @@
 namespace yw
 {
     Model::Model() :
-        m_Triangles(0)
+        m_VertexFormat(nullptr),
+        m_VertexBuffer(nullptr)
     {
     }
 
@@ -42,18 +43,16 @@ namespace yw
         m_IndexBuffers.clear();
     }
 
-    ModelGroup* Model::AddGroup(const StringA& groupName, ModelGroup* meshGroup)
+    ModelGroup* Model::AddGroup(const StringA& groupName)
     {
         ModelGroup* group = FindGroup(groupName);
         if (nullptr == group)
         {
-            m_Groups.push_back(meshGroup);
-            return meshGroup;
+            group = new ModelGroup(groupName);
+            m_Groups.push_back(group);
         }
-        else
-        {
-            return nullptr;
-        }
+        
+        return group;
     }
 
     ModelGroup* Model::FindGroup(const StringA& groupName)
@@ -90,47 +89,19 @@ namespace yw
         // ------------------------------------------------------------------
         // Create data.
 
-        // Create vertex format.
+        // Create vertex format, release old vertex format data.
         YW_SAFE_RELEASE(m_VertexFormat);
         if (YW3D_FAILED(device->CreateVertexFormat(&m_VertexFormat, s_VertexDeclaration, sizeof(s_VertexDeclaration))))
         {
             return false;
         }
 
-        // Create vertex buffer.
+        // Create vertex buffer, release old vertex buffer data.
         YW_SAFE_RELEASE(m_VertexBuffer);
         if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(Vertexformat) * (uint32_t)m_Vertices.size())))
         {
             return false;
         }
-
-        for (int i = 0; i < (int32_t)m_IndexBuffers.size(); i++)
-        {
-            YW_SAFE_RELEASE(m_IndexBuffers[i]);
-        }
-
-        m_IndexBuffers.clear();
-
-        for (int32_t i = 0; i < (int32_t)m_Groups.size(); i++)
-        {
-            ModelGroup* group = m_Groups[i];
-            if (nullptr == group)
-            {
-                continue;
-            }
-
-            // Create index buffer.
-            Yw3dIndexBuffer* indexBuffer = nullptr;
-            if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, sizeof(uint16_t) * (uint32_t)group->m_Triangles.size() * 3, Yw3d_FMT_INDEX16)))
-            {
-                return false;
-            }
-
-            m_IndexBuffers.push_back(indexBuffer);
-        }
-
-        // ------------------------------------------------------------------
-        // Fill data.
 
         // Get vertex buffer pointer.
         Vertexformat* vertexFormat = nullptr;
@@ -148,14 +119,22 @@ namespace yw
                 Vertexformat& vf = vertexFormat[triangle->m_VertexIndices[j]];
                 vf.position = m_Vertices[triangle->m_VertexIndices[j]];
                 vf.normal = m_Normals[triangle->m_NormalIndices[j]];
-                vf.tangent = m_Tangents[triangle->m_VertexIndices[j]];
-                vf.color = m_Colors[triangle->m_VertexIndices[j]];
-                vf.texcoord = m_Texcoords[triangle->m_TexcoordsIndices[j]];
-                vf.texcoord2 = m_Texcoord2s[triangle->m_Texcoords2Indices[j]];
+                vf.tangent = (m_Tangents.size() > 0) ? m_Tangents[triangle->m_VertexIndices[j]] : Vector3::Zero();
+                vf.color = (m_Colors.size() > 0) ? m_Colors[triangle->m_VertexIndices[j]] : Vector4::White();
+                vf.texcoord = (m_Texcoords.size() > 0) ? m_Texcoords[triangle->m_TexcoordsIndices[j]] : Vector2::Zero();
+                vf.texcoord2 = (m_Texcoord2s.size() > 0) ? m_Texcoord2s[triangle->m_Texcoords2Indices[j]] : Vector2::Zero();
             }
         }
 
-        // Get each group.
+        // Release old index buffer data.
+        for (int i = 0; i < (int32_t)m_IndexBuffers.size(); i++)
+        {
+            YW_SAFE_RELEASE(m_IndexBuffers[i]);
+        }
+
+        m_IndexBuffers.clear();
+
+        // Create and fill index buffer data by each group.
         for (int32_t i = 0; i < (int32_t)m_Groups.size(); i++)
         {
             ModelGroup* group = m_Groups[i];
@@ -164,9 +143,22 @@ namespace yw
                 continue;
             }
 
+            uint32_t triangleCount = (uint32_t)group->m_Triangles.size();
+            if (0 == triangleCount)
+            {
+                continue;
+            }
+
+            // Create index buffer.
+            Yw3dIndexBuffer* indexBuffer = nullptr;
+            if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, sizeof(uint16_t) * triangleCount * 3, Yw3d_FMT_INDEX16)))
+            {
+                return false;
+            }
+
             // Get index buffer pointer.
             uint16_t* indices = nullptr;
-            if (YW3D_FAILED(m_IndexBuffers[i]->GetPointer(0, (void**)&indices)))
+            if (YW3D_FAILED(indexBuffer->GetPointer(0, (void**)&indices)))
             {
                 return false;
             }
@@ -175,11 +167,13 @@ namespace yw
             for (int32_t j = 0; j < (int32_t)group->m_Triangles.size(); j++)
             {
                 ModelTriangle* triangle = m_Triangles[j];
-                indices[0] = triangle->m_VertexIndices[0];
-                indices[1] = triangle->m_VertexIndices[1];
-                indices[2] = triangle->m_VertexIndices[2];
-                indices += 3;
+                for (int32_t k = 0; k < 3; k++)
+                {
+                    *indices++ = triangle->m_VertexIndices[k];
+                }
             }
+
+            m_IndexBuffers.push_back(indexBuffer);
         }
 
         return true;
