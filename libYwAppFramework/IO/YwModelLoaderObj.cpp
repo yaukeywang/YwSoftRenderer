@@ -671,12 +671,6 @@ namespace yw
 
     void ModelLoaderObj::ProcessOtherData(class Model* model)
     {
-        assert(model->m_Vertices.size() == model->m_Normals.size());
-        assert(model->m_Vertices.size() == model->m_Texcoords.size());
-        assert(model->m_Vertices.size() == model->m_Texcoord2s.size());
-        assert(model->m_Vertices.size() == model->m_Tangents.size());
-        assert(model->m_Vertices.size() == model->m_Colors.size());
-
         assert(model->m_Texcoords.size() == model->m_Texcoord2s.size());
         for (int32_t i = 0; i < (int32_t)model->m_Texcoords.size(); i++)
         {
@@ -686,6 +680,15 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)model->m_Colors.size(); i++)
         {
             model->m_Colors[i] = Vector4::White();
+        }
+
+        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        {
+            ModelTriangle* triangle = model->m_Triangles[i];
+            for (int32_t j = 0; j < 3; j++)
+            {
+                triangle->m_Texcoords2Indices[j] = triangle->m_TexcoordsIndices[j];
+            }
         }
     }
 

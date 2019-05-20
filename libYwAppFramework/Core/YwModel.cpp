@@ -139,16 +139,20 @@ namespace yw
             return false;
         }
 
-        // Fill vertex buffer data.
-        for (int32_t i = 0; i < (int32_t)m_Vertices.size(); i++)
+        // Fill vertex buffer data, through by triangles.
+        for (int32_t i = 0; i < (int32_t)m_Triangles.size(); i++)
         {
-            Vertexformat& vf = vertexFormat[i];
-            vf.position = m_Vertices[i];
-            vf.normal = m_Normals[i];
-            vf.tangent = m_Tangents[i];
-            vf.color = m_Colors[i];
-            vf.texcoord = m_Texcoords[i];
-            vf.texcoord2 = m_Texcoord2s[i];
+            ModelTriangle* triangle = m_Triangles[i];
+            for (int32_t j = 0; j < 3; j++)
+            {
+                Vertexformat& vf = vertexFormat[triangle->m_VertexIndices[j]];
+                vf.position = m_Vertices[triangle->m_VertexIndices[j]];
+                vf.normal = m_Normals[triangle->m_NormalIndices[j]];
+                vf.tangent = m_Tangents[triangle->m_VertexIndices[j]];
+                vf.color = m_Colors[triangle->m_VertexIndices[j]];
+                vf.texcoord = m_Texcoords[triangle->m_TexcoordsIndices[j]];
+                vf.texcoord2 = m_Texcoord2s[triangle->m_Texcoords2Indices[j]];
+            }
         }
 
         // Get each group.
