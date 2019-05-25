@@ -22,6 +22,12 @@ solution "YwSoftRenderer"
     filter { "system:windows" }
         defines { "_CRT_SECURE_NO_WARNINGS" }
 
+    filter { "system:linux" }
+        defines { "_LINUX" }
+
+   filter { "system:macosx" }
+        defines { "_MAC_OSX" }
+
     filter { "configurations:Debug*" }
         defines { "DEBUG" }
 
@@ -42,6 +48,9 @@ project "libYw3d"
 
     includedirs
     {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math"
     }
 
     files
@@ -125,7 +134,13 @@ project "libYwAppFramework"
 
     includedirs
     {
-        "libYw3d"
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/ThirdParty"
     }
 
     files
@@ -145,10 +160,16 @@ project "libYwAppFramework"
         "libYwAppFramework/Core/YwGraphics.cpp",
         "libYwAppFramework/Core/YwInput.h",
         "libYwAppFramework/Core/YwInput.cpp",
+        "libYwAppFramework/Core/YwModel.h",
+        "libYwAppFramework/Core/YwModel.cpp",
         "libYwAppFramework/Core/YwScene.h",
         "libYwAppFramework/Core/YwScene.cpp",
         "libYwAppFramework/Core/YwStateBlock.h",
         "libYwAppFramework/Core/YwStateBlock.cpp",
+
+        "libYwAppFramework/IO/YwModelLoader.h",
+        "libYwAppFramework/IO/YwModelLoaderObj.h",
+        "libYwAppFramework/IO/YwModelLoaderObj.cpp",
 
         --"libYwAppFramework/ThirdParty/*.h",
         --"libYwAppFramework/ThirdParty/*.cpp"
@@ -158,6 +179,7 @@ project "libYwAppFramework"
     {
         ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.inl", "libYwAppFramework/Yw*.cpp" },
         ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.inl", "libYwAppFramework/Core/Yw*.cpp" },
+        ["IO"] = { "libYwAppFramework/IO/Yw*.h", "libYwAppFramework/IO/Yw*.inl", "libYwAppFramework/IO/Yw*.cpp" },
         ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.cpp" }
     }
 
@@ -183,8 +205,11 @@ project "Demo1Triangle"
     includedirs
     {
         "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
         "libYwAppFramework",
         "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
         "libYwAppFramework/ThirdParty"
     }
 

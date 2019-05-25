@@ -10,6 +10,7 @@
 
 namespace yw
 {
+    // The class wraps may base device api.
     class Graphics
     {
         friend class IApplication;

@@ -13,12 +13,7 @@ namespace yw
     struct Plane
     {
     public:
-        union
-        {
-            struct { Vector3 normal; float d; };
-            struct { float a; float b; float c; float d; };
-            Vector4 p;
-        };
+        Vector3 normal; float d;
 
     public:
         Plane();

@@ -1,4 +1,4 @@
-// Add by Yaukey at 2010-11-01.
+// Add by Yaukey at 2018-11-01.
 // YW Soft Renderer some utility things.
 
 #ifndef __YW_BASE_H__
@@ -9,10 +9,10 @@
 #include <stdint.h>
 #include <vector>
 #include <list>
-#include <wtypes.h>
 
 #if defined(_WIN32) || defined(WIN32)
     #include <tchar.h>
+    #include <wtypes.h>
 #endif
 
 #ifndef __amigaos4__
@@ -62,13 +62,15 @@
 // String.
 namespace yw
 {
-	#ifndef _UNICODE
-	    #define std_tstring(x) std::##x
-	#else
-	    #define std_tstring(x) std::w##x
-	#endif // !_UNICODE
+    // String define.
+    typedef std::string StringA;
+    typedef std::wstring StringW;
 
-	typedef std_tstring(string) String;
+	#ifndef _UNICODE
+        typedef StringA String;
+	#else
+        typedef StringW String;
+	#endif // !_UNICODE
 }
 
 // ------------------------------------------------------------------
@@ -80,37 +82,57 @@ namespace yw
 // Log things.
 #if !defined(_WIN32) && !defined(WIN32)
     #define OutputDebugString printf
+#else
+    #if !defined(OutputDebugString)
+        #define OutputDebugString
+    #endif
 #endif
 
 #ifndef LOG
-    #define LOG(x) OutputDebugString(x)
+    #define LOG_A(x, ...)
+    #define LOG_W(x, ...)
+    #define LOG(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGF
-    #define LOGF(x) OutputDebugString(x)
+    #define LOGF_A(x, ...)
+    #define LOGF_W(x, ...)
+    #define LOGF(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGI
+    #define LOGI_A(x, ...)
+    #define LOGI_W(x, ...)
     #define LOGI(x) OutputDebugString(x)
 #endif
 
 #ifndef LOGIF
-    #define LOGIF(x) OutputDebugString(x)
+    #define LOGIF_A(x, ...)
+    #define LOGIF_W(x, ...)
+    #define LOGIF(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGW
-    #define LOGW(x) OutputDebugString(x)
+    #define LOGW_A(x, ...)
+    #define LOGW_W(x, ...)
+    #define LOGW(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGWF
-    #define LOGWF(x) OutputDebugString(x)
+    #define LOGWF_A(x, ...)
+    #define LOGWF_W(x, ...)
+    #define LOGWF(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGE
-    #define LOGE(x) OutputDebugString(x)
+    #define LOGE_A(x, ...)
+    #define LOGE_W(x, ...)
+    #define LOGE(x, ...) OutputDebugString(x)
 #endif
 
 #ifndef LOGEF
+    #define LOGEF_A(x, ...)
+    #define LOGEF_W(x, ...)
     #define LOGEF(x) OutputDebugString(x)
 #endif
 

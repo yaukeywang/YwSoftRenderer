@@ -351,7 +351,7 @@ namespace yw
 
             if ((destRect->left >= destRect->right) || (destRect->top >= destRect->bottom))
             {
-                LOGE(_T("CMuli3DSurface::CopyToSurface: invalid destination rectangle specified!\n"));
+                LOGE(_T("Yw3dSurface::CopyToSurface: invalid destination rectangle specified!\n"));
                 return Yw3d_E_InvalidParameters;
             }
 
@@ -370,7 +370,7 @@ namespace yw
         Yw3dResult lockResult = destSurface->LockRect((void**)destData, destRect);
         if (YW3D_FAILED(lockResult))
         {
-            LOGE(_T("CMuli3DSurface::CopyToSurface: couldn't lock destination surface!\n"));
+            LOGE(_T("Yw3dSurface::CopyToSurface: couldn't lock destination surface!\n"));
             return lockResult;
         }
 
@@ -415,6 +415,12 @@ namespace yw
                 case Yw3d_FMT_R32G32B32F: destData[2] = srcColor.b;
                 case Yw3d_FMT_R32G32F: destData[1] = srcColor.g;
                 case Yw3d_FMT_R32F: destData[0] = srcColor.r;
+                    break;
+                case Yw3d_FMT_INDEX16:
+                case Yw3d_FMT_INDEX32:
+                default:
+                    LOGE(_T("Yw3dSurface::CopyToSurface: wrong format of source surface!\n"));
+                    break;
                 }
             }
         }
@@ -507,7 +513,6 @@ namespace yw
 
         // Update surface if partial locked.
         const uint32_t lockWidth = m_PartialLockRect.right - m_PartialLockRect.left;
-        const uint32_t lockHeight = m_PartialLockRect.bottom - m_PartialLockRect.top;
         const uint32_t surfaceFloatCount = GetFormatFloats();
 
         float* curLockedData = m_PartialLockData;

@@ -4,8 +4,8 @@
 #ifndef __YW_3D_RENDER_TARGET_H__
 #define __YW_3D_RENDER_TARGET_H__
 
-#include "../Yw3dBase.h"
-#include "../Yw3dTypes.h"
+#include "Yw3dBase.h"
+#include "Yw3dTypes.h"
 
 namespace yw
 {
@@ -58,14 +58,14 @@ namespace yw
         // @return Yw3d_E_InvalidParameters if an invalid format was encountered.
         Yw3dResult SetColorBuffer(class Yw3dSurface* colorBuffer);
 
-        // Associates a CMuli3DSurface as depthbuffer with this rendertarget, releasing the currently set depthbuffer.
+        // Associates a Yw3dSurface as depthbuffer with this rendertarget, releasing the currently set depthbuffer.
         // Calling this function will increase the internal reference count of the surface.
         // @param[in] depthBuffer new depthbuffer.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if an invalid format was encountered.
         Yw3dResult SetDepthBuffer(class Yw3dSurface* depthBuffer);
 
-        // Associates a CMuli3DSurface as stencilbuffer with this rendertarget, releasing the currently set stencilbuffer.
+        // Associates a Yw3dSurface as stencilbuffer with this rendertarget, releasing the currently set stencilbuffer.
         // Calling this function will increase the internal reference count of the surface.
         // @param[in] stencilbuffer new stencilbuffer.
         // @return Yw3d_S_OK if the function succeeds.

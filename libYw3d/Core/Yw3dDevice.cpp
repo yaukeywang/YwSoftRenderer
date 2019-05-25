@@ -1,4 +1,4 @@
-﻿// Add by Yaukey at 2018-01-30.
+// Add by Yaukey at 2018-01-30.
 // YW Soft Renderer 3d device class.
 
 #include "Yw3dCore.h"
@@ -52,9 +52,11 @@ namespace yw
         // NOTE: add support for other platforms here.
 #if defined(_WIN32) || defined(WIN32)
         m_PresentTarget = new Yw3dPresentTargetWindows(this);
-#elif LINUX_X11
-        m_PresentTarget = new Yw3dPresentTargetLinuxX11(this);
-#elif __amigaos4__
+#elif defined(LINUX_X11) || defined(_LINUX)
+        m_PresentTarget = new Yw3dPresentTargetLinux(this);
+#elif defined(_MAC_OSX)
+        m_PresentTarget = new Yw3dPresentTargetMacOSX(this);
+#elif defined(__amigaos4__) || (_AMIGAOS4)
         m_PresentTarget = new Yw3dPresentTargetAmigaOS4(this);
 #endif
 
@@ -1116,7 +1118,7 @@ namespace yw
             }
         default:
             color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-            LOGE(_T("CMuli3DDevice::SampleTexture: invalid texture-sampling input!\n"));
+            LOGE(_T("Yw3dDevice::SampleTexture: invalid texture-sampling input!\n"));
             return Yw3d_E_InvalidState;
         }
 
@@ -1726,8 +1728,8 @@ namespace yw
     Yw3dResult Yw3dDevice::DecodeVertexStream(Yw3dVSInput& vertexShaderInput, uint32_t vertexIndex)
     {
         // Raw vertex data cache for each stream.
-        const byte* vertexRawData[YW3D_MAX_VERTEX_STREAMS];
-        memset(vertexRawData, 0, sizeof(byte) * YW3D_MAX_VERTEX_STREAMS);
+        const uint8_t* vertexRawData[YW3D_MAX_VERTEX_STREAMS];
+        memset(vertexRawData, 0, sizeof(uint8_t) * YW3D_MAX_VERTEX_STREAMS);
 
         // Get start vertex index in vertex buffer of each stream.
         const VertexStream* vertexStream = m_VertexStreams;

@@ -16,7 +16,7 @@ namespace yw
         Yw3d_S_OK = 0,                  // No errors were encountered, function returned successfully.
         
         // Failed.
-        Yw3d_E_Unknown,			        // An unknown error has occured.
+        Yw3d_E_Unknown,			        // An unknown error has occurred.
         Yw3d_E_InvalidParameters,       // One or more parameters were invalid.
         Yw3d_E_OutOfMemory,             // Allocation of memory within the function failed.
         Yw3d_E_InvalidFormat,           // A format is invalid for a specific task.
@@ -103,7 +103,7 @@ namespace yw
     #endif // !WIN32
 
     // Linux.
-    #ifdef LINUX_X11
+    #if defined(LINUX_X11) || defined(_LINUX)
 
         // Float type header.
         #include <fpu_control.h>
@@ -124,17 +124,34 @@ namespace yw
 
     #endif // !LINUX_X11
 
+    // Mac OSX.
+    #if defined(_MAC_OSX)
+
+        // Sets FPU to truncation-mode and single precision.
+        inline void fpuTruncate()
+        {
+            // #warning: fpuTruncate() currently not implemented on Mac OSX.
+        }
+
+        // Resets FPU to default.
+        inline void fpuReset()
+        {
+            // #warning: fpuReset() currently not implemented on Mac OSX.
+        }
+
+    #endif // !_MAC_OSX
+
     // AmigaOS4.
-    #ifdef __amigaos4__
+    #if defined(__amigaos4__) || defined(_AMIGAOS4)
 
         inline void fpuTruncate()
         {
-            // #warning: fpuTruncate() currently not implemented on AmigaOS 4 
+            // #warning: fpuTruncate() currently not implemented on AmigaOS 4.
         }
 
         inline void fpuReset()
         {
-            // #warning: fpuReset() currently not implemented on AmigaOS 4
+            // #warning: fpuReset() currently not implemented on AmigaOS 4.
         }
 
     #endif // !__amigaos4__

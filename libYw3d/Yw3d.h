@@ -8,7 +8,7 @@
 // Include all basic-headers.
 #include "Yw3dBase.h"
 #include "Yw3dTypes.h"
-#include "Core/Yw3dCore.h"
-#include "Math/YwMath.h"
+#include "Yw3dCore.h"
+#include "YwMath.h"
 
 #endif // !__YW_3D_H__

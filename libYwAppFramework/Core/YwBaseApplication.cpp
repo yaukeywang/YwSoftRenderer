@@ -40,9 +40,11 @@ namespace yw
         // Create input. NOTE: add support for other platforms here.
 #if defined(_WIN32) || defined(WIN32)
         m_Input = new YwInputWindows(this);
-#elif LINUX_X11
+#elif defined(LINUX_X11) || defined(_LINUX)
         m_Input = new YwInputLinux(this);
-#elif __amigaos4__
+#elif defined(_MAC_OSX)
+        m_Input = new YwInputMacOSX(this);
+#elif defined(__amigaos4__) || defined(_AMIGAOS4)
         m_Input = new YwInputAmigaOS4(this);
 #endif
 

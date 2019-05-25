@@ -24,8 +24,10 @@ namespace yw
         this->d = d;
     }
 
-    inline Plane::Plane(const Plane& p) : normal(p.normal), d(p.d)
+    inline Plane::Plane(const Plane& p)
     {
+        normal = p.normal;
+        d = p.d;
     }
 
     inline const Plane& Plane::operator =(const Plane& p)

@@ -10,11 +10,15 @@
 #if defined(_WIN32) || defined(WIN32)
 // Windows platform.
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-#elif LINUX_X11
+#elif defined(LINUX_X11) || defined(_LINUX)
 // Linux platform.
 int main()
-#elif __amigaos4__
-// amigaos platform.
+// Mac OSX platform.
+#elif defined(_MAC_OSX)
+int main()
+//#error "Main entry is not implemented!"
+#elif defined(__amigaos4__) || defined(_AMIGAOS4)
+// AmigaOS platform.
 int main(int argc, char** argv)
 #endif
 {

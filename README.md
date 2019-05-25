@@ -14,7 +14,8 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] `Input` module.
 - [x] `Stencil Buffer` support.
 - [x] `State Block` optimize with pooling.
-- [ ] `Mesh Data Loading` module. **[Working on...]**
+- [x] `Model Data Loading` module.
+- [ ] `Resource and IO` module. **[Working on...]**
 - [ ] `Texture Data Loading` module.
 - [ ] `Log` module.
 - [ ] `PBR` demo.

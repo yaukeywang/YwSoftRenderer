@@ -23,6 +23,7 @@
 
 namespace yw
 {
+    // The input class for windows.
     class YwInputWindows : public IInput
     {
         friend class IApplication;
@@ -36,6 +37,7 @@ namespace yw
         ~YwInputWindows();
 
     protected:
+        // @return true if successful, false if not.
         bool Initialize();
 
     public:
@@ -43,24 +45,28 @@ namespace yw
         void Update();
 
         // Get if key down.
+        // @return true if key down, false is not.
         inline bool KeyDown(char keyCode)
         {
             return (m_Keys[keyCode] & 0x80) ? true : false;
         }
 
         // Get if key up.
+        // @return true if key up, false is not.
         inline bool KeyUp(char keyCode)
         {
             return (m_Keys[keyCode] & 0x80) ? false : true;
         }
 
         // Get if mouse down.
+        // @return true if mouse button down, false is not.
         inline bool MouseButtonDown(uint32_t keyCode) 
         {
             return (m_MouseState.rgbButtons[keyCode] & 0x80) ? true : false;
         }
 
         // Get if mouse up.
+        // @return true if mouse button up, false is not.
         inline bool MouseButtonUp(uint32_t keyCode)
         {
             return (m_MouseState.rgbButtons[keyCode] & 0x80) ? false : true;
@@ -74,6 +80,7 @@ namespace yw
         }
 
         // Get mouse wheel movement.
+        // @return mouse delta movement, maybe negative
         inline int GetMouseWheelMovement() const
         {
             return m_MouseState.lZ;
@@ -105,5 +112,170 @@ namespace yw
 }
 
 #endif // End of Windows platform.
+
+// ------------------------------------------------------------------
+// Linux platform.
+#if defined(LINUX_X11) || defined(_LINUX)
+
+namespace yw
+{
+    // The input class for windows.
+    class YwInputLinux : public IInput
+    {
+        friend class IApplication;
+        friend class CApplication;
+        
+    protected:
+        // Constructor.
+        YwInputLinux(class IApplication* application);
+        
+        // Destructor.
+        ~YwInputLinux();
+        
+    protected:
+        // Initialize the input system.
+        // @return true if successful, false if not.
+        bool Initialize();
+        
+    public:
+        // Update logic.
+        void Update();
+        
+        // Get if key down.
+        // @return true if key down, false is not.
+        bool KeyDown(char keyCode);
+        
+        // Get if key up.
+        // @return true if key up, false is not.
+        bool KeyUp(char keyCode);
+        
+        // Get if mouse down.
+        // @return true if mouse button down, false is not.
+        bool MouseButtonDown(uint32_t keyCode);
+        
+        // Get if mouse up.
+        // @return true if mouse button up, false is not.
+        bool MouseButtonUp(uint32_t keyCode);
+        
+        // Get mouse movement.
+        void GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const;
+        
+        // Get mouse wheel movement.
+        // @return mouse delta movement, maybe negative
+        int GetMouseWheelMovement() const;
+    };
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Mac OSX platform.
+#if defined(_MAC_OSX)
+
+namespace yw
+{
+    // The input class for windows.
+    class YwInputMacOSX : public IInput
+    {
+        friend class IApplication;
+        friend class CApplication;
+        
+    protected:
+        // Constructor.
+        YwInputMacOSX(class IApplication* application);
+        
+        // Destructor.
+        ~YwInputMacOSX();
+        
+    protected:
+        // Initialize the input system.
+        // @return true if successful, false if not.
+        bool Initialize();
+        
+    public:
+        // Update logic.
+        void Update();
+        
+        // Get if key down.
+        // @return true if key down, false is not.
+        bool KeyDown(char keyCode);
+        
+        // Get if key up.
+        // @return true if key up, false is not.
+        bool KeyUp(char keyCode);
+        
+        // Get if mouse down.
+        // @return true if mouse button down, false is not.
+        bool MouseButtonDown(uint32_t keyCode);
+        
+        // Get if mouse up.
+        // @return true if mouse button up, false is not.
+        bool MouseButtonUp(uint32_t keyCode);
+        
+        // Get mouse movement.
+        void GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const;
+        
+        // Get mouse wheel movement.
+        // @return mouse delta movement, maybe negative
+        int GetMouseWheelMovement() const;
+    };
+}
+
+#endif
+
+// ------------------------------------------------------------------
+// Amiga OS 4 platform.
+#if defined(__amigaos4__) || (_AMIGAOS4)
+
+namespace yw
+{
+    // The input class for windows.
+    class YwInputAmigaOS4 : public IInput
+    {
+        friend class IApplication;
+        friend class CApplication;
+        
+    protected:
+        // Constructor.
+        YwInputAmigaOS4(class IApplication* application);
+        
+        // Destructor.
+        ~YwInputAmigaOS4();
+        
+    protected:
+        // Initialize the input system.
+        // @return true if successful, false if not.
+        bool Initialize();
+        
+    public:
+        // Update logic.
+        void Update();
+        
+        // Get if key down.
+        // @return true if key down, false is not.
+        bool KeyDown(char keyCode);
+        
+        // Get if key up.
+        // @return true if key up, false is not.
+        bool KeyUp(char keyCode);
+        
+        // Get if mouse down.
+        // @return true if mouse button down, false is not.
+        bool MouseButtonDown(uint32_t keyCode);
+        
+        // Get if mouse up.
+        // @return true if mouse button up, false is not.
+        bool MouseButtonUp(uint32_t keyCode);
+        
+        // Get mouse movement.
+        void GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const;
+        
+        // Get mouse wheel movement.
+        // @return mouse delta movement, maybe negative
+        int GetMouseWheelMovement() const;
+    };
+}
+
+#endif
 
 #endif // !__YW_INPUT_H__

@@ -13,15 +13,11 @@ namespace yw
     struct Matrix33;
     struct Matrix44;
 
-    // Vector 2 class.
+    // Quaternion class.
     struct Quaternion
     {
     public:
-        union
-        {
-            struct { float x; float y; float z; float w; };
-            struct { Vector3 v; float w; };
-        };
+        float x; float y; float z; float w;
 
     public:
         Quaternion();

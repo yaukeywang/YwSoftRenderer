@@ -170,10 +170,11 @@ namespace yw
         camera->SetWorldMatrix(matWorld);
 
         // This should be from device.
+        Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
         device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
         device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
         device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
-        device->SetTransform(Yw3d_TS_WVP, &(camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix()));
+        device->SetTransform(Yw3d_TS_WVP, &matProjection);
 
         graphics->SetVertexFormat(m_VertexFormat);
         graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(Vertexformat));
