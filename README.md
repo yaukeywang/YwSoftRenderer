@@ -19,6 +19,7 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [ ] `Texture Data Loading` module.
 - [ ] `Log` module.
 - [ ] `PBR` demo.
+- [ ] `Low Level Memory Pool` support.
 - [ ] `Linux` support
 - [ ] `Mac OS X` support.
 - [ ] Maybe a `Shader Compiler and Runtime` support.
