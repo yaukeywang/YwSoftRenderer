@@ -10,12 +10,58 @@
 #include "YwModelLoaderObj.h"
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
-#pragma warning(disable:4996)
+//#pragma warning(disable:4996)
 
 namespace yw
 {
     // Helper to read triangle in model.
     #define TRIANGLE(x) (model->m_Triangles[(x)])
+
+    // Scanning a string with sscanf and moving ahead with skipping white-space, stopped when empty or '\n' is found.
+    const char* sscanf_string_and_go_ahead(const char* buffer, const char* format, const char* destination)
+    {
+        if (strlen(buffer) == 0)
+        {
+            return nullptr;
+        }
+
+        while (' ' == *buffer)
+        {
+            buffer++;
+            if (('\0' == *buffer) || ('\n' == *buffer))
+            {
+                return nullptr;
+            }
+        }
+
+        if ('\n' == *buffer)
+        {
+            return nullptr;
+        }
+
+        int32_t result = sscanf(buffer, format, destination);
+        if (result <= 0)
+        {
+            return nullptr;
+        }
+
+        buffer += strlen(destination);
+        while (' ' == *buffer)
+        {
+            buffer++;
+            if (('\0' == *buffer) || ('\n' == *buffer))
+            {
+                break;
+            }
+        }
+
+        if ('\n' == *buffer)
+        {
+            return nullptr;
+        }
+
+        return buffer;
+    }
 
     ModelLoaderObj::ModelLoaderObj() : 
         IModelLoader(),
@@ -215,26 +261,102 @@ namespace yw
                 if (strstr(buf, "//"))
                 {
                     /* v//n */
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d//%d", &v, &n);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d//%d", &v, &n);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d//%d", &v, &n);
+
                     numTriangles++;
                     model->m_Triangles.push_back(new ModelTriangle());
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d//%d", &v, &n);
+
+                        numTriangles++;
+                        model->m_Triangles.push_back(new ModelTriangle());
+                    }
                 }
                 else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3)
                 {
                     /* v/t/n */
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d/%d", &v, &t, &n);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d/%d", &v, &t, &n);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d/%d", &v, &t, &n);
+
                     numTriangles++;
                     model->m_Triangles.push_back(new ModelTriangle());
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d/%d/%d", &v, &t, &n);
+
+                        numTriangles++;
+                        model->m_Triangles.push_back(new ModelTriangle());
+                    }
                 }
                 else if (sscanf(buf, "%d/%d", &v, &t) == 2)
                 {
                     /* v/t */
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d", &v, &t);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d", &v, &t);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d", &v, &t);
+
                     numTriangles++;
                     model->m_Triangles.push_back(new ModelTriangle());
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d/%d", &v, &t);
+
+                        numTriangles++;
+                        model->m_Triangles.push_back(new ModelTriangle());
+                    }
                 }
                 else
                 {
                     /* v */
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d", &v);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d", &v);
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d", &v);
+
                     numTriangles++;
                     model->m_Triangles.push_back(new ModelTriangle());
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d", &v);
+
+                        numTriangles++;
+                        model->m_Triangles.push_back(new ModelTriangle());
+                    }
                 }
                 break;
             default:
@@ -281,9 +403,9 @@ namespace yw
         memset(buf, 0, sizeof(buf));
 
         // Used for parsing face data.
-        int32_t v[3] = { 0, 0, 0 };
-        int32_t n[3] = { 0, 0, 0 };
-        int32_t t[3] = { 0, 0, 0 };
+        int32_t v = 0;
+        int32_t n = 0;
+        int32_t t = 0;
 
         /* set the pointer shortcuts */
         Vector3* vertices = &(model->m_Vertices[0]);        /* array of vertices  */
@@ -350,62 +472,154 @@ namespace yw
                 if (strstr(buf, "//"))
                 {
                     /* v//n */
-                    sscanf(curPos, "%d//%d %d//%d %d//%d", &v[0], &n[0], &v[1], &n[1], &v[2], &n[2]);
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n < 0 ? n + numNormals : n;
 
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
-                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n[0] < 0 ? n[0] + numNormals : n[0];
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n < 0 ? n + numNormals : n;
 
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
-                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n[1] < 0 ? n[1] + numNormals : n[1];
-
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
-                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n[2] < 0 ? n[2] + numNormals : n[2];
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d//%d", &v, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d//%d", &v, &n);
+
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+
+                        group->m_Triangles.push_back(numTriangles);
+                        numTriangles++;
+                    }
                 }
-                else if (sscanf(curPos, "%d/%d/%d %d/%d/%d %d/%d/%d", &v[0], &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]) == 9)
+                else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3)
                 {
                     /* v/t/n */
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t[0] < 0 ? t[0] + numTexcoords : t[0];
-                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n[0] < 0 ? n[0] + numNormals : n[0];
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n < 0 ? n + numNormals : n;
 
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t[1] < 0 ? t[1] + numTexcoords : t[1];
-                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n[1] < 0 ? n[1] + numNormals : n[1];
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n < 0 ? n + numNormals : n;
 
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t[2] < 0 ? t[2] + numTexcoords : t[2];
-                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n[2] < 0 ? n[2] + numNormals : n[2];
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d/%d", &v, &t, &n);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d/%d/%d", &v, &t, &n);
+
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                        TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                        TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                        TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+
+                        group->m_Triangles.push_back(numTriangles);
+                        numTriangles++;
+                    }
                 }
-                else if (sscanf(curPos, "%d/%d %d/%d %d/%d", &v[0], &t[0], &v[1], &t[1], &v[2], &t[2]) == 6)
+                else if (sscanf(buf, "%d/%d", &v, &t) == 2)
                 {
                     /* v/t */
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t[0] < 0 ? t[0] + numTexcoords : t[0];
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
 
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t[1] < 0 ? t[1] + numTexcoords : t[1];
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t < 0 ? t + numTexcoords : t;
 
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t[2] < 0 ? t[2] + numTexcoords : t[2];
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d/%d", &v, &t);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d/%d", &v, &t);
+
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+
+                        group->m_Triangles.push_back(numTriangles);
+                        numTriangles++;
+                    }
                 }
                 else
                 {
                     /* v */
-                    sscanf(curPos, "%d %d %d", &v[0], &v[1], &v[2]);
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v[0] < 0 ? v[0] + numVertices : v[0];
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v[1] < 0 ? v[1] + numVertices : v[1];
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v[2] < 0 ? v[2] + numVertices : v[2];
+                    const char* movingAhead = curPos;
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+
+                    movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                    sscanf(buf, "%d", &v);
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
+
+                    while (nullptr != movingAhead)
+                    {
+                        movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
+                        sscanf(buf, "%d", &v);
+
+                        TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                        TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+
+                        group->m_Triangles.push_back(numTriangles);
+                        numTriangles++;
+                    }
                 }
                 break;
             default:
@@ -689,6 +903,15 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)model->m_Texcoords.size(); i++)
         {
             model->m_Texcoord2s[i] = model->m_Texcoords[i];
+        }
+
+        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        {
+            ModelTriangle* triangle = model->m_Triangles[i];
+            for (int32_t j = 0; j < 3; j++)
+            {
+                triangle->m_Texcoords2Indices[j] = triangle->m_TexcoordsIndices[j];
+            }
         }
     }
 

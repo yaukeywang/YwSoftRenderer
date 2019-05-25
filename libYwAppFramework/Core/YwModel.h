@@ -145,6 +145,15 @@ namespace yw
             Vertexformat() {}
         };
 
+        struct IndexBufferElement
+        {
+            Yw3dIndexBuffer* indexBuffer;
+            int32_t primitiveCount;
+
+            IndexBufferElement() : indexBuffer(nullptr), primitiveCount(0) {}
+            IndexBufferElement(Yw3dIndexBuffer* buffer, int32_t count) : indexBuffer(buffer), primitiveCount(count) {}
+        };
+
         // Vertex element declaration.
         static Yw3dVertexElement s_VertexDeclaration[6];
 
@@ -155,7 +164,7 @@ namespace yw
         Yw3dVertexBuffer* m_VertexBuffer;
 
         // The index buffer for each group.
-        std::vector<Yw3dIndexBuffer*> m_IndexBuffers;
+        std::vector<IndexBufferElement> m_IndexBuffers;
     };
 }
 

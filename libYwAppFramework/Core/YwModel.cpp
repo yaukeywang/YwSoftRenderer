@@ -37,7 +37,7 @@ namespace yw
         YW_SAFE_RELEASE(m_VertexBuffer);
         for (size_t i = 0; i < m_IndexBuffers.size(); i++)
         {
-            YW_SAFE_RELEASE(m_IndexBuffers[i]);
+            YW_SAFE_RELEASE(m_IndexBuffers[i].indexBuffer);
         }
 
         m_IndexBuffers.clear();
@@ -129,7 +129,7 @@ namespace yw
         // Release old index buffer data.
         for (int i = 0; i < (int32_t)m_IndexBuffers.size(); i++)
         {
-            YW_SAFE_RELEASE(m_IndexBuffers[i]);
+            YW_SAFE_RELEASE(m_IndexBuffers[i].indexBuffer);
         }
 
         m_IndexBuffers.clear();
@@ -143,8 +143,8 @@ namespace yw
                 continue;
             }
 
-            uint32_t triangleCount = (uint32_t)group->m_Triangles.size();
-            if (0 == triangleCount)
+            int32_t triangleCount = (int32_t)group->m_Triangles.size();
+            if (triangleCount <= 0)
             {
                 continue;
             }
@@ -164,16 +164,16 @@ namespace yw
             }
 
             // Fill index buffer data.
-            for (int32_t j = 0; j < (int32_t)group->m_Triangles.size(); j++)
+            for (int32_t j = 0; j < triangleCount; j++)
             {
-                ModelTriangle* triangle = m_Triangles[j];
+                ModelTriangle* triangle = m_Triangles[group->m_Triangles[j]];
                 for (int32_t k = 0; k < 3; k++)
                 {
                     *indices++ = triangle->m_VertexIndices[k];
                 }
             }
 
-            m_IndexBuffers.push_back(indexBuffer);
+            m_IndexBuffers.push_back(IndexBufferElement(indexBuffer, triangleCount));
         }
 
         return true;
