@@ -2697,6 +2697,13 @@ namespace yw
                 const uint32_t curPixelX = intCoordA[0] + i;
                 const uint32_t curPixelY = intCoordA[1] + (uint32_t)ftol(slope * i);
 
+                // Skip off-screen pixel.
+                if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
+                    (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
+                {
+                    continue;
+                }
+
                 // Interpolation a vertex output for pixel input.
                 Yw3dVSOutput psInput;
                 SetVSOutputFromGradient(&psInput, (float)curPixelX, (float)curPixelY);
@@ -2742,6 +2749,13 @@ namespace yw
             {
                 const uint32_t curPixelX = intCoordA[0] + ftol(slope * i);
                 const uint32_t curPixelY = intCoordA[1] + i;
+
+                // Skip off-screen pixel.
+                if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
+                    (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
+                {
+                    continue;
+                }
 
                 // Interpolation a vertex output for pixel input.
                 Yw3dVSOutput psInput;
