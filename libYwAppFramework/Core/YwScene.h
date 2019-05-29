@@ -39,11 +39,11 @@ namespace yw
         void Render(uint32_t pass);
 
         // Registry entity by name and creation function.
-        void RegisterEntityType(String typeName, EntityCreateFunction createFunction);
+        void RegisterEntityType(const String& typeName, EntityCreateFunction createFunction);
 
         // Create a entity.
         // If sceneProcess is false, then the scene will not automatically call framemove/render - suited for sub-models.
-        HENTITY CreateEntity(String typeName, bool sceneProcess = true);
+        HENTITY CreateEntity(const String& typeName, bool sceneProcess = true);
 
         // Get a entity.
         class IEntity* GetEntity(HENTITY entityHandle) const;

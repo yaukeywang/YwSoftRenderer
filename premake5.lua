@@ -167,6 +167,8 @@ project "libYwAppFramework"
         "libYwAppFramework/Core/YwStateBlock.h",
         "libYwAppFramework/Core/YwStateBlock.cpp",
 
+        "libYwAppFramework/IO/YwFileIO.h",
+        "libYwAppFramework/IO/YwFileIO.cpp",
         "libYwAppFramework/IO/YwModelLoader.h",
         "libYwAppFramework/IO/YwModelLoaderObj.h",
         "libYwAppFramework/IO/YwModelLoaderObj.cpp",

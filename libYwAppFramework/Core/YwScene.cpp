@@ -67,12 +67,12 @@ namespace yw
         }
     }
 
-    void Scene::RegisterEntityType(String typeName, EntityCreateFunction createFunction)
+    void Scene::RegisterEntityType(const String& typeName, EntityCreateFunction createFunction)
     {
         m_RegisteredEntityTypes[typeName] = createFunction;
     }
 
-    HENTITY Scene::CreateEntity(String typeName, bool sceneProcess)
+    HENTITY Scene::CreateEntity(const String& typeName, bool sceneProcess)
     {
         // Get create function.
         EntityCreateFunction createFunction = m_RegisteredEntityTypes[typeName];
