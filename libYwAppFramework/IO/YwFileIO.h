@@ -14,16 +14,27 @@ namespace yw
         friend class Application;
 
     protected:
-        FileIO();
+        // Constructor.
+        FileIO(class IApplication* application);
+
+        // Destructor.
         virtual ~FileIO();
 
     protected:
+        // Initialize the file io system.
         bool Initialize();
 
     public:
-        uint32_t ReadFile(StringA& i_sFilename, uint8_t** data, bool text = false);
-        uint32_t ReadFile(StringA& i_sFilename, uint8_t* data, uint32_t dataSize, bool text = false);
-        uint32_t WriteFile(StringA& i_sFilename, uint8_t* data, uint32_t dataSize, bool text = false);
+        // Reading file and allocating data, with text or binary.
+        uint32_t ReadFile(StringA& filename, uint8_t** data, bool text = false);
+
+        // Reading file and filling by already allocated data, with text or binary.
+        uint32_t ReadFile(StringA& filename, uint8_t* data, uint32_t dataSize, bool text = false);
+
+        // Writing file with provided data.
+        uint32_t WriteFile(StringA& filename, uint8_t* data, uint32_t dataSize, bool text = false);
+
+        // Check if file exist.
         bool FileExists(StringA& filename);
 
     public:
@@ -34,6 +45,7 @@ namespace yw
         }
 
     private:
+        // The parent application.
         class IApplication* m_Application;
     };
 }
