@@ -37,6 +37,9 @@ namespace yw
         // Check if file exist.
         bool FileExists(StringA& filename);
 
+        // Get file relative path.
+        StringA GetFilePath(StringA& fileName);
+
     public:
         // Get parent application.
         inline class IApplication* GetApplication()
