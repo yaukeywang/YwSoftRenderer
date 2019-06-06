@@ -173,6 +173,9 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwModelLoaderObj.h",
         "libYwAppFramework/IO/YwModelLoaderObj.cpp",
 
+        "libYwAppFramework/Resource/YwResourceManager.h",
+        "libYwAppFramework/Resource/YwResourceManager.cpp",
+
         --"libYwAppFramework/ThirdParty/*.h",
         --"libYwAppFramework/ThirdParty/*.cpp"
     }
@@ -182,6 +185,7 @@ project "libYwAppFramework"
         ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.inl", "libYwAppFramework/Yw*.cpp" },
         ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.inl", "libYwAppFramework/Core/Yw*.cpp" },
         ["IO"] = { "libYwAppFramework/IO/Yw*.h", "libYwAppFramework/IO/Yw*.inl", "libYwAppFramework/IO/Yw*.cpp" },
+        ["Resource"] = { "libYwAppFramework/Resource/Yw*.h", "libYwAppFramework/Resource/Yw*.inl", "libYwAppFramework/Resource/Yw*.cpp" },
         ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.cpp" }
     }
 

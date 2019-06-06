@@ -1,4 +1,4 @@
-// Add by Yaukey at 2018-10-10.
+// Add by Yaukey at 2019-06-01.
 // YW Soft Renderer file io class.
 
 #ifndef __YW_FILE_IO_H__
@@ -21,24 +21,24 @@ namespace yw
         virtual ~FileIO();
 
     protected:
-        // Initialize the file io system.
+        // Initialize this system.
         bool Initialize();
 
     public:
         // Reading file and allocating data, with text or binary.
-        uint32_t ReadFile(StringA& filename, uint8_t** data, bool text = false);
+        uint32_t ReadFile(const StringA& filename, uint8_t** data, bool text = false);
 
         // Reading file and filling by already allocated data, with text or binary.
-        uint32_t ReadFile(StringA& filename, uint8_t* data, uint32_t dataSize, bool text = false);
+        uint32_t ReadFile(const StringA& filename, uint8_t* data, uint32_t dataSize, bool text = false);
 
         // Writing file with provided data.
-        uint32_t WriteFile(StringA& filename, uint8_t* data, uint32_t dataSize, bool text = false);
+        uint32_t WriteFile(const StringA& filename, uint8_t* data, uint32_t dataSize, bool text = false);
 
         // Check if file exist.
-        bool FileExists(StringA& filename);
+        bool FileExists(const StringA& filename);
 
         // Get file relative path.
-        StringA GetFilePath(StringA& fileName);
+        StringA GetFilePath(const StringA& fileName);
 
     public:
         // Get parent application.

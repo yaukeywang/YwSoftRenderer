@@ -1,6 +1,5 @@
-// Add by Yaukey at 2018-10-10.
+// Add by Yaukey at 2019-06-01.
 // YW Soft Renderer file io class.
-
 
 #include "YwFileIO.h"
 #include "YwBaseApplication.h"
@@ -21,7 +20,7 @@ namespace yw
         return true;
     }
 
-    uint32_t FileIO::ReadFile(StringA& filename, uint8_t** data, bool text)
+    uint32_t FileIO::ReadFile(const StringA& filename, uint8_t** data, bool text)
     {
         // Open the file.
         FILE* file = fopen(filename.c_str(), text ? "rt" : "rb");
@@ -78,7 +77,7 @@ namespace yw
         return fileSize;
     }
 
-    uint32_t FileIO::ReadFile(StringA& filename, uint8_t* data, uint32_t dataSize, bool text)
+    uint32_t FileIO::ReadFile(const StringA& filename, uint8_t* data, uint32_t dataSize, bool text)
     {
         // Open the file.
         FILE* file = fopen(filename.c_str(), text ? "rt" : "rb");
@@ -134,7 +133,7 @@ namespace yw
         return fileSize;
     }
 
-    uint32_t FileIO::WriteFile(StringA& filename, uint8_t* data, uint32_t dataSize, bool text)
+    uint32_t FileIO::WriteFile(const StringA& filename, uint8_t* data, uint32_t dataSize, bool text)
     {
         // Get file path and file mode.
         StringA filePath = GetFilePath(filename);
@@ -156,7 +155,7 @@ namespace yw
         return writtenBytes;
     }
 
-    bool FileIO::FileExists(StringA& filename)
+    bool FileIO::FileExists(const StringA& filename)
     {
         // Get file final path.
         StringA filePath = GetFilePath(filename);
@@ -174,7 +173,7 @@ namespace yw
         return true;
     }
 
-    StringA FileIO::GetFilePath(StringA& fileName)
+    StringA FileIO::GetFilePath(const StringA& fileName)
     {
         // $Implement: Return file relative path.
         return StringA(fileName);
