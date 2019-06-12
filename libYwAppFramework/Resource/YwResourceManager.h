@@ -42,31 +42,31 @@ namespace yw
         void UnloadResource(HRESOURCE hResource);
 
         // Get a loaded resource.
-        void* GetResource(HRESOURCE hResource);
+        const void* GetResource(HRESOURCE hResource) const;
 
     protected:
         // Register a load/unload function for a resource extension.
         void RegisterResourceExtension(const StringA& extension, RESOURCELOADFUNCTION loadFunction, RESOURCEUNLOADFUNCTION unloadFunction);
 
         // Load and unload model file.
-        static void* LoadModel(ResourceManager* resourceManager, const StringA& filename);
+        static void* LoadModel(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadModel(ResourceManager* resourceManager, void* resource);
 
         // Load and unload "tga" texture file.
-        static void* LoadTexture_TGA(ResourceManager* resourceManager, const StringA& filename);
+        static void* LoadTexture_TGA(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_TGA(ResourceManager* resourceManager, void* resource);
 
         // Load and unload "png" texture file.
-        static void* LoadTexture_PNG(ResourceManager* resourceManager, const StringA& filename);
+        static void* LoadTexture_PNG(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_PNG(ResourceManager* resourceManager, void* resource);
 
         // Load and unload "cube" texture file.
-        static void* LoadCubeTexture(ResourceManager* resourceManager, const StringA& filename);
-        static void UnloadCubeTexture(ResourceManager* resourceManager, void* resource);
+        static void* LoadTexture_Cube(ResourceManager* resourceManager, const StringA& fileName);
+        static void UnloadTexture_Cube(ResourceManager* resourceManager, void* resource);
 
         // Load and unload "animated" texture file.
-        static void* LoadAnimatedTexture(ResourceManager* resourceManager, const StringA& filename);
-        static void UnloadAnimatedTexture(ResourceManager* resourceManager, void* resource);
+        static void* LoadTexture_Animated(ResourceManager* resourceManager, const StringA& fileName);
+        static void UnloadTexture_Animated(ResourceManager* resourceManager, void* resource);
 
     public:
         // Get parent application.
@@ -96,7 +96,7 @@ namespace yw
         };
 
         // All loaded managed resources.
-        std::vector<ManagedResource> m_ManagedResources;
+        std::map<HRESOURCE, ManagedResource> m_ManagedResources;
         uint32_t m_NumberLoadedResources;
     };
 }
