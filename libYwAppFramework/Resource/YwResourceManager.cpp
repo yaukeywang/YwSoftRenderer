@@ -151,14 +151,7 @@ namespace yw
 
         // Load model data by loader.
         ModelLoaderObj modelLoader;
-        if (!modelLoader.Load(fileName, &model))
-        {
-            YW_SAFE_DELETE(model);
-            return nullptr;
-        }
-
-        // Create vertex data.
-        if (!model->CreateVertexData(resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice()))
+        if (!modelLoader.Load(fileName, &model, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice()))
         {
             YW_SAFE_DELETE(model);
             return nullptr;

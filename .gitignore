@@ -34,6 +34,8 @@
 *.la
 *.a
 *.lib
+!libYwAppFramework/ThirdParty/libpng/libpng.lib
+!libYwAppFramework/ThirdParty/zlib/zlib.lib
 
 # Executables
 *.exe

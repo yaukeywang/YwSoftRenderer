@@ -140,7 +140,9 @@ project "libYwAppFramework"
         "libYwAppFramework",
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
-        "libYwAppFramework/ThirdParty"
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/zlib"
     }
 
     files
@@ -172,6 +174,7 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwModelLoader.h",
         "libYwAppFramework/IO/YwModelLoaderObj.h",
         "libYwAppFramework/IO/YwModelLoaderObj.cpp",
+        "libYwAppFramework/IO/YwTextureLoader.h",
 
         "libYwAppFramework/Resource/YwResourceManager.h",
         "libYwAppFramework/Resource/YwResourceManager.cpp",

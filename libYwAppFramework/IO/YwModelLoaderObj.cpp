@@ -95,7 +95,7 @@ namespace yw
         const char* objData = ReadDataFromFile(fileName);
         if (nullptr == objData)
         {
-            return nullptr;
+            return false;
         }
         
         // Try to load obj model from data.
@@ -105,6 +105,30 @@ namespace yw
         // Release file data.
         YW_SAFE_DELETE_ARRAY(objData);
         
+        return true;
+    }
+
+    bool ModelLoaderObj::Load(const StringA& fileName, Model** model, Yw3dDevice* device)
+    {
+        if (nullptr == device)
+        {
+            return false;
+        }
+
+        // Load base model data from file.
+        if (!Load(fileName, model))
+        {
+            return false;
+        }
+
+        // Create vertex data.
+        Model* objModel = *model;
+        if (!objModel->CreateVertexData(device))
+        {
+            YW_SAFE_DELETE(model);
+            return nullptr;
+        }
+
         return true;
     }
 
