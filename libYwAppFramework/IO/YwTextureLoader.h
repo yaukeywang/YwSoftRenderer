@@ -23,8 +23,9 @@ namespace yw
         // Load texture data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the model file.
         // @param[out] texture the loaded data to fill.
-        // @return Model pointer of the loaded model, null if failed.
-        virtual bool Load(const StringA& fileName, class Yw3dTexture** texture) = 0;
+        // @return device used to create texture.
+        // @return texture pointer of the loaded data, null if failed.
+        virtual bool Load(const StringA& fileName, class Yw3dDevice* device, class Yw3dTexture** texture) = 0;
     };
 }
 

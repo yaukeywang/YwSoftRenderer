@@ -175,6 +175,8 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwModelLoaderObj.h",
         "libYwAppFramework/IO/YwModelLoaderObj.cpp",
         "libYwAppFramework/IO/YwTextureLoader.h",
+        "libYwAppFramework/IO/YwTextureLoaderPng.h",
+        "libYwAppFramework/IO/YwTextureLoaderPng.cpp",
 
         "libYwAppFramework/Resource/YwResourceManager.h",
         "libYwAppFramework/Resource/YwResourceManager.cpp",
