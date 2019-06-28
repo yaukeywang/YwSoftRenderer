@@ -8,6 +8,7 @@
 
 #include "YwModel.h"
 #include "YwModelLoaderObj.h"
+#include "YwFileIO.h"
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
 //#pragma warning(disable:4996)
@@ -92,7 +93,15 @@ namespace yw
         }
 
         // Read data from file.
-        const char* objData = ReadDataFromFile(fileName);
+        FileIO file;
+        uint8_t* modelData = nullptr;
+        uint32_t fileSize = file.ReadFile(fileName, &modelData, true);
+        if ((0 == fileSize) || (nullptr == modelData))
+        {
+            return false;
+        }
+
+        const char* objData = (const char*)modelData;
         if (nullptr == objData)
         {
             return false;
@@ -130,61 +139,6 @@ namespace yw
         }
 
         return true;
-    }
-
-    const char* ModelLoaderObj::ReadDataFromFile(const StringA& fileName)
-    {
-        // Open the file.
-        FILE* objFile = fopen(fileName.c_str(), "rt");
-        if (nullptr == objFile)
-        {
-            return nullptr;
-        }
-
-        // Get file size.
-        fseek(objFile, 0, SEEK_END);
-        uint32_t fileSize = ftell(objFile);
-
-        // Rewind to the begin.
-        rewind(objFile);
-
-        // Read data.
-        char* objData = new char[fileSize + 1];
-        fileSize = (uint32_t)fread(objData, 1, fileSize, objFile);
-
-        // Close file.
-        fclose(objFile);
-
-        // Process data.
-        objData[fileSize] = 0;
-
-#if !(defined(_WIN32) || defined(WIN32))
-        {
-            char* temp = new char[fileSize + 1];
-            strcpy(temp, objData);
-
-            char* src = temp;
-            char* dest = objData;
-            fileSize = 0;
-            while (*src)
-            {
-                if ('\r' != *src)
-                {
-                    *dest++ = *src;
-                    ++fileSize;
-                }
-
-                ++src;
-            }
-
-            *dest = 0;
-
-            // Release temp data.
-            YW_SAFE_DELETE_ARRAY(temp);
-        }
-#endif
-
-        return objData;
     }
 
     void ModelLoaderObj::LoadWavefrontObjFormData(Model* objModel, const char* objData, bool calculateNormals, float calculateNormalAngle)

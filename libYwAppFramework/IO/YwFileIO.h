@@ -10,19 +10,12 @@ namespace yw
 {
     class FileIO
     {
-        friend class IApplication;
-        friend class Application;
-
-    protected:
+    public:
         // Constructor.
-        FileIO(class IApplication* application);
+        FileIO();
 
         // Destructor.
         virtual ~FileIO();
-
-    protected:
-        // Initialize this system.
-        bool Initialize();
 
     public:
         // Reading file and allocating data, with text or binary.
@@ -39,17 +32,6 @@ namespace yw
 
         // Get file relative path.
         StringA GetFilePath(const StringA& fileName);
-
-    public:
-        // Get parent application.
-        inline class IApplication* GetApplication()
-        {
-            return m_Application;
-        }
-
-    private:
-        // The parent application.
-        class IApplication* m_Application;
     };
 }
 

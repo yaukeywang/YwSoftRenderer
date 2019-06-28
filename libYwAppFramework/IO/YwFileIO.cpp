@@ -2,22 +2,15 @@
 // YW Soft Renderer file io class.
 
 #include "YwFileIO.h"
-#include "YwBaseApplication.h"
 
 namespace yw
 {
-    FileIO::FileIO(IApplication* application) :
-        m_Application(application)
+    FileIO::FileIO()
     {
     }
 
     FileIO::~FileIO()
     {
-    }
-
-    bool FileIO::Initialize()
-    {
-        return true;
     }
 
     uint32_t FileIO::ReadFile(const StringA& filename, uint8_t** data, bool text)

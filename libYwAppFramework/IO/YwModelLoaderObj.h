@@ -39,9 +39,6 @@ namespace yw
         bool Load(const StringA& fileName, class Model** model, class Yw3dDevice* device);
         
     private:
-        // $TEMP: Read data from obj file.
-        const char* ReadDataFromFile(const StringA& fileName);
-
         // Load Wavefront-Obj form data.
         void LoadWavefrontObjFormData(Model* model, const char* objData, bool calculateNormals, float calculateNormalAngle);
 

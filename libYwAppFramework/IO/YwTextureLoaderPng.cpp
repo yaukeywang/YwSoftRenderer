@@ -3,6 +3,7 @@
 
 #include "YwTextureLoaderPng.h"
 #include "Yw3d.h"
+#include "YwFileIO.h"
 
 #if defined(_WIN32) || defined(WIN32)
 #include "png.h"
@@ -36,7 +37,33 @@ namespace yw
 
     bool TextureLoaderPng::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture)
     {
-        return false;
+        if ((0 == fileName.length()) || (nullptr == device) || (nullptr == texture))
+        {
+            return false;
+        }
+
+        // Use file io.
+        FileIO file;
+        uint8_t* textureData = nullptr;
+        uint32_t fileSize = file.ReadFile(fileName, &textureData, false);
+        if ((0 == fileSize) || (nullptr == textureData))
+        {
+            YW_SAFE_DELETE_ARRAY(textureData);
+            return false;
+        }
+
+        bool res = LoadFormData(textureData, device, texture);
+        if (!res)
+        {
+            return false;
+        }
+
+        if (nullptr == *texture)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     bool TextureLoaderPng::LoadFormData(uint8_t* data, Yw3dDevice* device, Yw3dTexture** texture)
