@@ -17,11 +17,20 @@
 
 namespace yw
 {
+    // Png data read wrapper.
+    struct PngDataWrapper
+    {
+        uint8_t* data;
+        uint32_t offset;
+    };
+
     // Callback to read png data.
     static void png_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
     {
-        memcpy(data, png_ptr->io_ptr, length);
-        png_ptr->io_ptr = (byte *)png_ptr->io_ptr + length;
+        PngDataWrapper* wrapper = (PngDataWrapper*)png_get_io_ptr(png_ptr);
+        uint8_t* io_ptr = wrapper->data + wrapper->offset;
+        memcpy(data, io_ptr, length);
+        wrapper->offset += (uint32_t)length;
     }
 
     TextureLoaderPng::TextureLoaderPng() : 
@@ -52,14 +61,29 @@ namespace yw
             return false;
         }
 
+        // Load texture from data.
         bool res = LoadFormData(textureData, device, texture);
         if (!res)
         {
+            YW_SAFE_DELETE_ARRAY(textureData);
             return false;
         }
 
+        // Release texture data.
+        YW_SAFE_DELETE_ARRAY(textureData);
+
+        // Check loaded texture.
         if (nullptr == *texture)
         {
+            YW_SAFE_RELEASE(*texture);
+            return false;
+        }
+
+        // Generate texture mipmap.
+        Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
+        if (YW3D_FAILED(resMip))
+        {
+            YW_SAFE_RELEASE(*texture);
             return false;
         }
 
@@ -89,13 +113,19 @@ namespace yw
             return false;
         }
 
-        if (setjmp(png_ptr->jmpbuf))
+        if (setjmp(png_jmpbuf(png_ptr)))
         {
             png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
             return false;
         }
 
-        png_set_read_fn(png_ptr, (png_voidp*)data, png_read_data);
+        // Set png data wrapper.
+        PngDataWrapper dataWrapper;
+        dataWrapper.data = data;
+        dataWrapper.offset = 0;
+
+        // Set png data read function.
+        png_set_read_fn(png_ptr, (png_voidp*)(&dataWrapper), png_read_data);
         png_read_info(png_ptr, info_ptr);
 
         // Read texture dimension and format info.

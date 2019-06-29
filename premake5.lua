@@ -181,8 +181,12 @@ project "libYwAppFramework"
         "libYwAppFramework/Resource/YwResourceManager.h",
         "libYwAppFramework/Resource/YwResourceManager.cpp",
 
-        --"libYwAppFramework/ThirdParty/*.h",
-        --"libYwAppFramework/ThirdParty/*.cpp"
+        "libYwAppFramework/ThirdParty/libpng/*.h",
+        "libYwAppFramework/ThirdParty/libpng/*.c",
+        "libYwAppFramework/ThirdParty/libpng/*.cpp",
+        "libYwAppFramework/ThirdParty/zlib/*.h",
+        "libYwAppFramework/ThirdParty/zlib/*.c",
+        "libYwAppFramework/ThirdParty/zlib/*.cpp"
     }
 
     vpaths 
@@ -191,7 +195,9 @@ project "libYwAppFramework"
         ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.inl", "libYwAppFramework/Core/Yw*.cpp" },
         ["IO"] = { "libYwAppFramework/IO/Yw*.h", "libYwAppFramework/IO/Yw*.inl", "libYwAppFramework/IO/Yw*.cpp" },
         ["Resource"] = { "libYwAppFramework/Resource/Yw*.h", "libYwAppFramework/Resource/Yw*.inl", "libYwAppFramework/Resource/Yw*.cpp" },
-        ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.cpp" }
+        ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.c", "libYwAppFramework/ThirdParty/*.cpp" },
+        ["ThirdParty/libpng"] = {"libYwAppFramework/ThirdParty/libpng/*.h", "libYwAppFramework/ThirdParty/libpng/*.inl", "libYwAppFramework/ThirdParty/libpng/*.c", "libYwAppFramework/ThirdParty/libpng/*.cpp"},
+        ["ThirdParty/zlib"] = {"libYwAppFramework/ThirdParty/zlib/*.h", "libYwAppFramework/ThirdParty/zlib/*.inl", "libYwAppFramework/ThirdParty/zlib/*.c", "libYwAppFramework/ThirdParty/zlib/*.cpp"}
     }
 
     links
