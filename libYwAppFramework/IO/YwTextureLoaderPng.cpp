@@ -169,7 +169,7 @@ namespace yw
         // Get raw data.
         uint8_t* rawData = new uint8_t[dimensionY * png_get_rowbytes(png_ptr, info_ptr)];
         uint8_t* curData = rawData;
-        uint8_t** rowsData = new uint8_t*[dimensionY];
+        uint8_t** rowsData = new uint8_t * [dimensionY];
         for (uint32_t i = 0; i < dimensionY; i++)
         {
             rowsData[i] = curData;
