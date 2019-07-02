@@ -1116,6 +1116,8 @@ namespace yw
             case Yw3d_TA_Clamp: u = Saturate(u); break;
             default: color = Vector4(0.0f, 0.0f, 0.0f, 0.0f); LOGE(_T("Yw3dDevice::SampleTexture: value of texture sampler state Yw3d_TSS_AddressU is invalid.\n")); return Yw3d_E_InvalidState;
             }
+
+            break;
         default:
             color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
             LOGE(_T("Yw3dDevice::SampleTexture: invalid texture-sampling input!\n"));
@@ -2425,8 +2427,8 @@ namespace yw
         m_TriangleInfo.zDdy = -(deltaX[1] * deltaZ[0] - deltaX[0] * deltaZ[1]) * oneOverDeterminant;
 
         // Get w partial derivatives with respect to the screen-space x and y coordinate.
-        m_TriangleInfo.zDdx = (deltaY[1] * deltaW[0] - deltaY[0] * deltaW[1]) * oneOverDeterminant;
-        m_TriangleInfo.zDdy = -(deltaX[1] * deltaW[0] - deltaX[0] * deltaW[1]) * oneOverDeterminant;
+        m_TriangleInfo.wDdx = (deltaY[1] * deltaW[0] - deltaY[0] * deltaW[1]) * oneOverDeterminant;
+        m_TriangleInfo.wDdy = -(deltaX[1] * deltaW[0] - deltaX[0] * deltaW[1]) * oneOverDeterminant;
 
         // Calculate shader register partial derivatives with respect to the screen-space x and y coordinate.
         Yw3dShaderRegister* destDdx = m_TriangleInfo.shaderOutputsDdx;
