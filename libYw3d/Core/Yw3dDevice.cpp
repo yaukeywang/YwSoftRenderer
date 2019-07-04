@@ -2521,7 +2521,7 @@ namespace yw
 
         // Get the value of each shader register.
         Yw3dShaderRegister* regDest = vsOutput->shaderOutputs;
-        Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
+        const Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
 
         for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++)
         {
@@ -2901,7 +2901,6 @@ namespace yw
         for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, (nullptr != stencilData) ? stencilData++ : stencilData, StepXVSOutputFromGradient(vsOutput))
         {
             // Do stencil compare if stencil is enabled.
-            
             uint32_t* stencilDataPointer = (uint32_t*)stencilData;
             bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
 
