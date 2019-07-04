@@ -2523,7 +2523,7 @@ namespace yw
         Yw3dShaderRegister* regDest = vsOutput->shaderOutputs;
         const Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
 
-        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++)
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, regDest++, regDdx++)
         {
             switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
             {
