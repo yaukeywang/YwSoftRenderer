@@ -112,7 +112,7 @@ namespace yw
         LoadWavefrontObjFormData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
         
         // Release file data.
-        YW_SAFE_DELETE_ARRAY(objData);
+        YW_SAFE_DELETE_ARRAY(modelData);
         
         return true;
     }
