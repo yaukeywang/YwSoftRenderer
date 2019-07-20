@@ -68,6 +68,12 @@ namespace yw
         static void* LoadTexture_Animated(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_Animated(ResourceManager* resourceManager, void* resource);
 
+        // Get disk file path.
+        StringA GetDiskFilePath(const StringA& fileName) const;
+
+        // Get data root path.
+        StringA GetDataPath() const;
+
     public:
         // Get parent application.
         inline class IApplication* GetApplication()
@@ -75,7 +81,7 @@ namespace yw
             return m_Application;
         }
 
-    private:
+    protected:
         // The parent application.
         class IApplication* m_Application;
 

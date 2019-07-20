@@ -79,8 +79,12 @@ namespace yw
             return 0;
         }
 
+        // Get file path on disk.
+        StringA& filePath = GetDiskFilePath(fileName);
+
+        // Load and create a resource.
         ManagedResource newResource;
-        newResource.resource = loadFunc(this, fileName);
+        newResource.resource = loadFunc(this, filePath);
         if (nullptr == newResource.resource)
         {
             return 0;
@@ -207,5 +211,20 @@ namespace yw
     void ResourceManager::UnloadTexture_Animated(ResourceManager* resourceManager, void* resource)
     {
         YW_SAFE_DELETE(resource);
+    }
+
+    StringA ResourceManager::GetDiskFilePath(const StringA& fileName) const
+    {
+        StringA diskFilePath = GetDataPath() + "/" + fileName;
+        return diskFilePath;
+    }
+
+    StringA ResourceManager::GetDataPath() const
+    {
+#if defined(__amigaos4__) || (_AMIGAOS4)
+        return StringA("Data");
+#else
+        return StringA("./Data");
+#endif
     }
 }
