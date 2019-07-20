@@ -55,7 +55,7 @@ namespace yw
                 ++mipLevels;
                 srcWidth >>= 1;
                 srcHeight >>= 1;
-            } while ((0 == srcWidth) && (0 == srcHeight));
+            } while ((0 != srcWidth) && (0 != srcHeight));
         }
 
         m_MipLevelsData = new Yw3dSurface*[mipLevels];
@@ -90,7 +90,7 @@ namespace yw
 
             width >>= 1;
             height >>= 1;
-        } while ((0 != width) && (0 == height));
+        } while ((0 != width) && (0 != height));
 
         return Yw3d_S_OK;
     }

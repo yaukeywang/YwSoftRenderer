@@ -191,7 +191,7 @@ namespace yw
         return hd.i.lo;
     #elif defined(_WIN32) || defined(WIN32)
         #ifdef _WIN64
-            return (int32_t)f;
+            return (int32_t)round(f);
         #else
             static int32_t tmp;
             #if _MSC_VER > 1000

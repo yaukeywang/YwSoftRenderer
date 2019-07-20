@@ -3,13 +3,25 @@
 
 #include "YwBase.h"
 #include "YwModel.h"
+#include "YwGraphics.h"
 
 namespace yw
 {
     Model::Model() :
+        m_ReadOnly(true),
         m_VertexFormat(nullptr),
-        m_VertexBuffer(nullptr)
+        m_VertexBuffer(nullptr),
+        m_TotalVertexCount(0)
     {
+    }
+
+    Model::Model(const StringA& modelName, bool readOnly) : 
+        m_VertexFormat(nullptr),
+        m_VertexBuffer(nullptr),
+        m_TotalVertexCount(0)
+    {
+        m_Name = modelName;
+        m_ReadOnly = readOnly;
     }
 
     Model::~Model()
@@ -17,8 +29,8 @@ namespace yw
         // Clear all group.
         for (size_t i = 0; i < m_Groups.size(); i++)
         {
-            ModelGroup* meshGroup = m_Groups[i];
-            YW_SAFE_DELETE(meshGroup);
+            ModelGroup* modelGroup = m_Groups[i];
+            YW_SAFE_DELETE(modelGroup);
         }
 
         m_Groups.clear();
@@ -26,8 +38,8 @@ namespace yw
         // Clear all triangles.
         for (size_t i = 0; i < m_Triangles.size(); i++)
         {
-            ModelTriangle* meshTriangle = m_Triangles[i];
-            YW_SAFE_DELETE(meshTriangle);
+            ModelTriangle* modelTriangle = m_Triangles[i];
+            YW_SAFE_DELETE(modelTriangle);
         }
 
         m_Triangles.clear();
@@ -86,8 +98,16 @@ namespace yw
             return false;
         }
 
+        if (m_Vertices.empty())
+        {
+            return false;
+        }
+
         // ------------------------------------------------------------------
         // Create data.
+
+        // Update vertex count.
+        m_TotalVertexCount = (int32_t)m_Vertices.size();
 
         // Create vertex format, release old vertex format data.
         YW_SAFE_RELEASE(m_VertexFormat);
@@ -176,6 +196,83 @@ namespace yw
             m_IndexBuffers.push_back(IndexBufferElement(indexBuffer, triangleCount));
         }
 
+        // Clear base model data after finishing created graphics data if the model is read-only.
+        if (ReadOnly())
+        {
+            ClearBaseModelData();
+        }
+
         return true;
+    }
+
+    int Model::Render(Yw3dDevice* device) const
+    {
+        if (nullptr == device)
+        {
+            return 0;
+        }
+
+        int32_t renderedGroups = 0;
+        for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
+        {
+            const IndexBufferElement& indexBuffer = m_IndexBuffers[i];
+            device->SetIndexBuffer(indexBuffer.indexBuffer);
+            device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, m_TotalVertexCount, 0, indexBuffer.primitiveCount);
+        }
+
+        return renderedGroups;
+    }
+
+    int Model::Render(Graphics* graphics) const
+    {
+        if (nullptr == graphics)
+        {
+            return 0;
+        }
+
+        Yw3dDevice* device = graphics->GetYw3dDevice();
+        if (nullptr == device)
+        {
+            return 0;
+        }
+
+        int32_t renderedGroups = 0;
+        for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
+        {
+            const IndexBufferElement& indexBuffer = m_IndexBuffers[i];
+            graphics->SetIndexBuffer(indexBuffer.indexBuffer);
+            device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, m_TotalVertexCount, 0, indexBuffer.primitiveCount);
+        }
+
+        return renderedGroups;
+    }
+
+    void Model::ClearBaseModelData()
+    {
+        m_Vertices.clear();
+        m_FacetNormals.clear();
+        m_Normals.clear();
+        m_Texcoords.clear();
+        m_Texcoord2s.clear();
+        m_Tangents.clear();
+        m_Colors.clear();
+
+        // Clear all group.
+        for (size_t i = 0; i < m_Groups.size(); i++)
+        {
+            ModelGroup* modelGroup = m_Groups[i];
+            YW_SAFE_DELETE(modelGroup);
+        }
+
+        m_Groups.clear();
+
+        // Clear all triangles.
+        for (size_t i = 0; i < m_Triangles.size(); i++)
+        {
+            ModelTriangle* modelTriangle = m_Triangles[i];
+            YW_SAFE_DELETE(modelTriangle);
+        }
+
+        m_Triangles.clear();
     }
 }

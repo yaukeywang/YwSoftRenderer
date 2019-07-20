@@ -77,6 +77,9 @@ namespace yw
     public:
         // Constructor.
         Model();
+
+        // Constructor.
+        Model(const StringA& modelName, bool readOnly);
         
         // Destructor.
         ~Model();
@@ -92,7 +95,32 @@ namespace yw
         // Create all vertex related data.
         bool CreateVertexData(Yw3dDevice* device);
 
+        // Render this model directly with device.
+        // Return: How many groups rendered.
+        int Render(Yw3dDevice* device) const;
+
+        // Render this model with graphics management.
+        // Return: How many groups rendered.
+        int Model::Render(class Graphics* device) const;
+
+        // If this model data is read-only.
+        inline bool ReadOnly() const
+        {
+            return m_ReadOnly;
+        }
+
+    private:
+        // Clear all base model data, graphics data can not be re-created after clearing.
+        void ClearBaseModelData();
+
+    private:
+        // If this model data is read-only.
+        bool m_ReadOnly;
+
     public:
+        // ------------------------------------------------------------------
+        // Basic model data.
+
         // The model name.
         StringA m_Name;
         
@@ -129,10 +157,10 @@ namespace yw
         // The position of the mesh.
         //Vector3 m_Position;
 
+    public:
         // ------------------------------------------------------------------
         // Data for graphics device.
 
-    public:
         // Define vertex format.
         struct Vertexformat
         {
@@ -165,6 +193,9 @@ namespace yw
 
         // The index buffer for each group.
         std::vector<IndexBufferElement> m_IndexBuffers;
+
+        // Total vertex count.
+        int32_t m_TotalVertexCount;
     };
 }
 

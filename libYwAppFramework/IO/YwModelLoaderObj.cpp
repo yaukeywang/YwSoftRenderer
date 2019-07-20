@@ -8,6 +8,7 @@
 
 #include "YwModel.h"
 #include "YwModelLoaderObj.h"
+#include "YwFileIO.h"
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
 //#pragma warning(disable:4996)
@@ -92,10 +93,18 @@ namespace yw
         }
 
         // Read data from file.
-        const char* objData = ReadDataFromFile(fileName);
+        FileIO file;
+        uint8_t* modelData = nullptr;
+        uint32_t fileSize = file.ReadFile(fileName, &modelData, true);
+        if ((0 == fileSize) || (nullptr == modelData))
+        {
+            return false;
+        }
+
+        const char* objData = (const char*)modelData;
         if (nullptr == objData)
         {
-            return nullptr;
+            return false;
         }
         
         // Try to load obj model from data.
@@ -103,64 +112,33 @@ namespace yw
         LoadWavefrontObjFormData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
         
         // Release file data.
-        YW_SAFE_DELETE_ARRAY(objData);
+        YW_SAFE_DELETE_ARRAY(modelData);
         
         return true;
     }
 
-    const char* ModelLoaderObj::ReadDataFromFile(const StringA& fileName)
+    bool ModelLoaderObj::Load(const StringA& fileName, Model** model, Yw3dDevice* device)
     {
-        // Open the file.
-        FILE* objFile = fopen(fileName.c_str(), "rt");
-        if (nullptr == objFile)
+        if (nullptr == device)
         {
+            return false;
+        }
+
+        // Load base model data from file.
+        if (!Load(fileName, model))
+        {
+            return false;
+        }
+
+        // Create vertex data.
+        Model* objModel = *model;
+        if (!objModel->CreateVertexData(device))
+        {
+            YW_SAFE_DELETE(model);
             return nullptr;
         }
 
-        // Get file size.
-        fseek(objFile, 0, SEEK_END);
-        uint32_t fileSize = ftell(objFile);
-
-        // Rewind to the begin.
-        rewind(objFile);
-
-        // Read data.
-        char* objData = new char[fileSize + 1];
-        fileSize = (uint32_t)fread(objData, 1, fileSize, objFile);
-
-        // Close file.
-        fclose(objFile);
-
-        // Process data.
-        objData[fileSize] = 0;
-
-#if !(defined(_WIN32) || defined(WIN32))
-        {
-            char* temp = new char[fileSize + 1];
-            strcpy(temp, objData);
-
-            char* src = temp;
-            char* dest = objData;
-            fileSize = 0;
-            while (*src)
-            {
-                if ('\r' != *src)
-                {
-                    *dest++ = *src;
-                    ++fileSize;
-                }
-
-                ++src;
-            }
-
-            *dest = 0;
-
-            // Release temp data.
-            YW_SAFE_DELETE_ARRAY(temp);
-        }
-#endif
-
-        return objData;
+        return true;
     }
 
     void ModelLoaderObj::LoadWavefrontObjFormData(Model* objModel, const char* objData, bool calculateNormals, float calculateNormalAngle)
@@ -668,14 +646,16 @@ namespace yw
             for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
             {
                 ModelTriangle* triangle = model->m_Triangles[i];
+                
+                uint32_t* t1 = triangle->m_TexcoordsIndices;
+                t1[0] = (0 == t1[0]) ? t1[0] : (t1[0] - 1);
+                t1[1] = (0 == t1[1]) ? t1[1] : (t1[1] - 1);
+                t1[2] = (0 == t1[2]) ? t1[2] : (t1[2] - 1);
 
-                triangle->m_TexcoordsIndices[0] -= 1;
-                triangle->m_TexcoordsIndices[1] -= 1;
-                triangle->m_TexcoordsIndices[2] -= 1;
-
-                triangle->m_Texcoords2Indices[0] -= 1;
-                triangle->m_Texcoords2Indices[1] -= 1;
-                triangle->m_Texcoords2Indices[2] -= 1;
+                uint32_t* t2 = triangle->m_Texcoords2Indices;
+                t2[0] = (0 == t2[0]) ? t2[0] : (t2[0] - 1);
+                t2[1] = (0 == t2[1]) ? t2[1] : (t2[1] - 1);
+                t2[2] = (0 == t2[2]) ? t2[2] : (t2[2] - 1);
             }
         }
     }

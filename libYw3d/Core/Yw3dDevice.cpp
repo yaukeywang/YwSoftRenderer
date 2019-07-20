@@ -1116,6 +1116,8 @@ namespace yw
             case Yw3d_TA_Clamp: u = Saturate(u); break;
             default: color = Vector4(0.0f, 0.0f, 0.0f, 0.0f); LOGE(_T("Yw3dDevice::SampleTexture: value of texture sampler state Yw3d_TSS_AddressU is invalid.\n")); return Yw3d_E_InvalidState;
             }
+
+            break;
         default:
             color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
             LOGE(_T("Yw3dDevice::SampleTexture: invalid texture-sampling input!\n"));
@@ -2425,8 +2427,8 @@ namespace yw
         m_TriangleInfo.zDdy = -(deltaX[1] * deltaZ[0] - deltaX[0] * deltaZ[1]) * oneOverDeterminant;
 
         // Get w partial derivatives with respect to the screen-space x and y coordinate.
-        m_TriangleInfo.zDdx = (deltaY[1] * deltaW[0] - deltaY[0] * deltaW[1]) * oneOverDeterminant;
-        m_TriangleInfo.zDdy = -(deltaX[1] * deltaW[0] - deltaX[0] * deltaW[1]) * oneOverDeterminant;
+        m_TriangleInfo.wDdx = (deltaY[1] * deltaW[0] - deltaY[0] * deltaW[1]) * oneOverDeterminant;
+        m_TriangleInfo.wDdy = -(deltaX[1] * deltaW[0] - deltaX[0] * deltaW[1]) * oneOverDeterminant;
 
         // Calculate shader register partial derivatives with respect to the screen-space x and y coordinate.
         Yw3dShaderRegister* destDdx = m_TriangleInfo.shaderOutputsDdx;
@@ -2519,9 +2521,9 @@ namespace yw
 
         // Get the value of each shader register.
         Yw3dShaderRegister* regDest = vsOutput->shaderOutputs;
-        Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
+        const Yw3dShaderRegister* regDdx = m_TriangleInfo.shaderOutputsDdx;
 
-        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++)
+        for (uint32_t regIdx = 0; regIdx < YW3D_PIXEL_SHADER_REGISTERS; regIdx++, regDest++, regDdx++)
         {
             switch (m_RenderInfo.vsOutputRegisterTypes[regIdx])
             {
@@ -2603,8 +2605,8 @@ namespace yw
             {
             case 0: // Draw upper triangle-part.
                 {
-                    iY[0] = (uint32_t)ftol(ceilf(posA.y));
-                    iY[1] = (uint32_t)ftol(ceilf(posB.y));
+                    iY[0] = (uint32_t)ceilf(posA.y);
+                    iY[1] = (uint32_t)ceilf(posB.y);
 
                     if (stepX[0] > stepX[1]) // left <-> right ?
                     {
@@ -2624,8 +2626,8 @@ namespace yw
                 break;
             case 1: // Draw lower triangle-part
                 {
-                    //iY[0] = iY[1];
-                    iY[1] = (uint32_t)ftol(ceilf(posC.y));
+                    iY[0] = iY[1];
+                    iY[1] = (uint32_t)ceilf(posC.y);
 
                     const float preStepY = (float)iY[0] - posB.y;
                     if (stepX[1] > stepX[2]) // left <-> right ?
@@ -2646,12 +2648,17 @@ namespace yw
                 break;
             }
 
-            // Rasterize a single scan line.
+            // Rasterize a single triangle.
+            // From top(inclusive) to bottom(exclusive): ceil(yTop) -> ceil(yBottom) - 1.
+            // $TIPS: Actually rasterizing from iY[0] to iY[1] - 1.
             for (; iY[0] < iY[1]; iY[0]++, fX[0] += deltaX[0], fX[1] += deltaX[1])
             {
-                const int32_t iX[2] = { ftol(ceilf(fX[0])), ftol(ceilf(fX[1])) };
+                const int32_t iX[2] = { (int32_t)ceilf(fX[0]), (int32_t)ceilf(fX[1]) };
                 //const float preStepX = (float)iX[0] - fX[0];
 
+                // Rasterize a single scan line.
+                // From left(inclusive) to right(exclusive): ceil(xStart) -> ceil(xEnd) - 1.
+                // $TIPS: fpRasterizeScanline rasterizing from iX[0] to iX[1] - 1 inside.
                 Yw3dVSOutput psInput;
                 SetVSOutputFromGradient(&psInput, (float)iX[0], (float)iY[0]);
                 m_TriangleInfo.curPixelY = iY[0];
@@ -2696,6 +2703,13 @@ namespace yw
             {
                 const uint32_t curPixelX = intCoordA[0] + i;
                 const uint32_t curPixelY = intCoordA[1] + (uint32_t)ftol(slope * i);
+
+                // Skip off-screen pixel.
+                if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
+                    (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
+                {
+                    continue;
+                }
 
                 // Interpolation a vertex output for pixel input.
                 Yw3dVSOutput psInput;
@@ -2742,6 +2756,13 @@ namespace yw
             {
                 const uint32_t curPixelX = intCoordA[0] + ftol(slope * i);
                 const uint32_t curPixelY = intCoordA[1] + i;
+
+                // Skip off-screen pixel.
+                if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
+                    (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
+                {
+                    continue;
+                }
 
                 // Interpolation a vertex output for pixel input.
                 Yw3dVSOutput psInput;
@@ -2885,7 +2906,6 @@ namespace yw
         for (; x1 < x2; x1++, frameData += m_RenderInfo.colorFloats, depthData++, (nullptr != stencilData) ? stencilData++ : stencilData, StepXVSOutputFromGradient(vsOutput))
         {
             // Do stencil compare if stencil is enabled.
-            
             uint32_t* stencilDataPointer = (uint32_t*)stencilData;
             bool stencilPassed = m_RenderInfo.stencilEnabled ? PerformPixelStencilTest(stencilDataPointer, m_RenderInfo.stencilReference, m_RenderInfo.stencilMask, m_RenderInfo.stencilWriteMask, m_RenderInfo.stencilCompare, m_RenderInfo.stencilOperatonFail) : false;
 
