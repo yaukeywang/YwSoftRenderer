@@ -2605,8 +2605,8 @@ namespace yw
             {
             case 0: // Draw upper triangle-part.
                 {
-                    iY[0] = (uint32_t)ftol(ceilf(posA.y));
-                    iY[1] = (uint32_t)ftol(ceilf(posB.y));
+                    iY[0] = (uint32_t)ceil(posA.y);
+                    iY[1] = (uint32_t)ceil(posB.y);
 
                     if (stepX[0] > stepX[1]) // left <-> right ?
                     {
@@ -2626,8 +2626,8 @@ namespace yw
                 break;
             case 1: // Draw lower triangle-part
                 {
-                    //iY[0] = iY[1];
-                    iY[1] = (uint32_t)ftol(ceilf(posC.y));
+                    iY[0] = iY[1];
+                    iY[1] = (uint32_t)ceil(posC.y);
 
                     const float preStepY = (float)iY[0] - posB.y;
                     if (stepX[1] > stepX[2]) // left <-> right ?
@@ -2651,7 +2651,7 @@ namespace yw
             // Rasterize a single scan line.
             for (; iY[0] < iY[1]; iY[0]++, fX[0] += deltaX[0], fX[1] += deltaX[1])
             {
-                const int32_t iX[2] = { ftol(ceilf(fX[0])), ftol(ceilf(fX[1])) };
+                const int32_t iX[2] = { (int32_t)ceil(fX[0]), (int32_t)ceil(fX[1]) };
                 //const float preStepX = (float)iX[0] - fX[0];
 
                 Yw3dVSOutput psInput;
