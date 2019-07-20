@@ -2605,8 +2605,8 @@ namespace yw
             {
             case 0: // Draw upper triangle-part.
                 {
-                    iY[0] = (uint32_t)ceil(posA.y);
-                    iY[1] = (uint32_t)ceil(posB.y);
+                    iY[0] = (uint32_t)ceilf(posA.y);
+                    iY[1] = (uint32_t)ceilf(posB.y);
 
                     if (stepX[0] > stepX[1]) // left <-> right ?
                     {
@@ -2627,7 +2627,7 @@ namespace yw
             case 1: // Draw lower triangle-part
                 {
                     iY[0] = iY[1];
-                    iY[1] = (uint32_t)ceil(posC.y);
+                    iY[1] = (uint32_t)ceilf(posC.y);
 
                     const float preStepY = (float)iY[0] - posB.y;
                     if (stepX[1] > stepX[2]) // left <-> right ?
@@ -2648,12 +2648,17 @@ namespace yw
                 break;
             }
 
-            // Rasterize a single scan line.
+            // Rasterize a single triangle.
+            // From top(inclusive) to bottom(exclusive): ceil(yTop) -> ceil(yBottom) - 1.
+            // $TIPS: Actually rasterizing from iY[0] to iY[1] - 1.
             for (; iY[0] < iY[1]; iY[0]++, fX[0] += deltaX[0], fX[1] += deltaX[1])
             {
-                const int32_t iX[2] = { (int32_t)ceil(fX[0]), (int32_t)ceil(fX[1]) };
+                const int32_t iX[2] = { (int32_t)ceilf(fX[0]), (int32_t)ceilf(fX[1]) };
                 //const float preStepX = (float)iX[0] - fX[0];
 
+                // Rasterize a single scan line.
+                // From left(inclusive) to right(exclusive): ceil(xStart) -> ceil(xEnd) - 1.
+                // $TIPS: fpRasterizeScanline rasterizing from iX[0] to iX[1] - 1 inside.
                 Yw3dVSOutput psInput;
                 SetVSOutputFromGradient(&psInput, (float)iX[0], (float)iY[0]);
                 m_TriangleInfo.curPixelY = iY[0];
