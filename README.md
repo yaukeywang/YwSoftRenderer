@@ -15,10 +15,12 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] `Stencil Buffer` support.
 - [x] `State Block` optimize with pooling.
 - [x] `Model Data Loading` module.
-- [ ] `Resource and IO` module. **[Working on...]**
-- [ ] `Texture Data Loading` module.
-- [ ] `Log` module.
+- [x] `Resource and IO` module.
+- [x] `Texture Data Loading` module.
+- [ ] More `Basic` demos. **[Working on...]**
+- [ ] `Lighting and Material` module.
 - [ ] `PBR` demo.
+- [ ] `Log` module.
 - [ ] `Low Level Memory Pool` support.
 - [ ] `Linux` support
 - [ ] `Mac OS X` support.
