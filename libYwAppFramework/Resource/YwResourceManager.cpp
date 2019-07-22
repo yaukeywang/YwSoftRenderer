@@ -151,11 +151,11 @@ namespace yw
     void* ResourceManager::LoadModel(ResourceManager* resourceManager, const StringA& fileName)
     {
         // Alloc a model.
-        Model* model = new Model();
+        Model* model = nullptr;
 
         // Load model data by loader.
         ModelLoaderObj modelLoader;
-        if (!modelLoader.Load(fileName, &model, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice()))
+        if (!modelLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &model, true, &fileName))
         {
             YW_SAFE_DELETE(model);
             return nullptr;

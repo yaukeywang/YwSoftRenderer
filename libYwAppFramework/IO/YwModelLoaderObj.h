@@ -36,7 +36,7 @@ namespace yw
         // Load model data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the model file.
         // @return Model pointer of the loaded model, null if failed, CREATE vertex/index buffer.
-        bool Load(const StringA& fileName, class Model** model, class Yw3dDevice* device);
+        bool Load(const StringA& fileName, class Yw3dDevice* device, class Model** model, bool modelReadOnly = true, const StringA* modelName = nullptr);
         
     private:
         // Load Wavefront-Obj form data.

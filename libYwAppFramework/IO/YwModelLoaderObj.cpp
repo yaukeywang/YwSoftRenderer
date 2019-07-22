@@ -92,6 +92,10 @@ namespace yw
             return false;
         }
 
+        // Create model data.
+        YW_SAFE_DELETE(*model);
+        (*model) = new Model();
+
         // Read data from file.
         FileIO file;
         uint8_t* modelData = nullptr;
@@ -117,12 +121,16 @@ namespace yw
         return true;
     }
 
-    bool ModelLoaderObj::Load(const StringA& fileName, Model** model, Yw3dDevice* device)
+    bool ModelLoaderObj::Load(const StringA& fileName, Yw3dDevice* device, Model** model, bool modelReadOnly, const StringA* modelName)
     {
         if (nullptr == device)
         {
             return false;
         }
+
+        // Create model data.
+        YW_SAFE_DELETE(*model);
+        (*model) = new Model((nullptr == modelName) ? "" : *modelName, modelReadOnly);
 
         // Load base model data from file.
         if (!Load(fileName, model))

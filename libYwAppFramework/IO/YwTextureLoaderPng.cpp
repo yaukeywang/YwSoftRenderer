@@ -160,6 +160,7 @@ namespace yw
         Yw3dFormat textureFormat = hasAlpha ? Yw3d_FMT_R32G32B32A32F : Yw3d_FMT_R32G32B32F;
 
         // Create texture from device.
+        YW_SAFE_RELEASE(*texture);
         if (YW3D_FAILED(device->CreateTexture(texture, dimensionX, dimensionY, 0, textureFormat)))
         {
             png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
