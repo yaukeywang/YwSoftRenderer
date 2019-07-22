@@ -6,6 +6,7 @@
 #include "YwGraphics.h"
 #include "YwModel.h"
 #include "YwModelLoaderObj.h"
+#include "YwTextureLoaderPng.h"
 
 namespace yw
 {
@@ -150,7 +151,7 @@ namespace yw
 
     void* ResourceManager::LoadModel(ResourceManager* resourceManager, const StringA& fileName)
     {
-        // Alloc a model.
+        // Define a model.
         Model* model = nullptr;
 
         // Load model data by loader.
@@ -182,13 +183,24 @@ namespace yw
 
     void* ResourceManager::LoadTexture_PNG(ResourceManager* resourceManager, const StringA& fileName)
     {
-        assert(nullptr && _T("LoadTexture_PNG is currently not supported!"));
-        return nullptr;
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderPng pngLoader;
+        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
     }
 
     void ResourceManager::UnloadTexture_PNG(ResourceManager* resourceManager, void* resource)
     {
-        YW_SAFE_DELETE(resource);
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
+        YW_SAFE_RELEASE(texture);
     }
 
     void* ResourceManager::LoadTexture_Cube(ResourceManager* resourceManager, const StringA& fileName)
