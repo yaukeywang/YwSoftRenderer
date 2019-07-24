@@ -252,11 +252,13 @@ project "Demo1Triangle"
         "libYwAppFramework"
     }
 
-    filter { "architecture:x86" }
-        targetdir (builddir .. "/x86/Demo1Triangle")
+    targetdir (builddir .. "/Bin")
 
-    filter { "architecture:x86_64" }
-        targetdir (builddir .. "/x64/Demo1Triangle")
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
 
-    filter { "configurations:Debug*" }
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
