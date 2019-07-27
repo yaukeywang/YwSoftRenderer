@@ -157,9 +157,6 @@ namespace yw
         // Second pass to organize data.
         SecondPass(objModel, objData);
 
-        // Normalize model mesh indices from 1-based to 0-based.
-        NormalizeIndices(objModel);
-
         // Calculate facet normals is necessary.
         CalculateFacetNormals(objModel);
 
@@ -432,6 +429,7 @@ namespace yw
                     sscanf(curPos, "%f %f",
                         &(texcoords[numTexcoords].x),
                         &(texcoords[numTexcoords].y));
+                    texcoords[numTexcoords].y = 1.0f - texcoords[numTexcoords].y;
                     numTexcoords++;
                     break;
                 }
@@ -461,18 +459,18 @@ namespace yw
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d//%d", &v, &n);
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n < 0 ? n + numNormals : n;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = (n < 0 ? n + numNormals : n) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d//%d", &v, &n);
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n < 0 ? n + numNormals : n;
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = (n < 0 ? n + numNormals : n) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d//%d", &v, &n);
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = (n < 0 ? n + numNormals : n) - 1;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
@@ -486,8 +484,8 @@ namespace yw
                         TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
                         TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
                         TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
-                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
-                        TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
+                        TRIANGLE(numTriangles)->m_NormalIndices[2] = (n < 0 ? n + numNormals : n) - 1;
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -499,21 +497,21 @@ namespace yw
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
-                    TRIANGLE(numTriangles)->m_NormalIndices[0] = n < 0 ? n + numNormals : n;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = (t < 0 ? t + numTexcoords : t) - 1;
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = (n < 0 ? n + numNormals : n) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t < 0 ? t + numTexcoords : t;
-                    TRIANGLE(numTriangles)->m_NormalIndices[1] = n < 0 ? n + numNormals : n;
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = (t < 0 ? t + numTexcoords : t) - 1;
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = (n < 0 ? n + numNormals : n) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
-                    TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = (t < 0 ? t + numTexcoords : t) - 1;
+                    TRIANGLE(numTriangles)->m_NormalIndices[2] = (n < 0 ? n + numNormals : n) - 1;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
@@ -529,9 +527,9 @@ namespace yw
                         TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
                         TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
-                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
-                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
-                        TRIANGLE(numTriangles)->m_NormalIndices[2] = n < 0 ? n + numNormals : n;
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = (t < 0 ? t + numTexcoords : t) - 1;
+                        TRIANGLE(numTriangles)->m_NormalIndices[2] = (n < 0 ? n + numNormals : n) - 1;
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -543,18 +541,18 @@ namespace yw
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = (t < 0 ? t + numTexcoords : t) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = (t < 0 ? t + numTexcoords : t) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = (t < 0 ? t + numTexcoords : t) - 1;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
@@ -568,8 +566,8 @@ namespace yw
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
                         TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
-                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
-                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t < 0 ? t + numTexcoords : t;
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
+                        TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = (t < 0 ? t + numTexcoords : t) - 1;
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -581,15 +579,15 @@ namespace yw
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d", &v);
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = (v < 0 ? v + numVertices : v) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d", &v);
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = (v < 0 ? v + numVertices : v) - 1;
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d", &v);
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
@@ -601,7 +599,7 @@ namespace yw
 
                         TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
                         TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
-                        TRIANGLE(numTriangles)->m_VertexIndices[2] = v < 0 ? v + numVertices : v;
+                        TRIANGLE(numTriangles)->m_VertexIndices[2] = (v < 0 ? v + numVertices : v) - 1;
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -632,40 +630,6 @@ namespace yw
             numTexcoords * 3 * sizeof(Vector2) * (numTexcoords ? 1 : 0) +
             numTriangles * sizeof(ModelTriangle));
 #endif
-    }
-
-    void ModelLoaderObj::NormalizeIndices(class Model* model)
-    {
-        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
-        {
-            ModelTriangle* triangle = model->m_Triangles[i];
-
-            triangle->m_VertexIndices[0] -= 1;
-            triangle->m_VertexIndices[1] -= 1;
-            triangle->m_VertexIndices[2] -= 1;
-
-            triangle->m_NormalIndices[0] -= 1;
-            triangle->m_NormalIndices[1] -= 1;
-            triangle->m_NormalIndices[2] -= 1;
-        }
-
-        if (model->m_Texcoords.size() > 0)
-        {
-            for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
-            {
-                ModelTriangle* triangle = model->m_Triangles[i];
-                
-                uint32_t* t1 = triangle->m_TexcoordsIndices;
-                t1[0] = (0 == t1[0]) ? t1[0] : (t1[0] - 1);
-                t1[1] = (0 == t1[1]) ? t1[1] : (t1[1] - 1);
-                t1[2] = (0 == t1[2]) ? t1[2] : (t1[2] - 1);
-
-                uint32_t* t2 = triangle->m_Texcoords2Indices;
-                t2[0] = (0 == t2[0]) ? t2[0] : (t2[0] - 1);
-                t2[1] = (0 == t2[1]) ? t2[1] : (t2[1] - 1);
-                t2[2] = (0 == t2[2]) ? t2[2] : (t2[2] - 1);
-            }
-        }
     }
 
     void ModelLoaderObj::CalculateFacetNormals(Model* model)
