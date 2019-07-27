@@ -118,13 +118,13 @@ namespace yw
 
         // Create vertex buffer, release old vertex buffer data.
         YW_SAFE_RELEASE(m_VertexBuffer);
-        if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(Vertexformat) * (uint32_t)m_Vertices.size())))
+        if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(ModelVertexFormat) * (uint32_t)m_Vertices.size())))
         {
             return false;
         }
 
         // Get vertex buffer pointer.
-        Vertexformat* vertexFormat = nullptr;
+        ModelVertexFormat* vertexFormat = nullptr;
         if (YW3D_FAILED(m_VertexBuffer->GetPointer(0, (void**)&vertexFormat)))
         {
             return false;
@@ -136,13 +136,15 @@ namespace yw
             ModelTriangle* triangle = m_Triangles[i];
             for (int32_t j = 0; j < 3; j++)
             {
-                Vertexformat& vf = vertexFormat[triangle->m_VertexIndices[j]];
-                vf.position = m_Vertices[triangle->m_VertexIndices[j]];
-                vf.normal = m_Normals[triangle->m_NormalIndices[j]];
-                vf.tangent = (m_Tangents.size() > 0) ? m_Tangents[triangle->m_VertexIndices[j]] : Vector3::Zero();
-                vf.color = (m_Colors.size() > 0) ? m_Colors[triangle->m_VertexIndices[j]] : Vector4::White();
-                vf.texcoord = (m_Texcoords.size() > 0) ? m_Texcoords[triangle->m_TexcoordsIndices[j]] : Vector2::Zero();
-                vf.texcoord2 = (m_Texcoord2s.size() > 0) ? m_Texcoord2s[triangle->m_Texcoords2Indices[j]] : Vector2::Zero();
+                uint32_t vertexIndex = triangle->m_VertexAttributeIndices[j];
+                ModelVertexFormat& vf = vertexFormat[vertexIndex];
+                ModelVertexAttributeIndex& vai = m_Vertices[vertexIndex];
+                vf.position = m_Positions[vai.positionIndex];
+                vf.normal = m_Normals[vai.normalIndex];
+                vf.tangent = ((m_Tangents.size() > 0) && (vai.tangentIndex >= 0)) ? m_Tangents[vai.tangentIndex] : Vector3::Zero();
+                vf.color = ((m_Colors.size() > 0) && (vai.colorIndex >= 0)) ? m_Colors[vai.colorIndex] : Vector4::White();
+                vf.texcoord = ((m_Texcoords.size() > 0) && (vai.texcoordIndex >= 0)) ? m_Texcoords[vai.texcoordIndex] : Vector2::Zero();
+                vf.texcoord2 = ((m_Texcoord2s.size() > 0) && (vai.texcoord2Index >= 0)) ? m_Texcoord2s[vai.texcoord2Index] : Vector2::Zero();
             }
         }
 
@@ -189,11 +191,11 @@ namespace yw
                 ModelTriangle* triangle = m_Triangles[group->m_Triangles[j]];
                 for (int32_t k = 0; k < 3; k++)
                 {
-                    *indices++ = triangle->m_VertexIndices[k];
+                    *indices++ = triangle->m_VertexAttributeIndices[k];
                 }
             }
 
-            m_IndexBuffers.push_back(IndexBufferElement(indexBuffer, triangleCount));
+            m_IndexBuffers.push_back(ModelIndexBufferElement(indexBuffer, triangleCount));
         }
 
         // Clear base model data after finishing created graphics data if the model is read-only.
@@ -215,7 +217,7 @@ namespace yw
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
         {
-            const IndexBufferElement& indexBuffer = m_IndexBuffers[i];
+            const ModelIndexBufferElement& indexBuffer = m_IndexBuffers[i];
             device->SetIndexBuffer(indexBuffer.indexBuffer);
             device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, m_TotalVertexCount, 0, indexBuffer.primitiveCount);
         }
@@ -239,7 +241,7 @@ namespace yw
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
         {
-            const IndexBufferElement& indexBuffer = m_IndexBuffers[i];
+            const ModelIndexBufferElement& indexBuffer = m_IndexBuffers[i];
             graphics->SetIndexBuffer(indexBuffer.indexBuffer);
             device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, m_TotalVertexCount, 0, indexBuffer.primitiveCount);
         }
@@ -249,13 +251,14 @@ namespace yw
 
     void Model::ClearBaseModelData()
     {
-        m_Vertices.clear();
+        m_Positions.clear();
         m_FacetNormals.clear();
         m_Normals.clear();
         m_Texcoords.clear();
         m_Texcoord2s.clear();
         m_Tangents.clear();
         m_Colors.clear();
+        m_Vertices.clear();
 
         // Clear all group.
         for (size_t i = 0; i < m_Groups.size(); i++)
