@@ -70,56 +70,79 @@ namespace yw
     {
         size_t operator()(const ModelVertexAttributeIndex& o) const
         {
-#if defined(_WIN32) || defined(WIN32)
+            size_t result = 0;
+
+        #if defined(_WIN32) || defined(WIN32)
             // Windows.
             #if defined(_WIN64)
-                const size_t _FNV_offset_basis = 14695981039346656037ULL;
-                const size_t _FNV_prime = 1099511628211ULL;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
+                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
+                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
+                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #else /* defined(_WIN64) */
-                const size_t _FNV_offset_basis = 2166136261U;
-                const size_t _FNV_prime = 16777619U;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
+                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
+                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
+                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #endif /* defined(_WIN64) */
-#elif defined(LINUX_X11) || defined(_LINUX)
+        #elif defined(LINUX_X11) || defined(_LINUX)
             // Linux
             #if defined(__LP64__)
-                const size_t _FNV_offset_basis = 14695981039346656037ULL;
-                const size_t _FNV_prime = 1099511628211ULL;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
+                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
+                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
+                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #else /* defined(__LP64__) */
-                const size_t _FNV_offset_basis = 2166136261U;
-                const size_t _FNV_prime = 16777619U;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
+                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
+                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
+                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #endif /* defined(__LP64__) */
-#elif defined(_MAC_OSX)
+        #elif defined(_MAC_OSX)
             // OSX
             #if defined(__LP64__)
-                const size_t _FNV_offset_basis = 14695981039346656037ULL;
-                const size_t _FNV_prime = 1099511628211ULL;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
+                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
+                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
+                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #else /* defined(__LP64__) */
-                const size_t _FNV_offset_basis = 2166136261U;
-                const size_t _FNV_prime = 16777619U;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
+                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
+                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
+                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #endif /* defined(__LP64__) */
-#elif defined(__amigaos4__) || defined(_AMIGAOS4)
+        #elif defined(__amigaos4__) || defined(_AMIGAOS4)
             // OSX
             #if defined(__LP64__)
-                const size_t _FNV_offset_basis = 14695981039346656037ULL;
-                const size_t _FNV_prime = 1099511628211ULL;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
+                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
+                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
+                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #else /* defined(__LP64__) */
-                const size_t _FNV_offset_basis = 2166136261U;
-                const size_t _FNV_prime = 16777619U;
+                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
+                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
+                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
+                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
+                result += o.colorIndex * 10;                                // No data.
+                result += o.texcoord2Index;                                 // Same with texcoordIndex.
             #endif /* defined(__LP64__) */
-#endif
+        #endif
 
-                std::hash<int32_t> hasher;
-                size_t result = _FNV_offset_basis;
-
-                result ^= hasher(o.positionIndex);
-                result ^= hasher(o.normalIndex);
-                result ^= hasher(o.tangentIndex);
-                result ^= hasher(o.colorIndex);
-                result ^= hasher(o.texcoordIndex);
-                result ^= hasher(o.texcoord2Index);
-                result *= _FNV_prime;
-
-                return result;
+            return result;
         }
     };
 
