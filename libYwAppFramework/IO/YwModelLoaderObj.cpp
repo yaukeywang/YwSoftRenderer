@@ -68,78 +68,66 @@ namespace yw
     // Hash function of ModelVertexAttributeIndex.
     struct ModelVertexAttributeIndexHashFunc
     {
+        uint64_t hash_64(const ModelVertexAttributeIndex& o) const
+        {
+            uint64_t result = 0;
+
+            result |= ((uint64_t)(o.positionIndex & 0x0000ffff) << 48);     // Very important.
+            result |= ((uint64_t)(o.texcoordIndex & 0x0000ffff) << 32);     // Mostly important.
+            result |= ((uint64_t)(o.normalIndex & 0x0000ffff) << 16);       // Very important, but mostly same with position count.
+            result |= (uint64_t)(o.tangentIndex & 0x0000ffff);              // Very important, but mostly same with position count.
+            result += o.colorIndex * 10;                                    // No data.
+            result += o.texcoord2Index;                                     // Same with texcoordIndex.
+
+            return result;
+        }
+
+        uint32_t hash_32(const ModelVertexAttributeIndex& o) const
+        {
+            uint32_t result = 0;
+
+            result |= ((uint32_t)(o.positionIndex & 0x0000ffff) << 16);     // Very important.
+            result |= (uint32_t)(o.texcoordIndex & 0x0000ffff);             // Mostly important.
+            result += o.normalIndex * 1000;                                 // Very important, but mostly same with position count.
+            result += o.tangentIndex * 100;                                 // Very important, but mostly same with position count.
+            result += o.colorIndex * 10;                                    // No data.
+            result += o.texcoord2Index;                                     // Same with texcoordIndex.
+
+            return result;
+        }
+
         size_t operator()(const ModelVertexAttributeIndex& o) const
         {
             size_t result = 0;
 
         #if defined(_WIN32) || defined(WIN32)
             // Windows.
-            #if defined(_WIN64)
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
-                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
-                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
-                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #else /* defined(_WIN64) */
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
-                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
-                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
-                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #endif /* defined(_WIN64) */
+            #if defined(_WIN64) /* defined(_WIN64) */
+                return hash_64(o);
+            #else
+                return hash_32(o);
+            #endif
         #elif defined(LINUX_X11) || defined(_LINUX)
             // Linux
-            #if defined(__LP64__)
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
-                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
-                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
-                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #else /* defined(__LP64__) */
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
-                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
-                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
-                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #endif /* defined(__LP64__) */
+            #if defined(__LP64__) /* defined(__LP64__) */
+                return hash_64(o);
+            #else
+                return hash_32(o);
+            #endif
         #elif defined(_MAC_OSX)
             // OSX
-            #if defined(__LP64__)
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
-                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
-                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
-                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #else /* defined(__LP64__) */
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
-                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
-                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
-                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #endif /* defined(__LP64__) */
+            #if defined(__LP64__) /* defined(__LP64__) */
+                return hash_64(o);
+            #else
+                return hash_32(o);
+            #endif
         #elif defined(__amigaos4__) || defined(_AMIGAOS4)
             // OSX
-            #if defined(__LP64__)
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 48);   // Very important.
-                result |= ((size_t)(o.texcoordIndex & 0x0000ffff) << 32);   // Mostly important.
-                result |= ((size_t)(o.normalIndex & 0x0000ffff) << 16);     // Very important, but mostly same with position count.
-                result |= (size_t)(o.tangentIndex & 0x0000ffff);            // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #else /* defined(__LP64__) */
-                result |= ((size_t)(o.positionIndex & 0x0000ffff) << 16);   // Very important.
-                result |= (size_t)(o.texcoordIndex & 0x0000ffff);           // Mostly important.
-                result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
-                result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
-                result += o.colorIndex * 10;                                // No data.
-                result += o.texcoord2Index;                                 // Same with texcoordIndex.
-            #endif /* defined(__LP64__) */
+            #if defined(__LP64__) /* defined(__LP64__) */
+                return hash_64(o);
+            #else
+                return hash_32(o);
+            #endif
         #endif
 
             return result;
