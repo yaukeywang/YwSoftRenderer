@@ -191,42 +191,6 @@ namespace yw
     {
         // Release each group.
     }
-    
-    bool ModelLoaderObj::Load(const StringA& fileName, Model** model)
-    {
-        if ((fileName.length() <= 0) || (nullptr == model))
-        {
-            return false;
-        }
-
-        // Create model data.
-        YW_SAFE_DELETE(*model);
-        (*model) = new Model();
-
-        // Read data from file.
-        FileIO file;
-        uint8_t* modelData = nullptr;
-        uint32_t fileSize = file.ReadFile(fileName, &modelData, true);
-        if ((0 == fileSize) || (nullptr == modelData))
-        {
-            return false;
-        }
-
-        const char* objData = (const char*)modelData;
-        if (nullptr == objData)
-        {
-            return false;
-        }
-        
-        // Try to load obj model from data.
-        Model* objModel = *model;
-        LoadWavefrontObjFormData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
-        
-        // Release file data.
-        YW_SAFE_DELETE_ARRAY(modelData);
-        
-        return true;
-    }
 
     bool ModelLoaderObj::Load(const StringA& fileName, Yw3dDevice* device, Model** model, bool modelReadOnly, const StringA* modelName)
     {
@@ -256,7 +220,43 @@ namespace yw
         return true;
     }
 
-    void ModelLoaderObj::LoadWavefrontObjFormData(Model* objModel, const char* objData, bool calculateNormals, float calculateNormalAngle)
+    bool ModelLoaderObj::Load(const StringA& fileName, Model** model)
+    {
+        if ((fileName.length() <= 0) || (nullptr == model))
+        {
+            return false;
+        }
+
+        // Create model data.
+        YW_SAFE_DELETE(*model);
+        (*model) = new Model();
+
+        // Read data from file.
+        FileIO file;
+        uint8_t* modelData = nullptr;
+        uint32_t fileSize = file.ReadFile(fileName, &modelData, true);
+        if ((0 == fileSize) || (nullptr == modelData))
+        {
+            return false;
+        }
+
+        const char* objData = (const char*)modelData;
+        if (nullptr == objData)
+        {
+            return false;
+        }
+
+        // Try to load obj model from data.
+        Model* objModel = *model;
+        LoadWavefrontObjFromData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
+
+        // Release file data.
+        YW_SAFE_DELETE_ARRAY(modelData);
+
+        return true;
+    }
+
+    void ModelLoaderObj::LoadWavefrontObjFromData(Model* objModel, const char* objData, bool calculateNormals, float calculateNormalAngle)
     {
         // Make a first pass through the file to get a count of the number of vertices, normals, texcoords & triangles.
         FirstPass(objModel, objData);
