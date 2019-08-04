@@ -192,6 +192,7 @@ namespace yw
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_DELETE_ARRAY(rawData);
+            YW_SAFE_RELEASE(*texture);
             return false;
         }
 
