@@ -14,46 +14,34 @@ namespace yw
     const uint16_t BITMAP_FILE_MAGIC = ('M' << 8) | 'B';
 
     // Bit map file header.
+    #pragma pack(push, 1)
     struct BitMapFileHeader
     {
-        uint16_t  bfType;
+        uint16_t bfType;
         uint32_t bfSize;
-        uint16_t  bfReserved1;
-        uint16_t  bfReserved2;
+        uint16_t bfReserved1;
+        uint16_t bfReserved2;
         uint32_t bfOffBits;
-
-        BitMapFileHeader() : bfType(0), bfSize(0), bfReserved1(0), bfReserved2(0), bfOffBits(0) {}
     };
+    #pragma pack(pop)
 
     // Bit map info header.
+    #pragma pack(push, 1)
     struct BitMapInfoHeader
     {
         uint32_t biSize;
-        int32_t  biWidth;
-        int32_t  biHeight;
-        uint16_t  biPlanes;
-        uint16_t  biBitCount;
+        int32_t biWidth;
+        int32_t biHeight;
+        uint16_t biPlanes;
+        uint16_t biBitCount;
         uint32_t biCompression;
         uint32_t biSizeImage;
-        int32_t  biXPelsPerMeter;
-        int32_t  biYPelsPerMeter;
+        int32_t biXPelsPerMeter;
+        int32_t biYPelsPerMeter;
         uint32_t biClrUsed;
         uint32_t biClrImportant;
-
-        BitMapInfoHeader() :
-            biSize(0),
-            biWidth(0),
-            biHeight(0),
-            biPlanes(0),
-            biBitCount(0),
-            biCompression(0),
-            biSizeImage(0),
-            biXPelsPerMeter(0),
-            biYPelsPerMeter(0),
-            biClrUsed(0),
-            biClrImportant(0)
-        {}
     };
+    #pragma pack(pop)
 
     // ------------------------------------------------------------------
     // For texture loader.
@@ -127,13 +115,15 @@ namespace yw
 
         // Read bit map info.
         BitMapInfoHeader* infoHeader = (BitMapInfoHeader*)(data + sizeof(BitMapFileHeader));
-        int32_t texWidth = infoHeader->biWidth;
-        int32_t texHeight = infoHeader->biHeight;
+        int32_t texWidth = abs(infoHeader->biWidth);
+        int32_t texHeight = abs(infoHeader->biHeight);
         Yw3dFormat textureFormat = Yw3d_FMT_R32G32B32F;
         uint16_t bbp = infoHeader->biBitCount / 8;
+        uint32_t pitch = texWidth * bbp;
 
         // Read texture data.
-        uint8_t* rawData = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
+        //uint8_t* rawData = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
+        uint8_t* rawData = (uint8_t*)(data + fileHeader->bfOffBits);
 
         // Create texture from device.
         YW_SAFE_RELEASE(*texture);
@@ -156,13 +146,15 @@ namespace yw
 
         // Fill data.
         uint8_t* curData = rawData;
-        for (uint32_t yIdx = 0; yIdx < texHeight; yIdx++)
+        for (int32_t yIdx = 0; yIdx < texHeight; yIdx++)
         {
-            for (uint32_t xIdx = 0; xIdx < texWidth; xIdx++)
+            for (int32_t xIdx = 0; xIdx < texWidth; xIdx++)
             {
-                (*textureData++) = (float)((*curData++) * colorScale);
-                (*textureData++) = (float)((*curData++) * colorScale);
-                (*textureData++) = (float)((*curData++) * colorScale);
+                Vector3* colorData = (Vector3*)textureData;
+                colorData->b = (float)((*curData++) * colorScale);
+                colorData->g = (float)((*curData++) * colorScale);
+                colorData->r = (float)((*curData++) * colorScale);
+                textureData += 3;
             }
         }
 
