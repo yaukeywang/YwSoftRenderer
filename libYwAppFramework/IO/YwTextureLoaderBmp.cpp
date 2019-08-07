@@ -115,15 +115,15 @@ namespace yw
 
         // Read bit map info.
         BitMapInfoHeader* infoHeader = (BitMapInfoHeader*)(data + sizeof(BitMapFileHeader));
-        int32_t texWidth = abs(infoHeader->biWidth);
-        int32_t texHeight = abs(infoHeader->biHeight);
-        Yw3dFormat textureFormat = Yw3d_FMT_R32G32B32F;
+        int32_t texWidth = infoHeader->biWidth;
+        int32_t texHeight = infoHeader->biHeight;
+        Yw3dFormat textureFormat = (32 == infoHeader->biBitCount) ? Yw3d_FMT_R32G32B32A32F : Yw3d_FMT_R32G32B32F;
         uint16_t bbp = infoHeader->biBitCount / 8;
-        uint32_t pitch = texWidth * bbp;
+        int32_t pitch = ((texWidth * bbp) + 3) / 4 * 4;
 
         // Read texture data.
-        //uint8_t* rawData = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
-        uint8_t* rawData = (uint8_t*)(data + fileHeader->bfOffBits);
+        uint8_t* texDataStart = (uint8_t*)(data + fileHeader->bfOffBits);
+        //uint8_t* texDataStart = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
 
         // Create texture from device.
         YW_SAFE_RELEASE(*texture);
@@ -145,16 +145,31 @@ namespace yw
         const float colorScale = 1.0f / 255.0f;
 
         // Fill data.
-        uint8_t* curData = rawData;
+        uint8_t* rawData = texDataStart;
         for (int32_t yIdx = 0; yIdx < texHeight; yIdx++)
         {
             for (int32_t xIdx = 0; xIdx < texWidth; xIdx++)
             {
-                Vector3* colorData = (Vector3*)textureData;
-                colorData->b = (float)((*curData++) * colorScale);
-                colorData->g = (float)((*curData++) * colorScale);
-                colorData->r = (float)((*curData++) * colorScale);
-                textureData += 3;
+                int32_t texIndex = (texHeight - 1 - yIdx) * texWidth + xIdx;
+                int32_t bmpIndex = yIdx * pitch + xIdx * bbp;
+                
+                if (Yw3d_FMT_R32G32B32A32F == textureFormat)
+                {
+                    Vector4* texData = (Vector4*)textureData + texIndex;
+                    uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
+                    texData->b = (float)((*bmpData) * colorScale);
+                    texData->g = (float)((*(bmpData + 1)) * colorScale);
+                    texData->r = (float)((*(bmpData + 2)) * colorScale);
+                    texData->a = (float)((*(bmpData + 3)) * colorScale);
+                }
+                else
+                {
+                    Vector3* texData = (Vector3*)textureData + texIndex;
+                    uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
+                    texData->b = (float)((*bmpData) * colorScale);
+                    texData->g = (float)((*(bmpData + 1)) * colorScale);
+                    texData->r = (float)((*(bmpData + 2)) * colorScale);
+                }
             }
         }
 
