@@ -103,6 +103,24 @@ namespace yw
     {
         return a + (b - a) * t;
     }
+
+    // Compute the next highest power of 2 of 32-bit n.
+    // 0->0, 1->1, 3->4, 5->8, 100->128...
+    // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+    // @param[in] n the number to compute.
+    // @return the next highest power of 2 of 32-bit n.
+    inline int32_t RoundUpPowerOf2(int32_t n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+
+        return n;
+    }
 }
 
 #endif // !__YW_MATH_UTILITY_H__
