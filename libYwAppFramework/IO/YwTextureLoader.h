@@ -22,10 +22,11 @@ namespace yw
     public:
         // Load texture data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the model file.
+        // @param[in] device used to create texture.
         // @param[out] texture the loaded data to fill.
-        // @return device used to create texture.
-        // @return texture pointer of the loaded data, null if failed.
-        virtual bool Load(const StringA& fileName, class Yw3dDevice* device, class Yw3dTexture** texture) = 0;
+        // @param[in] generateMipmap generate mipmap or not. NOTE: only textures whose size is pow of 2 are supported, or it will not generate mipmap even generateMipmap is set to true.
+        // @return true if the texture loading ok, false if loading failed.
+        virtual bool Load(const StringA& fileName, class Yw3dDevice* device, class Yw3dTexture** texture, bool generateMipmap = true) = 0;
     };
 }
 

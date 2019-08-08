@@ -1,5 +1,9 @@
 // Add by Yaukey at 2019-08-04.
 // YW texture loader for bmp class.
+// NOTE:
+// 1. Compression formats are not supported;
+// 2. Color table is not supported;
+// 3. Only support 24-bit/32-bit depth true color format.
 
 #include "YwTextureLoaderBmp.h"
 #include "Yw3d.h"
@@ -15,6 +19,7 @@ namespace yw
 
     // Bit map file header.
     #pragma pack(push, 1)
+    // https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapfileheader
     struct BitMapFileHeader
     {
         uint16_t bfType;
@@ -26,6 +31,7 @@ namespace yw
     #pragma pack(pop)
 
     // Bit map info header.
+    // https://docs.microsoft.com/zh-cn/previous-versions/dd183376(v=vs.85)
     #pragma pack(push, 1)
     struct BitMapInfoHeader
     {
@@ -57,7 +63,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderBmp::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderBmp::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture, bool generateMipmap)
     {
         if ((0 == fileName.length()) || (nullptr == device) || (nullptr == texture))
         {
@@ -92,12 +98,15 @@ namespace yw
             return false;
         }
 
-        // Generate texture mipmap.
-        Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
-        if (YW3D_FAILED(resMip))
+        if (generateMipmap && DetermineIfPowerOf2((*texture)->GetWidth()) && DetermineIfPowerOf2((*texture)->GetHeight()))
         {
-            YW_SAFE_RELEASE(*texture);
-            return false;
+            // Generate texture mipmap.
+            Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
+            if (YW3D_FAILED(resMip))
+            {
+                YW_SAFE_RELEASE(*texture);
+                return false;
+            }
         }
 
         return true;

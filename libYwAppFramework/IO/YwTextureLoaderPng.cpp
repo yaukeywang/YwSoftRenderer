@@ -44,7 +44,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderPng::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPng::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture, bool generateMipmap)
     {
         if ((0 == fileName.length()) || (nullptr == device) || (nullptr == texture))
         {
@@ -79,12 +79,15 @@ namespace yw
             return false;
         }
 
-        // Generate texture mipmap.
-        Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
-        if (YW3D_FAILED(resMip))
+        if (generateMipmap && DetermineIfPowerOf2((*texture)->GetWidth()) && DetermineIfPowerOf2((*texture)->GetHeight()))
         {
-            YW_SAFE_RELEASE(*texture);
-            return false;
+            // Generate texture mipmap.
+            Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
+            if (YW3D_FAILED(resMip))
+            {
+                YW_SAFE_RELEASE(*texture);
+                return false;
+            }
         }
 
         return true;

@@ -22,9 +22,12 @@ namespace yw
     public:
         // Load model data from a file, classes derived from this need to implement their own.
         // @param[in] fileName the full path of the model file.
+        // @param[in] device used to create model data.
         // @param[out] model the loaded data to fill.
-        // @return Model pointer of the loaded model, null if failed.
-        virtual bool Load(const StringA& fileName, class Model** model) = 0;
+        // @param[in] modelReadOnly if model is read only, if true, the original model data will be cleared after the GRAPHICS-MODEL-DATA(vertex/index buffer) is created, you can not re-create graphics model data again from souce data.
+        // @param[in] modelName the name of this model, optional. 
+        // @return true if the model loading ok, false if loading failed.
+        virtual bool Load(const StringA& fileName, class Yw3dDevice* device, class Model** model, bool modelReadOnly = true, const StringA* modelName = nullptr) = 0;
     };
 }
 
