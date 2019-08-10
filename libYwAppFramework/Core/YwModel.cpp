@@ -238,6 +238,9 @@ namespace yw
             return 0;
         }
 
+        graphics->SetVertexFormat(m_VertexFormat);
+        graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertexFormat));
+
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
         {
