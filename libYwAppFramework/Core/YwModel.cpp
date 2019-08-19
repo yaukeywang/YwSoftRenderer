@@ -214,6 +214,9 @@ namespace yw
             return 0;
         }
 
+        device->SetVertexFormat(m_VertexFormat);
+        device->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertexFormat));
+
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
         {

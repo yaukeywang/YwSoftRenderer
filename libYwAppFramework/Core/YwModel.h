@@ -143,7 +143,7 @@ namespace yw
 
         // Render this model with graphics management.
         // Return: How many groups rendered.
-        int Model::Render(class Graphics* device) const;
+        int Render(class Graphics* graphics) const;
 
         // If this model data is read-only.
         inline bool ReadOnly() const
