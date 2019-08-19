@@ -26,7 +26,14 @@ namespace yw
         // @param[out] texture the loaded data to fill.
         // @param[in] generateMipmap generate mipmap or not. NOTE: only textures whose size is pow of 2 are supported, or it will not generate mipmap even generateMipmap is set to true.
         // @return true if the texture loading ok, false if loading failed.
-        virtual bool Load(const StringA& fileName, class Yw3dDevice* device, class Yw3dTexture** texture, bool generateMipmap = true) = 0;
+        bool Load(const StringA& fileName, class Yw3dDevice* device, class Yw3dTexture** texture, bool generateMipmap = true);
+
+    private:
+        // Load texture from kinds of data.
+        // @param[in] data - texture raw data.
+        // @param[in] device used to create texture.
+        // @param[out] texture the loaded data to fill.
+        virtual bool LoadFormData(uint8_t* data, class Yw3dDevice* device, class Yw3dTexture** texture) = 0;
     };
 }
 
