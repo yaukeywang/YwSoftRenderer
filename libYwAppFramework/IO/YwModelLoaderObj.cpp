@@ -172,19 +172,9 @@ namespace yw
     }
 
     ModelLoaderObj::ModelLoaderObj() : 
-        IModelLoader(),
-        m_CalculateNormals(false),
-        m_CalculateNormalAngle(90.0f)
+        IModelLoader()
     {
         
-    }
-
-    ModelLoaderObj::ModelLoaderObj(bool calculateNormals, float calculateNormalAngle) :
-        IModelLoader(),
-        m_CalculateNormals(calculateNormals),
-        m_CalculateNormalAngle(calculateNormalAngle)
-    {
-
     }
     
     ModelLoaderObj::~ModelLoaderObj()
@@ -192,67 +182,9 @@ namespace yw
         // Release each group.
     }
 
-    bool ModelLoaderObj::Load(const StringA& fileName, Yw3dDevice* device, Model** model, bool modelReadOnly, const StringA* modelName)
+    bool ModelLoaderObj::LoadFormData(const char* data, bool calculateNormals, float calculateNormalAngle, Model* model)
     {
-        if (nullptr == device)
-        {
-            return false;
-        }
-
-        // Create model data.
-        YW_SAFE_DELETE(*model);
-        (*model) = new Model((nullptr == modelName) ? "" : *modelName, modelReadOnly);
-
-        // Load base model data from file.
-        if (!Load(fileName, model))
-        {
-            return false;
-        }
-
-        // Create vertex data.
-        Model* objModel = *model;
-        if (!objModel->CreateVertexData(device))
-        {
-            YW_SAFE_DELETE(model);
-            return nullptr;
-        }
-
-        return true;
-    }
-
-    bool ModelLoaderObj::Load(const StringA& fileName, Model** model)
-    {
-        if ((fileName.length() <= 0) || (nullptr == model))
-        {
-            return false;
-        }
-
-        // Create model data.
-        YW_SAFE_DELETE(*model);
-        (*model) = new Model();
-
-        // Read data from file.
-        FileIO file;
-        uint8_t* modelData = nullptr;
-        uint32_t fileSize = file.ReadFile(fileName, &modelData, true);
-        if ((0 == fileSize) || (nullptr == modelData))
-        {
-            return false;
-        }
-
-        const char* objData = (const char*)modelData;
-        if (nullptr == objData)
-        {
-            return false;
-        }
-
-        // Try to load obj model from data.
-        Model* objModel = *model;
-        LoadWavefrontObjFromData(objModel, objData, m_CalculateNormals, m_CalculateNormalAngle);
-
-        // Release file data.
-        YW_SAFE_DELETE_ARRAY(modelData);
-
+        LoadWavefrontObjFromData(model, data, calculateNormals, calculateNormalAngle);
         return true;
     }
 

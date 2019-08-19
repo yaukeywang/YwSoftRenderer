@@ -172,6 +172,7 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwFileIO.h",
         "libYwAppFramework/IO/YwFileIO.cpp",
         "libYwAppFramework/IO/YwModelLoader.h",
+        "libYwAppFramework/IO/YwModelLoader.cpp",
         "libYwAppFramework/IO/YwModelLoaderObj.h",
         "libYwAppFramework/IO/YwModelLoaderObj.cpp",
         "libYwAppFramework/IO/YwTextureLoader.h",

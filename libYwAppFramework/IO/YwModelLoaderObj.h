@@ -20,29 +20,20 @@ namespace yw
     public:
         // Constructor.
         ModelLoaderObj();
-
-        // Constructor with params.
-        ModelLoaderObj(bool calculateNormals, float calculateNormalAngle);
         
         // Destructor.
         ~ModelLoaderObj();
-        
-    public:
-        // Load model data from a file, classes derived from this need to implement their own.
-        // @param[in] fileName the full path of the model file.
-        // @param[in] device used to create model data.
+
+    private:
+        // Load model from kinds of data.
+        // @param[in] data model raw data.
+        // @param[in] calculateNormals always re-calculate model normals or not.
+        // @param[in] calculateNormalAngle the angle used to re-calculate normals.
         // @param[out] model the loaded data to fill.
-        // @param[in] modelReadOnly if model is read only, if true, the original model data will be cleared after the GRAPHICS-MODEL-DATA(vertex/index buffer) is created, you can not re-create graphics model data again from souce data.
-        // @param[in] modelName the name of this model, optional. 
         // @return true if the model loading ok, false if loading failed.
-        bool Load(const StringA& fileName, class Yw3dDevice* device, class Model** model, bool modelReadOnly = true, const StringA* modelName = nullptr);
+        virtual bool LoadFormData(const char* data, bool calculateNormals, float calculateNormalAngle, Model* model);
         
     private:
-        // Load model data from a file, classes derived from this need to implement their own.
-        // @param[in] fileName the full path of the model file.
-        // @return Model pointer of the loaded model, null if failed, NOT create vertex/index buffer.
-        bool Load(const StringA& fileName, class Model** model);
-
         // Load Wavefront-Obj form data.
         void LoadWavefrontObjFromData(Model* model, const char* objData, bool calculateNormals, float calculateNormalAngle);
 
@@ -78,13 +69,6 @@ namespace yw
 
             Node() : m_Index(0), m_Averaged(false), m_Next(nullptr) {}
         };
-
-    private:
-        // Calculate normal or not.
-        bool m_CalculateNormals;
-
-        // The angle of calculating normal.
-        float m_CalculateNormalAngle;
     };
 }
 
