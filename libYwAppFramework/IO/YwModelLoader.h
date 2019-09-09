@@ -42,4 +42,4 @@ namespace yw
     };
 }
 
-#endif //!__YW_MODEL_LOADER_H__
+#endif // !__YW_MODEL_LOADER_H__

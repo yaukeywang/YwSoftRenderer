@@ -1,0 +1,15 @@
+Using the LibTarga library
+CS 559
+Mark Pingel
+updated for FlTk 1.11 by Mike Gleicher,
+September 20, 2001
+updated by Chi Man Liu,
+September 11, 2007 
+
+https://research.cs.wisc.edu/graphics/Gallery/LibTarga/
+
+Modified by Yaukey:
+ - Add alpha bits param in "tga_load".
+ - Add "tga_load_data".
+ - Add "tga_release".
+ 

@@ -7,7 +7,6 @@
 
 #include "YwTextureLoaderBmp.h"
 #include "Yw3d.h"
-#include "YwFileIO.h"
 
 namespace yw
 {
@@ -63,7 +62,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderBmp::LoadFormData(uint8_t* data, class Yw3dDevice* device, class Yw3dTexture** texture)
+    bool TextureLoaderBmp::LoadFormData(uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
     {
         // Read bit map file header.
         BitMapFileHeader* fileHeader = (BitMapFileHeader*)data;
@@ -117,10 +116,10 @@ namespace yw
                 {
                     Vector4* texData = (Vector4*)textureData + texIndex;
                     uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
-                    texData->b = (float)((*bmpData) * colorScale);
-                    texData->g = (float)((*(bmpData + 1)) * colorScale);
-                    texData->r = (float)((*(bmpData + 2)) * colorScale);
-                    texData->a = (float)((*(bmpData + 3)) * colorScale);
+                    texData->a = (float)((*bmpData) * colorScale);
+                    texData->r = (float)((*(bmpData + 1)) * colorScale);
+                    texData->g = (float)((*(bmpData + 2)) * colorScale);
+                    texData->b = (float)((*(bmpData + 3)) * colorScale);
                 }
                 else
                 {

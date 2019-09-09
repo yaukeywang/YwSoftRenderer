@@ -6,7 +6,9 @@
 #include "YwGraphics.h"
 #include "YwModel.h"
 #include "YwModelLoaderObj.h"
+#include "YwTextureLoaderBmp.h"
 #include "YwTextureLoaderPng.h"
+#include "YwTextureLoaderTga.h"
 
 namespace yw
 {
@@ -31,8 +33,9 @@ namespace yw
     {
         // Register resource file type by extension.
         RegisterResourceExtension("obj", LoadModel, UnloadModel);
-        RegisterResourceExtension("tga", LoadTexture_TGA, UnloadTexture_TGA);
+        RegisterResourceExtension("bmp", LoadTexture_BMP, UnloadTexture_BMP);
         RegisterResourceExtension("png", LoadTexture_PNG, UnloadTexture_PNG);
+        RegisterResourceExtension("tga", LoadTexture_TGA, UnloadTexture_TGA);
         RegisterResourceExtension("cube", LoadTexture_Cube, UnloadTexture_Cube);
         RegisterResourceExtension("anim", LoadTexture_Animated, UnloadTexture_Animated);
 
@@ -156,7 +159,7 @@ namespace yw
 
         // Load model data by loader.
         ModelLoaderObj modelLoader;
-        if (!modelLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &model, true, &fileName))
+        if (!modelLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &model, true, false, 90.0f, &fileName))
         {
             YW_SAFE_DELETE(model);
             return nullptr;
@@ -170,15 +173,26 @@ namespace yw
         YW_SAFE_DELETE(resource);
     }
 
-    void* ResourceManager::LoadTexture_TGA(ResourceManager* resourceManager, const StringA& fileName)
+    void* ResourceManager::LoadTexture_BMP(ResourceManager* resourceManager, const StringA& fileName)
     {
-        assert(nullptr && _T("LoadTexture_TGA is currently not supported!"));
-        return nullptr;
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderBmp bmpLoader;
+        if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
     }
 
-    void ResourceManager::UnloadTexture_TGA(ResourceManager* resourceManager, void* resource)
+    void ResourceManager::UnloadTexture_BMP(ResourceManager* resourceManager, void* resource)
     {
-        YW_SAFE_DELETE(resource);
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
+        YW_SAFE_RELEASE(texture);
     }
 
     void* ResourceManager::LoadTexture_PNG(ResourceManager* resourceManager, const StringA& fileName)
@@ -188,7 +202,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderPng pngLoader;
-        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture))
+        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -198,6 +212,28 @@ namespace yw
     }
 
     void ResourceManager::UnloadTexture_PNG(ResourceManager* resourceManager, void* resource)
+    {
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
+        YW_SAFE_RELEASE(texture);
+    }
+
+    void* ResourceManager::LoadTexture_TGA(ResourceManager* resourceManager, const StringA& fileName)
+    {
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderTga tgaLoader;
+        if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
+    }
+
+    void ResourceManager::UnloadTexture_TGA(ResourceManager* resourceManager, void* resource)
     {
         Yw3dTexture* texture = (Yw3dTexture*)resource;
         YW_SAFE_RELEASE(texture);

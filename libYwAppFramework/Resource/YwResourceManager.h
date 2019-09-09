@@ -52,13 +52,17 @@ namespace yw
         static void* LoadModel(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadModel(ResourceManager* resourceManager, void* resource);
 
-        // Load and unload "tga" texture file.
-        static void* LoadTexture_TGA(ResourceManager* resourceManager, const StringA& fileName);
-        static void UnloadTexture_TGA(ResourceManager* resourceManager, void* resource);
+        // Load and unload "bmp" texture file.
+        static void* LoadTexture_BMP(ResourceManager* resourceManager, const StringA& fileName);
+        static void UnloadTexture_BMP(ResourceManager* resourceManager, void* resource);
 
         // Load and unload "png" texture file.
         static void* LoadTexture_PNG(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_PNG(ResourceManager* resourceManager, void* resource);
+
+        // Load and unload "tga" texture file.
+        static void* LoadTexture_TGA(ResourceManager* resourceManager, const StringA& fileName);
+        static void UnloadTexture_TGA(ResourceManager* resourceManager, void* resource);
 
         // Load and unload "cube" texture file.
         static void* LoadTexture_Cube(ResourceManager* resourceManager, const StringA& fileName);

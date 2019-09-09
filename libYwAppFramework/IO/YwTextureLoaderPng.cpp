@@ -3,7 +3,6 @@
 
 #include "YwTextureLoaderPng.h"
 #include "Yw3d.h"
-#include "YwFileIO.h"
 
 #if defined(_WIN32) || defined(WIN32)
 #include "png.h"
@@ -44,7 +43,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderPng::LoadFormData(uint8_t* data, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPng::LoadFormData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         // Create base structure.
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

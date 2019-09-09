@@ -142,6 +142,7 @@ project "libYwAppFramework"
         "libYwAppFramework/IO",
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
         "libYwAppFramework/ThirdParty/zlib"
     }
 
@@ -181,6 +182,8 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwTextureLoaderBmp.cpp",
         "libYwAppFramework/IO/YwTextureLoaderPng.h",
         "libYwAppFramework/IO/YwTextureLoaderPng.cpp",
+        "libYwAppFramework/IO/YwTextureLoaderTga.h",
+        "libYwAppFramework/IO/YwTextureLoaderTga.cpp",
 
         "libYwAppFramework/Resource/YwResourceManager.h",
         "libYwAppFramework/Resource/YwResourceManager.cpp",
@@ -188,6 +191,9 @@ project "libYwAppFramework"
         "libYwAppFramework/ThirdParty/libpng/*.h",
         "libYwAppFramework/ThirdParty/libpng/*.c",
         "libYwAppFramework/ThirdParty/libpng/*.cpp",
+        "libYwAppFramework/ThirdParty/libtarga/*.h",
+        "libYwAppFramework/ThirdParty/libtarga/*.c",
+        "libYwAppFramework/ThirdParty/libtarga/*.cpp",
         "libYwAppFramework/ThirdParty/zlib/*.h",
         "libYwAppFramework/ThirdParty/zlib/*.c",
         "libYwAppFramework/ThirdParty/zlib/*.cpp"
@@ -201,6 +207,7 @@ project "libYwAppFramework"
         ["Resource"] = { "libYwAppFramework/Resource/Yw*.h", "libYwAppFramework/Resource/Yw*.inl", "libYwAppFramework/Resource/Yw*.cpp" },
         ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.c", "libYwAppFramework/ThirdParty/*.cpp" },
         ["ThirdParty/libpng"] = {"libYwAppFramework/ThirdParty/libpng/*.h", "libYwAppFramework/ThirdParty/libpng/*.inl", "libYwAppFramework/ThirdParty/libpng/*.c", "libYwAppFramework/ThirdParty/libpng/*.cpp"},
+        ["ThirdParty/libtarga"] = {"libYwAppFramework/ThirdParty/libtarga/*.h", "libYwAppFramework/ThirdParty/libtarga/*.inl", "libYwAppFramework/ThirdParty/libtarga/*.c", "libYwAppFramework/ThirdParty/libtarga/*.cpp"},
         ["ThirdParty/zlib"] = {"libYwAppFramework/ThirdParty/zlib/*.h", "libYwAppFramework/ThirdParty/zlib/*.inl", "libYwAppFramework/ThirdParty/zlib/*.c", "libYwAppFramework/ThirdParty/zlib/*.cpp"}
     }
 
