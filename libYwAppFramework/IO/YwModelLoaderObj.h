@@ -31,11 +31,11 @@ namespace yw
         // @param[in] calculateNormalAngle the angle used to re-calculate normals.
         // @param[out] model the loaded data to fill.
         // @return true if the model loading ok, false if loading failed.
-        virtual bool LoadFormData(const char* data, bool calculateNormals, float calculateNormalAngle, Model* model);
+        virtual bool LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model);
         
     private:
         // Load Wavefront-Obj form data.
-        void LoadWavefrontObjFromData(Model* model, const char* objData, bool calculateNormals, float calculateNormalAngle);
+        void LoadWavefrontObjFromData(Model* model, const uint8_t* objData, bool calculateNormals, float calculateNormalAngle);
 
         // First pass of process.
         void FirstPass(Model* model, const char* objData);

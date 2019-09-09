@@ -32,7 +32,7 @@ namespace yw
             return false;
         }
 
-        const char* objData = (const char*)modelData;
+        const uint8_t* objData = modelData;
         if (nullptr == objData)
         {
             return false;

@@ -182,19 +182,19 @@ namespace yw
         // Release each group.
     }
 
-    bool ModelLoaderObj::LoadFormData(const char* data, bool calculateNormals, float calculateNormalAngle, Model* model)
+    bool ModelLoaderObj::LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
     {
         LoadWavefrontObjFromData(model, data, calculateNormals, calculateNormalAngle);
         return true;
     }
 
-    void ModelLoaderObj::LoadWavefrontObjFromData(Model* objModel, const char* objData, bool calculateNormals, float calculateNormalAngle)
+    void ModelLoaderObj::LoadWavefrontObjFromData(Model* objModel, const uint8_t* objData, bool calculateNormals, float calculateNormalAngle)
     {
         // Make a first pass through the file to get a count of the number of vertices, normals, texcoords & triangles.
-        FirstPass(objModel, objData);
+        FirstPass(objModel, (const char*)objData);
 
         // Second pass to organize data.
-        SecondPass(objModel, objData);
+        SecondPass(objModel, (const char*)objData);
 
         // Calculate facet normals is necessary.
         CalculateFacetNormals(objModel);
