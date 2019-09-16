@@ -59,7 +59,7 @@ namespace yw
         if (m_ChangedVertexShader)
         {
             device->SetVertexShader(m_VertexShader);
-            YW_SAFE_RELEASE(m_VertexFormat);
+            YW_SAFE_RELEASE(m_VertexShader);
             m_ChangedVertexShader = false;
         }
 
