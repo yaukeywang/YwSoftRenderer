@@ -140,6 +140,7 @@ project "libYwAppFramework"
         "libYwAppFramework",
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
@@ -238,7 +239,11 @@ project "Demo1Triangle"
         "libYwAppFramework",
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
-        "libYwAppFramework/ThirdParty"
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/zlib"
     }
 
     files

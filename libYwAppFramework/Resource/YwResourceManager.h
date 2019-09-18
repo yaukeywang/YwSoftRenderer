@@ -42,7 +42,7 @@ namespace yw
         void UnloadResource(HRESOURCE hResource);
 
         // Get a loaded resource.
-        const void* GetResource(HRESOURCE hResource) const;
+        void* GetResource(HRESOURCE hResource) const;
 
     protected:
         // Register a load/unload function for a resource extension.

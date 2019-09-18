@@ -129,7 +129,7 @@ namespace yw
         }
     }
 
-    const void* ResourceManager::GetResource(HRESOURCE hResource) const
+    void* ResourceManager::GetResource(HRESOURCE hResource) const
     {
         if (0 == hResource)
         {
