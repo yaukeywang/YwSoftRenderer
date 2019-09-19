@@ -6,6 +6,10 @@
 local action = _ACTION or ""
 local todir = "Workspace/" .. action
 local builddir = "Build"
+local appbuilddir = builddir .. "/YwSoftRenderer"
+local appdatadir = appbuilddir .. "/Data"
+local abssrcdatadir = "%{wks.location}../../Data"
+local absdstdatadir = "%{wks.location}../../" .. appdatadir
 
 solution "YwSoftRenderer"
     location (todir)
@@ -119,13 +123,6 @@ project "libYw3d"
 
     filter { "configurations:Debug*" }
         targetsuffix "D"
-
-    -- filter { "system:windows" }
-    --     postbuildcommands
-    --     {
-    --         '{MKDIR} "%{wks.location}../../Build/Bin/%{cfg.platform}/%{prj.name}"',
-    --         '{COPY} "%{cfg.targetdir}/%{cfg.buildtarget.name}" "%{wks.location}../../' .. builddir .. '/Bin/%{cfg.platform}/%{prj.name}"'
-    --     }
 
 project "libYwAppFramework"
     language "C++"
@@ -268,7 +265,8 @@ project "Demo1Triangle"
         "libYwAppFramework"
     }
 
-    targetdir (builddir .. "/Bin")
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
 
     filter { "configurations:Debug*", "architecture:x86" }
         targetsuffix "x86D"
@@ -278,3 +276,88 @@ project "Demo1Triangle"
 
     filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
+
+    -- filter { "system:windows" }
+    --     postbuildcommands
+    --     {
+    --         '{MKDIR} "%{wks.location}../../Build/Bin/%{cfg.platform}/%{prj.name}"',
+    --         '{COPY} "%{cfg.targetdir}/%{cfg.buildtarget.name}" "%{wks.location}../../' .. builddir .. '/Bin/%{cfg.platform}/%{prj.name}"'
+    --     }
+
+project "Demo2Model"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/zlib"
+    }
+
+    files
+    { 
+        "Demo2Model/YwDemoModel.h",
+        "Demo2Model/YwDemoModel.cpp",
+        "Demo2Model/YwDemoModelApp.h",
+        "Demo2Model/YwDemoModelApp.cpp",
+        "Demo2Model/YwDemoModelCamera.h",
+        "Demo2Model/YwDemoModelCamera.cpp",
+        "Demo2Model/YwDemoModelMain.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo2Model/Yw*.h", "Demo2Model/Yw*.inl", "Demo2Model/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
+        }
