@@ -17,17 +17,20 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] `Model Data Loading` module.
 - [x] `Resource and IO` module.
 - [x] `Texture Data Loading` module.
-- [ ] More `Basic` demos. **[Working on...]**
-- [ ] `Lighting and Material` module.
+- [x] More `Basic` demos.
+- [ ] `Shading with Light and Material` module. **[Working on...]**
 - [ ] `PBR` demo.
 - [ ] `Log` module.
 - [ ] `Low Level Memory Pool` support.
 - [ ] `Linux` support
 - [ ] `Mac OS X` support.
-- [ ] Maybe a `Shader Compiler and Runtime` support.
+- [ ] Maybe a `Custom Shader Compiler and Runtime` support.
 - [ ] Something unknown...
 
 ### Examples
 
 #### Demo 1: Triangle
-![Demo 1 Triangle](Demo-1-Triangle.png)
+![Demo 1 Triangle](Demo1Triangle/Demo1Triangle.png)
+
+#### Demo 2: Model
+![Demo 2 Model](Demo2Model/Demo2Model.png)
