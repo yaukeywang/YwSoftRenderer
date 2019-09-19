@@ -5,6 +5,7 @@
 #include "YwInput.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
+#include "YwResourceManager.h"
 
 namespace yw
 {
@@ -22,6 +23,7 @@ namespace yw
         m_AppData(nullptr),
         m_Input(nullptr),
         m_Graphics(nullptr),
+        m_ResourceManager(nullptr),
         m_Scene(nullptr)
     {
 
@@ -29,9 +31,10 @@ namespace yw
 
     IApplication::~IApplication()
     {
-        YW_SAFE_DELETE(m_Input);
-        YW_SAFE_DELETE(m_Graphics);
         YW_SAFE_DELETE(m_Scene);
+        YW_SAFE_DELETE(m_ResourceManager);
+        YW_SAFE_DELETE(m_Graphics);
+        YW_SAFE_DELETE(m_Input);
         YW_SAFE_DELETE_ARRAY(m_AppData);
     }
 
@@ -57,6 +60,13 @@ namespace yw
         // Create graphics.
         m_Graphics = new Graphics(this);
         if ((nullptr == m_Graphics) || !m_Graphics->Initialize(creationFlags))
+        {
+            return false;
+        }
+
+        // Create resource manager.
+        m_ResourceManager = new ResourceManager(this);
+        if ((nullptr == m_ResourceManager) || !m_ResourceManager->Initialize())
         {
             return false;
         }

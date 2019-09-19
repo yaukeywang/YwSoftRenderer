@@ -3,7 +3,6 @@
 
 #include "YwTextureLoaderPng.h"
 #include "Yw3d.h"
-#include "YwFileIO.h"
 
 #if defined(_WIN32) || defined(WIN32)
 #include "png.h"
@@ -44,53 +43,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderPng::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture)
-    {
-        if ((0 == fileName.length()) || (nullptr == device) || (nullptr == texture))
-        {
-            return false;
-        }
-
-        // Use file io.
-        FileIO file;
-        uint8_t* textureData = nullptr;
-        uint32_t fileSize = file.ReadFile(fileName, &textureData, false);
-        if ((0 == fileSize) || (nullptr == textureData))
-        {
-            YW_SAFE_DELETE_ARRAY(textureData);
-            return false;
-        }
-
-        // Load texture from data.
-        bool res = LoadFormData(textureData, device, texture);
-        if (!res)
-        {
-            YW_SAFE_DELETE_ARRAY(textureData);
-            return false;
-        }
-
-        // Release texture data.
-        YW_SAFE_DELETE_ARRAY(textureData);
-
-        // Check loaded texture.
-        if (nullptr == *texture)
-        {
-            YW_SAFE_RELEASE(*texture);
-            return false;
-        }
-
-        // Generate texture mipmap.
-        Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
-        if (YW3D_FAILED(resMip))
-        {
-            YW_SAFE_RELEASE(*texture);
-            return false;
-        }
-
-        return true;
-    }
-
-    bool TextureLoaderPng::LoadFormData(uint8_t* data, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPng::LoadFormData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         // Create base structure.
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -192,6 +145,7 @@ namespace yw
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_DELETE_ARRAY(rawData);
+            YW_SAFE_RELEASE(*texture);
             return false;
         }
 

@@ -73,6 +73,7 @@ namespace yw
         // Set cursor.
         SetCursor(LoadCursor(0, IDC_WAIT));
 
+        // Create sub system and return the result.
         return CreateSubSystems(creationFlags);
     }
 

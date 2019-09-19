@@ -103,6 +103,33 @@ namespace yw
     {
         return a + (b - a) * t;
     }
+
+    // Determining if an integer is a power of 2.
+    // http://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
+    // @param[in] n the number to determining.
+    // @return true if n is power of 2, otherwise not.
+    inline bool DetermineIfPowerOf2(uint32_t n)
+    {
+        return (n && !(n & (n - 1)));
+    }
+
+    // Compute the next highest power of 2 of 32-bit n.
+    // 0->0, 1->1, 3->4, 5->8, 100->128...
+    // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+    // @param[in] n the number to compute.
+    // @return the next highest power of 2 of 32-bit n.
+    inline uint32_t RoundUpPowerOf2(uint32_t n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+
+        return n;
+    }
 }
 
 #endif // !__YW_MATH_UTILITY_H__

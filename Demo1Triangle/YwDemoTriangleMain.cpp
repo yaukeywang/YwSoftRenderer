@@ -6,7 +6,6 @@
 // ------------------------------------------------------------------
 // Platform-dependent code.
 
-
 #if defined(_WIN32) || defined(WIN32)
 // Windows platform.
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -28,17 +27,17 @@ int main(int argc, char** argv)
     uint32_t windowWidth = 400;
     uint32_t windowHeight = 300;
 
-    #ifdef __amigaos4__
-    if (argc == 3)
+#if defined(__amigaos4__) || defined(_AMIGAOS4)
+    if (3 == argc)
     {
-        windowWidth = iClamp(atoi(argv[1]), 160, 1600);
-        windowHeight = iClamp(atoi(argv[2]), 160, 1280);
+        windowWidth = Clamp(atoi(argv[1]), 160, 1600);
+        windowHeight = Clamp(atoi(argv[2]), 160, 1280);
     }
-    #endif
+#endif
 
-    #if defined(_WIN32) || defined(WIN32)
+#if defined(_WIN32) || defined(WIN32)
     creationFlags.icon = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(0));
-    #endif
+#endif
 
     creationFlags.windowWidth = windowWidth;
     creationFlags.windowHeight = windowHeight;

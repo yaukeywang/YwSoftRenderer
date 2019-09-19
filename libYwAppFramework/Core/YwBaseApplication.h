@@ -148,6 +148,12 @@ namespace yw
             return m_Graphics;
         }
 
+        // Get current resource manager.
+        inline class ResourceManager* GetResourceManager() const
+        {
+            return m_ResourceManager;
+        }
+
         // Get current scene.
         inline class Scene* GetScene() const
         {
@@ -202,6 +208,9 @@ namespace yw
 
         // Graphics class.
         class Graphics* m_Graphics;
+
+        // Resource manager class.
+        class ResourceManager* m_ResourceManager;
 
         // Scene class.
         class Scene* m_Scene;

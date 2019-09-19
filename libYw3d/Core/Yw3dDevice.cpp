@@ -2669,9 +2669,26 @@ namespace yw
 
     void Yw3dDevice::RasterizeLine(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1)
     {
+        // Sort vertices by x-coordinate from left to right. To Solve the "Double Line" between two same point issue.
+        // 0 - 1
+        // | \ |
+        // 3 - 2
+        // For example: triangle: 0-1-2 and 0-2-3 share the edge 0-2, when render first triangle we draw line
+        // 0-1, 1-2, 2-0, and 0-2, 2-3, 3-0 for the second triangle, so we draw edge 0-2 two times from different start
+        // point that 0->2 and 2->0. Due to the algorithm use below and precision of floating point, the result of 
+        // drawing from 0 to 2 may be different from the result of drawing from 2 to 0, and we will we two lines between point 0 and point 2.
+        // So, if we sort the vertices always from left to right, we will give the same result by the same algorithm, 
+        // no matter if we are drawing 0->2 or 2->0.
+        const Yw3dVSOutput* vertices[2] = { vsOutput0, vsOutput1 };
+        if (vertices[1]->position.x < vertices[0]->position.x)
+        {
+            vertices[0] = vsOutput1;
+            vertices[1] = vsOutput0;
+        }
+
         // Get referenced position.
-        const Vector4& posA = vsOutput0->position;
-        const Vector4& posB = vsOutput1->position;
+        const Vector4& posA = vertices[0]->position;
+        const Vector4& posB = vertices[1]->position;
 
         uint32_t intCoordA[2] = { (uint32_t)ftol(posA.x), (uint32_t)ftol(posA.y) };
         float deltaX = posB.x - posA.x;

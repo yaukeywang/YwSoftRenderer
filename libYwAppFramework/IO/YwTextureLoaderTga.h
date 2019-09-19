@@ -1,21 +1,21 @@
-// Add by Yaukey at 2019-06-26.
-// YW texture loader for png class.
+// Add by Yaukey at 2019-08-20.
+// YW texture loader for tga class.
 
-#ifndef __YW_TEXTURE_LOADER_PNG_H__
-#define __YW_TEXTURE_LOADER_PNG_H__
+#ifndef __YW_TEXTURE_LOADER_TGA_H__
+#define __YW_TEXTURE_LOADER_TGA_H__
 
 #include "YwTextureLoader.h"
 
 namespace yw
 {
-    class TextureLoaderPng : public ITextureLoader
+    class TextureLoaderTga : public ITextureLoader
     {
     public:
         // Constructor.
-        TextureLoaderPng();
+        TextureLoaderTga();
 
         // Destructor.
-        ~TextureLoaderPng();
+        ~TextureLoaderTga();
 
     private:
         // Load texture from kinds of data.
@@ -27,4 +27,4 @@ namespace yw
     };
 }
 
-#endif // !__YW_TEXTURE_LOADER_PNG_H__
+#endif // !__YW_TEXTURE_LOADER_TGA_H__

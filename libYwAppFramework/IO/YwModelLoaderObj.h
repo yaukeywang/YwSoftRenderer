@@ -20,36 +20,28 @@ namespace yw
     public:
         // Constructor.
         ModelLoaderObj();
-
-        // Constructor with params.
-        ModelLoaderObj(bool calculateNormals, float calculateNormalAngle);
         
         // Destructor.
         ~ModelLoaderObj();
-        
-    public:
-        // Load model data from a file, classes derived from this need to implement their own.
-        // @param[in] fileName the full path of the model file.
-        // @return Model pointer of the loaded model, null if failed, NOT create vertex/index buffer.
-        bool Load(const StringA& fileName, class Model** model);
 
-        // Load model data from a file, classes derived from this need to implement their own.
-        // @param[in] fileName the full path of the model file.
-        // @return Model pointer of the loaded model, null if failed, CREATE vertex/index buffer.
-        bool Load(const StringA& fileName, class Yw3dDevice* device, class Model** model, bool modelReadOnly = true, const StringA* modelName = nullptr);
+    private:
+        // Load model from kinds of data.
+        // @param[in] data model raw data.
+        // @param[in] calculateNormals always re-calculate model normals or not.
+        // @param[in] calculateNormalAngle the angle used to re-calculate normals.
+        // @param[out] model the loaded data to fill.
+        // @return true if the model loading ok, false if loading failed.
+        virtual bool LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model);
         
     private:
         // Load Wavefront-Obj form data.
-        void LoadWavefrontObjFormData(Model* model, const char* objData, bool calculateNormals, float calculateNormalAngle);
+        void LoadWavefrontObjFromData(Model* model, const uint8_t* objData, bool calculateNormals, float calculateNormalAngle);
 
         // First pass of process.
         void FirstPass(Model* model, const char* objData);
         
         // Second pass of process.
         void SecondPass(class Model* model, const char* objData);
-
-        // Normalize model mesh indices from 1-based to 0-based.
-        void NormalizeIndices(class Model* model);
 
         // Calculate facet normals.
         void CalculateFacetNormals(class Model* model);
@@ -77,13 +69,6 @@ namespace yw
 
             Node() : m_Index(0), m_Averaged(false), m_Next(nullptr) {}
         };
-
-    private:
-        // Calculate normal or not.
-        bool m_CalculateNormals;
-
-        // The angle of calculating normal.
-        float m_CalculateNormalAngle;
     };
 }
 

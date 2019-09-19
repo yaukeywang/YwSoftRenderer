@@ -1,21 +1,21 @@
-// Add by Yaukey at 2019-06-26.
-// YW texture loader for png class.
+// Add by Yaukey at 2019-08-04.
+// YW texture loader for bmp class.
 
-#ifndef __YW_TEXTURE_LOADER_PNG_H__
-#define __YW_TEXTURE_LOADER_PNG_H__
+#ifndef __YW_TEXTURE_LOADER_BMP_H__
+#define __YW_TEXTURE_LOADER_BMP_H__
 
 #include "YwTextureLoader.h"
 
 namespace yw
 {
-    class TextureLoaderPng : public ITextureLoader
+    class TextureLoaderBmp : public ITextureLoader
     {
     public:
         // Constructor.
-        TextureLoaderPng();
+        TextureLoaderBmp();
 
         // Destructor.
-        ~TextureLoaderPng();
+        ~TextureLoaderBmp();
 
     private:
         // Load texture from kinds of data.
@@ -27,4 +27,4 @@ namespace yw
     };
 }
 
-#endif // !__YW_TEXTURE_LOADER_PNG_H__
+#endif // !__YW_TEXTURE_LOADER_BMP_H__
