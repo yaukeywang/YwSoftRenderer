@@ -361,3 +361,78 @@ project "Demo2Model"
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
         }
+
+project "Demo3BlinnPhong"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/zlib"
+    }
+
+    files
+    { 
+        "Demo3BlinnPhong/YwDemoBlinnPhong.h",
+        "Demo3BlinnPhong/YwDemoBlinnPhong.cpp",
+        "Demo3BlinnPhong/YwDemoBlinnPhongApp.h",
+        "Demo3BlinnPhong/YwDemoBlinnPhongApp.cpp",
+        "Demo3BlinnPhong/YwDemoBlinnPhongCamera.h",
+        "Demo3BlinnPhong/YwDemoBlinnPhongCamera.cpp",
+        "Demo3BlinnPhong/YwDemoBlinnPhongMain.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo3BlinnPhong/Yw*.h", "Demo3BlinnPhong/Yw*.inl", "Demo3BlinnPhong/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
+        }
