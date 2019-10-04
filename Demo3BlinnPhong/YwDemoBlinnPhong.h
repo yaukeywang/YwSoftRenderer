@@ -53,6 +53,14 @@ namespace yw
         // Shader related.
         class DemoBlinnPhongVertexShader* m_VertexShader;
         class DemoBlinnPhongPixelShader* m_PixelShader;
+
+        // Lighting params.
+        Vector3 m_LightDirection;
+        Vector4 m_LightColor;
+        Vector4 m_AlbedoColor;
+        Vector4 m_SpecularColor;
+        float m_Specular;
+        float m_Gloss;
     };
 }
 

@@ -23,10 +23,25 @@ namespace yw
             // The projection vertex position.
             position = vsShaderInput[0] * (*GetWVPMatrix());
 
-            // Vertex attribute.
+            // Model normal.
             vsShaderOutput[0] = vsShaderInput[1];
-            vsShaderOutput[1] = vsShaderInput[2];
-            vsShaderOutput[2] = vsShaderInput[3];
+
+            // Get light and view direction.
+            const Vector4& lightDir = GetVector(0);
+            const Vector4& viewDir = GetVector(1);
+
+            // Get world inverse matrix.
+            const Matrix44& worldInverse = GetMatrix(0);
+
+            // Transform light and view direction into model space.
+            Vector4 modelLightDir = lightDir * worldInverse;
+            Vector4 modelViewDir = viewDir * worldInverse;
+
+            //// Other vertex attribute.
+            vsShaderOutput[1] = -modelLightDir;
+            vsShaderOutput[2] = -modelViewDir;
+
+            // Other vertex attribute.
             vsShaderOutput[3] = vsShaderInput[4];
             vsShaderOutput[4] = vsShaderInput[5];
         }
@@ -62,28 +77,32 @@ namespace yw
 
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
-            Vector3 lightDir = Vector3(-1.0f, 0.0f, 0.0f);
-            Vector3 viewDir = Vector3(0.0f, 0.0f, -1.0f);
+            Vector3 normal = Vector3(input[0]).Normalize();
+            Vector3 modelLightDir = Vector3(input[1]).Normalize();
+            Vector3 modelViewDir = Vector3(input[2]).Normalize();
 
-            Vector3 normal = input[0];
-            Vector3Normalize(normal, normal);
+            // Get half vector.
+            Vector3 h = (modelLightDir + modelViewDir);
 
-            Vector3 h = (lightDir + viewDir);
-            float diff = Vector3Dot(normal, lightDir);
-            diff = (diff < 0.0f) ? 0.0f : diff;
+            // Get diffuse.
+            float diff = max(0.0f, Vector3Dot(normal, modelLightDir));
 
-            float nh = Vector3Dot(normal, h);
-            nh = (nh < 0.0f) ? 0.0f : nh;
+            // Get N dot H.
+            float nh = max(0.0f, Vector3Dot(normal, h));
 
-            float spec = pow(nh, 0.5f * 128.0f) * 0.6f;
+            // Get specular.
+            float specular = GetFloat(0);
+            float gloss = GetFloat(1);
+            float spec = pow(nh, specular * 128.0f) * gloss;
 
-            Vector4 albedo = Vector4(0.3f, 0.3f, 0.3f, 1.0f);
-            Vector4 lightColor = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-            Vector4 specColor = Vector4(0.65f, 0.8f, 0.24f, 1.0f);
+            Vector4 lightColor = GetVector(0);
+            Vector4 albedo = GetVector(1);
+            Vector4 specColor = GetVector(2);
 
-            color = albedo + lightColor * diff + lightColor * specColor * spec;
-            color.a = 1.0f;
+            Vector4 c = albedo + lightColor * diff + lightColor * specColor * spec;
+            c.a = 1.0f;
 
+            color = c;
             return true;
         }
     };
@@ -96,7 +115,9 @@ namespace yw
         m_Model(nullptr),
         m_ModelHandle(0),
         m_VertexShader(nullptr),
-        m_PixelShader(nullptr)
+        m_PixelShader(nullptr),
+        m_Specular(0.08f),
+        m_Gloss(0.01f)
     {
     }
 
@@ -143,6 +164,14 @@ namespace yw
         m_VertexShader = new DemoBlinnPhongVertexShader();
         m_PixelShader = new DemoBlinnPhongPixelShader();
 
+        // Initialize environments.
+        m_LightDirection.Set(1.0f, 0.0f, 0.5f);
+        m_LightColor.Set(0.3f, 0.5f, 0.3f, 1.0f);
+        m_AlbedoColor.Set(0.1f, 0.1f, 0.1f, 1.0f);
+        m_SpecularColor.Set(0.65f, 0.8f, 0.24f, 1.0f);
+        m_Specular = 0.08f;
+        m_Gloss = 0.008f;
+
         return true;
     }
 
@@ -180,6 +209,19 @@ namespace yw
         device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
         device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
         device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+        // Update shader property.
+        Matrix44 worldInverse;
+        Matrix44Inverse(worldInverse, camera->GetWorldMatrix());
+        m_VertexShader->SetMatrix(0, worldInverse);
+        m_VertexShader->SetVector(0, m_LightDirection);
+        m_VertexShader->SetVector(1, camera->GetForward());
+
+        m_PixelShader->SetVector(0, m_LightColor);
+        m_PixelShader->SetVector(1, m_AlbedoColor);
+        m_PixelShader->SetVector(2, m_SpecularColor);
+        m_PixelShader->SetFloat(0, m_Specular);
+        m_PixelShader->SetFloat(1, m_Gloss);
 
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
