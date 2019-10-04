@@ -18,8 +18,10 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] `Resource and IO` module.
 - [x] `Texture Data Loading` module.
 - [x] More `Basic` demos.
-- [ ] `Shading with Light and Material` module. **[Working on...]**
+- [ ] Basic `Shading with Light` demo. **[Working on...]**
 - [ ] `PBR` demo.
+- [ ] `Shading with Light and Material` module.
+- [ ] `MSAA` module.
 - [ ] `Log` module.
 - [ ] `Low Level Memory Pool` support.
 - [ ] `Linux` support
@@ -34,3 +36,6 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 
 #### Demo 2: Model
 ![Demo 2 Model](Demo2Model/Demo2Model.png)
+
+#### Demo 3: Blinn-Phong
+![Demo 2 Model](Demo3BlinnPhong/Demo3BlinnPhong.png)

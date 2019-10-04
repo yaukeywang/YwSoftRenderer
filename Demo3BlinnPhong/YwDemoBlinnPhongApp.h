@@ -32,8 +32,11 @@ namespace yw
         void Render();
 
     public:
-        // Current rotation angle.
-        float GetRotationAngle() const;
+        // Current model rotation angle.
+        float GetModelRotationAngle() const;
+
+        // Current light rotation angle.
+        float GetLightRotationAngle() const;
 
     private:
         // Current camera.
@@ -45,8 +48,11 @@ namespace yw
         // Window caption text update time.
         float m_UpdateTextTime;
 
-        // The rotation angle.
-        float m_RotateAngle;
+        // The model rotation angle.
+        float m_ModelRotateAngle;
+
+        // The light rotation angle.
+        float m_LightRotateAngle;
     };
 }
 

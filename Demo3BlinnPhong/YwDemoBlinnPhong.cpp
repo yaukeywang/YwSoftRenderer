@@ -165,12 +165,12 @@ namespace yw
         m_PixelShader = new DemoBlinnPhongPixelShader();
 
         // Initialize environments.
-        m_LightDirection.Set(1.0f, 0.0f, 0.5f);
+        m_LightDirection.Set(0.5f, 0.0f, 1.0f);
         m_LightColor.Set(0.3f, 0.5f, 0.3f, 1.0f);
         m_AlbedoColor.Set(0.1f, 0.1f, 0.1f, 1.0f);
         m_SpecularColor.Set(0.65f, 0.8f, 0.24f, 1.0f);
         m_Specular = 0.08f;
-        m_Gloss = 0.008f;
+        m_Gloss = 0.002f;
 
         return true;
     }
@@ -197,7 +197,7 @@ namespace yw
 
         // Set rotation.
         Matrix44 matRotate;
-        Matrix44RotationY(matRotate, ((DemoBlinnPhongApp*)(GetScene()->GetApplication()))->GetRotationAngle());
+        Matrix44RotationY(matRotate, ((DemoBlinnPhongApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
         matWorld *= matRotate;
 
         // Set world transform to camera.
@@ -213,8 +213,13 @@ namespace yw
         // Update shader property.
         Matrix44 worldInverse;
         Matrix44Inverse(worldInverse, camera->GetWorldMatrix());
+
+        Matrix44 lightRotate;
+        Matrix44RotationY(lightRotate, ((DemoBlinnPhongApp*)(GetScene()->GetApplication()))->GetLightRotationAngle());
+        Vector3 lightDir = Vector4(m_LightDirection) * lightRotate;
+
         m_VertexShader->SetMatrix(0, worldInverse);
-        m_VertexShader->SetVector(0, m_LightDirection);
+        m_VertexShader->SetVector(0, lightDir);
         m_VertexShader->SetVector(1, camera->GetForward());
 
         m_PixelShader->SetVector(0, m_LightColor);

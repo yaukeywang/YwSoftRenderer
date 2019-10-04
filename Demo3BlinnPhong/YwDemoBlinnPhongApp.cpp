@@ -14,7 +14,8 @@ namespace yw
         m_Camera(nullptr),
         m_DemoBlinnPhongHandle(0),
         m_UpdateTextTime(0.0f),
-        m_RotateAngle(0.0f)
+        m_ModelRotateAngle(0.0f),
+        m_LightRotateAngle(0.0f)
     {
 
     }
@@ -99,16 +100,13 @@ namespace yw
         }
 
         // Update rotation angle.
+        m_ModelRotateAngle += GetDeltaTime() * 3.0f;
         if (m_Input->MouseButtonDown(0))
         {
             int32_t deltaX = 0;
             int32_t deltaY = 0;
             m_Input->GetMouseMovement(&deltaX, &deltaY);
-            m_RotateAngle -= (float)deltaX * 0.015f;
-        }
-        else
-        {
-            m_RotateAngle += GetDeltaTime() * 3.0f;
+            m_LightRotateAngle -= (float)deltaX * 0.015f;
         }
     }
 
@@ -125,8 +123,13 @@ namespace yw
         m_Camera->EndRender(true);
     }
 
-    float DemoBlinnPhongApp::GetRotationAngle() const
+    float DemoBlinnPhongApp::GetModelRotationAngle() const
     {
-        return m_RotateAngle;
+        return m_ModelRotateAngle;
+    }
+
+    float DemoBlinnPhongApp::GetLightRotationAngle() const
+    {
+        return m_LightRotateAngle;
     }
 }
