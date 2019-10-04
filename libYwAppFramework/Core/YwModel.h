@@ -75,6 +75,7 @@ namespace yw
     };
 
     // Define model vertex attribute index.
+    // $Note: Normal must be exist, default will be position index.
     struct ModelVertexAttributeIndex
     {
         int32_t positionIndex;
@@ -85,8 +86,8 @@ namespace yw
         int32_t texcoord2Index;
 
         ModelVertexAttributeIndex() : positionIndex(-1), normalIndex(-1), tangentIndex(-1), colorIndex(-1), texcoordIndex(-1), texcoord2Index(-1) {}
-        ModelVertexAttributeIndex(int32_t position) : positionIndex(position), normalIndex(-1), tangentIndex(-1), colorIndex(-1), texcoordIndex(-1), texcoord2Index(-1) {}
-        ModelVertexAttributeIndex(int32_t position, int32_t normal) : positionIndex(position), normalIndex(normal), tangentIndex(-1), colorIndex(-1), texcoordIndex(-1), texcoord2Index(-1) {}
+        ModelVertexAttributeIndex(int32_t position) : positionIndex(position), normalIndex(position), tangentIndex(position), colorIndex(-1), texcoordIndex(-1), texcoord2Index(-1) {}
+        ModelVertexAttributeIndex(int32_t position, int32_t normal) : positionIndex(position), normalIndex(normal), tangentIndex(normal), colorIndex(-1), texcoordIndex(-1), texcoord2Index(-1) {}
         ModelVertexAttributeIndex(int32_t position, int32_t normal, int32_t tangent, int32_t color, int32_t texcoord, int32_t texcoord2) : positionIndex(position), normalIndex(normal), tangentIndex(tangent), colorIndex(color), texcoordIndex(texcoord), texcoord2Index(texcoord2) {}
     };
 

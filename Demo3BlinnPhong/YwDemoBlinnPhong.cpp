@@ -62,7 +62,28 @@ namespace yw
 
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
-            color = Vector4(0.65f, 0.8f, 0.24f, 1.0f);
+            Vector3 lightDir = Vector3(-1.0f, 0.0f, 0.0f);
+            Vector3 viewDir = Vector3(0.0f, 0.0f, -1.0f);
+
+            Vector3 normal = input[0];
+            Vector3Normalize(normal, normal);
+
+            Vector3 h = (lightDir + viewDir);
+            float diff = Vector3Dot(normal, lightDir);
+            diff = (diff < 0.0f) ? 0.0f : diff;
+
+            float nh = Vector3Dot(normal, h);
+            nh = (nh < 0.0f) ? 0.0f : nh;
+
+            float spec = pow(nh, 0.5f * 128.0f) * 0.6f;
+
+            Vector4 albedo = Vector4(0.3f, 0.3f, 0.3f, 1.0f);
+            Vector4 lightColor = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+            Vector4 specColor = Vector4(0.65f, 0.8f, 0.24f, 1.0f);
+
+            color = albedo + lightColor * diff + lightColor * specColor * spec;
+            color.a = 1.0f;
+
             return true;
         }
     };
@@ -165,7 +186,7 @@ namespace yw
         graphics->SetPixelShader(m_PixelShader);
         
         // Render model.
-        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
+        //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
         m_Model->Render(device);
     }
 }

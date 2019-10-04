@@ -562,7 +562,7 @@ namespace yw
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t;
                     TRIANGLE(numTriangles)->m_NormalIndices[0] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, -1, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
@@ -572,7 +572,7 @@ namespace yw
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t;
                     TRIANGLE(numTriangles)->m_NormalIndices[1] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, -1, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
@@ -582,7 +582,7 @@ namespace yw
                     TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
                     TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, -1, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
@@ -608,7 +608,7 @@ namespace yw
                         TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
                         TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, -1, -1, t, t));
+                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -624,7 +624,7 @@ namespace yw
                     t = (t < 0 ? t + numTexcoords : t) - 1;
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, -1, -1, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
@@ -632,7 +632,7 @@ namespace yw
                     t = (t < 0 ? t + numTexcoords : t) - 1;
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, -1, -1, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
 
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
@@ -640,7 +640,7 @@ namespace yw
                     t = (t < 0 ? t + numTexcoords : t) - 1;
                     TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, -1, -1, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
@@ -662,7 +662,7 @@ namespace yw
 
                         TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, -1, -1, -1, t, t));
+                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
