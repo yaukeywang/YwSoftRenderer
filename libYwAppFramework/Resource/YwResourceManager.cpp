@@ -270,9 +270,9 @@ namespace yw
     StringA ResourceManager::GetDataPath() const
     {
 #if defined(__amigaos4__) || (_AMIGAOS4)
-        return StringA("Data");
+        return StringA("Resources");
 #else
-        return StringA("./Data");
+        return StringA("./Resources");
 #endif
     }
 }

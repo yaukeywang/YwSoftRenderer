@@ -7,9 +7,9 @@ local action = _ACTION or ""
 local todir = "Workspace/" .. action
 local builddir = "Build"
 local appbuilddir = builddir .. "/YwSoftRenderer"
-local appdatadir = appbuilddir .. "/Data"
-local abssrcdatadir = "%{wks.location}../../Data"
-local absdstdatadir = "%{wks.location}../../" .. appdatadir
+local appresdir = appbuilddir .. "/Resources"
+local abssrcdatadir = "%{wks.location}../../Resources"
+local absdstdatadir = "%{wks.location}../../" .. appresdir
 
 solution "YwSoftRenderer"
     location (todir)
