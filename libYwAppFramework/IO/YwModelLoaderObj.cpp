@@ -206,7 +206,8 @@ namespace yw
         }
 
         // Calculate facet and vertex tangents.
-        CalculateVertexTangent(objModel);
+        //CalculateVertexTangent(objModel);
+        CalculateVertexTangentTBN(objModel);
 
         // Process secondary texture coordinates.
         ProcessOtherData(objModel);
@@ -950,9 +951,77 @@ namespace yw
             const float deltaTexCoordY[2] = { texCoordY1 - texCoordY0, texCoordY2 - texCoordY0 };
             const Vector3 tangent = (deltaVertex[0] * deltaTexCoordY[1] - deltaVertex[1] * deltaTexCoordY[0]).Normalize();
             
-            model->m_Tangents[triangle->m_PositionIndices[0]] = tangent;
-            model->m_Tangents[triangle->m_PositionIndices[1]] = tangent;
-            model->m_Tangents[triangle->m_PositionIndices[2]] = tangent;
+            model->m_Tangents[triangle->m_PositionIndices[0]] = Vector4(tangent.x, tangent.y, tangent.z, 1.0f);
+            model->m_Tangents[triangle->m_PositionIndices[1]] = Vector4(tangent.x, tangent.y, tangent.z, 1.0f);
+            model->m_Tangents[triangle->m_PositionIndices[2]] = Vector4(tangent.x, tangent.y, tangent.z, 1.0f);
+        }
+    }
+
+    void ModelLoaderObj::CalculateVertexTangentTBN(class Model* model)
+    {
+        // Skip if no texture coordinates data.
+        if (model->m_Texcoords.size() <= 0)
+        {
+            return;
+        }
+
+        // Get vertex count. (Positions count.)
+        int32_t vertexCount = (int32_t)model->m_Positions.size();
+
+        // Alloc model tangents space.
+        model->m_Tangents.resize(vertexCount);
+
+        // Allocate temporary storage for tangents and bitangents and initialize to zeros.
+        std::vector<Vector3> tangent(vertexCount);
+        std::vector<Vector3> bitangent(vertexCount);
+
+        // Calculate tangent and bitangent for each triangle and add to all three vertices.
+        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        {
+            const ModelTriangle* triangle = TRIANGLE(i);
+
+            const uint32_t i0 = triangle->m_PositionIndices[0];
+            const uint32_t i1 = triangle->m_PositionIndices[0];
+            const uint32_t i2 = triangle->m_PositionIndices[0];
+
+            const Vector3& p0 = model->m_Positions[i0];
+            const Vector3& p1 = model->m_Positions[i1];
+            const Vector3& p2 = model->m_Positions[i2];
+
+            const Vector2& w0 = model->m_Texcoords[i0];
+            const Vector2& w1 = model->m_Texcoords[i1];
+            const Vector2& w2 = model->m_Texcoords[i2];
+
+            Vector3 e1 = p1 - p0;
+            Vector3 e2 = p2 - p0;
+            float x1 = w1.x - w0.x;
+            float x2 = w2.x - w0.x;
+            float y1 = w1.y - w0.y;
+            float y2 = w2.y - w0.y;
+            float r = 1.0f / (x1 * y2 - x2 * y1);
+            Vector3 t = (e1 * y2 - e2 * y1) * r;
+            Vector3 b = (e2 * x1 - e1 * x2) * r;
+
+            tangent[i0] += t;
+            tangent[i1] += t;
+            tangent[i2] += t;
+
+            bitangent[i0] += b;
+            bitangent[i1] += b;
+            bitangent[i2] += b;
+        }
+
+        // Orthonormalize each tangent and calculate the handedness.
+        for (int32_t i = 0; i < vertexCount; i++)
+        {
+            const Vector3& t = tangent[i];
+            const Vector3& b = bitangent[i];
+            const Vector3& n = model->m_Normals[i];
+            Vector4& vertexTangent = model->m_Tangents[i];
+            
+            Vector3 tangentXYZ = Vector3Normalize(Vector3(), Vector3Reject(Vector3(), t, n));
+            float tangentW = (Vector3Dot(Vector3Cross(Vector3(), t, b), n) > 0.0f) ? 1.0f : -1.0f;
+            vertexTangent.Set(tangentXYZ.x, tangentXYZ.y, tangentXYZ.z, tangentW);
         }
     }
 

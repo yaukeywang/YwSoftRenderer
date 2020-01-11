@@ -186,7 +186,7 @@ namespace yw
         std::vector<Vector2> m_Texcoord2s;
 
         // All vertex tangents.
-        std::vector<Vector3> m_Tangents;
+        std::vector<Vector4> m_Tangents;
 
         // Add vertex colors.
         std::vector<Vector4> m_Colors;
