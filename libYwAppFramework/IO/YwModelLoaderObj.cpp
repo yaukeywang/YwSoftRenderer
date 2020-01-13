@@ -981,8 +981,8 @@ namespace yw
             const ModelTriangle* triangle = TRIANGLE(i);
 
             const uint32_t i0 = triangle->m_PositionIndices[0];
-            const uint32_t i1 = triangle->m_PositionIndices[0];
-            const uint32_t i2 = triangle->m_PositionIndices[0];
+            const uint32_t i1 = triangle->m_PositionIndices[1];
+            const uint32_t i2 = triangle->m_PositionIndices[2];
 
             const Vector3& p0 = model->m_Positions[i0];
             const Vector3& p1 = model->m_Positions[i1];
