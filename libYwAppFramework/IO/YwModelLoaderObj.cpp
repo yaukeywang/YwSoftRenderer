@@ -1019,8 +1019,9 @@ namespace yw
             const Vector3& n = model->m_Normals[i];
             Vector4& vertexTangent = model->m_Tangents[i];
             
+            // We use left-handed.
             Vector3 tangentXYZ = Vector3Normalize(Vector3(), Vector3Reject(Vector3(), t, n));
-            float tangentW = (Vector3Dot(Vector3Cross(Vector3(), t, b), n) > 0.0f) ? 1.0f : -1.0f;
+            float tangentW = (Vector3Dot(Vector3Cross(Vector3(), b, t), n) > 0.0f) ? 1.0f : -1.0f;
             vertexTangent.Set(tangentXYZ.x, tangentXYZ.y, tangentXYZ.z, tangentW);
         }
     }
