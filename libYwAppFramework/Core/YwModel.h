@@ -96,7 +96,7 @@ namespace yw
     {
         Vector3 position;
         Vector3 normal;
-        Vector3 tangent;
+        Vector4 tangent;
         Vector4 color;
         Vector2 texcoord;
         Vector2 texcoord2;

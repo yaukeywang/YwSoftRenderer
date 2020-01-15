@@ -83,12 +83,12 @@ namespace yw
 
     Yw3dVertexElement Model::s_VertexDeclaration[6] = 
     {
-        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 0),
-        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 1),
-        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 2),
-        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector4, 3),
-        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 4),
-        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 5)
+        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 0), // Position.
+        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 1), // Normal.
+        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector4, 2), // Tangent.
+        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector4, 3), // Color.
+        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 4), // Texcoord.
+        YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 5) // Texcoord2.
     };
 
     bool Model::CreateVertexData(Yw3dDevice* device)
