@@ -436,3 +436,84 @@ project "Demo3BlinnPhong"
             '{MKDIR} "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
         }
+
+project "Demo4NormalMapping"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/zlib"
+    }
+
+    files
+    { 
+        "Demo4NormalMapping/YwDemoNormalMapping.h",
+        "Demo4NormalMapping/YwDemoNormalMapping.cpp",
+        "Demo4NormalMapping/YwDemoNormalMappingApp.h",
+        "Demo4NormalMapping/YwDemoNormalMappingApp.cpp",
+        "Demo4NormalMapping/YwDemoNormalMappingCamera.h",
+        "Demo4NormalMapping/YwDemoNormalMappingCamera.cpp",
+        "Demo4NormalMapping/YwDemoNormalMappingMain.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo3BlinnPhong/Yw*.h", "Demo3BlinnPhong/Yw*.inl", "Demo3BlinnPhong/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cube.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/1030_QuanWangDaoGe.png"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/BumpMapTexturePreview.png"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cube.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/1030_QuanWangDaoGe.png"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/BumpMapTexturePreview.png"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cube.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/1030_QuanWangDaoGe.png"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/BumpMapTexturePreview.png"' .. ' "' .. absdstdatadir .. '"'
+        }
