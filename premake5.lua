@@ -495,25 +495,25 @@ project "Demo4NormalMapping"
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cube.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/1030_QuanWangDaoGe.png"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/BumpMapTexturePreview.png"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:linux" }
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cube.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/1030_QuanWangDaoGe.png"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/BumpMapTexturePreview.png"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:macosx" }
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cube.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/1030_QuanWangDaoGe.png"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/BumpMapTexturePreview.png"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
         }
