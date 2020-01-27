@@ -24,7 +24,7 @@ namespace yw
             position = vsShaderInput[0] * (*GetWVPMatrix());
 
             // Model normal.
-            vsShaderOutput[0] = vsShaderInput[1];
+            //vsShaderOutput[0] = vsShaderInput[1];
 
             // Get light and view direction.
             const Vector4& lightDir = GetVector(0);
@@ -38,19 +38,19 @@ namespace yw
             Vector4 modelViewDir = viewDir * worldInverse;
 
             //// Other vertex attribute.
-            vsShaderOutput[1] = -modelLightDir;
-            vsShaderOutput[2] = -modelViewDir;
+            vsShaderOutput[0] = -modelLightDir;
+            vsShaderOutput[1] = -modelViewDir;
 
             // Other vertex attribute.
-            vsShaderOutput[3] = vsShaderInput[4];
-            vsShaderOutput[4] = vsShaderInput[5];
+            vsShaderOutput[2] = vsShaderInput[4];
+            vsShaderOutput[3] = vsShaderInput[5];
 
             const Vector3 normal = vsShaderInput[1];
             const Vector4 tangent = vsShaderInput[2];
             const Vector3 binormal = Vector3Cross(Vector3(), normal, Vector3(tangent.x, tangent.y, tangent.z)) * tangent.w;
-            vsShaderOutput[5] = Vector3(tangent);
-            vsShaderOutput[6] = binormal;
-            vsShaderOutput[7] = normal;
+            vsShaderOutput[4] = Vector3(tangent);
+            vsShaderOutput[5] = binormal;
+            vsShaderOutput[6] = normal;
         }
 
         Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister)
@@ -90,61 +90,89 @@ namespace yw
 
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
-            const Vector3 tangent = Vector3(input[5]).Normalize();
-            const Vector3 binormal = Vector3(input[6]).Normalize();
-            const Vector3 normal = Vector3(input[7]).Normalize();
-            const Matrix33 TBN = Matrix33(
+            const Vector3 tangent = Vector3(input[4]).Normalize();
+            const Vector3 binormal = Vector3(input[5]).Normalize();
+            const Vector3 normal = Vector3(input[6]).Normalize();
+            Matrix33 TBN = Matrix33(
                 tangent.x, tangent.y, tangent.z,
                 binormal.x, binormal.y, binormal.z,
                 normal.x, normal.y, normal.z
             );
 
-            //const Matrix33 TBN = Matrix33(
-            //    tangent.x, binormal.x, normal.x,
-            //    tangent.y, binormal.y, normal.y,
-            //    tangent.z, binormal.z, normal.z
-            //);
+            //Matrix33Transpose(TBN, TBN);
 
             Vector4 vDdx, vDdy;
-            GetPartialDerivatives(3, vDdx, vDdy);
-            Vector2 texCoord = input[3];
+            GetPartialDerivatives(2, vDdx, vDdy);
+            Vector2 texCoord = input[2];
             Vector4 texColor;
             SampleTexture(texColor, 0, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
 
-            GetPartialDerivatives(4, vDdx, vDdy);
-            Vector2 normalTexCoord = input[4];
+            GetPartialDerivatives(2, vDdx, vDdy);
+            Vector2 normalTexCoord = input[2];
             Vector4 normalTexColor;
             SampleTexture(normalTexColor, 1, normalTexCoord.x, normalTexCoord.y, 0.0f, &vDdx, &vDdy);
 
             //Vector3 normal = Vector3(input[0]).Normalize();
             Vector3 normalT = normalTexColor * 2 - Vector4(1.0f, 1.0f, 1.0f, 0.0f);
             Vector3 normalTBN = Vector3Normalize(Vector3(), normalT * TBN);
+            normalTBN.Normalize();
 
-            Vector3 modelLightDir = Vector3(input[1]).Normalize();
-            Vector3 modelViewDir = Vector3(input[2]).Normalize();
+            //Vector3 modelLightDir = Vector3(input[0]).Normalize();
+            Vector3 modelLightDir = Vector3(0, 0, 1).Normalize();
+            //Vector3 modelViewDir = Vector3(input[1]).Normalize();
 
             // Get half vector.
-            Vector3 h = (modelLightDir + modelViewDir);
+            //Vector3 h = (modelLightDir + modelViewDir);
 
             // Get diffuse.
             float diff = max(0.0f, Vector3Dot(normalTBN, modelLightDir));
+            //float diff = max(0.0f, Vector3Dot(Vector3(-1, 0, 0), modelLightDir));
+            if (diff > 1.0f)
+            {
+                int32_t difftest = 5;
+            }
 
             // Get N dot H.
-            float nh = max(0.0f, Vector3Dot(normalTBN, h));
+            //float nh = max(0.0f, Vector3Dot(normalTBN, h));
 
-            // Get specular.
-            float specular = GetFloat(0);
-            float gloss = GetFloat(1);
-            float spec = pow(nh, specular * 128.0f) * gloss;
+            //// Get specular.
+            //float specular = GetFloat(0);
+            //float gloss = GetFloat(1);
+            //float spec = pow(nh, specular * 128.0f) * gloss;
 
-            Vector4 lightColor = GetVector(0);
-            Vector4 albedo = GetVector(1);
-            Vector4 specColor = GetVector(2);
+            //Vector4 lightColor = GetVector(0);
+            //Vector4 albedo = GetVector(1);
+            //Vector4 specColor = GetVector(2);
 
-            Vector4 c = albedo * texColor + lightColor * diff * texColor * 0.5f + lightColor * specColor * spec * 0.8f;
+            texColor.x = Saturate(texColor.x);
+            texColor.y = Saturate(texColor.y);
+            texColor.z = Saturate(texColor.z);
+            texColor.Set(0.5f, 0.5f, 0.5f, 1.0f);
+            //diff = 0.1f;
+            //Vector4 c = albedo * texColor + lightColor * diff * texColor * 0.8f + lightColor * specColor * spec * 1.5f;
+            //Vector4 c = texColor + Vector4(diff, diff, diff, 0.0f);
+            Vector4 c(texColor.x, texColor.y + diff, texColor.z, 1.0f);
+            //Vector4 c = Vector4(diff, diff, diff, 0.0f);
+            //Vector4 c = Vector4(spec, spec, spec, 0.0f);
+            //texColor.y += diff;
+            if (diff <= 1) {
+                int xx1 = 0;
+            }
+            if (c.x < 0 || c.y <= 0.6f || c.z < 0) {
+                int xx = 0;
+            }
             c.a = 1.0f;
 
-            color = c;
+            //color = c;
+
+            //color.x = Saturate(color.x);
+            //color.y = Saturate(color.y);
+            //color.z = Saturate(color.z);
+            //if (color.y < 1.0f)
+            //{
+            //    int colortest = 0;
+            //}
+            color.Set(c.r, c.g, c.b, c.a);
             return true;
         }
     };
@@ -202,21 +230,22 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
-        m_ModelHandle = resManager->LoadResource("Cube.obj");
+        m_ModelHandle = resManager->LoadResource("Cylinder.obj");
         if (m_ModelHandle <= 0)
         {
             LOGE(_T("Load resource \"teapot.obj\" failed."));
             return false;
         }
 
-        m_ModelTextureHandle = resManager->LoadResource("1030_QuanWangDaoGe.png");
+        m_ModelTextureHandle = resManager->LoadResource("bricks_color.bmp");
         if (m_ModelTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"Wood.png\" failed."));
             return false;
         }
 
-        m_ModelNormalTextureHandle = resManager->LoadResource("BumpMapTexturePreview.png");
+        m_ModelNormalTextureHandle = resManager->LoadResource("bricks_nmap.bmp");
+        //m_ModelNormalTextureHandle = resManager->LoadResource("floor_nmap.bmp");
         if (m_ModelNormalTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"Wood.png\" failed."));
@@ -280,6 +309,7 @@ namespace yw
         Matrix44 matRotate;
         //Matrix44RotationY(matRotate, 3.14f);
         Matrix44RotationY(matRotate, ((DemoNormalMappingApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
+        //Matrix44RotationY(matRotate, ((DemoNormalMappingApp*)(GetScene()->GetApplication()))->GetLightRotationAngle());
         matWorld *= matRotate;
 
         // Set scale.
@@ -301,10 +331,16 @@ namespace yw
         graphics->SetTexture(0, m_ModelTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Point);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Point);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Point);
 
         graphics->SetTexture(1, m_ModelNormalTexture);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Point);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Point);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Point);
 
         // Update shader property.
         Matrix44 worldInverse;

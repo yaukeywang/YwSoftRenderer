@@ -34,14 +34,14 @@ namespace yw
         }
 
         // Calculation projection matrix.
-        m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 1.0f, 1000.0f);
+        m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 1.0f, 100.0f);
 
         // Calculation view matrix.
-        m_Camera->SetPosition(Vector3(0.0f, 0.0f, -1.3f));
-        m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        m_Camera->SetPosition(Vector3(0.0f, 0.7f, -1.5f));
+        m_Camera->SetLookAt(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
-        Vector4 clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        Vector4 clearColor(0.3f, 0.0f, 0.0f, 0.0f);
         GetScene()->SetClearColor(clearColor);
 
         // Registry a demo model entity and create an instance.
@@ -100,14 +100,15 @@ namespace yw
         }
 
         // Update rotation angle.
-        //m_ModelRotateAngle += GetDeltaTime() * 3.0f;
+        m_ModelRotateAngle += GetDeltaTime() * 3.0f;
+        //m_LightRotateAngle += GetDeltaTime() * 3.0f;
         if (m_Input->MouseButtonDown(0))
         {
             int32_t deltaX = 0;
             int32_t deltaY = 0;
             m_Input->GetMouseMovement(&deltaX, &deltaY);
-            //m_LightRotateAngle -= (float)deltaX * 0.015f;
-            m_ModelRotateAngle -= (float)deltaX * 0.015f;
+            m_LightRotateAngle -= (float)deltaX * 0.015f;
+            //m_ModelRotateAngle -= (float)deltaX * 0.015f;
         }
     }
 
