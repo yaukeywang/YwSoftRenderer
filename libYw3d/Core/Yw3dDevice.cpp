@@ -2656,6 +2656,15 @@ namespace yw
                 const int32_t iX[2] = { (int32_t)ceilf(fX[0]), (int32_t)ceilf(fX[1]) };
                 //const float preStepX = (float)iX[0] - fX[0];
 
+                // Skip off-screen pixel, or will FrameBuffer-Overflow.
+                // $Optimize.
+                if ((iX[0] < (int32_t)m_RenderInfo.viewportRect.left) || (iX[0] >= (int32_t)m_RenderInfo.viewportRect.right) ||
+                    (iX[1] < (int32_t)m_RenderInfo.viewportRect.left) || (iX[1] >= (int32_t)m_RenderInfo.viewportRect.right) ||
+                    (iY[0] < (int32_t)m_RenderInfo.viewportRect.top) || (iY[0] >= (int32_t)m_RenderInfo.viewportRect.bottom))
+                {
+                    continue;
+                }
+
                 // Rasterize a single scan line.
                 // From left(inclusive) to right(exclusive): ceil(xStart) -> ceil(xEnd) - 1.
                 // $TIPS: fpRasterizeScanline rasterizing from iX[0] to iX[1] - 1 inside.
@@ -2721,7 +2730,7 @@ namespace yw
                 const uint32_t curPixelX = intCoordA[0] + i;
                 const uint32_t curPixelY = intCoordA[1] + (uint32_t)ftol(slope * i);
 
-                // Skip off-screen pixel, or will Array-Overflow.
+                // Skip off-screen pixel, or will FrameBuffer-Overflow.
                 // $Optimize.
                 if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
                     (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
@@ -2745,6 +2754,9 @@ namespace yw
                     for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
                     {
                         const int32_t newPixelY = curPixelY + j;
+
+                        // Skip off-screen pixel, or will FrameBuffer-Overflow.
+                        // $Optimize.
                         if ((newPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (newPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
                         {
                             continue;
@@ -2775,7 +2787,7 @@ namespace yw
                 const uint32_t curPixelX = intCoordA[0] + ftol(slope * i);
                 const uint32_t curPixelY = intCoordA[1] + i;
 
-                // Skip off-screen pixel, or will Array-Overflow.
+                // Skip off-screen pixel, or will FrameBuffer-Overflow.
                 // $Optimize.
                 if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
                     (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
@@ -2799,6 +2811,9 @@ namespace yw
                     for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
                     {
                         const int32_t newPixelX = curPixelX + j;
+
+                        // Skip off-screen pixel, or will FrameBuffer-Overflow.
+                        // $Optimize.
                         if ((newPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (newPixelX >= (int32_t)m_RenderInfo.viewportRect.right))
                         {
                             continue;
@@ -2813,6 +2828,16 @@ namespace yw
 
     void Yw3dDevice::RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
     {
+        //if (x1 < (int32_t)m_RenderInfo.viewportRect.left || x1 >= (int32_t)m_RenderInfo.viewportRect.right || x2 < (int32_t)m_RenderInfo.viewportRect.left || x2 >= (int32_t)m_RenderInfo.viewportRect.right)
+        //{
+        //   // return;
+        //}
+
+        //if (y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
+        //{
+        //    //return;
+        //}
+
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
