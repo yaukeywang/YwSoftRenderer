@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 #endif
 {
     yw::ApplicationCreationFlags creationFlags;
-    creationFlags.windowTitle = _T("DemoModel");
+    creationFlags.windowTitle = _T("DemoNormalMapping");
 
     uint32_t windowWidth = 400;
     uint32_t windowHeight = 300;

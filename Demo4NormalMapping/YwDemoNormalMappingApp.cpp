@@ -45,8 +45,8 @@ namespace yw
         GetScene()->SetClearColor(clearColor);
 
         // Registry a demo model entity and create an instance.
-        GetScene()->RegisterEntityType(_T("DemoBlinnPhong"), DemoNormalMapping::CreateDemoBlinnPhong);
-        m_DemoBlinnPhongHandle = GetScene()->CreateEntity(_T("DemoBlinnPhong"));
+        GetScene()->RegisterEntityType(_T("DemoNormalMapping"), DemoNormalMapping::CreateDemoBlinnPhong);
+        m_DemoBlinnPhongHandle = GetScene()->CreateEntity(_T("DemoNormalMapping"));
         if (0 == m_DemoBlinnPhongHandle)
         {
             return false;
@@ -79,22 +79,22 @@ namespace yw
             #if defined(_WIN32) || defined(WIN32)
                 #ifdef _UNICODE
                     wchar_t szCaption[256];
-                    swprintf(szCaption, L"DemoBlinnPhong, FPS: %3.2f", GetFPS());
+                    swprintf(szCaption, L"DemoNormalMapping, FPS: %3.2f", GetFPS());
                 #else
                     char szCaption[256];
-                    sprintf(szCaption, "DemoBlinnPhong, FPS: %3.2f", GetFPS());
+                    sprintf(szCaption, "DemoNormalMapping, FPS: %3.2f", GetFPS());
                 #endif
 
                 SetWindowText(GetWindowHandle(), szCaption);
             #elif defined(LINUX_X11) || defined(_LINUX)
                 char szCaption[256];
-                sprintf(szCaption, "DemoBlinnPhong, FPS: %3.2f", GetFPS());
+                sprintf(szCaption, "DemoNormalMapping, FPS: %3.2f", GetFPS());
                 XStoreName((Display*)GetDisplay(), GetWindowHandle(), szCaption);
             #elif defined(_MAC_OSX)
                 //#error "Window caption is not implemented!"
             #elif defined(__amigaos4__) || defined(_AMIGAOS4)
                 static char szCaption[256];
-                sprintf(szCaption, "DemoBlinnPhong, FPS: %3.2f", GetFPS());
+                sprintf(szCaption, "DemoNormalMapping, FPS: %3.2f", GetFPS());
                 IIntuition->SetWindowTitles(GetWindowHandle(), szCaption, szCaption);
             #endif
         }

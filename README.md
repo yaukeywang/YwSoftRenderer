@@ -18,7 +18,8 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] `Resource and IO` module.
 - [x] `Texture Data Loading` module.
 - [x] More `Basic` demos.
-- [ ] Basic `Shading with Light` demo. **[Working on...]**
+- [x] Basic `Shading with Light` demo (Blinn-Phong, Normal-Mapping).
+- [ ] `Triangle-Shader` demo. **[Working on...]**
 - [ ] `PBR` demo.
 - [ ] `Shading with Light and Material` module.
 - [ ] `MSAA` module.
@@ -39,3 +40,6 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 
 #### Demo 3: Blinn-Phong
 ![Demo 2 Model](Demo3BlinnPhong/Demo3BlinnPhong.png)
+
+#### Demo 4: Normal-Mapping
+![Demo 2 Model](Demo4NormalMapping/Demo4NormalMapping.png)
