@@ -176,6 +176,12 @@ namespace yw
     // The result of two vector3 cross product.
     Vector3& Vector3Cross(Vector3& out, const Vector3& left, const Vector3& right);
 
+    // The result of vector a project to vector b.
+    Vector3& Vector3Project(Vector3& out, const Vector3& left, const Vector3& right);
+
+    // The result of vector a reject to vector b.
+    Vector3& Vector3Reject(Vector3& out, const Vector3& left, const Vector3& right);
+
     // The result of two vector3 distance.
     float Vector3Distance(const Vector3& left, const Vector3& right);
 

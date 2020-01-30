@@ -1,7 +1,7 @@
-// Add by Yaukey at 2019-09-19.
-// YW Soft Renderer demo model main entry class.
+// Add by Yaukey at 2020-01-23.
+// YW Soft Renderer demo with normal-mapping camera class.
 
-#include "YwDemoBlinnPhongApp.h"
+#include "YwDemoNormalMappingApp.h"
 
 // ------------------------------------------------------------------
 // Platform-dependent code.
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 #endif
 {
     yw::ApplicationCreationFlags creationFlags;
-    creationFlags.windowTitle = _T("DemoBlinnPhong");
+    creationFlags.windowTitle = _T("DemoNormalMapping");
 
     uint32_t windowWidth = 400;
     uint32_t windowHeight = 300;
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     creationFlags.windowHeight = windowHeight;
     creationFlags.windowed = true;
 
-    yw::DemoBlinnPhongApp demoApp;
+    yw::DemoNormalMappingApp demoApp;
     if (!demoApp.Initialize(creationFlags))
     {
         return 1;

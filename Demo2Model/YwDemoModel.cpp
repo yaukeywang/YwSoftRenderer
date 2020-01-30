@@ -38,7 +38,7 @@ namespace yw
             case 0:
                 return Yw3d_SRT_Vector3;    // Vertex normal.
             case 1:
-                return Yw3d_SRT_Vector3;    // Vertex tangent.
+                return Yw3d_SRT_Vector4;    // Vertex tangent.
             case 2:
                 return Yw3d_SRT_Vector4;    // Vertex color.
             case 3:

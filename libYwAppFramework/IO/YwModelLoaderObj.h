@@ -52,6 +52,12 @@ namespace yw
         // Calculate vertex tangent.
         void CalculateVertexTangent(class Model* model);
 
+        // Calculate vertex tangent with TBN.
+        // http://foundationsofgameenginedev.com/
+        // <<Foundations of Game Engine Development>> by Eric Lengyel, Volume 2: Rendering, 7.5 Tangent Space.
+        // http://www.terathon.com/code/tangent.html
+        void CalculateVertexTangentTBN(class Model* model);
+
         // Process secondary texture coordinates.
         void ProcessOtherData(class Model* model);
 

@@ -705,6 +705,25 @@ namespace yw
         return out;
     }
 
+    inline Vector3& Vector3Project(Vector3& out, const Vector3& left, const Vector3& right)
+    {
+        Vector3 result = right * (Vector3Dot(left, right) / Vector3Dot(right, right));
+        out.Set(result.x, result.y, result.z);
+
+        return out;
+    }
+
+    inline Vector3& Vector3Reject(Vector3& out, const Vector3& left, const Vector3& right)
+    {
+        Vector3 project;
+        Vector3Project(project, left, right);
+
+        Vector3 result = left - project;
+        out.Set(result.x, result.y, result.z);
+
+        return out;
+    }
+
     inline float Vector3Distance(const Vector3& left, const Vector3& right)
     {
         float deltaX = left.x - right.x;
