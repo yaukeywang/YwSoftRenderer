@@ -528,14 +528,14 @@ namespace yw
         // @param[in] x1 left position in rendertarget along x-axis.
         // @param[in] x2 right position in rendertarget along x-axis.
         // @param[in,out] vsOutput interpolated vertex data.
-        void RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
+        void RasterizeScanline_ColorOnly(int32_t y, int32_t x1, int32_t x2, Yw3dVSOutput* vsOutput);
 
         // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; performs the pixel stencil test and writes the pixel depth, which has been interpolated from the base triangle's vertices to the depth buffer.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] x1 left position in rendertarget along x-axis.
         // @param[in] x2 right position in rendertarget along x-axis.
         // @param[in,out] io_pVSOutput interpolated vertex data.
-        void RasterizeScanline_ColorOnly_MightKillPixels(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
+        void RasterizeScanline_ColorOnly_MightKillPixels(int32_t y, int32_t x1, int32_t x2, Yw3dVSOutput* vsOutput);
 
         // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer. Does not support stencil test.
         // @note Early depth-testing is disabled, which may lead to worse performance because regardless of the depth value the pixel shader will always be called for a given pixel.
@@ -543,20 +543,20 @@ namespace yw
         // @param[in] x1 left position in rendertarget along x-axis.
         // @param[in] x2 right position in rendertarget along x-axis.
         // @param[in,out] io_pVSOutput interpolated vertex data.
-        void RasterizeScanline_ColorDepth(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput);
+        void RasterizeScanline_ColorDepth(int32_t y, int32_t x1, int32_t x2, Yw3dVSOutput* vsOutput);
 
         // Draws a single pixels. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; performs the pixel stencil test and writes the pixel depth, which has been interpolated from the vertices to the depth buffer. Does not support pixel-killing.
         // @param[in] x position in rendertarget along x-axis.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] vsOutput interpolated vertex data, already divided by position w component.
-        void DrawPixel_ColorOnly(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
+        void DrawPixel_ColorOnly(int32_t x, int32_t y, const Yw3dVSOutput* vsOutput);
 
         // Rasterizes a scanline span on screen. Writes the pixel color, which is outputted by the pixel shader, to the colorbuffer; writes the pixel depth, which has been computed by the pixel shader to the depth buffer. Does not support stencil test.
         // @note Early depth-testing is disabled, which may lead to worse performance because regardless of the depth value the pixel shader will always be called for a given pixel.
         // @param[in] x position in rendertarget along x-axis.
         // @param[in] y position in rendertarget along y-axis.
         // @param[in] vsOutput interpolated vertex data, already divided by position w component.
-        void DrawPixel_ColorDepth(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput);
+        void DrawPixel_ColorDepth(int32_t x, int32_t y, const Yw3dVSOutput* vsOutput);
 
         // Perform a stencil test for a pixel.
         // @param[in,out] stencil the pointer to the current stencil value.
@@ -749,10 +749,10 @@ namespace yw
             // Rasterize info.
 
             // Rasterization-function for scanlines (triangle-drawing).
-            void (Yw3dDevice::*fpRasterizeScanline)(uint32_t, uint32_t, uint32_t, Yw3dVSOutput*);
+            void (Yw3dDevice::*fpRasterizeScanline)(int32_t, int32_t, int32_t, Yw3dVSOutput*);
 
             // Drawing-function for individual pixels.
-            void (Yw3dDevice::*fpDrawPixel)(uint32_t, uint32_t, const Yw3dVSOutput*);
+            void (Yw3dDevice::*fpDrawPixel)(int32_t, int32_t, const Yw3dVSOutput*);
 
             // Counts the number of pixels that pass the depth-test.
             uint32_t renderedPixels;

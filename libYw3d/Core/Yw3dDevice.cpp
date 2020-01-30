@@ -2560,6 +2560,8 @@ namespace yw
         // ------------------------------------------------------------------
         // Rasterize this triangle by scan line.
         // We use "top-left" Fill Convention which d3d used.
+        // https://docs.microsoft.com/en-us/windows/win32/direct3d9/rasterization-rules
+        // https://docs.microsoft.com/zh-cn/windows/win32/direct3d11/d3d10-graphics-programming-guide-rasterizer-stage-rules
         // Reference: <<Tricks of the 3D Game Programming Gurus : Advanced 3D Graphics and Rasterization>>, 9.4.2 Fill Convention, Page604(Chinese), Page934(English)
 
         // Sort vertices by y-coordinate.
@@ -2583,9 +2585,10 @@ namespace yw
         }
 
         // Screenspace-position references.
-        const Vector4& posA = vertices[0]->position;
-        const Vector4& posB = vertices[1]->position;
-        const Vector4& posC = vertices[2]->position;
+        // Offset the pixel coordinates to Top-Left by 0.5.
+        const Vector4 posA = vertices[0]->position + Vector4(-0.5f, -0.5f, 0.0f, 0.0f);
+        const Vector4 posB = vertices[1]->position + Vector4(-0.5f, -0.5f, 0.0f, 0.0f);
+        const Vector4 posC = vertices[2]->position + Vector4(-0.5f, -0.5f, 0.0f, 0.0f);
 
         // Calculate slopes for stepping.
         const float stepX[3] = 
@@ -2597,7 +2600,7 @@ namespace yw
 
         // Begin rasterization.
         float fX[2] = { posA.x, posA.x };   // x1 -> x2.
-        uint32_t iY[2] = { 0, 0 };          // y1 -> y2;
+        int32_t iY[2] = { 0, 0 };          // y1 -> y2;
         float deltaX[2] = { 0.0f, 0.0f };   // left slope -> right slope.
         for (uint32_t triPart = 0; triPart < 2; triPart++)
         {
@@ -2605,8 +2608,8 @@ namespace yw
             {
             case 0: // Draw upper triangle-part.
                 {
-                    iY[0] = (uint32_t)ceilf(posA.y);
-                    iY[1] = (uint32_t)ceilf(posB.y);
+                    iY[0] = (int32_t)ceilf(posA.y);
+                    iY[1] = (int32_t)ceilf(posB.y);
 
                     if (stepX[0] > stepX[1]) // left <-> right ?
                     {
@@ -2627,7 +2630,7 @@ namespace yw
             case 1: // Draw lower triangle-part
                 {
                     iY[0] = iY[1];
-                    iY[1] = (uint32_t)ceilf(posC.y);
+                    iY[1] = (int32_t)ceilf(posC.y);
 
                     const float preStepY = (float)iY[0] - posB.y;
                     if (stepX[1] > stepX[2]) // left <-> right ?
@@ -2655,15 +2658,6 @@ namespace yw
             {
                 const int32_t iX[2] = { (int32_t)ceilf(fX[0]), (int32_t)ceilf(fX[1]) };
                 //const float preStepX = (float)iX[0] - fX[0];
-
-                // Skip off-screen pixel, or will FrameBuffer-Overflow.
-                // $Optimize.
-                if ((iX[0] < (int32_t)m_RenderInfo.viewportRect.left) || (iX[0] >= (int32_t)m_RenderInfo.viewportRect.right) ||
-                    (iX[1] < (int32_t)m_RenderInfo.viewportRect.left) || (iX[1] >= (int32_t)m_RenderInfo.viewportRect.right) ||
-                    (iY[0] < (int32_t)m_RenderInfo.viewportRect.top) || (iY[0] >= (int32_t)m_RenderInfo.viewportRect.bottom))
-                {
-                    continue;
-                }
 
                 // Rasterize a single scan line.
                 // From left(inclusive) to right(exclusive): ceil(xStart) -> ceil(xEnd) - 1.
@@ -2699,7 +2693,7 @@ namespace yw
         const Vector4& posA = vertices[0]->position;
         const Vector4& posB = vertices[1]->position;
 
-        uint32_t intCoordA[2] = { (uint32_t)ftol(posA.x), (uint32_t)ftol(posA.y) };
+        int32_t intCoordA[2] = { ftol(posA.x), (posA.y) };
         float deltaX = posB.x - posA.x;
         float deltaY = posB.y - posA.y;
 
@@ -2727,16 +2721,8 @@ namespace yw
 
             for (int32_t i = 0; i != pixelsX; i += signX, interpolation += interpolationStep)
             {
-                const uint32_t curPixelX = intCoordA[0] + i;
-                const uint32_t curPixelY = intCoordA[1] + (uint32_t)ftol(slope * i);
-
-                // Skip off-screen pixel, or will FrameBuffer-Overflow.
-                // $Optimize.
-                if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
-                    (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
-                {
-                    continue;
-                }
+                const int32_t curPixelX = intCoordA[0] + i;
+                const int32_t curPixelY = intCoordA[1] + ftol(slope * i);
 
                 // Interpolation a vertex output for pixel input.
                 Yw3dVSOutput psInput;
@@ -2754,14 +2740,6 @@ namespace yw
                     for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
                     {
                         const int32_t newPixelY = curPixelY + j;
-
-                        // Skip off-screen pixel, or will FrameBuffer-Overflow.
-                        // $Optimize.
-                        if ((newPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (newPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
-                        {
-                            continue;
-                        }
-
                         (this->*m_RenderInfo.fpDrawPixel)(curPixelX, newPixelY, &psInput);
                     }
                 }
@@ -2787,14 +2765,6 @@ namespace yw
                 const uint32_t curPixelX = intCoordA[0] + ftol(slope * i);
                 const uint32_t curPixelY = intCoordA[1] + i;
 
-                // Skip off-screen pixel, or will FrameBuffer-Overflow.
-                // $Optimize.
-                if ((curPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (curPixelX >= (int32_t)m_RenderInfo.viewportRect.right) ||
-                    (curPixelY < (int32_t)m_RenderInfo.viewportRect.top) || (curPixelY >= (int32_t)m_RenderInfo.viewportRect.bottom))
-                {
-                    continue;
-                }
-
                 // Interpolation a vertex output for pixel input.
                 Yw3dVSOutput psInput;
                 SetVSOutputFromGradient(&psInput, (float)curPixelX, (float)curPixelY);
@@ -2811,14 +2781,6 @@ namespace yw
                     for (int32_t j = lineThicknessHalf + posOffset; j <= -lineThicknessHalf; j++)
                     {
                         const int32_t newPixelX = curPixelX + j;
-
-                        // Skip off-screen pixel, or will FrameBuffer-Overflow.
-                        // $Optimize.
-                        if ((newPixelX < (int32_t)m_RenderInfo.viewportRect.left) || (newPixelX >= (int32_t)m_RenderInfo.viewportRect.right))
-                        {
-                            continue;
-                        }
-
                         (this->*m_RenderInfo.fpDrawPixel)(newPixelX, curPixelY, &psInput);
                     }
                 }
@@ -2826,17 +2788,17 @@ namespace yw
         }
     }
 
-    void Yw3dDevice::RasterizeScanline_ColorOnly(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
+    void Yw3dDevice::RasterizeScanline_ColorOnly(int32_t y, int32_t x1, int32_t x2, Yw3dVSOutput* vsOutput)
     {
-        //if (x1 < (int32_t)m_RenderInfo.viewportRect.left || x1 >= (int32_t)m_RenderInfo.viewportRect.right || x2 < (int32_t)m_RenderInfo.viewportRect.left || x2 >= (int32_t)m_RenderInfo.viewportRect.right)
-        //{
-        //   // return;
-        //}
+        // Skip if the y coordinate off the screen area.
+        if (y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
+        {
+            return;
+        }
 
-        //if (y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
-        //{
-        //    //return;
-        //}
+        // Clamp the x coordinate into screen area.
+        x1 = max((int32_t)m_RenderInfo.viewportRect.left, min(x1, (int32_t)m_RenderInfo.viewportRect.right));
+        x2 = max((int32_t)m_RenderInfo.viewportRect.left, min(x2, (int32_t)m_RenderInfo.viewportRect.right));
 
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
@@ -2939,8 +2901,18 @@ namespace yw
         }
     }
 
-    void Yw3dDevice::RasterizeScanline_ColorOnly_MightKillPixels(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
+    void Yw3dDevice::RasterizeScanline_ColorOnly_MightKillPixels(int32_t y, int32_t x1, int32_t x2, Yw3dVSOutput* vsOutput)
     {
+        // Skip if the y coordinate off the screen area.
+        if (y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
+        {
+            return;
+        }
+
+        // Clamp the x coordinate into screen area.
+        x1 = max((int32_t)m_RenderInfo.viewportRect.left, min(x1, (int32_t)m_RenderInfo.viewportRect.right));
+        x2 = max((int32_t)m_RenderInfo.viewportRect.left, min(x2, (int32_t)m_RenderInfo.viewportRect.right));
+
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
@@ -3048,8 +3020,18 @@ namespace yw
         }
     }
 
-    void Yw3dDevice::RasterizeScanline_ColorDepth(uint32_t y, uint32_t x1, uint32_t x2, Yw3dVSOutput* vsOutput)
+    void Yw3dDevice::RasterizeScanline_ColorDepth(int32_t y, int32_t x1, int32_t x2, Yw3dVSOutput* vsOutput)
     {
+        // Skip if the y coordinate off the screen area.
+        if (y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
+        {
+            return;
+        }
+
+        // Clamp the x coordinate into screen area.
+        x1 = max((int32_t)m_RenderInfo.viewportRect.left, min(x1, (int32_t)m_RenderInfo.viewportRect.right));
+        x2 = max((int32_t)m_RenderInfo.viewportRect.left, min(x2, (int32_t)m_RenderInfo.viewportRect.right));
+
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x1 * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x1);
@@ -3132,8 +3114,15 @@ namespace yw
         }
     }
 
-    void Yw3dDevice::DrawPixel_ColorOnly(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput)
+    void Yw3dDevice::DrawPixel_ColorOnly(int32_t x, int32_t y, const Yw3dVSOutput* vsOutput)
     {
+        // Check if coordinate in screen area.
+        if (x < (int32_t)m_RenderInfo.viewportRect.left || x >= (int32_t)m_RenderInfo.viewportRect.right ||
+            y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
+        {
+            return;
+        }
+
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x);
@@ -3226,8 +3215,15 @@ namespace yw
         m_RenderInfo.renderedPixels++;
     }
 
-    void Yw3dDevice::DrawPixel_ColorDepth(uint32_t x, uint32_t y, const Yw3dVSOutput* vsOutput)
+    void Yw3dDevice::DrawPixel_ColorDepth(int32_t x, int32_t y, const Yw3dVSOutput* vsOutput)
     {
+        // Check if coordinate in screen area.
+        if (x < (int32_t)m_RenderInfo.viewportRect.left || x >= (int32_t)m_RenderInfo.viewportRect.right ||
+            y < (int32_t)m_RenderInfo.viewportRect.top || y >= (int32_t)m_RenderInfo.viewportRect.bottom)
+        {
+            return;
+        }
+
         // Get color buffer data and depth buffer data.
         float* frameData = m_RenderInfo.frameData + (y * m_RenderInfo.colorBufferPitch + x * m_RenderInfo.colorFloats);
         float* depthData = m_RenderInfo.depthData + (y * m_RenderInfo.depthBufferPitch + x);
