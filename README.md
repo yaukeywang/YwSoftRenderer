@@ -39,7 +39,7 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 ![Demo 2 Model](Demo2Model/Demo2Model.png)
 
 #### Demo 3: Blinn-Phong
-![Demo 2 Model](Demo3BlinnPhong/Demo3BlinnPhong.png)
+![Demo 3 Blinn-Phong](Demo3BlinnPhong/Demo3BlinnPhong.png)
 
 #### Demo 4: Normal-Mapping
-![Demo 2 Model](Demo4NormalMapping/Demo4NormalMapping.png)
+![Demo 4 Normal-Mapping](Demo4NormalMapping/Demo4NormalMapping.png)
