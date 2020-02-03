@@ -1,5 +1,9 @@
 // Add by Yaukey at 2020-02-02.
 // YW Soft Renderer demo with triangle shader wireframe shader class.
+// Port from Nvidia SolidWireframe Sample: https://developer.download.nvidia.cn/SDK/10/direct3d/samples.html#SolidWireframe
+// Know Issue: 
+//   1. SolidWirePattern demo shader (DemoTriangleShaderWireframeTriangleShader and DemoTriangleShaderWireframePatternPixelShader) has problems.
+//   2. Alpha Blend not supported, it is need for better effect.
 
 #ifndef __YW_DEMO_TRIANGLE_SHADER_WIREFRAME_SHADER_H__
 #define __YW_DEMO_TRIANGLE_SHADER_WIREFRAME_SHADER_H__
