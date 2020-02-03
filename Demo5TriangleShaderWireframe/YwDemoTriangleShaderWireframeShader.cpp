@@ -1,5 +1,9 @@
 // Add by Yaukey at 2020-02-02.
 // YW Soft Renderer demo with triangle shader wireframe shader class.
+// Port from Nvidia SolidWireframe Sample: https://developer.download.nvidia.cn/SDK/10/direct3d/samples.html#SolidWireframe
+// Know Issue: 
+//   1. SolidWirePattern demo shader (DemoTriangleShaderWireframeTriangleShader and DemoTriangleShaderWireframePatternPixelShader) has problems.
+//   2. Alpha Blend not supported.
 
 #include "YwDemoTriangleShaderWireframeShader.h"
 
@@ -205,7 +209,8 @@ namespace yw
 
     bool DemoTriangleShaderWireframeDefaultPixelShader::MightKillPixels()
     {
-        return false;
+        //return false; // Can use alpha blend.
+        return true; // Discard pixel if pixel shader return false.
     }
 
     float DemoTriangleShaderWireframeDefaultPixelShader::EvalMinDistanceToEdges(const Yw3dShaderRegister* input)
@@ -257,7 +262,7 @@ namespace yw
     // Shader main entry.
     bool DemoTriangleShaderWireframeDefaultPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
-        const float lineWidth = 4.0f;
+        const float lineWidth = 2.0f;
         const float fadeDistance = 50.0f;
         const float patternPeriod = 1.5f;
 
@@ -298,7 +303,8 @@ namespace yw
 
     bool DemoTriangleShaderWireframePatternPixelShader::MightKillPixels()
     {
-        return false;
+        //return false; // Can use alpha blend.
+        return true; // Discard pixel if pixel shader return false.
     }
 
     float DemoTriangleShaderWireframePatternPixelShader::EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, Vector3& edgeSqDists, Vector3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2)
@@ -325,10 +331,12 @@ namespace yw
             {
                 std::swap(edgeOrder0, edgeOrder1);
             }
+
             if (inoutEdgeSqDists[2] < inoutEdgeSqDists[edgeOrder1])
             {
                 std::swap(edgeOrder1, edgeOrder2);
             }
+
             if (inoutEdgeSqDists[2] < inoutEdgeSqDists[edgeOrder0])
             {
                 std::swap(edgeOrder0, edgeOrder1);
@@ -426,9 +434,9 @@ namespace yw
         // Compute the shortest square distance between the fragment and the edges.
         Vector3 edgeSqDists;
         Vector3 edgeCoords;
-        uint32_t edgeOrder0 = 0;
-        uint32_t edgeOrder1 = 0;
-        uint32_t edgeOrder2 = 0;
+        uint32_t edgeOrder0 = 0xffffffff;
+        uint32_t edgeOrder1 = 0xffffffff;
+        uint32_t edgeOrder2 = 0xffffffff;
         float dist = EvalMinDistanceToEdgesExt(input, edgeSqDists, edgeCoords, edgeOrder0, edgeOrder1, edgeOrder2);
 
         float outputEdgeSqDists[3] = { edgeSqDists.x, edgeSqDists.y, edgeSqDists.z };

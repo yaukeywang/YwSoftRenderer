@@ -98,7 +98,7 @@ namespace yw
 
         // Set scale.
         Matrix44 matScale;
-        Matrix44Scaling(matScale, 0.045f, 0.045f, 0.045f);
+        Matrix44Scaling(matScale, 0.035f, 0.035f, 0.035f);
         matWorld *= matScale;
 
         // Set world transform to camera.
@@ -123,8 +123,8 @@ namespace yw
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetTriangleShader(m_TriangleShader);
-        //graphics->SetPixelShader(m_DefaultPixelShader);
-        graphics->SetPixelShader(m_PatternPixelShader);
+        graphics->SetPixelShader(m_DefaultPixelShader);
+        //graphics->SetPixelShader(m_PatternPixelShader);
         
         // Render model.
         //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
