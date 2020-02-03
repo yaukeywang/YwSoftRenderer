@@ -5,7 +5,7 @@ Implementing a Soft Renderer for Learning CG.
 Mostly coming from [Muli3D](http://muli3d.sourceforge.net/), improved by my understanding. It is still a long and hard trip, but worthwhile.
 
 ### Note
-Code in `DeprecatedCode` folder is legncy deprecated, only used for reference and will be removed later.
+Code in `DeprecatedCode` folder is obsolete, only used for reference and will be removed later.
 
 ### Progress
 - [x] Math support.
