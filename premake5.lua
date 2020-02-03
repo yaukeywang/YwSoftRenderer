@@ -517,3 +517,86 @@ project "Demo4NormalMapping"
             '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
         }
+
+project "Demo5TriangleShaderWireframe"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/zlib"
+    }
+
+    files
+    { 
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframe.h",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframe.cpp",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeApp.h",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeApp.cpp",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeCamera.h",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeCamera.cpp",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeMain.cpp",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeShader.h",
+        "Demo5TriangleShaderWireframe/YwDemoTriangleShaderWireframeShader.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo5TriangleShaderWireframe/Yw*.h", "Demo5TriangleShaderWireframe/Yw*.inl", "Demo5TriangleShaderWireframe/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+        }
