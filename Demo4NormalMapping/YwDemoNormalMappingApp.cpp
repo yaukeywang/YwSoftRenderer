@@ -12,7 +12,7 @@ namespace yw
 {
     DemoNormalMappingApp::DemoNormalMappingApp() :
         m_Camera(nullptr),
-        m_DemoBlinnPhongHandle(0),
+        m_DemoNormalMappingHandle(0),
         m_UpdateTextTime(0.0f),
         m_ModelRotateAngle(0.0f),
         m_LightRotateAngle(0.0f)
@@ -45,14 +45,14 @@ namespace yw
         GetScene()->SetClearColor(clearColor);
 
         // Registry a demo model entity and create an instance.
-        GetScene()->RegisterEntityType(_T("DemoNormalMapping"), DemoNormalMapping::CreateDemoBlinnPhong);
-        m_DemoBlinnPhongHandle = GetScene()->CreateEntity(_T("DemoNormalMapping"));
-        if (0 == m_DemoBlinnPhongHandle)
+        GetScene()->RegisterEntityType(_T("DemoNormalMapping"), DemoNormalMapping::Create);
+        m_DemoNormalMappingHandle = GetScene()->CreateEntity(_T("DemoNormalMapping"));
+        if (0 == m_DemoNormalMappingHandle)
         {
             return false;
         }
 
-        DemoNormalMapping* demoNormalMapping = (DemoNormalMapping*)GetScene()->GetEntity(m_DemoBlinnPhongHandle);
+        DemoNormalMapping* demoNormalMapping = (DemoNormalMapping*)GetScene()->GetEntity(m_DemoNormalMappingHandle);
         if (!demoNormalMapping->Initialize())
         {
             return false;
@@ -63,7 +63,7 @@ namespace yw
 
     void DemoNormalMappingApp::DestroyWorld()
     {
-        GetScene()->ReleaseEntity(m_DemoBlinnPhongHandle);
+        GetScene()->ReleaseEntity(m_DemoNormalMappingHandle);
         YW_SAFE_DELETE(m_Camera);
     }
 

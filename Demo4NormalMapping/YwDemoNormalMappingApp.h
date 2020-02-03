@@ -43,7 +43,7 @@ namespace yw
         class DemoNormalMappingCamera* m_Camera;
 
         // The demo entity handle.
-        HENTITY m_DemoBlinnPhongHandle;
+        HENTITY m_DemoNormalMappingHandle;
 
         // Window caption text update time.
         float m_UpdateTextTime;

@@ -1,5 +1,5 @@
 // Add by Yaukey at 2020-01-23.
-// YW Soft Renderer demo with normal-mapping camera class.
+// YW Soft Renderer demo with normal-mapping main entry class.
 
 #include "YwDemoNormalMappingApp.h"
 
