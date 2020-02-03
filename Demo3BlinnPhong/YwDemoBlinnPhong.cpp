@@ -12,7 +12,7 @@
 namespace yw
 {
     // ------------------------------------------------------------------
-    // Model shader.
+    // Blinn-Phong shader.
 
     // Model vertex shader.
     class DemoBlinnPhongVertexShader : public IYw3dVertexShader

@@ -19,8 +19,10 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 - [x] `Texture Data Loading` module.
 - [x] More `Basic` demos.
 - [x] Basic `Shading with Light` demo (Blinn-Phong, Normal-Mapping).
-- [ ] `Triangle-Shader` demo. **[Working on...]**
-- [ ] `PBR` demo.
+- [x] `Triangle Shader` demo. (with some issue)
+- [ ] `PBR` demo. **[Working on...]**
+- [ ] `Alpha Blending` support.
+- [ ] `Triangle Shader with Dynamic Vertex Generating` support.
 - [ ] `Shading with Light and Material` module.
 - [ ] `MSAA` module.
 - [ ] `Log` module.
@@ -38,8 +40,11 @@ Code in `DeprecatedCode` folder is legncy deprecated, only used for reference an
 #### Demo 2: Model
 ![Demo 2 Model](Demo2Model/Demo2Model.png)
 
-#### Demo 3: Blinn-Phong
-![Demo 3 Blinn-Phong](Demo3BlinnPhong/Demo3BlinnPhong.png)
+#### Demo 3: Blinn Phong
+![Demo 3 Blinn Phong](Demo3BlinnPhong/Demo3BlinnPhong.png)
 
-#### Demo 4: Normal-Mapping
-![Demo 4 Normal-Mapping](Demo4NormalMapping/Demo4NormalMapping.png)
+#### Demo 4: Normal Mapping
+![Demo 4 Normal Mapping](Demo4NormalMapping/Demo4NormalMapping.png)
+
+#### Demo 5: Triangle Shader Wireframe
+![Demo 5 Triangle Shader Wireframe](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe.png)

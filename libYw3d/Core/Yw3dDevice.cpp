@@ -2693,7 +2693,7 @@ namespace yw
         const Vector4& posA = vertices[0]->position;
         const Vector4& posB = vertices[1]->position;
 
-        int32_t intCoordA[2] = { ftol(posA.x), (posA.y) };
+        int32_t intCoordA[2] = { ftol(posA.x), ftol(posA.y) };
         float deltaX = posB.x - posA.x;
         float deltaY = posB.y - posA.y;
 

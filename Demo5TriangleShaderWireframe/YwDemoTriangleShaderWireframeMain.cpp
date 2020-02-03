@@ -1,7 +1,7 @@
-// Add by Yaukey at 2020-01-23.
-// YW Soft Renderer demo with normal-mapping main entry class.
+// Add by Yaukey at 2020-02-02.
+// YW Soft Renderer demo with triangle shader wireframe main entry class.
 
-#include "YwDemoNormalMappingApp.h"
+#include "YwDemoTriangleShaderWireframeApp.h"
 
 // ------------------------------------------------------------------
 // Platform-dependent code.
@@ -22,10 +22,10 @@ int main(int argc, char** argv)
 #endif
 {
     yw::ApplicationCreationFlags creationFlags;
-    creationFlags.windowTitle = _T("DemoNormalMapping");
+    creationFlags.windowTitle = _T("DemoTriangleShaderWireframe");
 
-    uint32_t windowWidth = 400;
-    uint32_t windowHeight = 300;
+    uint32_t windowWidth = 640;
+    uint32_t windowHeight = 480;
 
 #if defined(__amigaos4__) || defined(_AMIGAOS4)
     if (3 == argc)
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     creationFlags.windowHeight = windowHeight;
     creationFlags.windowed = true;
 
-    yw::DemoNormalMappingApp demoApp;
+    yw::DemoTriangleShaderWireframeApp demoApp;
     if (!demoApp.Initialize(creationFlags))
     {
         return 1;

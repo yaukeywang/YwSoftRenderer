@@ -12,9 +12,9 @@
 namespace yw
 {
     // ------------------------------------------------------------------
-    // Model shader.
+    // Normal-Mapping shader.
 
-    // Model vertex shader.
+    // Normal-Mapping vertex shader.
     class DemoNormalMappingVertexShader : public IYw3dVertexShader
     {
     protected:
@@ -79,7 +79,7 @@ namespace yw
         }
     };
 
-    // Model pixel shader.
+    // Normal-Mapping pixel shader.
     class DemoNormalMappingPixelShader : public IYw3dPixelShader
     {
     protected:
@@ -145,7 +145,7 @@ namespace yw
     };
 
     // ------------------------------------------------------------------
-    // Model entity.
+    // Normal-Mapping entity.
 
     DemoNormalMapping::DemoNormalMapping(Scene* scene) :
         IEntity(scene),

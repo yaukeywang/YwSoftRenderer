@@ -1,22 +1,22 @@
-// Add by Yaukey at 2020-01-23.
-// YW Soft Renderer demo with normal-mapping application class.
+// Add by Yaukey at 2020-02-02.
+// YW Soft Renderer demo with triangle shader wireframe application class.
 
-#ifndef __YW_DEMO_NORMAL_MAPPING_APP_H__
-#define __YW_DEMO_NORMAL_MAPPING_APP_H__
+#ifndef __YW_DEMO_TRIANGLE_SHADER_WIREFRAME_APP_H__
+#define __YW_DEMO_TRIANGLE_SHADER_WIREFRAME_APP_H__
 
 #include "YwApplication.h"
 #include "YwScene.h"
 
 namespace yw
 {
-    class DemoNormalMappingApp : public Application
+    class DemoTriangleShaderWireframeApp : public Application
     {
     public:
         // Constructor.
-        DemoNormalMappingApp();
+        DemoTriangleShaderWireframeApp();
 
         // Destructor.
-        ~DemoNormalMappingApp();
+        ~DemoTriangleShaderWireframeApp();
 
     public:
         // Create world.
@@ -40,20 +40,17 @@ namespace yw
 
     private:
         // Current camera.
-        class DemoNormalMappingCamera* m_Camera;
+        class DemoTriangleShaderWireframeCamera* m_Camera;
 
         // The demo entity handle.
-        HENTITY m_DemoNormalMappingHandle;
+        HENTITY m_DemoTriangleShaderWireframeHandle;
 
         // Window caption text update time.
         float m_UpdateTextTime;
 
         // The model rotation angle.
         float m_ModelRotateAngle;
-
-        // The light rotation angle.
-        float m_LightRotateAngle;
     };
 }
 
-#endif // !__YW_DEMO_NORMAL_MAPPING_APP_H__
+#endif // !__YW_DEMO_TRIANGLE_SHADER_WIREFRAME_APP_H__

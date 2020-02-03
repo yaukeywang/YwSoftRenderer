@@ -29,7 +29,7 @@ namespace yw
 
     public:
         // The instance create function.
-        inline static IEntity* CreateDemoBlinnPhong(class Scene* scene)
+        inline static IEntity* Create(class Scene* scene)
         {
             return new DemoNormalMapping(scene);
         }
