@@ -135,9 +135,9 @@ namespace yw
 
             // Vertex 1 EdgeB.
             Vector4& output1EdgeB = shaderRegister1[2];
-            output0EdgeB.x = edgeOffsets[0] + edgeSigns[0] * lengths[0];
-            output0EdgeB.y = edgeOffsets[1];
-            output0EdgeB.z = edgeOffsets[2] + edgeSigns[2] * cosAngles[2] * lengths[1];
+            output1EdgeB.x = edgeOffsets[0] + edgeSigns[0] * lengths[0];
+            output1EdgeB.y = edgeOffsets[1];
+            output1EdgeB.z = edgeOffsets[2] + edgeSigns[2] * cosAngles[2] * lengths[1];
 
             // Vertex 2 Projective pos.
             // Vertex 2 EdgeA.
@@ -258,8 +258,8 @@ namespace yw
     bool DemoTriangleShaderWireframeDefaultPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
         const float lineWidth = 4.0f;
-        const float fadeDistance = 50;
-        const float patternPeriod = 1.5;
+        const float fadeDistance = 50.0f;
+        const float patternPeriod = 1.5f;
 
         const Vector4 fillColor = Vector4(0.1f, 0.2f, 0.4f, 1.0f);
         const Vector4 wireColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -269,7 +269,7 @@ namespace yw
         float dist = EvalMinDistanceToEdges(input);
 
         // Cull fragments too far from the edge.
-        if (dist > 0.5f * lineWidth + 1)
+        if (dist > 0.5f * lineWidth + 1.0f)
         {
             return false;
         }
@@ -426,9 +426,9 @@ namespace yw
         // Compute the shortest square distance between the fragment and the edges.
         Vector3 edgeSqDists;
         Vector3 edgeCoords;
-        uint32_t edgeOrder0;
-        uint32_t edgeOrder1;
-        uint32_t edgeOrder2;
+        uint32_t edgeOrder0 = 0;
+        uint32_t edgeOrder1 = 0;
+        uint32_t edgeOrder2 = 0;
         float dist = EvalMinDistanceToEdgesExt(input, edgeSqDists, edgeCoords, edgeOrder0, edgeOrder1, edgeOrder2);
 
         float outputEdgeSqDists[3] = { edgeSqDists.x, edgeSqDists.y, edgeSqDists.z };
@@ -448,7 +448,7 @@ namespace yw
             }
 
             float patternPos = ((int32_t)abs(outputEdgeCoords[edgeOrder0]) % (int32_t)(patternPeriod * 2.0f * lineWidth)) - lineWidth;
-            dist = (patternPos*patternPos + dist * dist);
+            dist = (patternPos * patternPos + dist * dist);
 
             color = patternColor;
             realLineWidth = lineWidth;
@@ -460,6 +460,7 @@ namespace yw
                 color = wireColor;
                 realLineWidth = 0.5f * lineWidth;
             }
+
             dist = sqrt(dist);
         }
         // Cull fragments too far from the edge.
