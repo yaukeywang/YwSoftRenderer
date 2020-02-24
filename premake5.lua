@@ -600,3 +600,86 @@ project "Demo5TriangleShaderWireframe"
             '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
         }
+
+project "Demo6PBR"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/libpng",
+        "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/zlib"
+    }
+
+    files
+    { 
+        "Demo6PBR/YwDemoPBR.h",
+        "Demo6PBR/YwDemoPBR.cpp",
+        "Demo6PBR/YwDemoPBRApp.h",
+        "Demo6PBR/YwDemoPBRApp.cpp",
+        "Demo6PBR/YwDemoPBRCamera.h",
+        "Demo6PBR/YwDemoPBRCamera.cpp",
+        "Demo6PBR/YwDemoPBRMain.cpp",
+        "Demo6PBR/YwDemoPBRShader.h",
+        "Demo6PBR/YwDemoPBRShader.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo6PBR/Yw*.h", "Demo6PBR/Yw*.inl", "Demo6PBR/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+        }
