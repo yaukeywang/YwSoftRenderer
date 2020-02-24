@@ -1,5 +1,5 @@
 // Add by Yaukey at 2020-01-23.
-// YW Soft Renderer demo with normal-mapping application class.
+// YW Soft Renderer demo with triangle shader wireframe application class.
 
 #include "YwDemoTriangleShaderWireframeApp.h"
 #include "YwDemoTriangleShaderWireframe.h"

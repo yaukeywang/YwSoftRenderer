@@ -12,14 +12,6 @@ namespace yw
 {
     class DemoModel : public IEntity
     {
-    public:
-        // Define vertex format.
-        struct Vertexformat
-        {
-            Vector3 position;
-            Vector4 color;
-        };
-
     protected:
         // Constructor.
         DemoModel(class Scene* scene);

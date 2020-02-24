@@ -1,5 +1,5 @@
 // Add by Yaukey at 2020-01-23.
-// YW Soft Renderer demo with normal-mapping camera class.
+// YW Soft Renderer demo with triangle shader wireframe camera class.
 
 #include "YwDemoTriangleShaderWireframeCamera.h"
 #include "YwBaseApplication.h"

@@ -35,9 +35,6 @@ namespace yw
         // Current model rotation angle.
         float GetModelRotationAngle() const;
 
-        // Current light rotation angle.
-        float GetLightRotationAngle() const;
-
     private:
         // Current camera.
         class DemoTriangleShaderWireframeCamera* m_Camera;

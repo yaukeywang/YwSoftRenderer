@@ -12,14 +12,6 @@ namespace yw
 {
     class DemoNormalMapping : public IEntity
     {
-    public:
-        // Define vertex format.
-        struct Vertexformat
-        {
-            Vector3 position;
-            Vector4 color;
-        };
-
     protected:
         // Constructor.
         DemoNormalMapping(class Scene* scene);
