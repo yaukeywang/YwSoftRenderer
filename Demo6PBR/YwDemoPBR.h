@@ -55,8 +55,8 @@ namespace yw
         Vector4 m_LightColor;
         Vector4 m_AlbedoColor;
         Vector4 m_SpecularColor;
-        float m_Specular;
-        float m_Gloss;
+        float m_Roughness;
+        float m_Subsurface;
     };
 }
 

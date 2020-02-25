@@ -106,29 +106,99 @@ namespace yw
         Vector3 modelLightDir = Vector3(input[0]).Normalize();
         Vector3 modelViewDir = Vector3(input[1]).Normalize();
 
-        // Get half vector.
-        Vector3 h = (modelLightDir + modelViewDir);
+        // Get l/v/h vectors.
+        Vector3 halfV = (modelLightDir + modelViewDir).Normalize();
+        float NdotL = Saturate(Vector3Dot(normalModel, modelLightDir));
+        float NdotH = Saturate(Vector3Dot(normalModel, halfV));
+        float NdotV = Saturate(Vector3Dot(normalModel, modelViewDir));
+        float VdotH = Saturate(Vector3Dot(modelViewDir, halfV));
+        float LdotH = Saturate(Vector3Dot(modelLightDir, halfV));
 
-        // Get diffuse.
-        float diff = max(0.0f, Vector3Dot(normalModel, modelLightDir));
-
-        // Get N dot H.
-        float nh = max(0.0f, Vector3Dot(normalModel, h));
-
-        // Get specular.
-        float specular = GetFloat(0);
-        float gloss = GetFloat(1);
-        float spec = pow(nh, specular * 128.0f) * gloss;
-
-        // Get light color.
+        // Get parameters for lighting and shading.
         Vector4 lightColor = GetVector(0);
         Vector4 albedo = GetVector(1);
-        Vector4 specColor = GetVector(2);
+        Vector4 albedoColor = albedo * texColor;
+        Vector4 specularColor = GetVector(2);
+        float roughness = GetFloat(0);
+        float subsurface = GetFloat(1);
 
-        Vector4 c = albedo * texColor + lightColor * diff * texColor * 1.3f + lightColor * specColor * spec * 1.8f;
+        // BRDFs
+        Vector3 diffuse = DisneyDiffuse(albedoColor, NdotL, NdotV, LdotH, roughness, subsurface);
+        Vector3 specular = CookTorranceSpecular(NdotL, LdotH, NdotH, NdotV, roughness, specularColor);
+
+        // Adding diffuse, specular and tins (light, specular).
+        Vector3 firstLayer = (diffuse + specular * specularColor) * lightColor;
+        Vector4 c = firstLayer;
         c.a = 1.0f;
 
         color = c;
         return true;
+    }
+
+    Vector3 DemoPBRPixelShader::DisneyDiffuse(Vector3 albedo, float NdotL, float NdotV, float LdotH, float roughness, float subsurface)
+    {
+        const float PI = YW_PI;
+
+        // luminance approximation
+        float albedoLuminosity = 0.3f * albedo.r + 0.6f * albedo.g + 0.1f * albedo.b;
+        
+        // normalize luminosity to isolate hue and saturation
+        Vector3 albedoTint = albedoLuminosity > 0 ? albedo / albedoLuminosity : Vector3(1.0f, 1.0f, 1.0f);
+        float fresnelL = SchlickFresnel(NdotL);
+        float fresnelV = SchlickFresnel(NdotV);
+        float fresnelDiffuse = 0.5f + 2.0f * sqr(LdotH) * roughness;
+        Vector3 diffuse = albedoTint * Lerp(1.0, fresnelDiffuse, fresnelL) * Lerp(1.0, fresnelDiffuse, fresnelV);
+        float fresnelSubsurface90 = sqr(LdotH) * roughness;
+        float fresnelSubsurface = Lerp(1.0, fresnelSubsurface90, fresnelL) * Lerp(1.0, fresnelSubsurface90, fresnelV);
+        float ss = 1.25f * (fresnelSubsurface * (1.0f / (NdotL + NdotV) - 0.5f) + 0.5f);
+
+        Vector3 finalColor = Vector3Lerp(diffuse, diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo;
+        finalColor.r = Saturate(finalColor.r);
+        finalColor.g = Saturate(finalColor.g);
+        finalColor.b = Saturate(finalColor.b);
+        return finalColor;
+    }
+
+    Vector3 DemoPBRPixelShader::CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, Vector3 specularColor)
+    {
+        const float PI = YW_PI;
+        const Vector3& F0 = specularColor;
+
+        float alpha = sqr(roughness);
+
+        // D
+        float alphaSqr = sqr(alpha);
+        float denom = sqr(NdotH) * (alphaSqr - 1.0) + 1.0f;
+        float D = alphaSqr / (PI * sqr(denom));
+
+        // F
+        float LdotH5 = SchlickFresnel(LdotH);
+        Vector3 F = F0 + (Vector3::Zero() - F0) * LdotH5;
+
+        // G
+        float r = roughness + 1;
+        float k = sqr(r) / 8;
+        float g1L = G1(k, NdotL);
+        float g1V = G1(k, NdotV);
+        float G = g1L * g1V;
+
+        Vector3 specular = NdotL * D * F * G;
+        return specular;
+    }
+
+    float DemoPBRPixelShader::sqr(float value)
+    {
+        return value * value;
+    }
+
+    float DemoPBRPixelShader::SchlickFresnel(float value)
+    {
+        float m = Clamp(1 - value, 0.0f, 1.0f);
+        return pow(m, 5);
+    }
+
+    float DemoPBRPixelShader::G1(float k, float x)
+    {
+        return x / (x * (1 - k) + k);
     }
 }
