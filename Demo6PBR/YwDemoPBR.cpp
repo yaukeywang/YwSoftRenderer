@@ -102,7 +102,7 @@ namespace yw
         m_PixelShader = new DemoPBRPixelShader();
 
         // Initialize environments.
-        m_LightDirection.Set(0.0f, -0.65f, 1.0f);
+        m_LightDirection.Set(-0.2f, -0.65f, 1.0f);
         m_LightColor.Set(0.6f, 0.6f, 0.6f, 1.0f);
         m_AlbedoColor.Set(0.3f, 0.3f, 0.3f, 1.0f);
         m_SpecularColor.Set(0.35f, 0.35f, 0.35f, 1.0f);
