@@ -38,13 +38,25 @@ namespace yw
     private:
         // Model and texture resources.
         class Model* m_Model;
+        class Yw3dTexture* m_ModelTexture;
+        class Yw3dTexture* m_ModelNormalTexture;
 
         // Resource handle.
         HRESOURCE m_ModelHandle;
+        HRESOURCE m_ModelTextureHandle;
+        HRESOURCE m_ModelNormalTextureHandle;
 
         // Shader related.
         class DemoPBRVertexShader* m_VertexShader;
         class DemoPBRPixelShader* m_PixelShader;
+
+        // Lighting params.
+        Vector3 m_LightDirection;
+        Vector4 m_LightColor;
+        Vector4 m_AlbedoColor;
+        Vector4 m_SpecularColor;
+        float m_Specular;
+        float m_Gloss;
     };
 }
 

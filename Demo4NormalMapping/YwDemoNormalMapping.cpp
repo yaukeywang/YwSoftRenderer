@@ -200,21 +200,21 @@ namespace yw
         m_ModelHandle = resManager->LoadResource("Cylinder.obj");
         if (m_ModelHandle <= 0)
         {
-            LOGE(_T("Load resource \"teapot.obj\" failed."));
+            LOGE(_T("Load resource \"Cylinder.obj\" failed."));
             return false;
         }
 
         m_ModelTextureHandle = resManager->LoadResource("bricks_color.bmp");
         if (m_ModelTextureHandle <= 0)
         {
-            LOGE(_T("Load resource \"Wood.png\" failed."));
+            LOGE(_T("Load resource \"bricks_color.bmp\" failed."));
             return false;
         }
 
         m_ModelNormalTextureHandle = resManager->LoadResource("bricks_nmap.bmp");
         if (m_ModelNormalTextureHandle <= 0)
         {
-            LOGE(_T("Load resource \"Wood.png\" failed."));
+            LOGE(_T("Load resource \"bricks_nmap.bmp\" failed."));
             return false;
         }
 
@@ -222,21 +222,21 @@ namespace yw
         m_Model = (Model*)resManager->GetResource(m_ModelHandle);
         if (nullptr == m_Model)
         {
-            LOGE(_T("Get resource \"teapot.obj\" failed."));
+            LOGE(_T("Get resource \"Cylinder.obj\" failed."));
             return false;
         }
 
         m_ModelTexture = (Yw3dTexture*)resManager->GetResource(m_ModelTextureHandle);
         if (nullptr == m_ModelTexture)
         {
-            LOGE(_T("Get resource \"Wood.png\" failed."));
+            LOGE(_T("Get resource \"bricks_color.bmp\" failed."));
             return false;
         }
 
         m_ModelNormalTexture = (Yw3dTexture*)resManager->GetResource(m_ModelNormalTextureHandle);
         if (nullptr == m_ModelTexture)
         {
-            LOGE(_T("Get resource \"Wood.png\" failed."));
+            LOGE(_T("Get resource \"bricks_nmap.bmp\" failed."));
             return false;
         }
 

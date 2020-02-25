@@ -35,6 +35,9 @@ namespace yw
         // Current model rotation angle.
         float GetModelRotationAngle() const;
 
+        // Current light rotation angle.
+        float GetLightRotationAngle() const;
+
     private:
         // Current camera.
         class DemoPBRCamera* m_Camera;
@@ -47,6 +50,9 @@ namespace yw
 
         // The model rotation angle.
         float m_ModelRotateAngle;
+
+        // The light rotation angle.
+        float m_LightRotateAngle;
     };
 }
 

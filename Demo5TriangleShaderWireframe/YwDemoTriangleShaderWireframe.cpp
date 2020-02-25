@@ -55,7 +55,7 @@ namespace yw
         m_ModelHandle = resManager->LoadResource("HydrantPart.obj");
         if (m_ModelHandle <= 0)
         {
-            LOGE(_T("Load resource \"teapot.obj\" failed."));
+            LOGE(_T("Load resource \"HydrantPart.obj\" failed."));
             return false;
         }
 
@@ -63,7 +63,7 @@ namespace yw
         m_Model = (Model*)resManager->GetResource(m_ModelHandle);
         if (nullptr == m_Model)
         {
-            LOGE(_T("Get resource \"teapot.obj\" failed."));
+            LOGE(_T("Get resource \"HydrantPart.obj\" failed."));
             return false;
         }
 
