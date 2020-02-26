@@ -25,8 +25,8 @@ namespace yw
         m_ModelNormalTextureHandle(0),
         m_VertexShader(nullptr),
         m_PixelShader(nullptr),
-        m_Roughness(0.08f),
-        m_Subsurface(0.01f)
+        m_Roughness(0.25f),
+        m_Subsurface(0.75f)
     {
     }
 
@@ -123,6 +123,10 @@ namespace yw
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
         Yw3dDevice* device = graphics->GetYw3dDevice();
         Camera* camera = graphics->GetCurrentCamera();
+
+        // Get material parameters.
+        m_Roughness = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetRoughness();
+        m_Subsurface = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetSubsurface();
 
         Matrix44 matWorld;
         Matrix44Identity(matWorld);

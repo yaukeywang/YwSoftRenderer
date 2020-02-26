@@ -15,7 +15,9 @@ namespace yw
         m_DemoPBRHandle(0),
         m_UpdateTextTime(0.0f),
         m_ModelRotateAngle(0.0f),
-        m_LightRotateAngle(0.0f)
+        m_LightRotateAngle(0.0f),
+        m_Roughness(0.25f),
+        m_Subsurface(0.75f)
     {
 
     }
@@ -107,8 +109,12 @@ namespace yw
             int32_t deltaX = 0;
             int32_t deltaY = 0;
             m_Input->GetMouseMovement(&deltaX, &deltaY);
+
             //m_ModelRotateAngle -= (float)deltaX * 0.015f;
             //m_LightRotateAngle -= (float)deltaX * 0.015f;
+
+            m_Roughness = Saturate(m_Roughness - (float)deltaX * 0.00015f);
+            m_Subsurface = Saturate(m_Subsurface - (float)deltaY * 0.00015f);
         }
     }
 
@@ -123,15 +129,5 @@ namespace yw
         m_Camera->ClearToSceneColor();
         m_Camera->RenderPass(-1);
         m_Camera->EndRender(true);
-    }
-
-    float DemoPBRApp::GetModelRotationAngle() const
-    {
-        return m_ModelRotateAngle;
-    }
-
-    float DemoPBRApp::GetLightRotationAngle() const
-    {
-        return m_LightRotateAngle;
     }
 }

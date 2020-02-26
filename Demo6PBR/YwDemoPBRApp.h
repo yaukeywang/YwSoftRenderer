@@ -33,10 +33,28 @@ namespace yw
 
     public:
         // Current model rotation angle.
-        float GetModelRotationAngle() const;
+        inline float GetModelRotationAngle() const
+        {
+            return m_ModelRotateAngle;
+        }
 
         // Current light rotation angle.
-        float GetLightRotationAngle() const;
+        inline float GetLightRotationAngle() const
+        {
+            return m_LightRotateAngle;
+        }
+
+        // Current roughness of this demo.
+        inline float GetRoughness() const
+        {
+            return m_Roughness;
+        }
+
+        // Current subsurface of this demo.
+        inline float GetSubsurface() const
+        {
+            return m_Subsurface;
+        }
 
     private:
         // Current camera.
@@ -53,6 +71,12 @@ namespace yw
 
         // The light rotation angle.
         float m_LightRotateAngle;
+
+        // The roughness of this demo.
+        float m_Roughness;
+
+        // The subsurface of this demo.
+        float m_Subsurface;
     };
 }
 
