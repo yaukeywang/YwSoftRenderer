@@ -37,7 +37,7 @@ namespace yw
             Vector4 modelLightDir = lightDir * worldInverse;
             Vector4 modelViewDir = viewDir * worldInverse;
 
-            //// Other vertex attribute.
+            // Other vertex attribute.
             vsShaderOutput[0] = -modelLightDir;
             vsShaderOutput[1] = -modelViewDir;
 

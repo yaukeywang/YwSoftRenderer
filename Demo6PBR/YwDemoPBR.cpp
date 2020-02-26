@@ -104,7 +104,7 @@ namespace yw
         // Initialize environments.
         m_LightDirection.Set(-0.5f, -0.65f, 1.0f);
         m_LightColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
-        m_AlbedoColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
+        m_AlbedoColor.Set(0.7f, 0.7f, 0.7f, 1.0f);
         m_SpecularColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_Roughness = 0.25f;
         m_Subsurface = 0.75f;

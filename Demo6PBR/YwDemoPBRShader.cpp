@@ -27,7 +27,7 @@ namespace yw
         Vector4 modelLightDir = lightDir * worldInverse;
         Vector4 modelViewDir = viewDir * worldInverse;
 
-        //// Other vertex attribute.
+        // Other vertex attribute.
         vsShaderOutput[0] = -modelLightDir;
         vsShaderOutput[1] = -modelViewDir;
 
@@ -127,7 +127,7 @@ namespace yw
         Vector3 specular = CookTorranceSpecular(NdotL, LdotH, NdotH, NdotV, roughness, specularColor.r);
 
         // Adding diffuse, specular and tins (light, specular).
-        Vector3 firstLayer = (diffuse + specular * specularColor) * lightColor;
+        Vector3 firstLayer = diffuse * lightColor + specular * specularColor * lightColor;
         Vector4 c = firstLayer;
         c.a = 1.0f;
 
@@ -141,11 +141,11 @@ namespace yw
         float albedoLuminosity = 0.3f * albedo.r + 0.6f * albedo.g + 0.1f * albedo.b;
         
         // normalize luminosity to isolate hue and saturation
-        Vector3 albedoTint = albedoLuminosity > 0 ? albedo / albedoLuminosity : Vector3(1.0f, 1.0f, 1.0f);
+        Vector3 albedoTint = albedoLuminosity > 0.0f ? albedo / albedoLuminosity : Vector3(1.0f, 1.0f, 1.0f);
         float fresnelL = SchlickFresnel(NdotL);
         float fresnelV = SchlickFresnel(NdotV);
         float fresnelDiffuse = 0.5f + 2.0f * sqr(LdotH) * roughness;
-        Vector3 diffuse = albedoTint * Lerp(1.0, fresnelDiffuse, fresnelL) * Lerp(1.0, fresnelDiffuse, fresnelV);
+        Vector3 diffuse = albedoTint * Lerp(1.0f, fresnelDiffuse, fresnelL) * Lerp(1.0, fresnelDiffuse, fresnelV);
         float fresnelSubsurface90 = sqr(LdotH) * roughness;
         float fresnelSubsurface = Lerp(1.0, fresnelSubsurface90, fresnelL) * Lerp(1.0, fresnelSubsurface90, fresnelV);
         float ss = 1.25f * (fresnelSubsurface * (1.0f / (NdotL + NdotV) - 0.5f) + 0.5f);
@@ -173,7 +173,7 @@ namespace yw
         float g1V = G1(k, NdotV);
         float G = g1L * g1V;
 
-        float specular = NdotL * D * F * G;
+        float specular = (D * F * G) / (4.0f * NdotL * NdotV + 0.001f);
         return Vector3(specular, specular, specular);
     }
 
@@ -184,7 +184,7 @@ namespace yw
 
     float DemoPBRPixelShader::SchlickFresnel(float value)
     {
-        float m = Clamp(1 - value, 0.0f, 1.0f);
+        float m = clamp(1 - value, 0.0f, 1.0f);
         return pow(m, 5);
     }
 
