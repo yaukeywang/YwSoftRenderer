@@ -37,7 +37,7 @@ namespace yw
         Vector3 DisneyDiffuse(Vector3 albedo, float NdotL, float NdotV, float LdotH, float roughness, float subsurface);
 
         // Cook-Torrance implementation of PBR specular part.
-        Vector3 CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, Vector3 specularColor);
+        Vector3 CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, float specularColor);
 
         // Utility functions for calculating diffuse and specular.
         float sqr(float value);

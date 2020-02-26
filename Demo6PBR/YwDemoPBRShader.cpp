@@ -124,7 +124,7 @@ namespace yw
 
         // BRDFs
         Vector3 diffuse = DisneyDiffuse(albedoColor, NdotL, NdotV, LdotH, roughness, subsurface);
-        Vector3 specular = CookTorranceSpecular(NdotL, LdotH, NdotH, NdotV, roughness, specularColor);
+        Vector3 specular = CookTorranceSpecular(NdotL, LdotH, NdotH, NdotV, roughness, specularColor.r);
 
         // Adding diffuse, specular and tins (light, specular).
         Vector3 firstLayer = (diffuse + specular * specularColor) * lightColor;
@@ -152,9 +152,9 @@ namespace yw
         return saturate(lerp(diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo);
     }
 
-    Vector3 DemoPBRPixelShader::CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, Vector3 specularColor)
+    Vector3 DemoPBRPixelShader::CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, float specularColor)
     {
-        const Vector3& F0 = specularColor;
+        const float F0 = specularColor;
         const float alpha = sqr(roughness);
 
         // D
@@ -164,7 +164,7 @@ namespace yw
 
         // F
         float LdotH5 = SchlickFresnel(LdotH);
-        Vector3 F = F0 + (Vector3::Zero() - F0) * LdotH5;
+        float F = F0 + (1.0f - F0) * LdotH5;
 
         // G
         float r = roughness + 1;
@@ -173,8 +173,8 @@ namespace yw
         float g1V = G1(k, NdotV);
         float G = g1L * g1V;
 
-        Vector3 specular = NdotL * D * F * G;
-        return specular;
+        float specular = NdotL * D * F * G;
+        return Vector3(specular, specular, specular);
     }
 
     float DemoPBRPixelShader::sqr(float value)
