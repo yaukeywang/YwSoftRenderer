@@ -137,8 +137,6 @@ namespace yw
 
     Vector3 DemoPBRPixelShader::DisneyDiffuse(Vector3 albedo, float NdotL, float NdotV, float LdotH, float roughness, float subsurface)
     {
-        const float PI = YW_PI;
-
         // luminance approximation
         float albedoLuminosity = 0.3f * albedo.r + 0.6f * albedo.g + 0.1f * albedo.b;
         
@@ -151,20 +149,13 @@ namespace yw
         float fresnelSubsurface90 = sqr(LdotH) * roughness;
         float fresnelSubsurface = Lerp(1.0, fresnelSubsurface90, fresnelL) * Lerp(1.0, fresnelSubsurface90, fresnelV);
         float ss = 1.25f * (fresnelSubsurface * (1.0f / (NdotL + NdotV) - 0.5f) + 0.5f);
-
-        Vector3 finalColor = Vector3Lerp(diffuse, diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo;
-        finalColor.r = Saturate(finalColor.r);
-        finalColor.g = Saturate(finalColor.g);
-        finalColor.b = Saturate(finalColor.b);
-        return finalColor;
+        return Saturate(Lerp(diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo);
     }
 
     Vector3 DemoPBRPixelShader::CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, Vector3 specularColor)
     {
-        const float PI = YW_PI;
         const Vector3& F0 = specularColor;
-
-        float alpha = sqr(roughness);
+        const float alpha = sqr(roughness);
 
         // D
         float alphaSqr = sqr(alpha);

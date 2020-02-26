@@ -6,6 +6,8 @@
 
 namespace yw
 {
+    const float IYw3dBaseShader::PI = (float)YW_PI;
+
     void IYw3dBaseShader::SetFloat(uint32_t index, float value)
     {
         if (index >= YW3D_NUM_SHADER_CONSTANTS)
@@ -123,5 +125,71 @@ namespace yw
         }
 
         return m_Device->SampleTexture(color, samplerNumber, u, v, w, xGradient, yGradient);
+    }
+
+    float IYw3dBaseShader::Clamp(const float value, const float lower, const float upper)
+    {
+        return yw::Clamp(value, lower, upper);
+    }
+
+    int32_t IYw3dBaseShader::Clamp(const int32_t value, const int32_t lower, const int32_t upper)
+    {
+        return yw::Clamp(value, lower, upper);
+    }
+
+    Vector2 IYw3dBaseShader::Clamp(const Vector2& value, const float lower, const float upper)
+    {
+        return Vector2(yw::Clamp(value.x, lower, upper), yw::Clamp(value.y, lower, upper));
+    }
+
+    Vector3 IYw3dBaseShader::Clamp(const Vector3& value, const float lower, const float upper)
+    {
+        return Vector3(yw::Clamp(value.x, lower, upper), yw::Clamp(value.y, lower, upper), yw::Clamp(value.z, lower, upper));
+    }
+
+    Vector4 IYw3dBaseShader::Clamp(const Vector4& value, const float lower, const float upper)
+    {
+        return Vector4(yw::Clamp(value.x, lower, upper), yw::Clamp(value.y, lower, upper), yw::Clamp(value.z, lower, upper), yw::Clamp(value.w, lower, upper));
+    }
+
+    float IYw3dBaseShader::Saturate(const float value)
+    {
+        return yw::Saturate(value);
+    }
+
+    Vector2 IYw3dBaseShader::Saturate(const Vector2& value)
+    {
+        return Vector2(yw::Saturate(value.x), yw::Saturate(value.y));
+    }
+
+    Vector3 IYw3dBaseShader::Saturate(const Vector3& value)
+    {
+        return Vector3(yw::Saturate(value.x), yw::Saturate(value.y), yw::Saturate(value.z));
+    }
+
+    Vector4 IYw3dBaseShader::Saturate(const Vector4& value)
+    {
+        return Vector4(yw::Saturate(value.x), yw::Saturate(value.y), yw::Saturate(value.z), yw::Saturate(value.w));
+    }
+
+    float IYw3dBaseShader::Lerp(const float a, const float b, const float t)
+    {
+        return yw::Lerp(a, b, t);
+    }
+
+    Vector2 IYw3dBaseShader::Lerp(const Vector2& a, const Vector2& b, const float t)
+    {
+        return Vector2(yw::Lerp(a.x, b.x, t), yw::Lerp(a.y, b.y, t));
+    }
+
+    Vector3 IYw3dBaseShader::Lerp(const Vector3& a, const Vector3& b, const float t)
+    {
+        Vector3 result;
+        return Vector3Lerp(result, a, b, t);
+    }
+
+    Vector4 IYw3dBaseShader::Lerp(const Vector4& a, const Vector4& b, const float t)
+    {
+        return Vector4(yw::Lerp(a.x, b.x, t), yw::Lerp(a.y, b.y, t), yw::Lerp(a.z, b.z, t), yw::Lerp(a.w, b.w, t));
     }
 }

@@ -48,7 +48,7 @@ namespace yw
     // @param[in] value to clamp.
     // @param[in] lower minimum value.
     // @param[in] upper maximum value.
-    // @return clamped value e [lower,upper].
+    // @return clamped value in [lower,upper].
     inline float Clamp(const float value, const float lower, const float upper)
     {
         if (value <= lower)
@@ -69,7 +69,7 @@ namespace yw
     // @param[in] value to clamp.
     // @param[in] lower minimum value.
     // @param[in] upper maximum value.
-    // @return clamped value e [lower,upper].
+    // @return clamped value in [lower,upper].
     inline int32_t Clamp(const int32_t value, const int32_t lower, const int32_t upper)
     {
         if (value <= lower)
@@ -88,7 +88,7 @@ namespace yw
 
     // Clamps a floating-point value to [0.0f,1.0f].
     // @param[in] value to saturate.
-    // @return saturated value e [0.0f,1.0f].
+    // @return saturated value in [0.0f,1.0f].
     inline float Saturate(const float value)
     {
         return Clamp(value, 0.0f, 1.0f);
@@ -97,7 +97,7 @@ namespace yw
     // Linearly interpolates between two values.
     // @param[in] a first value.
     // @param[in] b second value.
-    // @param[in] t interpolation factor e [0.0f,1.0f].
+    // @param[in] t interpolation factor in [0.0f,1.0f].
     // @return interpolated value.
     inline float Lerp(const float a, const float b, const float t)
     {
