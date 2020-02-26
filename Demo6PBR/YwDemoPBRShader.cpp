@@ -37,7 +37,7 @@ namespace yw
 
         const Vector3 normal = vsShaderInput[1];
         const Vector4 tangent = vsShaderInput[2];
-        const Vector3 binormal = Vector3Cross(Vector3(), normal, Vector3(tangent.x, tangent.y, tangent.z)) * tangent.w;
+        const Vector3 binormal = cross(normal, Vector3(tangent.x, tangent.y, tangent.z)) * tangent.w;
         vsShaderOutput[4] = Vector3(tangent);
         vsShaderOutput[5] = binormal;
         vsShaderOutput[6] = normal;
@@ -101,18 +101,18 @@ namespace yw
         SampleTexture(normalTexColor, 1, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
 
         Vector3 normalTangent = normalTexColor * 2 - Vector4(1.0f, 1.0f, 1.0f, 0.0f);
-        Vector3 normalModel = Vector3Normalize(Vector3(), normalTangent * TBN);
+        Vector3 normalModel = normalize(normalTangent * TBN);
 
         Vector3 modelLightDir = Vector3(input[0]).Normalize();
         Vector3 modelViewDir = Vector3(input[1]).Normalize();
 
         // Get l/v/h vectors.
-        Vector3 halfV = (modelLightDir + modelViewDir).Normalize();
-        float NdotL = Saturate(Vector3Dot(normalModel, modelLightDir));
-        float NdotH = Saturate(Vector3Dot(normalModel, halfV));
-        float NdotV = Saturate(Vector3Dot(normalModel, modelViewDir));
-        float VdotH = Saturate(Vector3Dot(modelViewDir, halfV));
-        float LdotH = Saturate(Vector3Dot(modelLightDir, halfV));
+        Vector3 halfV = normalize(modelLightDir + modelViewDir);
+        float NdotL = saturate(dot(normalModel, modelLightDir));
+        float NdotH = saturate(dot(normalModel, halfV));
+        float NdotV = saturate(dot(normalModel, modelViewDir));
+        float VdotH = saturate(dot(modelViewDir, halfV));
+        float LdotH = saturate(dot(modelLightDir, halfV));
 
         // Get parameters for lighting and shading.
         Vector4 lightColor = GetVector(0);
@@ -149,7 +149,7 @@ namespace yw
         float fresnelSubsurface90 = sqr(LdotH) * roughness;
         float fresnelSubsurface = Lerp(1.0, fresnelSubsurface90, fresnelL) * Lerp(1.0, fresnelSubsurface90, fresnelV);
         float ss = 1.25f * (fresnelSubsurface * (1.0f / (NdotL + NdotV) - 0.5f) + 0.5f);
-        return Saturate(Lerp(diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo);
+        return saturate(lerp(diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo);
     }
 
     Vector3 DemoPBRPixelShader::CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, Vector3 specularColor)
@@ -159,7 +159,7 @@ namespace yw
 
         // D
         float alphaSqr = sqr(alpha);
-        float denom = sqr(NdotH) * (alphaSqr - 1.0) + 1.0f;
+        float denom = sqr(NdotH) * (alphaSqr - 1.0f) + 1.0f;
         float D = alphaSqr / (PI * sqr(denom));
 
         // F

@@ -78,83 +78,100 @@ namespace yw
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static float Clamp(const float value, const float lower, const float upper);
+        static float clamp(const float value, const float lower, const float upper);
 
         // Clamps an integer value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static int32_t Clamp(const int32_t value, const int32_t lower, const int32_t upper);
+        static int32_t clamp(const int32_t value, const int32_t lower, const int32_t upper);
 
         // Clamps a Vector2 value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static Vector2 Clamp(const Vector2& value, const float lower, const float upper);
+        static Vector2 clamp(const Vector2& value, const float lower, const float upper);
 
         // Clamps a Vector3 value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static Vector3 Clamp(const Vector3& value, const float lower, const float upper);
+        static Vector3 clamp(const Vector3& value, const float lower, const float upper);
 
         // Clamps a Vector4 value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static Vector4 Clamp(const Vector4& value, const float lower, const float upper);
+        static Vector4 clamp(const Vector4& value, const float lower, const float upper);
 
         // Clamps a floating-point value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static float Saturate(const float value);
+        static float saturate(const float value);
 
         // Clamps a Vector2 value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static Vector2 Saturate(const Vector2& value);
+        static Vector2 saturate(const Vector2& value);
 
         // Clamps a Vector3 value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static Vector3 Saturate(const Vector3& value);
+        static Vector3 saturate(const Vector3& value);
 
         // Clamps a Vector4 value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static Vector4 Saturate(const Vector4& value);
+        static Vector4 saturate(const Vector4& value);
 
         // Linearly interpolates between two values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static float Lerp(const float a, const float b, const float t);
+        static float lerp(const float a, const float b, const float t);
 
         // Linearly interpolates between two Vector2 values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static Vector2 Lerp(const Vector2& a, const Vector2& b, const float t);
+        static Vector2 lerp(const Vector2& a, const Vector2& b, const float t);
 
         // Linearly interpolates between two Vector3 values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static Vector3 Lerp(const Vector3& a, const Vector3& b, const float t);
+        static Vector3 lerp(const Vector3& a, const Vector3& b, const float t);
 
         // Linearly interpolates between two Vector3 values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static Vector4 Lerp(const Vector4& a, const Vector4& b, const float t);
+        static Vector4 lerp(const Vector4& a, const Vector4& b, const float t);
+
+        // The result of two vector3 dot product.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the dot product value.
+        static float dot(const Vector3& a, const Vector3& b);
+
+        // The result of two vector3 cross product.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the cross product value.
+        static Vector3 cross(const Vector3& a, const Vector3& b);
+
+        // The normalized result of Vector3 value.
+        // @param[in] v value to be normalized.
+        // @return the normalized Vector3 value.
+        static Vector3 normalize(const Vector3& v);
 
     private:
         // Single float-constants.
