@@ -266,12 +266,12 @@ namespace yw
         inline float3 FresnelTerm(float3 F0, float cosA)
         {
             float t = Pow5(1.0f - cosA);   // ala Schlick interpoliation
-            return F0 + (float3(1.0f, 1.0f, 1.0f) - F0) * t;
+            return F0 + (float3(1.0f) - F0) * t;
         }
 
         inline float3 FresnelLerp(float3 F0, float3 F90, float cosA)
         {
-            float t = Pow5(1 - cosA);   // ala Schlick interpoliation
+            float t = Pow5(1.0f - cosA);   // ala Schlick interpoliation
             return lerp(F0, F90, t);
         }
 
