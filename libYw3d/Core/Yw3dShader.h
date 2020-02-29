@@ -80,6 +80,36 @@ namespace yw
         // @param[out] ddy partial derivative with respect to the y-screen space coordinate.
         void GetPartialDerivatives(uint32_t register, Vector4& ddx, Vector4& ddy) const;
 
+    protected:
+        // Sample texture color.
+        // @param[in] shaderRegister texture binded shader register index.
+        // @param[in] samplerNumber texture binded texture sampler index.
+        // @param[in] x u of texture sample address.
+        // @param[in] y v of texture sample address.
+        // @return sampled texture color, return Pure-Black(0,0,0,0) if no textture found.
+        inline Vector4 tex2D(uint32_t shaderRegister, uint32_t samplerNumber, float u, float v)
+        {
+            // Get ddx and ddy for mipmap.
+            Vector4 vDdx, vDdy;
+            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+
+            // Sample the texture.
+            Vector4 texColor;
+            SampleTexture(texColor, samplerNumber, u, v, 0.0f, &vDdx, &vDdy);
+
+            return saturate(texColor);
+        }
+
+        // Sample texture color.
+        // @param[in] shaderRegister texture binded shader register index.
+        // @param[in] samplerNumber texture binded texture sampler index.
+        // @param[in] uv texture sample address.
+        // @return sampled texture color, return Pure-Black(0,0,0,0) if no textture found.
+        inline Vector4 tex2D(uint32_t shaderRegister, uint32_t samplerNumber, Vector2 uv)
+        {
+            return tex2D(shaderRegister, samplerNumber, uv.x, uv.y);
+        }
+
     private:
         // Register type info.
         const Yw3dShaderRegisterType* m_VsOutputs;

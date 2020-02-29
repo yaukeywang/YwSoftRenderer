@@ -25,8 +25,8 @@ namespace yw
         m_ModelNormalTextureHandle(0),
         m_VertexShader(nullptr),
         m_PixelShader(nullptr),
-        m_Roughness(0.25f),
-        m_Subsurface(0.75f)
+        m_Roughness(0.0f),
+        m_Subsurface(0.0f)
     {
     }
 
@@ -104,10 +104,10 @@ namespace yw
         // Initialize environments.
         m_LightDirection.Set(-0.5f, -0.65f, 1.0f);
         m_LightColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
-        m_AlbedoColor.Set(0.7f, 0.7f, 0.7f, 1.0f);
+        m_AlbedoColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_SpecularColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
-        m_Roughness = 0.25f;
-        m_Subsurface = 0.75f;
+        m_Roughness = 1.0f;
+        m_Subsurface = 1.0f;
 
         return true;
     }
@@ -181,7 +181,7 @@ namespace yw
 
         m_PixelShader->SetVector(0, m_LightColor);
         m_PixelShader->SetVector(1, m_AlbedoColor);
-        m_PixelShader->SetVector(2, m_SpecularColor);
+        //m_PixelShader->SetVector(2, m_SpecularColor);
         m_PixelShader->SetFloat(0, m_Roughness);
         m_PixelShader->SetFloat(1, m_Subsurface);
 

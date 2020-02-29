@@ -78,100 +78,183 @@ namespace yw
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static float clamp(const float value, const float lower, const float upper);
+        static inline float clamp(const float value, const float lower, const float upper)
+        {
+            return yw::Clamp(value, lower, upper);
+        }
 
         // Clamps an integer value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static int32_t clamp(const int32_t value, const int32_t lower, const int32_t upper);
+        static inline int32_t clamp(const int32_t value, const int32_t lower, const int32_t upper)
+        {
+            return yw::Clamp(value, lower, upper);
+        }
 
         // Clamps a Vector2 value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static Vector2 clamp(const Vector2& value, const float lower, const float upper);
+        static inline Vector2 clamp(const Vector2& value, const float lower, const float upper)
+        {
+            return Vector2(yw::Clamp(value.x, lower, upper), yw::Clamp(value.y, lower, upper));
+        }
 
         // Clamps a Vector3 value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static Vector3 clamp(const Vector3& value, const float lower, const float upper);
+        static inline Vector3 clamp(const Vector3& value, const float lower, const float upper)
+        {
+            return Vector3(yw::Clamp(value.x, lower, upper), yw::Clamp(value.y, lower, upper), yw::Clamp(value.z, lower, upper));
+        }
 
         // Clamps a Vector4 value.
         // @param[in] value to clamp.
         // @param[in] lower minimum value.
         // @param[in] upper maximum value.
         // @return clamped value in [lower,upper].
-        static Vector4 clamp(const Vector4& value, const float lower, const float upper);
+        static inline Vector4 clamp(const Vector4& value, const float lower, const float upper)
+        {
+            return Vector4(yw::Clamp(value.x, lower, upper), yw::Clamp(value.y, lower, upper), yw::Clamp(value.z, lower, upper), yw::Clamp(value.w, lower, upper));
+        }
 
         // Clamps a floating-point value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static float saturate(const float value);
+        static inline float saturate(const float value)
+        {
+            return yw::Saturate(value);
+        }
 
         // Clamps a Vector2 value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static Vector2 saturate(const Vector2& value);
+        static inline Vector2 saturate(const Vector2& value)
+        {
+            return Vector2(yw::Saturate(value.x), yw::Saturate(value.y));
+        }
 
         // Clamps a Vector3 value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static Vector3 saturate(const Vector3& value);
+        static inline Vector3 saturate(const Vector3& value)
+        {
+            return Vector3(yw::Saturate(value.x), yw::Saturate(value.y), yw::Saturate(value.z));
+        }
 
         // Clamps a Vector4 value to [0.0f,1.0f].
         // @param[in] value to saturate.
         // @return saturated value in [0.0f,1.0f].
-        static Vector4 saturate(const Vector4& value);
+        static inline Vector4 saturate(const Vector4& value)
+        {
+            return Vector4(yw::Saturate(value.x), yw::Saturate(value.y), yw::Saturate(value.z), yw::Saturate(value.w));
+        }
 
         // Linearly interpolates between two values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static float lerp(const float a, const float b, const float t);
+        static inline float lerp(const float a, const float b, const float t)
+        {
+            return yw::Lerp(a, b, t);
+        }
 
         // Linearly interpolates between two Vector2 values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static Vector2 lerp(const Vector2& a, const Vector2& b, const float t);
+        static inline Vector2 lerp(const Vector2& a, const Vector2& b, const float t)
+        {
+            return Vector2(yw::Lerp(a.x, b.x, t), yw::Lerp(a.y, b.y, t));
+        }
 
         // Linearly interpolates between two Vector3 values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static Vector3 lerp(const Vector3& a, const Vector3& b, const float t);
+        static inline Vector3 lerp(const Vector3& a, const Vector3& b, const float t)
+        {
+            Vector3 result;
+            return Vector3Lerp(result, a, b, t);
+        }
 
-        // Linearly interpolates between two Vector3 values.
+        // Linearly interpolates between two Vector4 values.
         // @param[in] a first value.
         // @param[in] b second value.
         // @param[in] t interpolation factor in [0.0f,1.0f].
         // @return interpolated value.
-        static Vector4 lerp(const Vector4& a, const Vector4& b, const float t);
+        static inline Vector4 lerp(const Vector4& a, const Vector4& b, const float t)
+        {
+            return Vector4(yw::Lerp(a.x, b.x, t), yw::Lerp(a.y, b.y, t), yw::Lerp(a.z, b.z, t), yw::Lerp(a.w, b.w, t));
+        }
+
+        // Returns true if any component of x is not equal to 0. Returns false otherwise.
+        // @param[in] v value that to be checked.
+        // @return true if any component of x is not equal to 0. false otherwise.
+        static inline bool any(const float x)
+        {
+            return (x > YW_FLOAT_PRECISION || x < -YW_FLOAT_PRECISION) ? true : false;
+        }
+
+        // Returns true if any component of v is not equal to 0. Returns false otherwise.
+        // @param[in] v value that to be checked.
+        // @return true if any component of v is not equal to 0. false otherwise.
+        static inline bool any(const Vector2& v)
+        {
+            return Vector2::Zero() != v ? true : false;
+        }
+
+        // Returns true if any component of v is not equal to 0. Returns false otherwise.
+        // @param[in] v value that to be checked.
+        // @return true if any component of v is not equal to 0. false otherwise.
+        static inline bool any(const Vector3& v)
+        {
+            return Vector3::Zero() != v ? true : false;
+        }
+
+        // Returns true if any component of v is not equal to 0. Returns false otherwise.
+        // @param[in] v value that to be checked.
+        // @return true if any component of v is not equal to 0. false otherwise.
+        static inline bool any(const Vector4& v)
+        {
+            return Vector4::Zero() != v ? true : false;
+        }
 
         // The result of two vector3 dot product.
         // @param[in] a first value.
         // @param[in] b second value.
         // @return the dot product value.
-        static float dot(const Vector3& a, const Vector3& b);
+        static inline float dot(const Vector3& a, const Vector3& b)
+        {
+            return Vector3Dot(a, b);
+        }
 
         // The result of two vector3 cross product.
         // @param[in] a first value.
         // @param[in] b second value.
         // @return the cross product value.
-        static Vector3 cross(const Vector3& a, const Vector3& b);
+        static inline Vector3 cross(const Vector3& a, const Vector3& b)
+        {
+            Vector3 result;
+            return Vector3Cross(result, a, b);
+        }
 
         // The normalized result of Vector3 value.
         // @param[in] v value to be normalized.
         // @return the normalized Vector3 value.
-        static Vector3 normalize(const Vector3& v);
+        static inline Vector3 normalize(const Vector3& v)
+        {
+            Vector3 result;
+            return Vector3Normalize(result, v);
+        }
 
     private:
         // Single float-constants.

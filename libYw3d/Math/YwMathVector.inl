@@ -20,6 +20,11 @@ namespace yw
 
     }
 
+    inline Vector2::Vector2(const float n)
+    {
+        *this = n;
+    }
+
     inline Vector2::Vector2(const Vector2& v) : x(v.x), y(v.y)
     {
     }
@@ -38,10 +43,10 @@ namespace yw
     {
     }
 
-    inline Vector2& Vector2::operator =(const float v)
+    inline Vector2& Vector2::operator =(const float n)
     {
-        x = v;
-        y = 0.0f;
+        x = n;
+        y = n;
 
         return *this;
     }
@@ -333,6 +338,11 @@ namespace yw
     {
     }
 
+    inline Vector3::Vector3(const float n)
+    {
+        *this = n;
+    }
+
     inline Vector3::Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z)
     {
     }
@@ -348,6 +358,11 @@ namespace yw
     {
     }
 
+    inline Vector3::Vector3(const Vector2& v, const float z) : x(v.x), y(v.y)
+    {
+        this->z = z;
+    }
+
     inline Vector3::Vector3(const Vector4& v) : x(v.x), y(v.y), z(v.z)
     {
     }
@@ -355,8 +370,8 @@ namespace yw
     inline Vector3& Vector3::operator =(const float n)
     {
         x = n;
-        y = 0.0f;
-        z = 0.0f;
+        y = n;
+        z = n;
 
         return *this;
     }
@@ -792,11 +807,16 @@ namespace yw
     {
     }
 
+    inline Vector4::Vector4(const float n)
+    {
+        *this = n;
+    }
+
     inline Vector4::Vector4(const Vector4& v) : x(v.x), y(v.y), z(v.z), w(v.w)
     {
     }
 
-    inline Vector4::Vector4(float x, float y, float z, float w)
+    inline Vector4::Vector4(const float x, const float y, const float z, const float w)
     {
         this->x = x;
         this->y = y;
@@ -812,12 +832,17 @@ namespace yw
     {
     }
 
+    inline Vector4::Vector4(const Vector3& v, const float w) : x(v.x), y(v.y), z(v.z)
+    {
+        this->w = w;
+    }
+
     inline Vector4& Vector4::operator =(const float n)
     {
         x = n;
-        y = 0.0f;
-        z = 0.0f;
-        w = 0.0f;
+        y = n;
+        z = n;
+        w = n;
 
         return *this;
     }

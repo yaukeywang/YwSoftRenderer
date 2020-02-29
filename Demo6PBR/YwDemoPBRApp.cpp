@@ -16,8 +16,8 @@ namespace yw
         m_UpdateTextTime(0.0f),
         m_ModelRotateAngle(0.0f),
         m_LightRotateAngle(0.0f),
-        m_Roughness(0.25f),
-        m_Subsurface(0.75f)
+        m_Roughness(0.0f),
+        m_Subsurface(0.0f)
     {
 
     }

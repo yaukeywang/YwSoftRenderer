@@ -90,106 +90,116 @@ namespace yw
         );
 
         // Sample main texture.
-        Vector4 vDdx, vDdy;
-        GetPartialDerivatives(2, vDdx, vDdy);
-        Vector2 texCoord = input[2];
-        Vector4 texColor;
-        SampleTexture(texColor, 0, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
+        float2 texCoord = input[2];
+        float4 texColor = tex2D(3, 0, texCoord);
 
         // Sample normal texture.
-        Vector4 normalTexColor;
-        SampleTexture(normalTexColor, 1, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
+        float4 normalTexColor = tex2D(3, 1, texCoord);
 
+        // Sample metallic map color.
+        float4 metallicGlossMap = tex2D(3, 2, texCoord);
+
+        // Get all directions.
         Vector3 normalTangent = normalTexColor * 2 - Vector4(1.0f, 1.0f, 1.0f, 0.0f);
         Vector3 normalModel = normalize(normalTangent * TBN);
-
         Vector3 modelLightDir = Vector3(input[0]).Normalize();
         Vector3 modelViewDir = Vector3(input[1]).Normalize();
-
-        // Get l/v/h vectors.
-        Vector3 halfV = normalize(modelLightDir + modelViewDir);
-        float NdotL = saturate(dot(normalModel, modelLightDir));
-        float NdotH = saturate(dot(normalModel, halfV));
-        float NdotV = saturate(dot(normalModel, modelViewDir));
-        float VdotH = saturate(dot(modelViewDir, halfV));
-        float LdotH = saturate(dot(modelLightDir, halfV));
 
         // Get parameters for lighting and shading.
         Vector4 lightColor = GetVector(0);
         Vector4 albedo = GetVector(1);
-        Vector4 albedoColor = albedo * texColor;
-        Vector4 specularColor = GetVector(2);
-        float roughness = GetFloat(0);
-        float subsurface = GetFloat(1);
+        float metallic = GetFloat(0);
+        float smoothness = GetFloat(1);
 
-        // BRDFs
-        Vector3 diffuse = DisneyDiffuse(albedoColor, NdotL, NdotV, LdotH, roughness, subsurface);
-        Vector3 specular = CookTorranceSpecular(NdotL, LdotH, NdotH, NdotV, roughness, specularColor.r);
-
-        // Adding diffuse, specular and tins (light, specular).
-        Vector3 firstLayer = diffuse * lightColor + specular * specularColor * lightColor;
-        Vector4 c = firstLayer;
-        c.a = 1.0f;
-
+        // Calculating the final brdf.
+        FragmentCommonData s = FragmentSetup(albedo, texColor, metallic, metallicGlossMap, smoothness);
+        float4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, lightColor, s.oneMinusReflectivity, s.smoothness, normalModel, modelViewDir, modelLightDir);
         color = c;
+
         return true;
     }
 
-    Vector3 DemoPBRPixelShader::DisneyDiffuse(Vector3 albedo, float NdotL, float NdotV, float LdotH, float roughness, float subsurface)
+    float4 DemoPBRPixelShader::UNITY_BRDF_PBS(float3 diffColor, float3 specColor, float3 lightColor, float oneMinusReflectivity, float smoothness, float3 normal, float3 viewDir, float3 lightDir)
     {
-        // luminance approximation
-        float albedoLuminosity = 0.3f * albedo.r + 0.6f * albedo.g + 0.1f * albedo.b;
-        
-        // normalize luminosity to isolate hue and saturation
-        Vector3 albedoTint = albedoLuminosity > 0.0f ? albedo / albedoLuminosity : Vector3(1.0f, 1.0f, 1.0f);
-        float fresnelL = SchlickFresnel(NdotL);
-        float fresnelV = SchlickFresnel(NdotV);
-        float fresnelDiffuse = 0.5f + 2.0f * sqr(LdotH) * roughness;
-        Vector3 diffuse = albedoTint * Lerp(1.0f, fresnelDiffuse, fresnelL) * Lerp(1.0, fresnelDiffuse, fresnelV);
-        float fresnelSubsurface90 = sqr(LdotH) * roughness;
-        float fresnelSubsurface = Lerp(1.0, fresnelSubsurface90, fresnelL) * Lerp(1.0, fresnelSubsurface90, fresnelV);
-        float ss = 1.25f * (fresnelSubsurface * (1.0f / (NdotL + NdotV) - 0.5f) + 0.5f);
-        return saturate(lerp(diffuse, Vector3(ss, ss, ss), subsurface) * (1 / PI) * albedo);
+        float perceptualRoughness = SmoothnessToPerceptualRoughness(smoothness);
+        float3 halfDir = Unity_SafeNormalize(lightDir + viewDir);
+
+        // NdotV should not be negative for visible pixels, but it can happen due to perspective projection and normal mapping
+        // In this case normal should be modified to become valid (i.e facing camera) and not cause weird artifacts.
+        // but this operation adds few ALU and users may not want it. Alternative is to simply take the abs of NdotV (less correct but works too).
+        // Following define allow to control this. Set it to 0 if ALU is critical on your platform.
+        // This correction is interesting for GGX with SmithJoint visibility function because artifacts are more visible in this case due to highlight edge of rough surface
+        // Edit: Disable this code by default for now as it is not compatible with two sided lighting used in SpeedTree.
+#if UNITY_HANDLE_CORRECTLY_NEGATIVE_NDOTV
+    // The amount we shift the normal toward the view vector is defined by the dot product.
+        float shiftAmount = dot(normal, viewDir);
+        normal = shiftAmount < 0.0f ? normal + viewDir * (-shiftAmount + 1e-5f) : normal;
+        // A re-normalization should be applied here but as the shift is small we don't do it to save ALU.
+        //normal = normalize(normal);
+
+        float nv = saturate(dot(normal, viewDir)); // TODO: this saturate should no be necessary here
+#else
+        float nv = abs(dot(normal, viewDir));    // This abs allow to limit artifact
+#endif
+
+        float nl = saturate(dot(normal, lightDir));
+        float nh = saturate(dot(normal, halfDir));
+
+        float lv = saturate(dot(lightDir, viewDir));
+        float lh = saturate(dot(lightDir, halfDir));
+
+        // Diffuse term
+        float diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
+
+        // Specular term
+        // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!
+        // BUT 1) that will make shader look significantly darker than Legacy ones
+        // and 2) on engine side "Non-important" lights have to be divided by Pi too in cases when they are injected into ambient SH
+        float roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
+
+        // GGX with roughtness to 0 would mean no specular at all, using max(roughness, 0.002) here to match HDrenderloop roughtness remapping.
+        roughness = max(roughness, 0.002f);
+        float V = SmithJointGGXVisibilityTerm(nl, nv, roughness);
+        float D = GGXTerm(nh, roughness);
+
+        float specularTerm = V * D * PI; // Torrance-Sparrow model, Fresnel is applied later
+
+#ifdef UNITY_COLORSPACE_GAMMA
+        specularTerm = sqrt(max(1e-4f, specularTerm));
+#endif
+
+        // specularTerm * nl can be NaN on Metal in some cases, use max() to make sure it's a sane value
+        specularTerm = max(0.0f, specularTerm * nl);
+#if defined(_SPECULARHIGHLIGHTS_OFF)
+        specularTerm = 0.0f;
+#endif
+
+        // surfaceReduction = Int D(NdotH) * NdotH * Id(NdotL>0) dH = 1/(roughness^2+1)
+        float surfaceReduction = 0.0f;
+#   ifdef UNITY_COLORSPACE_GAMMA
+        surfaceReduction = 1.0f - 0.28f * roughness * perceptualRoughness; // 1-0.28*x^3 as approximation for (1/(x^4+1))^(1/2.2) on the domain [0;1]
+#   else
+        surfaceReduction = 1.0 / (roughness * roughness + 1.0); // fade \in [0.5;1]
+#   endif
+
+        // To provide true Lambert lighting, we need to be able to kill specular completely.
+        specularTerm *= any(specColor) ? 1.0f : 0.0f;
+
+        float grazingTerm = saturate(smoothness + (1.0f - oneMinusReflectivity));
+        float3 color = diffColor * lightColor * diffuseTerm
+            + specularTerm * lightColor * FresnelTerm(specColor, lh)
+            + surfaceReduction * FresnelLerp(specColor, grazingTerm, nv);
+
+        return float4(color, 1.0f);
     }
 
-    Vector3 DemoPBRPixelShader::CookTorranceSpecular(float NdotL, float LdotH, float NdotH, float NdotV, float roughness, float specularColor)
+    float DemoPBRPixelShader::DisneyDiffuse(float NdotV, float NdotL, float LdotH, float perceptualRoughness)
     {
-        const float F0 = specularColor;
-        const float alpha = sqr(roughness);
+        float fd90 = 0.5f + 2.0f * LdotH * LdotH * perceptualRoughness;
+        // Two schlick fresnel term
+        float lightScatter = (1 + (fd90 - 1) * Pow5(1 - NdotL));
+        float viewScatter = (1 + (fd90 - 1) * Pow5(1 - NdotV));
 
-        // D
-        float alphaSqr = sqr(alpha);
-        float denom = sqr(NdotH) * (alphaSqr - 1.0f) + 1.0f;
-        float D = alphaSqr / (PI * sqr(denom));
-
-        // F
-        float LdotH5 = SchlickFresnel(LdotH);
-        float F = F0 + (1.0f - F0) * LdotH5;
-
-        // G
-        float r = roughness + 1;
-        float k = sqr(r) / 8;
-        float g1L = G1(k, NdotL);
-        float g1V = G1(k, NdotV);
-        float G = g1L * g1V;
-
-        float specular = (D * F * G) / (4.0f * NdotL * NdotV + 1e-4f);
-        return Vector3(specular, specular, specular);
-    }
-
-    float DemoPBRPixelShader::sqr(float value)
-    {
-        return value * value;
-    }
-
-    float DemoPBRPixelShader::SchlickFresnel(float value)
-    {
-        float m = clamp(1 - value, 0.0f, 1.0f);
-        return pow(m, 5);
-    }
-
-    float DemoPBRPixelShader::G1(float k, float x)
-    {
-        return x / (x * (1 - k) + k);
+        return lightScatter * viewScatter * INV_PI;
     }
 }
