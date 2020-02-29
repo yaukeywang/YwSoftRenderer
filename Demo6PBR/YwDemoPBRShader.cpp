@@ -173,7 +173,7 @@ namespace yw
         float g1V = G1(k, NdotV);
         float G = g1L * g1V;
 
-        float specular = (D * F * G) / (4.0f * NdotL * NdotV + 0.001f);
+        float specular = (D * F * G) / (4.0f * NdotL * NdotV + 1e-4f);
         return Vector3(specular, specular, specular);
     }
 
