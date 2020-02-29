@@ -7,6 +7,7 @@
 namespace yw
 {
     const float IYw3dBaseShader::PI = (float)YW_PI;
+    const float IYw3dBaseShader::INV_PI = (float)YW_INV_PI;
 
     void IYw3dBaseShader::SetFloat(uint32_t index, float value)
     {

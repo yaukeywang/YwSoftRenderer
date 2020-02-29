@@ -189,6 +189,9 @@ namespace yw
     protected:
         // PI.
         static const float PI;
+
+        // Inverse of PI.
+        static const float INV_PI;
     };
 }
 

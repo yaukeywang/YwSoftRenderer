@@ -20,7 +20,14 @@ namespace yw
     #endif
 
     // Math pi.
-    #define YW_PI 3.1415926f
+    #define YW_PI 3.14159265359f
+    #define YW_TWO_PI 6.28318530718f
+    #define YW_FOUR_PI 12.56637061436f
+    #define YW_INV_PI 0.31830988618f
+    #define YW_INV_TWO_PI 0.15915494309f
+    #define YW_INV_FOUR_PI 0.07957747155f
+    #define YW_HALF_PI 1.57079632679f
+    #define YW_INV_HALF_PI 0.636619772367f
 
     // Constant convert radians to degree.
     const float RAD_TO_DEG = 180.0f / YW_PI;
