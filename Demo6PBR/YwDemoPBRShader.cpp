@@ -195,11 +195,14 @@ namespace yw
 
     float DemoPBRPixelShader::DisneyDiffuse(float NdotV, float NdotL, float LdotH, float perceptualRoughness)
     {
-        float fd90 = 0.5f + 2.0f * LdotH * LdotH * perceptualRoughness;
+        float fd90 = 0.5f + 2.0f * LdotH * LdotH * (perceptualRoughness * 1.35f); // Darker than unity, temporary add a factor 1.35 for perceptualRoughness.
         // Two schlick fresnel term
         float lightScatter = (1 + (fd90 - 1) * Pow5(1 - NdotL));
         float viewScatter = (1 + (fd90 - 1) * Pow5(1 - NdotV));
 
         return lightScatter * viewScatter * INV_PI;
+
+        // Note: Disney diffuse must be multiply by diffuseAlbedo / PI. This is done outside of this function.
+        //return lightScatter * viewScatter * INV_PI;
     }
 }

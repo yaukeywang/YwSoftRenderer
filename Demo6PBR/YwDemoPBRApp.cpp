@@ -43,7 +43,7 @@ namespace yw
         m_Camera->SetLookAt(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
-        Vector4 clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        Vector4 clearColor(54.0f / 255.0f, 77.0f / 255.0f, 118.0f / 255.0f, 255.0f);
         GetScene()->SetClearColor(clearColor);
 
         // Registry a demo model entity and create an instance.
