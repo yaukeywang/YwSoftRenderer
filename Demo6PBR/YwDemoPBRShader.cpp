@@ -200,7 +200,7 @@ namespace yw
         float lightScatter = (1 + (fd90 - 1) * Pow5(1 - NdotL));
         float viewScatter = (1 + (fd90 - 1) * Pow5(1 - NdotV));
 
-        return lightScatter * viewScatter * INV_PI;
+        return lightScatter * viewScatter;
 
         // Note: Disney diffuse must be multiply by diffuseAlbedo / PI. This is done outside of this function.
         //return lightScatter * viewScatter * INV_PI;
