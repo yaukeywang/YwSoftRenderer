@@ -24,7 +24,7 @@ namespace yw
 
         const float3 normal = vsShaderInput[1];
         const float4 tangent = vsShaderInput[2];
-        const float3 binormal = cross(normal, float3(tangent.x, tangent.y, tangent.z)) * tangent.w;
+        const float3 binormal = cross(normal, float3(tangent)) * tangent.w;
         vsShaderOutput[1] = float3(tangent);
         vsShaderOutput[2] = binormal;
         vsShaderOutput[3] = normal;
@@ -59,9 +59,9 @@ namespace yw
     bool DemoPBRPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
         // Form TBN matrix from tangent space to model space.
-        const Vector3 tangent = normalize(float3(input[1]));
-        const Vector3 binormal = normalize(float3(input[2]));
-        const Vector3 normal = normalize(float3(input[3]));
+        const float3 tangent = normalize(float3(input[1]));
+        const float3 binormal = normalize(float3(input[2]));
+        const float3 normal = normalize(float3(input[3]));
         float33 TBN = float33(
             tangent.x, tangent.y, tangent.z,
             binormal.x, binormal.y, binormal.z,
@@ -83,10 +83,10 @@ namespace yw
         float3 tangentNormal = normalTexColor * 2.0f - float4(1.0f, 1.0f, 1.0f, 0.0f);
         float3 modelNormal = normalize(tangentNormal * TBN);
         float3 worldNormal = normalize(float4(modelNormal, 0.0f) * *GetWorldMatrix());
-        float3 lightDir = GetVector(0);
+        float3 lightDir = normalize(GetVector(0));
         float4 lightColor = GetVector(1);
         float4 albedo = GetVector(2);
-        float3 viewDir = GetVector(3);
+        float3 viewDir = normalize(GetVector(3));
         float metallic = GetFloat(0);
         float smoothness = GetFloat(1);
 

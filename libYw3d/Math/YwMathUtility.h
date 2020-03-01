@@ -58,11 +58,11 @@ namespace yw
     // @return clamped value in [lower,upper].
     inline float Clamp(const float value, const float lower, const float upper)
     {
-        if (value <= lower)
+        if (value < lower)
         {
             return lower;
         }
-        else if (value >= upper)
+        else if (value > upper)
         {
             return upper;
         }
@@ -79,11 +79,11 @@ namespace yw
     // @return clamped value in [lower,upper].
     inline int32_t Clamp(const int32_t value, const int32_t lower, const int32_t upper)
     {
-        if (value <= lower)
+        if (value < lower)
         {
             return lower;
         }
-        else if (value >= upper)
+        else if (value > upper)
         {
             return upper;
         }
