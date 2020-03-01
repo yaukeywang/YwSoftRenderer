@@ -483,8 +483,8 @@ namespace yw
     {
         Vector3 value(
             x * m._11 + y * m._21 + z * m._31, 
-            y * m._12 + y * m._22 + z * m._32, 
-            z * m._13 + y * m._23 + z * m._33
+            x * m._12 + y * m._22 + z * m._32, 
+            x * m._13 + y * m._23 + z * m._33
         );
         return value;
     }
@@ -536,8 +536,8 @@ namespace yw
     inline Vector3& Vector3::operator *=(const Matrix33& m)
     {
         float nx = x * m._11 + y * m._21 + z * m._31;
-        float ny = y * m._12 + y * m._22 + z * m._32;
-        float nz = z * m._13 + y * m._23 + z * m._33;
+        float ny = x * m._12 + y * m._22 + z * m._32;
+        float nz = x * m._13 + y * m._23 + z * m._33;
 
         x = nx;
         y = ny;

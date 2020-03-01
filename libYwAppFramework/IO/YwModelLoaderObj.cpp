@@ -951,9 +951,9 @@ namespace yw
             const float deltaTexCoordY[2] = { texCoordY1 - texCoordY0, texCoordY2 - texCoordY0 };
             const Vector3 tangent = (deltaVertex[0] * deltaTexCoordY[1] - deltaVertex[1] * deltaTexCoordY[0]).Normalize();
             
-            model->m_Tangents[triangle->m_PositionIndices[0]] = Vector4(tangent.x, tangent.y, tangent.z, 1.0f);
-            model->m_Tangents[triangle->m_PositionIndices[1]] = Vector4(tangent.x, tangent.y, tangent.z, 1.0f);
-            model->m_Tangents[triangle->m_PositionIndices[2]] = Vector4(tangent.x, tangent.y, tangent.z, 1.0f);
+            model->m_Tangents[triangle->m_PositionIndices[0]] = Vector4(tangent, 1.0f);
+            model->m_Tangents[triangle->m_PositionIndices[1]] = Vector4(tangent, 1.0f);
+            model->m_Tangents[triangle->m_PositionIndices[2]] = Vector4(tangent, 1.0f);
         }
     }
 
@@ -998,7 +998,7 @@ namespace yw
             float x2 = w2.x - w0.x;
             float y1 = w1.y - w0.y;
             float y2 = w2.y - w0.y;
-            float r = 1.0f / (x1 * y2 - x2 * y1);
+            float r = 1.0f / ((x1 * y2 - x2 * y1) + 1e-4f);
             Vector3 t = (e1 * y2 - e2 * y1) * r;
             Vector3 b = (e2 * x1 - e1 * x2) * r;
 
