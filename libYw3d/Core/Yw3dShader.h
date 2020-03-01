@@ -104,10 +104,41 @@ namespace yw
         // @param[in] shaderRegister texture binded shader register index.
         // @param[in] samplerNumber texture binded texture sampler index.
         // @param[in] uv texture sample address.
-        // @return sampled texture color, return Pure-Black(0,0,0,0) if no textture found.
+        // @return sampled texture color, return Pure-Black(1,1,1,1) if no textture found.
         inline Vector4 tex2D(uint32_t shaderRegister, uint32_t samplerNumber, Vector2 uv)
         {
             return tex2D(shaderRegister, samplerNumber, uv.x, uv.y);
+        }
+
+        // Sample texture color and check the state.
+        // @param[out] color receives the color of the pixel to be looked up.
+        // @param[in] shaderRegister texture binded shader register index.
+        // @param[in] samplerNumber texture binded texture sampler index.
+        // @param[in] x u of texture sample address.
+        // @param[in] y v of texture sample address.
+        // @return true if sampling texture succeed, otherwise false.
+        inline bool tex2DSafe(Vector4& color, uint32_t shaderRegister, uint32_t samplerNumber, float u, float v)
+        {
+            // Get ddx and ddy for mipmap.
+            Vector4 vDdx, vDdy;
+            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+
+            // Sample the texture.
+            Yw3dResult result = SampleTexture(color, samplerNumber, u, v, 0.0f, &vDdx, &vDdy);
+            saturate(color);
+
+            return YW3D_SUCCESSFUL(result);
+        }
+
+        // Sample texture color and check the state.
+        // @param[out] color receives the color of the pixel to be looked up.
+        // @param[in] shaderRegister texture binded shader register index.
+        // @param[in] samplerNumber texture binded texture sampler index.
+        // @param[in] uv texture sample address.
+        // @return true if sampling texture succeed, otherwise false.
+        inline bool tex2DSafe(Vector4& color, uint32_t shaderRegister, uint32_t samplerNumber, Vector2 uv)
+        {
+            return tex2DSafe(color, shaderRegister, samplerNumber, uv.x, uv.y);
         }
 
     private:

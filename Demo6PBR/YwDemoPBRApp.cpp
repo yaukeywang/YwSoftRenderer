@@ -16,8 +16,8 @@ namespace yw
         m_UpdateTextTime(0.0f),
         m_ModelRotateAngle(0.0f),
         m_LightRotateAngle(0.0f),
-        m_Roughness(0.0f),
-        m_Subsurface(0.0f)
+        m_Metallic(0.5f),
+        m_Smoothness(0.5f)
     {
 
     }
@@ -113,8 +113,8 @@ namespace yw
             //m_ModelRotateAngle -= (float)deltaX * 0.015f;
             //m_LightRotateAngle -= (float)deltaX * 0.015f;
 
-            m_Roughness = Saturate(m_Roughness - (float)deltaX * 0.00015f);
-            m_Subsurface = Saturate(m_Subsurface - (float)deltaY * 0.00015f);
+            m_Metallic = Saturate(m_Metallic - (float)deltaX * 0.00015f);
+            m_Smoothness = Saturate(m_Smoothness - (float)deltaY * 0.00015f);
         }
     }
 

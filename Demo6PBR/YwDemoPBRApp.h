@@ -45,15 +45,15 @@ namespace yw
         }
 
         // Current roughness of this demo.
-        inline float GetRoughness() const
+        inline float GetMetallic() const
         {
-            return m_Roughness;
+            return m_Metallic;
         }
 
         // Current subsurface of this demo.
-        inline float GetSubsurface() const
+        inline float GetSmoothness() const
         {
-            return m_Subsurface;
+            return m_Smoothness;
         }
 
     private:
@@ -72,11 +72,11 @@ namespace yw
         // The light rotation angle.
         float m_LightRotateAngle;
 
-        // The roughness of this demo.
-        float m_Roughness;
+        // The metallic of this demo.
+        float m_Metallic;
 
-        // The subsurface of this demo.
-        float m_Subsurface;
+        // The smooth of this demo.
+        float m_Smoothness;
     };
 }
 

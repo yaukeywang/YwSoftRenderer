@@ -1081,7 +1081,7 @@ namespace yw
         if (nullptr == texture)
         {
             color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-            return Yw3d_S_OK;
+            return Yw3d_E_InvalidState;
         }
 
         // Correct u, v, w by input type and address type.

@@ -57,7 +57,17 @@ namespace yw
     protected:
         // Accessible by Yw3dDevice - Sets the rendering-device.
         // @param[in] device the device.
-        void SetDevice(class Yw3dDevice* device);
+        inline void SetDevice(class Yw3dDevice* device)
+        {
+            m_Device = device;
+        }
+
+        // Gets the rendering-device.
+        // return the device.
+        inline class Yw3dDevice* GetDevice() const
+        {
+            return m_Device;
+        }
 
         // Samples the texture and returns the looked-up color. This simply functions
         // simply forwards the sampling-call to the device.

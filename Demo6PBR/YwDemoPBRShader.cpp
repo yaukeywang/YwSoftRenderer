@@ -8,39 +8,26 @@ namespace yw
     // ------------------------------------------------------------------
     // PBR vertex shader.
 
+    // Vertex input format:
+    // 0 - Vector3 position;
+    // 1 - Vector3 normal;
+    // 2 - Vector4 tangent;
+    // 3 - Vector4 color;
+    // 4 - Vector2 texcoord;
+    // 5 - Vector2 texcoord2;
     void DemoPBRVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
     {
         // The projection vertex position.
         position = vsShaderInput[0] * (*GetWVPMatrix());
 
-        // Model normal.
-        //vsShaderOutput[0] = vsShaderInput[1];
+        vsShaderOutput[0] = vsShaderInput[4];
 
-        // Get light and view direction.
-        const Vector4& lightDir = GetVector(0);
-        const Vector4& viewDir = GetVector(1);
-
-        // Get world inverse matrix.
-        const Matrix44& worldInverse = GetMatrix(0);
-
-        // Transform light and view direction into model space.
-        Vector4 modelLightDir = lightDir * worldInverse;
-        Vector4 modelViewDir = viewDir * worldInverse;
-
-        // Other vertex attribute.
-        vsShaderOutput[0] = -modelLightDir;
-        vsShaderOutput[1] = -modelViewDir;
-
-        // Other vertex attribute.
-        vsShaderOutput[2] = vsShaderInput[4];
-        vsShaderOutput[3] = vsShaderInput[5];
-
-        const Vector3 normal = vsShaderInput[1];
-        const Vector4 tangent = vsShaderInput[2];
-        const Vector3 binormal = cross(normal, Vector3(tangent.x, tangent.y, tangent.z)) * tangent.w;
-        vsShaderOutput[4] = Vector3(tangent);
-        vsShaderOutput[5] = binormal;
-        vsShaderOutput[6] = normal;
+        const float3 normal = vsShaderInput[1];
+        const float4 tangent = vsShaderInput[2];
+        const float3 binormal = cross(normal, float3(tangent.x, tangent.y, tangent.z)) * tangent.w;
+        vsShaderOutput[1] = float3(tangent);
+        vsShaderOutput[2] = binormal;
+        vsShaderOutput[3] = normal;
     }
 
     Yw3dShaderRegisterType DemoPBRVertexShader::GetOutputRegisters(uint32_t shaderRegister)
@@ -48,21 +35,13 @@ namespace yw
         switch (shaderRegister)
         {
         case 0:
-            return Yw3d_SRT_Vector3;    // Vertex normal.
+            return Yw3d_SRT_Vector2; // Texcoord.
         case 1:
-            return Yw3d_SRT_Vector4;    // Vertex tangent.
+            return Yw3d_SRT_Vector3; // Tangent of TBN.
         case 2:
-            return Yw3d_SRT_Vector4;    // Vertex color.
+            return Yw3d_SRT_Vector3; // Bi-Normal of TBN.
         case 3:
-            return Yw3d_SRT_Vector2;    // Vertex texcoord.
-        case 4:
-            return Yw3d_SRT_Vector2;    // Vertex texcoord2.
-        case 5:
-            return Yw3d_SRT_Vector3;
-        case 6:
-            return Yw3d_SRT_Vector3;
-        case 7:
-            return Yw3d_SRT_Vector3;
+            return Yw3d_SRT_Vector3; // Normal of TBN.
         default:
             return Yw3d_SRT_Unused;
         }
@@ -80,40 +59,40 @@ namespace yw
     bool DemoPBRPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
         // Form TBN matrix from tangent space to model space.
-        const Vector3 tangent = Vector3(input[4]).Normalize();
-        const Vector3 binormal = Vector3(input[5]).Normalize();
-        const Vector3 normal = Vector3(input[6]).Normalize();
-        Matrix33 TBN = Matrix33(
+        const Vector3 tangent = normalize(float3(input[1]));
+        const Vector3 binormal = normalize(float3(input[2]));
+        const Vector3 normal = normalize(float3(input[3]));
+        float33 TBN = float33(
             tangent.x, tangent.y, tangent.z,
             binormal.x, binormal.y, binormal.z,
             normal.x, normal.y, normal.z
         );
 
         // Sample main texture.
-        float2 texCoord = input[2];
-        float4 texColor = tex2D(3, 0, texCoord);
+        float2 texCoord = input[0];
+        float4 texColor = tex2D(0, 0, texCoord);
 
         // Sample normal texture.
-        float4 normalTexColor = tex2D(3, 1, texCoord);
+        float4 normalTexColor = tex2D(0, 1, texCoord);
 
         // Sample metallic map color.
-        float4 metallicGlossMap = tex2D(3, 2, texCoord);
+        float4 metallicGlossMap;
+        bool hasMetallicGlossMap = tex2DSafe(metallicGlossMap, 0, 2, texCoord);
 
-        // Get all directions.
-        Vector3 normalTangent = normalTexColor * 2 - Vector4(1.0f, 1.0f, 1.0f, 0.0f);
-        Vector3 normalModel = normalize(normalTangent * TBN);
-        Vector3 modelLightDir = Vector3(input[0]).Normalize();
-        Vector3 modelViewDir = Vector3(input[1]).Normalize();
-
-        // Get parameters for lighting and shading.
-        Vector4 lightColor = GetVector(0);
-        Vector4 albedo = GetVector(1);
+        // Get all parameters.
+        float3 tangentNormal = normalTexColor * 2.0f - float4(1.0f, 1.0f, 1.0f, 0.0f);
+        float3 modelNormal = normalize(tangentNormal * TBN);
+        float3 worldNormal = normalize(float4(modelNormal, 0.0f) * *GetWorldMatrix());
+        float3 lightDir = GetVector(0);
+        float4 lightColor = GetVector(1);
+        float4 albedo = GetVector(2);
+        float3 viewDir = GetVector(3);
         float metallic = GetFloat(0);
         float smoothness = GetFloat(1);
 
         // Calculating the final brdf.
-        FragmentCommonData s = FragmentSetup(albedo, texColor, metallic, metallicGlossMap, smoothness);
-        float4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, lightColor, s.oneMinusReflectivity, s.smoothness, normalModel, modelViewDir, modelLightDir);
+        FragmentCommonData s = FragmentSetup(albedo, texColor, hasMetallicGlossMap, metallic, metallicGlossMap, smoothness);
+        float4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, lightColor, s.oneMinusReflectivity, s.smoothness, worldNormal, -viewDir, -lightDir);
         color = c;
 
         return true;
@@ -186,9 +165,11 @@ namespace yw
         specularTerm *= any(specColor) ? 1.0f : 0.0f;
 
         float grazingTerm = saturate(smoothness + (1.0f - oneMinusReflectivity));
-        float3 color = diffColor * lightColor * diffuseTerm
+        float3 indirectDiffuse = float3(0.0f, 0.0f, 0.0f);
+        float3 indirectSpecular = float3(0.0f, 0.0f, 0.0f);
+        float3 color = diffColor * (indirectDiffuse + lightColor * diffuseTerm)
             + specularTerm * lightColor * FresnelTerm(specColor, lh)
-            + surfaceReduction * FresnelLerp(specColor, grazingTerm, nv);
+            + surfaceReduction * indirectSpecular * FresnelLerp(specColor, grazingTerm, nv);
 
         return float4(color, 1.0f);
     }
@@ -197,8 +178,8 @@ namespace yw
     {
         float fd90 = 0.5f + 2.0f * LdotH * LdotH * (perceptualRoughness * 1.35f); // Darker than unity, temporary add a factor 1.35 for perceptualRoughness.
         // Two schlick fresnel term
-        float lightScatter = (1 + (fd90 - 1) * Pow5(1 - NdotL));
-        float viewScatter = (1 + (fd90 - 1) * Pow5(1 - NdotV));
+        float lightScatter = (1.0f + (fd90 - 1.0f) * Pow5(1.0f - NdotL));
+        float viewScatter = (1.0f + (fd90 - 1.0f) * Pow5(1.0f - NdotV));
 
         return lightScatter * viewScatter;
 

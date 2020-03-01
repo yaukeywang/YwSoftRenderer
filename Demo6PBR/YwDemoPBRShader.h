@@ -76,13 +76,13 @@ namespace yw
         // Using Metallic Texture Alpha as smoothness source.
         // albedoTexture - Metallic Texture parameter.
         // glossMapScale - smoothness parameter.
-        inline FragmentCommonData FragmentSetup(float4 albedoTint, float4 albedoColor, float metallicScale, float4 metallicGlossMap, float glossMapScale)
+        inline FragmentCommonData FragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicGlossMap, float metallicScale, float4 metallicGlossMap, float glossMapScale)
         {
             // Get alpha.
             float alpha = albedoTint.a * albedoColor.a;
 
             // Get fragment from metallic setup.
-            FragmentCommonData o = MetallicSetup(albedoTint, albedoColor, metallicScale, metallicGlossMap, glossMapScale);
+            FragmentCommonData o = MetallicSetup(albedoTint, albedoColor, hasMetallicGlossMap, metallicScale, metallicGlossMap, glossMapScale);
 
             // NOTE: shader relies on pre-multiply alpha-blend (_SrcBlend = One, _DstBlend = OneMinusSrcAlpha)
             o.diffColor = PreMultiplyAlpha(o.diffColor, alpha, o.oneMinusReflectivity, /*out*/ o.alpha);
@@ -90,9 +90,9 @@ namespace yw
             return o;
         }
 
-        inline FragmentCommonData MetallicSetup(float4 albedoTint, float4 albedoColor, float metallicScale, float4 metallicGlossMap, float glossMapScale)
+        inline FragmentCommonData MetallicSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicGlossMap, float metallicScale, float4 metallicGlossMap, float glossMapScale)
         {
-            float2 metallicGloss = MetallicGloss(metallicScale, metallicGlossMap, glossMapScale);
+            float2 metallicGloss = MetallicGloss(hasMetallicGlossMap, metallicScale, metallicGlossMap, glossMapScale);
             float metallic = metallicGloss.x;
             float smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.
 
@@ -108,17 +108,19 @@ namespace yw
             return o;
         }
 
-        inline float2 MetallicGloss(float metallic, float4 metallicGlossMap, float glossMapScale)
+        inline float2 MetallicGloss(bool hasMetallicGlossMap, float metallic, float4 metallicGlossMap, float glossMapScale)
         {
             float2 mg;
-
-            #ifdef _METALLICGLOSSMAP
+            if (hasMetallicGlossMap)
+            {
                 mg = float2(metallicGlossMap.r, metallicGlossMap.a);
                 mg.g *= glossMapScale;
-            #else
+            }
+            else
+            {
                 mg.r = metallic;
                 mg.g = glossMapScale;
-            #endif
+            }
 
             return mg;
         }

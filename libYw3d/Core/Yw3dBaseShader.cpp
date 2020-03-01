@@ -113,11 +113,6 @@ namespace yw
         return matWVP;
     }
 
-    void IYw3dBaseShader::SetDevice(Yw3dDevice* device)
-    {
-        m_Device = device;
-    }
-
     Yw3dResult IYw3dBaseShader::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
     {
         if (nullptr == m_Device)

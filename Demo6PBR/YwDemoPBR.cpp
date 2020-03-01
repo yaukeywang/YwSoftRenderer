@@ -25,8 +25,8 @@ namespace yw
         m_ModelNormalTextureHandle(0),
         m_VertexShader(nullptr),
         m_PixelShader(nullptr),
-        m_Roughness(0.0f),
-        m_Subsurface(0.0f)
+        m_Metallic(0.0f),
+        m_Smoothness(0.0f)
     {
     }
 
@@ -102,12 +102,12 @@ namespace yw
         m_PixelShader = new DemoPBRPixelShader();
 
         // Initialize environments.
-        m_LightDirection.Set(-0.5f, -0.65f, 1.0f);
+        m_LightDirection.Set(0.0f, 0.0f, 1.0f);
         m_LightColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_AlbedoColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_SpecularColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
-        m_Roughness = 1.0f;
-        m_Subsurface = 1.0f;
+        m_Metallic = 0.5f;
+        m_Smoothness = 0.5f;
 
         return true;
     }
@@ -125,8 +125,8 @@ namespace yw
         Camera* camera = graphics->GetCurrentCamera();
 
         // Get material parameters.
-        m_Roughness = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetRoughness();
-        m_Subsurface = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetSubsurface();
+        m_Metallic = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetMetallic();
+        m_Smoothness = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetSmoothness();
 
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
@@ -134,6 +134,7 @@ namespace yw
         // Set rotation.
         Matrix44 matRotate;
         Matrix44RotationY(matRotate, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
+        Matrix44RotationY(matRotate, YW_PI);
         matWorld *= matRotate;
 
         // Set scale.
@@ -175,15 +176,13 @@ namespace yw
         //Vector3 lightDir = Vector4(m_LightDirection) * lightRotate;
         Vector3 lightDir = m_LightDirection;
 
-        m_VertexShader->SetMatrix(0, worldInverse);
-        m_VertexShader->SetVector(0, lightDir);
-        m_VertexShader->SetVector(1, camera->GetForward());
+        m_PixelShader->SetVector(0, m_LightDirection);
+        m_PixelShader->SetVector(1, m_LightColor);
+        m_PixelShader->SetVector(2, m_AlbedoColor);
+        m_PixelShader->SetVector(3, camera->GetForward());
 
-        m_PixelShader->SetVector(0, m_LightColor);
-        m_PixelShader->SetVector(1, m_AlbedoColor);
-        //m_PixelShader->SetVector(2, m_SpecularColor);
-        m_PixelShader->SetFloat(0, m_Roughness);
-        m_PixelShader->SetFloat(1, m_Subsurface);
+        m_PixelShader->SetFloat(0, m_Metallic);
+        m_PixelShader->SetFloat(1, m_Smoothness);
 
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
