@@ -133,7 +133,7 @@ namespace yw
 
         // Set rotation.
         Matrix44 matRotate;
-        Matrix44RotationY(matRotate, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
+        //Matrix44RotationY(matRotate, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
         Matrix44RotationY(matRotate, YW_PI);
         matWorld *= matRotate;
 
