@@ -80,7 +80,7 @@ namespace yw
         bool hasMetallicGlossMap = tex2DSafe(metallicGlossMap, 0, 2, texCoord);
 
         // Get all parameters.
-        float3 tangentNormal = UnpackScaleNormal(normalTexColor, 1.0f);
+        float3 tangentNormal = normalize(UnpackScaleNormal(normalTexColor, 1.0f));
         float3 modelNormal = normalize(tangentNormal * TBN);
         float3 worldNormal = normalize(float4(modelNormal, 0.0f) * *GetWorldMatrix());
         float3 lightDir = normalize(GetVector(0));
