@@ -39,12 +39,12 @@ namespace yw
     #ifdef UNITY_COLORSPACE_GAMMA
         #define unity_ColorSpaceGrey float4(0.5f, 0.5f, 0.5f, 0.5f)
         #define unity_ColorSpaceDouble float4(2.0f, 2.0f, 2.0f, 2.0f)
-        #define unity_ColorSpaceDielectricSpec float4(0.220916301f, 0.220916301f, 0.220916301f, 1.0 - 0.220916301f)
+        #define unity_ColorSpaceDielectricSpec float4(0.220916301f, 0.220916301f, 0.220916301f, 1.0f - 0.220916301f)
         #define unity_ColorSpaceLuminance float4(0.22f, 0.707f, 0.071f, 0.0) // Legacy: alpha is set to 0.0 to specify gamma mode
     #else // Linear values
         #define unity_ColorSpaceGrey float4(0.214041144f, 0.214041144f, 0.214041144f, 0.5f)
         #define unity_ColorSpaceDouble float4(4.59479380f, 4.59479380f, 4.59479380f, 2.0f)
-        #define unity_ColorSpaceDielectricSpec float4(0.04, 0.04, 0.04, 1.0 - 0.04) // standard dielectric reflectivity coef at incident angle (= 4%)
+        #define unity_ColorSpaceDielectricSpec float4(0.04f, 0.04f, 0.04f, 1.0f - 0.04f) // standard dielectric reflectivity coef at incident angle (= 4%)
         #define unity_ColorSpaceLuminance float4(0.0396819152f, 0.458021790f, 0.00609653955f, 1.0f) // Legacy: alpha is set to 1.0 to specify linear mode
     #endif
 
