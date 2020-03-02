@@ -43,14 +43,13 @@ namespace yw
 
             // Other vertex attribute.
             vsShaderOutput[2] = vsShaderInput[4];
-            vsShaderOutput[3] = vsShaderInput[5];
 
             const Vector3 normal = vsShaderInput[1];
             const Vector4 tangent = vsShaderInput[2];
             const Vector3 binormal = Vector3Cross(Vector3(), normal, Vector3(tangent.x, tangent.y, tangent.z)) * tangent.w;
-            vsShaderOutput[4] = Vector3(tangent);
-            vsShaderOutput[5] = binormal;
-            vsShaderOutput[6] = normal;
+            vsShaderOutput[3] = Vector3(tangent);
+            vsShaderOutput[4] = binormal;
+            vsShaderOutput[5] = normal;
         }
 
         Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister)
@@ -58,19 +57,17 @@ namespace yw
             switch (shaderRegister)
             {
             case 0:
-                return Yw3d_SRT_Vector3;    // Vertex normal.
+                return Yw3d_SRT_Vector3; // Light direction.
             case 1:
-                return Yw3d_SRT_Vector3;    // Vertex tangent.
+                return Yw3d_SRT_Vector3; // View direction.
             case 2:
-                return Yw3d_SRT_Vector2;    // Vertex color.
+                return Yw3d_SRT_Vector2; // Vertex texcoord.
             case 3:
-                return Yw3d_SRT_Vector2;    // Vertex texcoord.
+                return Yw3d_SRT_Vector3; // Tangent of TBN..
             case 4:
-                return Yw3d_SRT_Vector3;    // Vertex texcoord2.
+                return Yw3d_SRT_Vector3; // Bi-Normal of TBN.
             case 5:
-                return Yw3d_SRT_Vector3;
-            case 6:
-                return Yw3d_SRT_Vector3;
+                return Yw3d_SRT_Vector3; // Normal of TBN.
             default:
                 return Yw3d_SRT_Unused;
             }
@@ -89,9 +86,9 @@ namespace yw
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
             // Form TBN matrix from tangent space to model space.
-            const Vector3 tangent = Vector3(input[4]).Normalize();
-            const Vector3 binormal = Vector3(input[5]).Normalize();
-            const Vector3 normal = Vector3(input[6]).Normalize();
+            const Vector3 tangent = Vector3(input[3]).Normalize();
+            const Vector3 binormal = Vector3(input[4]).Normalize();
+            const Vector3 normal = Vector3(input[5]).Normalize();
             Matrix33 TBN = Matrix33(
                 tangent.x, tangent.y, tangent.z,
                 binormal.x, binormal.y, binormal.z,
