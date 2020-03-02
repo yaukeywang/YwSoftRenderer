@@ -353,6 +353,22 @@ namespace yw
             float dp3 = max(0.001f, dot(inVec, inVec));
             return inVec / sqrt(dp3);
         }
+
+        // Unpack a scaled normal from normal map pixel.
+        inline float3 UnpackScaleNormal(float4 packedNormal, float bumpScale)
+        {
+            float3 normal = UnpackNormal(packedNormal);
+            normal.x *= bumpScale;
+            normal.y *= bumpScale;
+
+            return normal;
+        }
+
+        // Unpack a normal from normal map pixel.
+        inline float3 UnpackNormal(float4 packedNormal)
+        {
+            return packedNormal * 2.0f - float4(1.0f);
+        }
     };
 }
 
