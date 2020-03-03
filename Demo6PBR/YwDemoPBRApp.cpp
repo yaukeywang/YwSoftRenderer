@@ -111,7 +111,7 @@ namespace yw
             m_Input->GetMouseMovement(&deltaX, &deltaY);
 
             //m_ModelRotateAngle -= (float)deltaX * 0.015f;
-            m_LightRotateAngle -= (float)deltaX * 0.015f;
+            m_LightRotateAngle -= (float)deltaX * 0.00015f;
 
             m_Metallic = Saturate(m_Metallic - (float)deltaX * 0.00015f);
             m_Smoothness = Saturate(m_Smoothness - (float)deltaY * 0.00015f);

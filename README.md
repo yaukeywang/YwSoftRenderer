@@ -48,3 +48,6 @@ Code in `DeprecatedCode` folder is obsolete, only used for reference and will be
 
 #### Demo 5: Triangle Shader Wireframe
 ![Demo 5 Triangle Shader Wireframe](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe.png)
+
+#### Demo 6: PBR (Unity BRDF 1: Desney Diffuse + Torrance-Sparrow Specular (D=GGX,F=Schlick,V=Smith), IBL is wroking on.)
+![Demo 6 PBR](Demo6PBR/Demo6PBR.png)
