@@ -116,10 +116,10 @@ namespace yw
                 {
                     Vector4* texData = (Vector4*)textureData + texIndex;
                     uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
-                    texData->a = (float)((*bmpData) * colorScale);
-                    texData->r = (float)((*(bmpData + 1)) * colorScale);
-                    texData->g = (float)((*(bmpData + 2)) * colorScale);
-                    texData->b = (float)((*(bmpData + 3)) * colorScale);
+                    texData->b = (float)((*bmpData) * colorScale);
+                    texData->g = (float)((*(bmpData + 1)) * colorScale);
+                    texData->r = (float)((*(bmpData + 2)) * colorScale);
+                    texData->a = (float)((*(bmpData + 3)) * colorScale);
                 }
                 else
                 {
