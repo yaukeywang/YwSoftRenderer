@@ -54,24 +54,24 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
-        m_ModelHandle = resManager->LoadResource("Duck.obj");
+        m_ModelHandle = resManager->LoadResource("SM_Chair.obj");
         if (m_ModelHandle <= 0)
         {
-            LOGE(_T("Load resource \"Duck.obj\" failed."));
+            LOGE(_T("Load resource \"SM_Chair.obj\" failed."));
             return false;
         }
 
-        m_ModelTextureHandle = resManager->LoadResource("Duck_DIFF.tga");
+        m_ModelTextureHandle = resManager->LoadResource("SM_Chair_D.bmp");
         if (m_ModelTextureHandle <= 0)
         {
-            LOGE(_T("Load resource \"Duck_DIFF.tga\" failed."));
+            LOGE(_T("Load resource \"SM_Chair_D.tga\" failed."));
             return false;
         }
 
-        m_ModelNormalTextureHandle = resManager->LoadResource("Duck_NRM.tga");
+        m_ModelNormalTextureHandle = resManager->LoadResource("SM_Chair_N.bmp");
         if (m_ModelNormalTextureHandle <= 0)
         {
-            LOGE(_T("Load resource \"Duck_NRM.tga\" failed."));
+            LOGE(_T("Load resource \"SM_Chair_N.tga\" failed."));
             return false;
         }
 
@@ -79,21 +79,21 @@ namespace yw
         m_Model = (Model*)resManager->GetResource(m_ModelHandle);
         if (nullptr == m_Model)
         {
-            LOGE(_T("Get resource \"Duck.obj\" failed."));
+            LOGE(_T("Get resource \"SM_Chair.obj\" failed."));
             return false;
         }
 
         m_ModelTexture = (Yw3dTexture*)resManager->GetResource(m_ModelTextureHandle);
         if (nullptr == m_ModelTexture)
         {
-            LOGE(_T("Get resource \"Duck_DIFF.tga\" failed."));
+            LOGE(_T("Get resource \"SM_Chair_D.tga\" failed."));
             return false;
         }
 
         m_ModelNormalTexture = (Yw3dTexture*)resManager->GetResource(m_ModelNormalTextureHandle);
         if (nullptr == m_ModelTexture)
         {
-            LOGE(_T("Get resource \"Duck_NRM.tga\" failed."));
+            LOGE(_T("Get resource \"SM_Chair_N.tga\" failed."));
             return false;
         }
 
@@ -102,7 +102,7 @@ namespace yw
         m_PixelShader = new DemoPBRPixelShader();
 
         // Initialize environments.
-        m_LightDirection.Set(0.0f, 0.0f, 1.0f);
+        m_LightDirection.Set(0.0f, -0.3f, 1.0f);
         m_LightColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_AlbedoColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_SpecularColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -124,6 +124,12 @@ namespace yw
         Yw3dDevice* device = graphics->GetYw3dDevice();
         Camera* camera = graphics->GetCurrentCamera();
 
+        // Update light direction.
+        Matrix44 lightRotate;
+        Matrix44RotationY(lightRotate, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetLightRotationAngle());
+        Vector3 lightDir = Vector4(m_LightDirection) * lightRotate;
+        //Vector3 lightDir = m_LightDirection;
+
         // Get material parameters.
         m_Metallic = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetMetallic();
         m_Smoothness = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetSmoothness();
@@ -131,16 +137,10 @@ namespace yw
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
 
-        // Set rotation.
-        Matrix44 matRotate;
-        //Matrix44RotationY(matRotate, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
-        Matrix44RotationY(matRotate, YW_PI);
-        matWorld *= matRotate;
-
-        // Set scale.
-        Matrix44 matScale;
-        Matrix44Scaling(matScale, 0.1f, 0.1f, 0.1f);
-        matWorld *= matScale;
+        // Set transformation.
+        Quaternion qRotate;
+        QuaternionFromEuler(qRotate, 0.0f, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetModelRotationAngle(), 0.0f);
+        Matrix44Transformation(matWorld, Vector3(0.005f, 0.005f, 0.005f), qRotate, Vector3(-0.3f, 0.0f, 0.0f));
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -167,16 +167,11 @@ namespace yw
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        // Update shader property.
-        Matrix44 worldInverse;
-        Matrix44Inverse(worldInverse, camera->GetWorldMatrix());
+        // Update shader parameters.
+        m_Metallic = 0.625f;
+        m_Smoothness = 0.6f;
 
-        //Matrix44 lightRotate;
-        //Matrix44RotationY(lightRotate, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetLightRotationAngle());
-        //Vector3 lightDir = Vector4(m_LightDirection) * lightRotate;
-        Vector3 lightDir = m_LightDirection;
-
-        m_PixelShader->SetVector(0, m_LightDirection);
+        m_PixelShader->SetVector(0, lightDir);
         m_PixelShader->SetVector(1, m_LightColor);
         m_PixelShader->SetVector(2, m_AlbedoColor);
         m_PixelShader->SetVector(3, camera->GetForward());
@@ -187,6 +182,32 @@ namespace yw
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetPixelShader(m_PixelShader);
+
+        // Render model.
+        //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
+        m_Model->Render(device);
+
+        // Transform other to another place.
+        QuaternionFromEuler(qRotate, 0.0f, ((DemoPBRApp*)(GetScene()->GetApplication()))->GetModelRotationAngle(), 0.0f);
+        Matrix44Transformation(matWorld, Vector3(0.005f, 0.005f, 0.005f), qRotate, Vector3(0.3f, 0.0f, 0.0f));
+
+        // Set world transform to camera.
+        camera->SetWorldMatrix(matWorld);
+
+        // This should be from device.
+        matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
+        device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
+        device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
+        device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
+        device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+        // Update shader parameters.
+        m_Metallic = 0.0f;
+        m_Smoothness = 1.0f;
+
+        // Set shader parameters.
+        m_PixelShader->SetFloat(0, m_Metallic);
+        m_PixelShader->SetFloat(1, m_Smoothness);
 
         // Render model.
         //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
