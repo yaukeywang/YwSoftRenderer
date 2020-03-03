@@ -8,10 +8,17 @@ namespace yw
     // ------------------------------------------------------------------
     // Wireframe vertex shader.
 
+    // Vertex input format:
+    // 0 - Vector3 position;
+    // 1 - Vector3 normal;
+    // 2 - Vector4 tangent;
+    // 3 - Vector4 color;
+    // 4 - Vector2 texcoord;
+    // 5 - Vector2 texcoord2;
     void DemoTriangleShaderWireframeVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
     {
         // Get current position.
-        Vector4 curPos = vsShaderInput[0];
+        float4 curPos = vsShaderInput[0];
         curPos.w = 1.0f;
 
         // The projection vertex position.
@@ -51,9 +58,9 @@ namespace yw
         const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
 
         // Get input pos.
-        Vector4 inputPos0 = shaderRegister0[0];
-        Vector4 inputPos1 = shaderRegister1[0];
-        Vector4 inputPos2 = shaderRegister2[0];
+        float4 inputPos0 = shaderRegister0[0];
+        float4 inputPos1 = shaderRegister1[0];
+        float4 inputPos2 = shaderRegister2[0];
 
         // Compute the case from the positions of point in space.
         int32_t curCase = (inputPos0.z < 0) * 4 + (inputPos1.z < 0) * 2 + (inputPos2.z < 0);
@@ -69,8 +76,8 @@ namespace yw
         }
 
         // Transform point to viewport space.
-        const Matrix44& viewportMatrix = GetMatrix(0);
-        Vector2 points[3];
+        const float44& viewportMatrix = GetMatrix(0);
+        float2 points[3];
         points[0] = inputPos0 * viewportMatrix;
         points[1] = inputPos1 * viewportMatrix;
         points[2] = inputPos2 * viewportMatrix;
@@ -80,7 +87,7 @@ namespace yw
         if (curCase == 0)
         {
             // Compute the edges vectors of the transformed triangle
-            Vector2 edges[3];
+            float2 edges[3];
             edges[0] = points[1] - points[0];
             edges[1] = points[2] - points[1];
             edges[2] = points[0] - points[2];
@@ -93,9 +100,9 @@ namespace yw
 
             // Compute the cos angle of each vertices
             float cosAngles[3];
-            cosAngles[0] = Vector2Dot(-edges[2], edges[0]) / (lengths[2] * lengths[0]);
-            cosAngles[1] = Vector2Dot(-edges[0], edges[1]) / (lengths[0] * lengths[1]);
-            cosAngles[2] = Vector2Dot(-edges[1], edges[2]) / (lengths[1] * lengths[2]);
+            cosAngles[0] = dot(-edges[2], edges[0]) / (lengths[2] * lengths[0]);
+            cosAngles[1] = dot(-edges[0], edges[1]) / (lengths[0] * lengths[1]);
+            cosAngles[2] = dot(-edges[1], edges[2]) / (lengths[1] * lengths[2]);
 
             // The height for each vertices of the triangle
             float heights[3];
@@ -115,39 +122,39 @@ namespace yw
 
             // Vertex 0 Projective pos.
             // Vertex 0 EdgeA.
-            Vector4& output0EdgeA = shaderRegister0[1];
+            float4& output0EdgeA = shaderRegister0[1];
             output0EdgeA.x = 0;
             output0EdgeA.y = heights[0];
             output0EdgeA.z = 0;
 
             // Vertex 0 EdgeB.
-            Vector4& output0EdgeB = shaderRegister0[2];
+            float4& output0EdgeB = shaderRegister0[2];
             output0EdgeB.x = edgeOffsets[0];
             output0EdgeB.y = edgeOffsets[1] + edgeSigns[1] * cosAngles[1] * lengths[0];
             output0EdgeB.z = edgeOffsets[2] + edgeSigns[2] * lengths[2];
 
             // Vertex 1 Projective pos.
             // Vertex 1 EdgeA.
-            Vector4& output1EdgeA = shaderRegister1[1];
+            float4& output1EdgeA = shaderRegister1[1];
             output1EdgeA.x = 0;
             output1EdgeA.y = 0;
             output1EdgeA.z = heights[1];
 
             // Vertex 1 EdgeB.
-            Vector4& output1EdgeB = shaderRegister1[2];
+            float4& output1EdgeB = shaderRegister1[2];
             output1EdgeB.x = edgeOffsets[0] + edgeSigns[0] * lengths[0];
             output1EdgeB.y = edgeOffsets[1];
             output1EdgeB.z = edgeOffsets[2] + edgeSigns[2] * cosAngles[2] * lengths[1];
 
             // Vertex 2 Projective pos.
             // Vertex 2 EdgeA.
-            Vector4& output2EdgeA = shaderRegister2[1];
+            float4& output2EdgeA = shaderRegister2[1];
             output2EdgeA.x = heights[2];
             output2EdgeA.y = 0;
             output2EdgeA.z = 0;
 
             // Vertex 2 EdgeB.
-            Vector4& output2EdgeB = shaderRegister2[2];
+            float4& output2EdgeB = shaderRegister2[2];
             output2EdgeB.x = edgeOffsets[0] + edgeSigns[0] * cosAngles[0] * lengths[2];
             output2EdgeB.y = edgeOffsets[1] + edgeSigns[1] * lengths[1];
             output2EdgeB.z = edgeOffsets[2];
@@ -158,7 +165,7 @@ namespace yw
             // Then compute and pass the edge definitions from the case
             // Vertex EdgeA x-y.
             //output.EdgeA.xy = points[infoA[output.Case]];
-            Vector2 tmpEdgeAXY = points[infoA[curCase]];
+            float2 tmpEdgeAXY = points[infoA[curCase]];
             shaderRegister0[1].x = tmpEdgeAXY.x;
             shaderRegister0[1].y = tmpEdgeAXY.y;
             shaderRegister1[1].x = tmpEdgeAXY.x;
@@ -168,7 +175,7 @@ namespace yw
 
             // Vertex EdgeB x-y.
             //output.EdgeB.xy = points[infoB[output.Case]];
-            Vector2 tmpEdgeBXY = points[infoB[curCase]];
+            float2 tmpEdgeBXY = points[infoB[curCase]];
             shaderRegister0[2].x = tmpEdgeBXY.x;
             shaderRegister0[2].y = tmpEdgeBXY.y;
             shaderRegister1[2].x = tmpEdgeBXY.x;
@@ -178,7 +185,7 @@ namespace yw
 
             // Vertex EdgeA z-w.
             //output.EdgeA.zw = normalize(output.EdgeA.xy - points[infoAd[output.Case]]);
-            Vector2 edgeAZW = (tmpEdgeAXY - points[infoAd[curCase]]).Normalize();
+            float2 edgeAZW = normalize(tmpEdgeAXY - points[infoAd[curCase]]);
             shaderRegister0[1].z = edgeAZW.x;
             shaderRegister0[1].w = edgeAZW.y;
             shaderRegister1[1].z = edgeAZW.x;
@@ -188,7 +195,7 @@ namespace yw
 
             // Vertex EdgeB z-w.
             //output.EdgeB.zw = normalize(output.EdgeB.xy - points[infoBd[output.Case]]);
-            Vector2 edgeBZW = (tmpEdgeBXY - points[infoBd[curCase]]).Normalize();
+            float2 edgeBZW = normalize(tmpEdgeBXY - points[infoBd[curCase]]);
             shaderRegister0[2].z = edgeBZW.x;
             shaderRegister0[2].w = edgeBZW.y;
             shaderRegister1[2].z = edgeBZW.x;
@@ -212,9 +219,9 @@ namespace yw
     float DemoTriangleShaderWireframeDefaultPixelShader::EvalMinDistanceToEdges(const Yw3dShaderRegister* input)
     {
         // Get input value.
-        const Vector4& inputPos = input[0];
-        const Vector4& inputEdgeA = input[1];
-        const Vector4& inputEdgeB = input[2];
+        const float4& inputPos = input[0];
+        const float4& inputEdgeA = input[1];
+        const float4& inputEdgeB = input[2];
         const int32_t inputCase = (int32_t)input[3].x;
 
         // Result distant.
@@ -232,20 +239,20 @@ namespace yw
         {
             // Compute and compare the sqDist, do one sqrt in the end.
 
-            Vector2 AF = Vector2(inputPos.x, inputPos.y) - Vector2(inputEdgeA.x, inputEdgeA.y);
-            float sqAF = Vector2Dot(AF, AF);
-            float AFcosA = Vector2Dot(AF, Vector2(inputEdgeA.z, inputEdgeA.w));
+            float2 AF = float2(inputPos.x, inputPos.y) - float2(inputEdgeA.x, inputEdgeA.y);
+            float sqAF = dot(AF, AF);
+            float AFcosA = dot(AF, float2(inputEdgeA.z, inputEdgeA.w));
             dist = abs(sqAF - AFcosA * AFcosA);
 
-            Vector2 BF = Vector2(inputPos.x, inputPos.y) - Vector2(inputEdgeB.x, inputEdgeB.y);
-            float sqBF = Vector2Dot(BF, BF);
-            float BFcosB = Vector2Dot(BF, Vector2(inputEdgeB.z, inputEdgeB.w));
+            float2 BF = float2(inputPos.x, inputPos.y) - float2(inputEdgeB.x, inputEdgeB.y);
+            float sqBF = dot(BF, BF);
+            float BFcosB = dot(BF, float2(inputEdgeB.z, inputEdgeB.w));
             dist = min(dist, abs(sqBF - BFcosB * BFcosB));
 
             // Only need to care about the 3rd edge for some cases.
             if (1 == inputCase || 2 == inputCase || 4 == inputCase)
             {
-                float AFcosA0 = Vector2Dot(AF, (Vector2(inputEdgeB.x, inputEdgeB.y) - Vector2(inputEdgeA.x, inputEdgeA.y)).Normalize());
+                float AFcosA0 = dot(AF, normalize(float2(inputEdgeB.x, inputEdgeB.y) - float2(inputEdgeA.x, inputEdgeA.y)));
                 dist = min(dist, abs(sqAF - AFcosA0 * AFcosA0));
             }
 
@@ -262,9 +269,9 @@ namespace yw
         const float fadeDistance = 50.0f;
         const float patternPeriod = 1.5f;
 
-        const Vector4 fillColor = Vector4(0.1f, 0.2f, 0.4f, 1.0f);
-        const Vector4 wireColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-        const Vector4 patternColor = Vector4(1.0f, 1.0f, 0.5f, 1.0f);
+        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
+        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
 
         // Compute the shortest distance between the fragment and the edges.
         float dist = EvalMinDistanceToEdges(input);
@@ -303,20 +310,20 @@ namespace yw
         return true; // Discard pixel if pixel shader return false.
     }
 
-    float DemoTriangleShaderWireframePatternPixelShader::EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, Vector3& edgeSqDists, Vector3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2)
+    float DemoTriangleShaderWireframePatternPixelShader::EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, float3& edgeSqDists, float3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2)
     {
         // Get input value.
-        const Vector4& inputPos = input[0];
-        const Vector4& inputEdgeA = input[1];
-        const Vector4& inputEdgeB = input[2];
+        const float4& inputPos = input[0];
+        const float4& inputEdgeA = input[1];
+        const float4& inputEdgeB = input[2];
         const int32_t inputCase = (int32_t)input[3].x;
 
         // The easy case, the 3 distances of the fragment to the 3 edges is already
         // computed, get the min.
         if (0 == inputCase)
         {
-            edgeSqDists = Vector3(inputEdgeA) * Vector3(inputEdgeA);
-            edgeCoords = Vector3(inputEdgeB);
+            edgeSqDists = float3(inputEdgeA) * float3(inputEdgeA);
+            edgeCoords = float3(inputEdgeB);
             edgeOrder0 = 0;
             edgeOrder1 = 1;
             edgeOrder2 = 2;
@@ -346,18 +353,18 @@ namespace yw
         // given from the geometry shader.
         else
         {
-            float2 AF = Vector2(inputPos) - Vector2(inputEdgeA);
-            float sqAF = Vector2Dot(AF, AF);
-            float AFcosA = Vector2Dot(AF, Vector2(inputEdgeA.z, inputEdgeA.w));
+            float2 AF = float2(inputPos) - float2(inputEdgeA);
+            float sqAF = dot(AF, AF);
+            float AFcosA = dot(AF, float2(inputEdgeA.z, inputEdgeA.w));
             edgeSqDists.x = abs(sqAF - AFcosA * AFcosA);
             edgeOrder0 = 0;
             edgeOrder1 = 1;
             edgeOrder2 = 2;
             edgeCoords.x = abs(AFcosA);
 
-            float2 BF = Vector2(inputPos) - Vector2(inputEdgeB);
-            float sqBF = Vector2Dot(BF, BF);
-            float BFcosB = Vector2Dot(BF, Vector2(inputEdgeB.z, inputEdgeB.w));
+            float2 BF = float2(inputPos) - float2(inputEdgeB);
+            float sqBF = dot(BF, BF);
+            float BFcosB = dot(BF, float2(inputEdgeB.z, inputEdgeB.w));
             edgeSqDists.y = abs(sqBF - BFcosB * BFcosB);
             edgeCoords.y = abs(BFcosB);
 
@@ -370,7 +377,7 @@ namespace yw
 
             if (1 == inputCase || 2 == inputCase || 4 == inputCase)
             {
-                float AFcosA0 = Vector2Dot(AF, (Vector2(inputEdgeB) - Vector2(inputEdgeA)).Normalize());
+                float AFcosA0 = dot(AF, normalize(float2(inputEdgeB) - float2(inputEdgeA)));
                 edgeSqDists.z = abs(sqAF - AFcosA0 * AFcosA0);
                 edgeCoords.z = abs(AFcosA0);
 
@@ -410,9 +417,9 @@ namespace yw
         const float fadeDistance = 50;
         const float patternPeriod = 1.5;
 
-        const Vector4 fillColor = Vector4(0.1f, 0.2f, 0.4f, 1.0f);
-        const Vector4 wireColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-        const Vector4 patternColor = Vector4(1.0f, 1.0f, 0.5f, 1.0f);
+        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
+        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
 
         // Constants.
         const uint32_t infoA[] = { 0, 0, 0, 0, 1, 1, 2 };
@@ -422,14 +429,14 @@ namespace yw
         const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
 
         // Get input value.
-        const Vector4& inputPos = input[0];
-        const Vector4& inputEdgeA = input[1];
-        const Vector4& inputEdgeB = input[2];
+        const float4& inputPos = input[0];
+        const float4& inputEdgeA = input[1];
+        const float4& inputEdgeB = input[2];
         const int32_t inputCase = (int32_t)input[3].x;
 
         // Compute the shortest square distance between the fragment and the edges.
-        Vector3 edgeSqDists;
-        Vector3 edgeCoords;
+        float3 edgeSqDists;
+        float3 edgeCoords;
         uint32_t edgeOrder0 = 0xffffffff;
         uint32_t edgeOrder1 = 0xffffffff;
         uint32_t edgeOrder2 = 0xffffffff;

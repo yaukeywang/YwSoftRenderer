@@ -15,6 +15,13 @@ namespace yw
     // Normal-Mapping shader.
 
     // Normal-Mapping vertex shader.
+    // Vertex input format:
+    // 0 - Vector3 position;
+    // 1 - Vector3 normal;
+    // 2 - Vector4 tangent;
+    // 3 - Vector4 color;
+    // 4 - Vector2 texcoord;
+    // 5 - Vector2 texcoord2;
     class DemoNormalMappingVertexShader : public IYw3dVertexShader
     {
     protected:
@@ -27,27 +34,28 @@ namespace yw
             //vsShaderOutput[0] = vsShaderInput[1];
 
             // Get light and view direction.
-            const Vector4& lightDir = GetVector(0);
-            const Vector4& viewDir = GetVector(1);
+            const float4& lightDir = GetVector(0);
+            const float4& viewDir = GetVector(1);
 
             // Get world inverse matrix.
-            const Matrix44& worldInverse = GetMatrix(0);
+            const float44& worldInverse = GetMatrix(0);
 
             // Transform light and view direction into model space.
-            Vector4 modelLightDir = lightDir * worldInverse;
-            Vector4 modelViewDir = viewDir * worldInverse;
+            float4 modelLightDir = lightDir * worldInverse;
+            float4 modelViewDir = viewDir * worldInverse;
 
             // Other vertex attribute.
             vsShaderOutput[0] = -modelLightDir;
             vsShaderOutput[1] = -modelViewDir;
 
-            // Other vertex attribute.
+            // Texcoord.
             vsShaderOutput[2] = vsShaderInput[4];
 
-            const Vector3 normal = vsShaderInput[1];
-            const Vector4 tangent = vsShaderInput[2];
-            const Vector3 binormal = Vector3Cross(Vector3(), normal, Vector3(tangent.x, tangent.y, tangent.z)) * tangent.w;
-            vsShaderOutput[3] = Vector3(tangent);
+            // TBN.
+            const float3 normal = vsShaderInput[1];
+            const float4 tangent = vsShaderInput[2];
+            const float3 binormal = cross(normal, float3(tangent)) * tangent.w;
+            vsShaderOutput[3] = float3(tangent);
             vsShaderOutput[4] = binormal;
             vsShaderOutput[5] = normal;
         }
@@ -86,40 +94,35 @@ namespace yw
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
             // Form TBN matrix from tangent space to model space.
-            const Vector3 tangent = Vector3(input[3]).Normalize();
-            const Vector3 binormal = Vector3(input[4]).Normalize();
-            const Vector3 normal = Vector3(input[5]).Normalize();
-            Matrix33 TBN = Matrix33(
+            const float3 tangent = normalize(float3(input[3]));
+            const float3 binormal = normalize(float3(input[4]));
+            const float3 normal = normalize(float3(input[5]));
+            float33 TBN = float33(
                 tangent.x, tangent.y, tangent.z,
                 binormal.x, binormal.y, binormal.z,
                 normal.x, normal.y, normal.z
             );
 
             // Sample main texture.
-            Vector4 vDdx, vDdy;
-            GetPartialDerivatives(2, vDdx, vDdy);
-            Vector2 texCoord = input[2];
-            Vector4 texColor;
-            SampleTexture(texColor, 0, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
+            float2 texCoord = input[2];
+            float4 texColor = tex2D(2, 0, texCoord);
 
             // Sample normal texture.
-            Vector4 normalTexColor;
-            SampleTexture(normalTexColor, 1, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
+            float4 normalTexColor = tex2D(2, 1, texCoord);;
+            float3 normalTangent = normalTexColor * 2 - float4(1.0f, 1.0f, 1.0f, 0.0f);
+            float3 normalModel = normalize(normalTangent * TBN);
 
-            Vector3 normalTangent = normalTexColor * 2 - Vector4(1.0f, 1.0f, 1.0f, 0.0f);
-            Vector3 normalModel = Vector3Normalize(Vector3(), normalTangent * TBN);
-
-            Vector3 modelLightDir = Vector3(input[0]).Normalize();
-            Vector3 modelViewDir = Vector3(input[1]).Normalize();
+            float3 modelLightDir = float3(input[0]).Normalize();
+            float3 modelViewDir = float3(input[1]).Normalize();
 
             // Get half vector.
-            Vector3 h = (modelLightDir + modelViewDir);
+            float3 h = (modelLightDir + modelViewDir);
 
             // Get diffuse.
-            float diff = max(0.0f, Vector3Dot(normalModel, modelLightDir));
+            float diff = max(0.0f, dot(normalModel, modelLightDir));
 
             // Get N dot H.
-            float nh = max(0.0f, Vector3Dot(normalModel, h));
+            float nh = max(0.0f, dot(normalModel, h));
 
             // Get specular.
             float specular = GetFloat(0);
@@ -127,11 +130,11 @@ namespace yw
             float spec = pow(nh, specular * 128.0f) * gloss;
 
             // Get light color.
-            Vector4 lightColor = GetVector(0);
-            Vector4 albedo = GetVector(1);
-            Vector4 specColor = GetVector(2);
+            float4 lightColor = GetVector(0);
+            float4 albedo = GetVector(1);
+            float4 specColor = GetVector(2);
 
-            Vector4 c = albedo * texColor + lightColor * diff * texColor * 1.3f + lightColor * specColor * spec * 1.8f;
+            float4 c = albedo * texColor + lightColor * diff * texColor * 1.3f + lightColor * specColor * spec * 1.8f;
             c.a = 1.0f;
 
             color = c;

@@ -56,7 +56,7 @@ namespace yw
         bool MightKillPixels();
 
         // Get minimum edge distance.
-        float EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, Vector3& edgeSqDists, Vector3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2);
+        float EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, float3& edgeSqDists, float3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2);
 
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);

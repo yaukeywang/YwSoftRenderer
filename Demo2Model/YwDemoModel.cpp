@@ -14,6 +14,14 @@ namespace yw
     // ------------------------------------------------------------------
     // Model shader.
 
+    // Vertex input format:
+    // 0 - Vector3 position;
+    // 1 - Vector3 normal;
+    // 2 - Vector4 tangent;
+    // 3 - Vector4 color;
+    // 4 - Vector2 texcoord;
+    // 5 - Vector2 texcoord2;
+
     // Model vertex shader.
     class DemoModelVertexShader : public IYw3dVertexShader
     {
