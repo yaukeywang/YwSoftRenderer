@@ -349,6 +349,12 @@ namespace yw
     typedef Vector3 float3;
     typedef Vector4 float4;
 
+    // half point format.
+    typedef float half;
+    typedef Vector2 half2;
+    typedef Vector3 half3;
+    typedef Vector4 half4;
+
     // float point format of matrix.
     typedef Matrix33 float33;
     typedef Matrix44 float44;
