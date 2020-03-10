@@ -76,6 +76,10 @@ enum Yw3dRenderState
     Yw3d_RS_StencilMask,      // Mask value used in stencil test.
     Yw3d_RS_StencilWriteMask, // Write mask applied to values written to stencil buffer.
 
+    Yw3d_RS_AlphaTestEnable, // true to enable per pixel alpha testing. If the test passes, the pixel is processed by the frame buffer. Otherwise, all frame-buffer processing is skipped for the pixel. The test is done by comparing the incoming alpha value with the reference alpha value, using the comparison function provided by the Yw3d_RS_AlphaFunc render state. The reference alpha value is determined by the value set for Yw3d_RS_AlphaFunc.
+    Yw3d_RS_AlphaRef,        // Value that specifies a reference alpha value against which pixels are tested when alpha testing is enabled. This is an 8-bit value placed in the low 8 bits of the uint32_t render-state value. Values can range from 0x00000000 through 0x000000FF. The default value is 0.
+    Yw3d_RS_AlphaFunc,       // One member of the Yw3dCompareFunction enumerated type. The default value is Yw3d_CMP_Always. This member enables an application to accept or reject a pixel, based on its alpha value.
+
     Yw3d_RS_AlphaBlendEnable,         // true to enable alpha-blended transparency. The default value is false. The type of alpha blending is determined by the Yw3d_RS_SrcBlend and Yw3d_RS_DestBlend render states.
     Yw3d_RS_SrcBlend,                 // One member of the Yw3dBlend enumerated type. The default value is Yw3d_Blend_One.
     Yw3d_RS_DestBlend,                // One member of the Yw3dBlend enumerated type. The default value is Yw3d_Blend_Zero.
