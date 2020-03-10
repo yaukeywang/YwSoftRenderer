@@ -1246,6 +1246,20 @@ namespace yw
         SetRenderState(Yw3d_RS_StencilMask, 0x000000ff);
         SetRenderState(Yw3d_RS_StencilWriteMask, 0x000000ff);
 
+        SetRenderState(Yw3d_RS_AlphaTestEnable, false);
+        SetRenderState(Yw3d_RS_AlphaRef, 0);
+        SetRenderState(Yw3d_RS_AlphaFunc, Yw3d_CMP_Always);
+
+        SetRenderState(Yw3d_RS_AlphaBlendEnable, false);
+        SetRenderState(Yw3d_RS_SrcBlend, Yw3d_Blend_One);
+        SetRenderState(Yw3d_RS_DestBlend, Yw3d_Blend_Zero);
+        SetRenderState(Yw3d_RS_BlendOp, Yw3d_BlendOp_Add);
+        SetRenderState(Yw3d_RS_SeparateAlphaBlendEnable, false);
+        SetRenderState(Yw3d_RS_SrcBlendAlpha, Yw3d_Blend_One);
+        SetRenderState(Yw3d_RS_DestBlendAlpha, Yw3d_Blend_Zero);
+        SetRenderState(Yw3d_RS_BlendOpAlpha, Yw3d_BlendOp_Add);
+        SetRenderState(Yw3d_RS_BlendFactor, 0xffffffff);
+
         SetRenderState(Yw3d_RS_ColorWriteEnable, true);
         SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
