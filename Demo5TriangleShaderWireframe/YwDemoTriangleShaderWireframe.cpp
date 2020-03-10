@@ -52,7 +52,7 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
-        m_ModelHandle = resManager->LoadResource("HydrantPart.obj");
+        m_ModelHandle = resManager->LoadResource("soccerball.obj");
         if (m_ModelHandle <= 0)
         {
             LOGE(_T("Load resource \"HydrantPart.obj\" failed."));
@@ -98,7 +98,7 @@ namespace yw
 
         // Set scale.
         Matrix44 matScale;
-        Matrix44Scaling(matScale, 0.035f, 0.035f, 0.035f);
+        Matrix44Scaling(matScale, 0.15f, 0.15f, 0.15f);
         matWorld *= matScale;
 
         // Set world transform to camera.
@@ -115,6 +115,11 @@ namespace yw
         Matrix44 worldInverse;
         Matrix44Inverse(worldInverse, camera->GetWorldMatrix());
 
+        // Set alpha blend state.
+        graphics->SetRenderState(Yw3d_RS_AlphaBlendEnable, true);
+        graphics->SetRenderState(Yw3d_RS_SrcBlend, Yw3d_Blend_SrcAlpha);
+        graphics->SetRenderState(Yw3d_RS_DestBlend, Yw3d_Blend_InvSrcAlpha);
+
         // Set viewport matrix to triangle shader.
         const Matrix44* matViewport = nullptr;
         device->GetViewportMatrix(matViewport);
@@ -123,8 +128,8 @@ namespace yw
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetTriangleShader(m_TriangleShader);
-        graphics->SetPixelShader(m_DefaultPixelShader);
-        //graphics->SetPixelShader(m_PatternPixelShader);
+        //graphics->SetPixelShader(m_DefaultPixelShader);
+        graphics->SetPixelShader(m_PatternPixelShader);
         
         // Render model.
         //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
