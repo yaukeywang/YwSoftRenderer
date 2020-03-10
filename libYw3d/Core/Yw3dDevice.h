@@ -576,6 +576,17 @@ namespace yw
         // @return new stencil to write.
         uint32_t CalculatePixelStencilValue(uint32_t stencil, uint32_t reference, uint32_t writeMask, Yw3dStencilOperaton operation);
 
+        // Perform alpha test stage for an output pixel value from pixel shader.
+        // @param[in] color the pixel color to perform alpha test.
+        // @return true if pixel should be kept, otherwise false.
+        bool PerformAlphaTestStage(const Vector4& color);
+
+        // Perform alpha blend stage for an output pixel value from pixel shader.
+        // @param[in] srcColor the source pixel color output from pixel shader.
+        // @param[in] dstColor the pixel currently on the back buffer.
+        // @return final blended color.
+        Vector4 PerformAlphaBlendStage(const Vector4& srcColor, const Vector4& dstColor);
+
     private:
         // ------------------------------------------------------------------
 
@@ -746,6 +757,48 @@ namespace yw
             bool stencilEnabled;
 
             // ------------------------------------------------------------------
+            // Alpha test info.
+
+            // Alpha test reference value.
+            uint8_t alphaTestRef;
+
+            // Alpha test function.
+            Yw3dCompareFunction alphaTestFunc;
+
+            // Alpha test enabled or not.
+            bool alphaTestEnabled;
+
+            // ------------------------------------------------------------------
+            // Alpha blend info.
+
+            // Source blend value.
+            Yw3dBlend srcBlend;
+
+            // Destination blend value.
+            Yw3dBlend destBlend;
+
+            // Blend operation.
+            Yw3dBlendOperaton blendOp;
+
+            // Alpha blend enabled or not.
+            bool alphaBlendEnabled;
+
+            // Source blend for separate alpha blend.
+            Yw3dBlend srcBlendAlpha;
+
+            // Destination blend for separate alpha blend.
+            Yw3dBlend destBlendAlpha;
+
+            // Blend operation for separate alpha blend.
+            Yw3dBlendOperaton blendOpAlpha;
+
+            // Separate alpha blend enabled or not.
+            bool separateAlphaBlendEnabled;
+
+            // Blend factor.
+            uint32_t blendFactor;
+
+            // ------------------------------------------------------------------
             // Rasterize info.
 
             // Rasterization-function for scanlines (triangle-drawing).
@@ -778,6 +831,10 @@ namespace yw
                 stencilData(nullptr), stencilBufferPitch(0), 
                 stencilOperatonPass(Yw3d_StencilOp_Keep), stencilOperatonFail(Yw3d_StencilOp_Keep), stencilOperatonZFail(Yw3d_StencilOp_Keep), 
                 stencilCompare(Yw3d_CMP_Always), stencilReference(0), stencilMask(0x000000ff), stencilWriteMask(0x000000ff), stencilEnabled(false),
+                alphaTestRef(0), alphaTestFunc(Yw3d_CMP_Always), alphaTestEnabled(false),
+                srcBlend(Yw3d_Blend_One), destBlend(Yw3d_Blend_Zero), blendOp(Yw3d_BlendOp_Add), alphaBlendEnabled(false),
+                srcBlendAlpha(Yw3d_Blend_One), destBlendAlpha(Yw3d_Blend_Zero), blendOpAlpha(Yw3d_BlendOp_Add), separateAlphaBlendEnabled(false),
+                blendFactor(0xffffffff),
                 fpRasterizeScanline(nullptr), fpDrawPixel(nullptr), renderedPixels(0), viewportRect()
             {
                 // Init shader register types.

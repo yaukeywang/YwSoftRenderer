@@ -1254,10 +1254,12 @@ namespace yw
         SetRenderState(Yw3d_RS_SrcBlend, Yw3d_Blend_One);
         SetRenderState(Yw3d_RS_DestBlend, Yw3d_Blend_Zero);
         SetRenderState(Yw3d_RS_BlendOp, Yw3d_BlendOp_Add);
+
         SetRenderState(Yw3d_RS_SeparateAlphaBlendEnable, false);
         SetRenderState(Yw3d_RS_SrcBlendAlpha, Yw3d_Blend_One);
         SetRenderState(Yw3d_RS_DestBlendAlpha, Yw3d_Blend_Zero);
         SetRenderState(Yw3d_RS_BlendOpAlpha, Yw3d_BlendOp_Add);
+
         SetRenderState(Yw3d_RS_BlendFactor, 0xffffffff);
 
         SetRenderState(Yw3d_RS_ColorWriteEnable, true);
@@ -1680,6 +1682,26 @@ namespace yw
 
         // Initialize pixel shader's pointers to info structures.
         m_PixelShader->SetInfo(m_RenderInfo.vsOutputRegisterTypes, &m_TriangleInfo);
+
+        // Initialize alpha test info.
+        m_RenderInfo.alphaTestEnabled = m_RenderStates[Yw3d_RS_AlphaTestEnable] ? true : false;
+        m_RenderInfo.alphaTestRef = m_RenderStates[Yw3d_RS_AlphaRef];
+        m_RenderInfo.alphaTestFunc = (Yw3dCompareFunction)m_RenderStates[Yw3d_RS_AlphaFunc];
+
+        // Initialize alpha blend info.
+        m_RenderInfo.alphaBlendEnabled = m_RenderStates[Yw3d_RS_AlphaBlendEnable] ? true : false;
+        m_RenderInfo.srcBlend = (Yw3dBlend)m_RenderStates[Yw3d_RS_SrcBlend];
+        m_RenderInfo.destBlend = (Yw3dBlend)m_RenderStates[Yw3d_RS_DestBlend];
+        m_RenderInfo.blendOp = (Yw3dBlendOperaton)m_RenderStates[Yw3d_RS_BlendOp];
+
+        // Initialize separate alpha blend info.
+        m_RenderInfo.separateAlphaBlendEnabled = m_RenderStates[Yw3d_RS_SeparateAlphaBlendEnable] ? true : false;
+        m_RenderInfo.srcBlendAlpha = (Yw3dBlend)m_RenderStates[Yw3d_RS_SrcBlendAlpha];
+        m_RenderInfo.destBlendAlpha = (Yw3dBlend)m_RenderStates[Yw3d_RS_DestBlendAlpha];
+        m_RenderInfo.blendOpAlpha = (Yw3dBlendOperaton)m_RenderStates[Yw3d_RS_BlendOpAlpha];
+
+        // Initialize blend factor.
+        m_RenderInfo.blendFactor = m_RenderStates[Yw3d_RS_BlendFactor];
 
         // Initialize vertex cache.
         m_NumValidCacheEntries = 0;
@@ -2893,19 +2915,32 @@ namespace yw
 
                 // Execute the pixel shader.
                 m_TriangleInfo.curPixelX = x1;
-                m_PixelShader->Execute(psInput.shaderOutputs, pixelColor, depth);
+                Vector4 outputColor = pixelColor;
+                m_PixelShader->Execute(psInput.shaderOutputs, outputColor, depth);
+
+                // Perform alpha test stage.
+                if (m_RenderInfo.alphaTestEnabled && !PerformAlphaTestStage(outputColor))
+                {
+                    continue;
+                }
+
+                // Perform alpha blend stage.
+                if (m_RenderInfo.alphaBlendEnabled)
+                {
+                    outputColor = PerformAlphaBlendStage(outputColor, pixelColor);
+                }
 
                 // Write the new color to the colorbuffer.
                 switch (m_RenderInfo.colorFloats)
                 {
                 case 4:
-                    frameData[3] = pixelColor.a;
+                    frameData[3] = outputColor.a;
                 case 3:
-                    frameData[2] = pixelColor.b;
+                    frameData[2] = outputColor.b;
                 case 2:
-                    frameData[1] = pixelColor.g;
+                    frameData[1] = outputColor.g;
                 case 1:
-                    frameData[0] = pixelColor.r;
+                    frameData[0] = outputColor.r;
                 default:    // Can not happen.
                     break;
                 }
@@ -2999,7 +3034,8 @@ namespace yw
 
                 // Execute the pixel shader.
                 m_TriangleInfo.curPixelX = x1;
-                if (!m_PixelShader->Execute(psInput.shaderOutputs, pixelColor, depth))
+                Vector4 outputColor = pixelColor;
+                if (!m_PixelShader->Execute(psInput.shaderOutputs, outputColor, depth))
                 {
                     // Pixel got killed.
                     continue;
@@ -3011,19 +3047,31 @@ namespace yw
                     *depthData = depth;
                 }
 
+                // Perform alpha test stage.
+                if (m_RenderInfo.alphaTestEnabled && !PerformAlphaTestStage(outputColor))
+                {
+                    continue;
+                }
+
+                // Perform alpha blend stage.
+                if (m_RenderInfo.alphaBlendEnabled)
+                {
+                    outputColor = PerformAlphaBlendStage(outputColor, pixelColor);
+                }
+
                 // Write the new color to the colorbuffer.
                 if (m_RenderInfo.colorWriteEnabled)
                 {
                     switch (m_RenderInfo.colorFloats)
                     {
                     case 4:
-                        frameData[3] = pixelColor.a;
+                        frameData[3] = outputColor.a;
                     case 3:
-                        frameData[2] = pixelColor.b;
+                        frameData[2] = outputColor.b;
                     case 2:
-                        frameData[1] = pixelColor.g;
+                        frameData[1] = outputColor.g;
                     case 1:
-                        frameData[0] = pixelColor.r;
+                        frameData[0] = outputColor.r;
                     default:    // Can not happen.
                         break;
                     }
@@ -3080,7 +3128,8 @@ namespace yw
 
             // Execute the pixel shader.
             m_TriangleInfo.curPixelX = x1;
-            if (!m_PixelShader->Execute(psInput.shaderOutputs, pixelColor, depth))
+            Vector4 outputColor = pixelColor;
+            if (!m_PixelShader->Execute(psInput.shaderOutputs, outputColor, depth))
             {
                 // Pixel got killed.
                 continue;
@@ -3106,19 +3155,31 @@ namespace yw
                 *depthData = depth;
             }
 
+            // Perform alpha test stage.
+            if (m_RenderInfo.alphaTestEnabled && !PerformAlphaTestStage(outputColor))
+            {
+                continue;
+            }
+
+            // Perform alpha blend stage.
+            if (m_RenderInfo.alphaBlendEnabled)
+            {
+                outputColor = PerformAlphaBlendStage(outputColor, pixelColor);
+            }
+
             // Update color buffer.
             if (m_RenderInfo.colorWriteEnabled)
             {
                 switch (m_RenderInfo.colorFloats)
                 {
                 case 4:
-                    frameData[3] = pixelColor.a;
+                    frameData[3] = outputColor.a;
                 case 3:
-                    frameData[2] = pixelColor.b;
+                    frameData[2] = outputColor.b;
                 case 2:
-                    frameData[1] = pixelColor.g;
+                    frameData[1] = outputColor.g;
                 case 1:
-                    frameData[0] = pixelColor.r;
+                    frameData[0] = outputColor.r;
                 default:    // Can not happen.
                     break;
                 }
@@ -3208,19 +3269,32 @@ namespace yw
             // Execute the pixel shader.
             m_TriangleInfo.curPixelX = x;
             m_TriangleInfo.curPixelY = y;
-            m_PixelShader->Execute(vsOutput->shaderOutputs, pixelColor, depth);
+            Vector4 outputColor = pixelColor;
+            m_PixelShader->Execute(vsOutput->shaderOutputs, outputColor, depth);
+
+            // Perform alpha test stage.
+            if (m_RenderInfo.alphaTestEnabled && !PerformAlphaTestStage(outputColor))
+            {
+                return;
+            }
+
+            // Perform alpha blend stage.
+            if (m_RenderInfo.alphaBlendEnabled)
+            {
+                outputColor = PerformAlphaBlendStage(outputColor, pixelColor);
+            }
 
             // Write the new color to the colorbuffer.
             switch (m_RenderInfo.colorFloats)
             {
             case 4:
-                frameData[3] = pixelColor.a;
+                frameData[3] = outputColor.a;
             case 3:
-                frameData[2] = pixelColor.b;
+                frameData[2] = outputColor.b;
             case 2:
-                frameData[1] = pixelColor.g;
+                frameData[1] = outputColor.g;
             case 1:
-                frameData[0] = pixelColor.r;
+                frameData[0] = outputColor.r;
             default:    // Can not happen.
                 break;
             }
@@ -3264,7 +3338,8 @@ namespace yw
         // Execute the pixel shader.
         m_TriangleInfo.curPixelX = x;
         m_TriangleInfo.curPixelY = y;
-        if (!m_PixelShader->Execute(vsOutput->shaderOutputs, pixelColor, depth))
+        Vector4 outputColor = pixelColor;
+        if (!m_PixelShader->Execute(vsOutput->shaderOutputs, outputColor, depth))
         {
             // Pixel got killed.
             return;
@@ -3290,19 +3365,31 @@ namespace yw
             *depthData = depth;
         }
 
+        // Perform alpha test stage.
+        if (m_RenderInfo.alphaTestEnabled && !PerformAlphaTestStage(outputColor))
+        {
+            return;
+        }
+
+        // Perform alpha blend stage.
+        if (m_RenderInfo.alphaBlendEnabled)
+        {
+            outputColor = PerformAlphaBlendStage(outputColor, pixelColor);
+        }
+
         // Update color buffer.
         if (m_RenderInfo.colorWriteEnabled)
         {
             switch (m_RenderInfo.colorFloats)
             {
             case 4:
-                frameData[3] = pixelColor.a;
+                frameData[3] = outputColor.a;
             case 3:
-                frameData[2] = pixelColor.b;
+                frameData[2] = outputColor.b;
             case 2:
-                frameData[1] = pixelColor.g;
+                frameData[1] = outputColor.g;
             case 1:
-                frameData[0] = pixelColor.r;
+                frameData[0] = outputColor.r;
             default:    // Can not happen.
                 break;
             }
@@ -3400,6 +3487,177 @@ namespace yw
             break;
         default: // Can not happen.
             break;
+        }
+
+        return result;
+    }
+
+    bool Yw3dDevice::PerformAlphaTestStage(const Vector4& color)
+    {
+        if (!m_RenderInfo.alphaTestEnabled)
+        {
+            return true;
+        }
+
+        const uint8_t alphaTestValue = (uint8_t)Clamp((int32_t)(color.a * 255.0f), 0, 255);
+        switch (m_RenderInfo.alphaTestFunc)
+        {
+        case Yw3d_CMP_Never:
+            return false;
+        case Yw3d_CMP_Equal:
+            return (alphaTestValue == m_RenderInfo.alphaTestRef);
+        case Yw3d_CMP_NotEqual:
+            return (alphaTestValue != m_RenderInfo.alphaTestRef);
+        case Yw3d_CMP_Less:
+            return (alphaTestValue < m_RenderInfo.alphaTestRef);
+        case Yw3d_CMP_LessEqual:
+            return (alphaTestValue <= m_RenderInfo.alphaTestRef);
+        case Yw3d_CMP_Greater:
+            return (alphaTestValue > m_RenderInfo.alphaTestRef);
+        case Yw3d_CMP_GreaterEqual:
+            return (alphaTestValue >= m_RenderInfo.alphaTestRef);
+        case Yw3d_CMP_Always:
+            return true;
+        default: // Can not happen.
+            return true;
+        }
+    }
+
+    Vector4 Yw3dDevice::PerformAlphaBlendStage(const Vector4& srcColor, const Vector4& dstColor)
+    {
+        if (!m_RenderInfo.alphaBlendEnabled)
+        {
+            return srcColor;
+        }
+
+        Vector4 result = srcColor;
+        if (!m_RenderInfo.separateAlphaBlendEnabled)
+        {
+            // Get source blend factor.
+            Vector4 srcBlendFactor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            switch (m_RenderInfo.srcBlend)
+            {
+            case Yw3d_Blend_Zero:
+                srcBlendFactor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+                break;
+            case Yw3d_Blend_One:
+                srcBlendFactor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                break;
+            case Yw3d_Blend_SrcColor:
+                srcBlendFactor = srcColor;
+                break;
+            case Yw3d_Blend_InvSrcColor:
+                srcBlendFactor = Vector4(1.0f - srcColor.r, 1.0f - srcColor.g, 1.0f - srcColor.b, 1.0f - srcColor.a);
+                break;
+            case Yw3d_Blend_SrcAlpha:
+                srcBlendFactor = Vector4(srcColor.a, srcColor.a, srcColor.a, srcColor.a);
+                break;
+            case Yw3d_Blend_InvSrcAlpha:
+                srcBlendFactor = Vector4(1.0f - srcColor.a, 1.0f - srcColor.a, 1.0f - srcColor.a, 1.0f - srcColor.a);
+                break;
+            case Yw3d_Blend_DestAlpha:
+                srcBlendFactor = Vector4(dstColor.a, dstColor.a, dstColor.a, dstColor.a);
+                break;
+            case Yw3d_Blend_InvDestAlpha:
+                srcBlendFactor = Vector4(1.0f - dstColor.a, 1.0f - dstColor.a, 1.0f - dstColor.a, 1.0f - dstColor.a);
+                break;
+            case Yw3d_Blend_DestColor:
+                srcBlendFactor = dstColor;
+                break;
+            case Yw3d_Blend_InvDestColor:
+                srcBlendFactor = Vector4(1.0f - dstColor.r, 1.0f - dstColor.g, 1.0f - dstColor.b, 1.0f - dstColor.a);
+                break;
+            case Yw3d_Blend_SrcAlphaSat:
+                {
+                    float f = min(srcColor.a, 1.0f - dstColor.a);
+                    srcBlendFactor = Vector4(f, f, f, 1.0f);
+                }                
+                break;
+            case Yw3d_Blend_BlendFactor:
+                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_Blend_BlendFactor has not implemented yet.\n"));
+                break;
+            case Yw3d_Blend_InvBlendFactor:
+                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_Blend_InvBlendFactor has not implemented ye.\n"));
+                break;
+            default:
+                break;
+            }
+
+            // Get destination blend factor.
+            Vector4 dstBlendFactor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+            switch (m_RenderInfo.destBlend)
+            {
+            case Yw3d_Blend_Zero:
+                dstBlendFactor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+                break;
+            case Yw3d_Blend_One:
+                dstBlendFactor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                break;
+            case Yw3d_Blend_SrcColor:
+                dstBlendFactor = srcColor;
+                break;
+            case Yw3d_Blend_InvSrcColor:
+                dstBlendFactor = Vector4(1.0f - srcColor.r, 1.0f - srcColor.g, 1.0f - srcColor.b, 1.0f - srcColor.a);
+                break;
+            case Yw3d_Blend_SrcAlpha:
+                dstBlendFactor = Vector4(srcColor.a, srcColor.a, srcColor.a, srcColor.a);
+                break;
+            case Yw3d_Blend_InvSrcAlpha:
+                dstBlendFactor = Vector4(1.0f - srcColor.a, 1.0f - srcColor.a, 1.0f - srcColor.a, 1.0f - srcColor.a);
+                break;
+            case Yw3d_Blend_DestAlpha:
+                dstBlendFactor = Vector4(dstColor.a, dstColor.a, dstColor.a, dstColor.a);
+                break;
+            case Yw3d_Blend_InvDestAlpha:
+                dstBlendFactor = Vector4(1.0f - dstColor.a, 1.0f - dstColor.a, 1.0f - dstColor.a, 1.0f - dstColor.a);
+                break;
+            case Yw3d_Blend_DestColor:
+                dstBlendFactor = dstColor;
+                break;
+            case Yw3d_Blend_InvDestColor:
+                dstBlendFactor = Vector4(1.0f - dstColor.r, 1.0f - dstColor.g, 1.0f - dstColor.b, 1.0f - dstColor.a);
+                break;
+            case Yw3d_Blend_SrcAlphaSat:
+                {
+                    float f = min(srcColor.a, 1.0f - dstColor.a);
+                    dstBlendFactor = Vector4(f, f, f, 1.0f);
+                }                
+                break;
+            case Yw3d_Blend_BlendFactor:
+                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_Blend_BlendFactor has not implemented yet.\n"));
+                break;
+            case Yw3d_Blend_InvBlendFactor:
+                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_Blend_InvBlendFactor has not implemented ye.\n"));
+                break;
+            default:
+                break;
+            }
+
+            // Combine final pixel color by blend operation.
+            switch (m_RenderInfo.blendOp)
+            {
+            case Yw3d_BlendOp_Add:
+                result = srcColor * srcBlendFactor + dstColor * dstBlendFactor;
+                break;
+            case Yw3d_BlendOp_Subtract:
+                result = srcColor * srcBlendFactor - dstColor * dstBlendFactor;
+                break;
+            case Yw3d_BlendOp_RevSubtract:
+                result = dstColor * dstBlendFactor - srcColor * srcBlendFactor;
+                break;
+            case Yw3d_BlendOp_Min:
+                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_BlendOp_Min has not implemented yet.\n"));
+                break;
+            case Yw3d_BlendOp_Max:
+                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_BlendOp_Max has not implemented yet.\n"));
+                break;
+            default:
+                break;
+            }
+        }
+        else
+        {
+            LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: m_RenderInfo.separateAlphaBlendEnabled has not implemented yet.\n"));
         }
 
         return result;

@@ -83,11 +83,11 @@ enum Yw3dRenderState
     Yw3d_RS_AlphaBlendEnable,         // true to enable alpha-blended transparency. The default value is false. The type of alpha blending is determined by the Yw3d_RS_SrcBlend and Yw3d_RS_DestBlend render states.
     Yw3d_RS_SrcBlend,                 // One member of the Yw3dBlend enumerated type. The default value is Yw3d_Blend_One.
     Yw3d_RS_DestBlend,                // One member of the Yw3dBlend enumerated type. The default value is Yw3d_Blend_Zero.
-    Yw3d_RS_BlendOp,                  // Value used to select the arithmetic operation applied when the alpha blending render state, Yw3d_RS_AlphaBlendEnable, is set to true. Valid values are defined by the Yw3d_BlendOperaton enumerated type. The default value is Yw3d_BlendOp_Add.
+    Yw3d_RS_BlendOp,                  // Value used to select the arithmetic operation applied when the alpha blending render state, Yw3d_RS_AlphaBlendEnable, is set to true. Valid values are defined by the Yw3dBlendOperaton enumerated type. The default value is Yw3d_BlendOp_Add.
     Yw3d_RS_SeparateAlphaBlendEnable, // true enables the separate blend mode for the alpha channel. The default value is false. When set to false, the render-target blending factors and operations applied to alpha are forced to be the same as those defined for color.
     Yw3d_RS_SrcBlendAlpha,            // One member of the Yw3dBlend enumerated type. This value is ignored unless Yw3d_RS_SeparateAlphaBlendEnable is true. The default value is Yw3d_Blend_One.
     Yw3d_RS_DestBlendAlpha,           // One member of the Yw3dBlend enumerated type. This value is ignored unless Yw3d_RS_SeparateAlphaBlendEnable is true. The default value is Yw3d_Blend_Zero.
-    Yw3d_RS_BlendOpAlpha,             // Value used to select the arithmetic operation applied to separate alpha blending when the render state, Yw3d_RS_SeparateAlphaBlendEnable, is set to true. Valid values are defined by the Yw3d_BlendOperaton enumerated type. The default value is Yw3d_BlendOp_Add.
+    Yw3d_RS_BlendOpAlpha,             // Value used to select the arithmetic operation applied to separate alpha blending when the render state, Yw3d_RS_SeparateAlphaBlendEnable, is set to true. Valid values are defined by the Yw3dBlendOperaton enumerated type. The default value is Yw3d_BlendOp_Add.
     Yw3d_RS_BlendFactor,              // Color used for a constant blend-factor during alpha blending. The default value is 0xffffffff.
 
 	Yw3d_RS_ColorWriteEnable, // Set this to true(default) to enable writing to the color-buffer during rasteriation. If no color-buffer is available this renderstate has no effect.
@@ -145,7 +145,7 @@ enum Yw3dBlend
     Yw3d_Blend_Zero,           // Blend factor is (0, 0, 0, 0).
     Yw3d_Blend_One,            // Blend factor is (1, 1, 1, 1).
     Yw3d_Blend_SrcColor,       // Blend factor is (Rs, Gs, Bs, As).
-    Yw3d_Blend_INVSrcColor,    // Blend factor is (1 - Rs, 1 - Gs, 1 - Bs, 1 - As).
+    Yw3d_Blend_InvSrcColor,    // Blend factor is (1 - Rs, 1 - Gs, 1 - Bs, 1 - As).
     Yw3d_Blend_SrcAlpha,       // Blend factor is (As, As, As, As).
     Yw3d_Blend_InvSrcAlpha,    // Blend factor is (1 - As, 1 - As, 1 - As, 1 - As).
     Yw3d_Blend_DestAlpha,      // Blend factor is (Ad Ad Ad Ad).
@@ -164,7 +164,7 @@ enum Yw3dBlend
 };
 
 // Defines the supported blend operations.
-enum Yw3d_BlendOperaton
+enum Yw3dBlendOperaton
 {
     Yw3d_BlendOp_Add,         // The result is the destination added to the source. Result = Source + Destination
     Yw3d_BlendOp_Subtract,    // The result is the destination subtracted from to the source. Result = Source - Destination
