@@ -206,6 +206,60 @@ namespace yw
             return Vector4(yw::Lerp(a.x, b.x, t), yw::Lerp(a.y, b.y, t), yw::Lerp(a.z, b.z, t), yw::Lerp(a.w, b.w, t));
         }
 
+        // The minimum result of two vector2. These all operate component-wise. The calculation is per component.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the minimum of two scalars or each respective component of two vectors.
+        static inline Vector2 minimum(const Vector2& a, const Vector2& b)
+        {
+            return Vector2(min(a.x, b.x), min(a.y, b.y));
+        }
+
+        // The minimum result of two vector3. These all operate component-wise. The calculation is per component.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the minimum of two scalars or each respective component of two vectors.
+        static inline Vector3 minimum(const Vector3& a, const Vector3& b)
+        {
+            return Vector3(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));
+        }
+
+        // The minimum result of two vector4. These all operate component-wise. The calculation is per component.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the minimum of two scalars or each respective component of two vectors.
+        static inline Vector4 minimum(const Vector4& a, const Vector4& b)
+        {
+            return Vector4(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z), min(a.w, b.w));
+        }
+
+        // The maximum result of two vector2. These all operate component-wise. The calculation is per component.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the maximum of two scalars or each respective component of two vectors.
+        static inline Vector2 maximum(const Vector2& a, const Vector2& b)
+        {
+            return Vector2(max(a.x, b.x), max(a.y, b.y));
+        }
+
+        // The maximum result of two vector3. These all operate component-wise. The calculation is per component.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the maximum of two scalars or each respective component of two vectors.
+        static inline Vector3 maximum(const Vector3& a, const Vector3& b)
+        {
+            return Vector3(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
+        }
+
+        // The maximum result of two vector4. These all operate component-wise. The calculation is per component.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the maximum of two scalars or each respective component of two vectors.
+        static inline Vector4 maximum(const Vector4& a, const Vector4& b)
+        {
+            return Vector4(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z), max(a.w, b.w));
+        }
+
         // Returns true if any component of x is not equal to 0. Returns false otherwise.
         // @param[in] v value that to be checked.
         // @return true if any component of x is not equal to 0. false otherwise.
@@ -236,6 +290,30 @@ namespace yw
         static inline bool any(const Vector4& v)
         {
             return Vector4::Zero() != v ? true : false;
+        }
+
+        // The length of vector2.
+        // @param[in] v vector to calculate length.
+        // @return length of this vector.
+        static inline float length(const Vector2& v)
+        {
+            return v.Length();
+        }
+
+        // The length of vector3.
+        // @param[in] v vector to calculate length.
+        // @return length of this vector.
+        static inline float length(const Vector3& v)
+        {
+            return v.Length();
+        }
+
+        // The length of vector4.
+        // @param[in] v vector to calculate length.
+        // @return length of this vector.
+        static inline float length(const Vector4& v)
+        {
+            return v.Length();
         }
 
         // The result of two vector3 dot product.

@@ -3646,10 +3646,18 @@ namespace yw
                 result = dstColor * dstBlendFactor - srcColor * srcBlendFactor;
                 break;
             case Yw3d_BlendOp_Min:
-                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_BlendOp_Min has not implemented yet.\n"));
+                {
+                    Vector4 srcCombine = srcColor * srcBlendFactor;
+                    Vector4 dstCombine = dstColor * dstBlendFactor;
+                    result = Vector4(min(srcCombine.x, dstCombine.x), min(srcCombine.y, dstCombine.y), min(srcCombine.z, dstCombine.z), min(srcCombine.w, dstCombine.w));
+                }
                 break;
             case Yw3d_BlendOp_Max:
-                LOGE(_T("Yw3dDevice::PerformAlphaBlendStage: Yw3d_BlendOp_Max has not implemented yet.\n"));
+                {
+                    Vector4 srcCombine = srcColor * srcBlendFactor;
+                    Vector4 dstCombine = dstColor * dstBlendFactor;
+                    result = Vector4(max(srcCombine.x, dstCombine.x), max(srcCombine.y, dstCombine.y), max(srcCombine.z, dstCombine.z), max(srcCombine.w, dstCombine.w));
+                }
                 break;
             default:
                 break;
