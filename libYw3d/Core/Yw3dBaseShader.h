@@ -335,6 +335,15 @@ namespace yw
             return Vector3Cross(result, a, b);
         }
 
+        // The normalized result of Vector2 value.
+        // @param[in] v value to be normalized.
+        // @return the normalized Vector2 value.
+        static inline Vector2 normalize(const Vector2& v)
+        {
+            Vector2 result;
+            return Vector2Normalize(result, v);
+        }
+
         // The normalized result of Vector3 value.
         // @param[in] v value to be normalized.
         // @return the normalized Vector3 value.
@@ -342,6 +351,15 @@ namespace yw
         {
             Vector3 result;
             return Vector3Normalize(result, v);
+        }
+
+        // The normalized result of Vector4 value.
+        // @param[in] v value to be normalized.
+        // @return the normalized Vector4 value.
+        static inline Vector4 normalize(const Vector4& v)
+        {
+            Vector4 result;
+            return Vector4Normalize(result, v);
         }
 
     private:
