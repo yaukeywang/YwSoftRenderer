@@ -52,10 +52,10 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
-        m_ModelHandle = resManager->LoadResource("soccerball.obj");
+        m_ModelHandle = resManager->LoadResource("SoccerBall.obj");
         if (m_ModelHandle <= 0)
         {
-            LOGE(_T("Load resource \"HydrantPart.obj\" failed."));
+            LOGE(_T("Load resource \"SoccerBall.obj\" failed."));
             return false;
         }
 
@@ -63,7 +63,7 @@ namespace yw
         m_Model = (Model*)resManager->GetResource(m_ModelHandle);
         if (nullptr == m_Model)
         {
-            LOGE(_T("Get resource \"HydrantPart.obj\" failed."));
+            LOGE(_T("Get resource \"SoccerBall.obj\" failed."));
             return false;
         }
 

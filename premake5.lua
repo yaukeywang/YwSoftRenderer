@@ -578,27 +578,21 @@ project "Demo5TriangleShaderWireframe"
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/SoccerBall.obj"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:linux" }
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/SoccerBall.obj"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:macosx" }
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/SoccerBall.obj"' .. ' "' .. absdstdatadir .. '"'
         }
 
 project "Demo6PBR"
