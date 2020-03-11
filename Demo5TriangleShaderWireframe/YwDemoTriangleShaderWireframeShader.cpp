@@ -76,11 +76,11 @@ namespace yw
         }
 
         // Transform point to viewport space.
-        const float44& viewportMatrix = GetMatrix(0);
+        const float4& viewport = GetVector(0);
         float2 points[3];
-        points[0] = inputPos0 * viewportMatrix;
-        points[1] = inputPos1 * viewportMatrix;
-        points[2] = inputPos2 * viewportMatrix;
+        points[0] = ProjectToWindow(viewport, inputPos0);
+        points[1] = ProjectToWindow(viewport, inputPos1);
+        points[2] = ProjectToWindow(viewport, inputPos2);
 
         // If Case is 0, all projected points are defined, do the
         // general case computation
@@ -94,9 +94,9 @@ namespace yw
 
             // Store the length of the edges
             float lengths[3];
-            lengths[0] = edges[0].Length();
-            lengths[1] = edges[1].Length();
-            lengths[2] = edges[2].Length();
+            lengths[0] = length(edges[0]);
+            lengths[1] = length(edges[1]);
+            lengths[2] = length(edges[2]);
 
             // Compute the cos angle of each vertices
             float cosAngles[3];
@@ -216,6 +216,45 @@ namespace yw
         return true; // Discard pixel if pixel shader return false.
     }
 
+    // Shader main entry.
+    bool DemoTriangleShaderWireframeDefaultPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    {
+        const float lineWidth = 1.6f;
+        const float fadeDistance = 50.0f;
+        const float patternPeriod = 1.0f;
+
+        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
+        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
+
+        // Compute the shortest distance between the fragment and the edges.
+        float dist = EvalMinDistanceToEdges(input);
+
+        // Cull fragments too far from the edge.
+        if (dist > 0.5f * lineWidth + 1.0f)
+        {
+            return false;
+        }
+
+        // Map the computed distance to the [0,2] range on the border of the line.
+        dist = Clamp((dist - (0.5f * lineWidth - 1.0f)), 0.0f, 2.0f);
+
+        // Alpha is computed from the function exp2(-2(x)^2).
+        dist *= dist;
+        float alpha = exp2(-2.0f * dist);
+
+        // Standard wire color
+        color = wireColor;
+        color.a *= alpha;
+
+        if (color.a <= 0.0f)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     float DemoTriangleShaderWireframeDefaultPixelShader::EvalMinDistanceToEdges(const Yw3dShaderRegister* input)
     {
         // Get input value.
@@ -262,45 +301,6 @@ namespace yw
         return dist;
     }
 
-    // Shader main entry.
-    bool DemoTriangleShaderWireframeDefaultPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
-    {
-        const float lineWidth = 2.0f;
-        const float fadeDistance = 50.0f;
-        const float patternPeriod = 1.5f;
-
-        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
-        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
-
-        // Compute the shortest distance between the fragment and the edges.
-        float dist = EvalMinDistanceToEdges(input);
-
-        // Cull fragments too far from the edge.
-        if (dist > 0.5f * lineWidth + 1.0f)
-        {
-            return false;
-        }
-
-        // Map the computed distance to the [0,2] range on the border of the line.
-        dist = Clamp((dist - (0.5f * lineWidth - 1.0f)), 0.0f, 2.0f);
-
-        // Alpha is computed from the function exp2(-2(x)^2).
-        dist *= dist;
-        float alpha = exp2(-2.0f * dist);
-
-        // Standard wire color
-        color = wireColor;
-        color.a *= alpha;
-
-        if (color.a <= 0.0f)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
     // ------------------------------------------------------------------
     // Wireframe pattern pixel shader.
 
@@ -308,6 +308,89 @@ namespace yw
     {
         //return false; // Can use alpha blend.
         return true; // Discard pixel if pixel shader return false.
+    }
+
+    // Shader main entry.
+    bool DemoTriangleShaderWireframePatternPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    {
+        const float lineWidth = 1.5f;
+        const float fadeDistance = 50;
+        const float patternPeriod = 1.5;
+
+        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
+        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
+
+        // Constants.
+        const uint32_t infoA[] = { 0, 0, 0, 0, 1, 1, 2 };
+        const uint32_t infoB[] = { 1, 1, 2, 0, 2, 1, 2 };
+        const uint32_t infoAd[] = { 2, 2, 1, 1, 0, 0, 0 };
+        const uint32_t infoBd[] = { 2, 2, 1, 2, 0, 2, 1 };
+        const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
+
+        // Get input value.
+        const float4& inputPos = input[0];
+        const float4& inputEdgeA = input[1];
+        const float4& inputEdgeB = input[2];
+        const int32_t inputCase = (int32_t)input[3].x;
+
+        // Compute the shortest square distance between the fragment and the edges.
+        float3 edgeSqDists;
+        float3 edgeCoords;
+        uint32_t edgeOrder0 = 0xffffffff;
+        uint32_t edgeOrder1 = 0xffffffff;
+        uint32_t edgeOrder2 = 0xffffffff;
+        float dist = EvalMinDistanceToEdgesExt(input, edgeSqDists, edgeCoords, edgeOrder0, edgeOrder1, edgeOrder2);
+
+        float outputEdgeSqDists[3] = { edgeSqDists.x, edgeSqDists.y, edgeSqDists.z };
+        float outputEdgeCoords[3] = { edgeCoords.x, edgeCoords.y, edgeCoords.z };
+
+        // Standard wire color
+        color = wireColor;
+        float realLineWidth = 0.5f * lineWidth;
+
+        // Except if on the diagonal edge
+        if (infoEdge0[inputCase] == edgeOrder0)
+        {
+            if (dist > lineWidth + 1.0f)
+            {
+                color.a = 0.0f;
+                return false;
+            }
+
+            float patternPos = ((int32_t)abs(outputEdgeCoords[edgeOrder0]) % (int32_t)(patternPeriod * 2.0f * lineWidth)) - lineWidth;
+            dist = (patternPos * patternPos + dist * dist);
+
+            color = patternColor;
+            realLineWidth = lineWidth;
+
+            // Filling the corners near the vertices with the WireColor
+            if (outputEdgeSqDists[edgeOrder1] < pow(0.5f * lineWidth + 1.0f, 2.0f))
+            {
+                dist = outputEdgeSqDists[edgeOrder1];
+                color = wireColor;
+                realLineWidth = 0.5f * lineWidth;
+            }
+
+            dist = sqrt(dist);
+        }
+        // Cull fragments too far from the edge.
+        else if (dist > 0.5f * lineWidth + 1.0f)
+        {
+            color.a = 0.0f;
+            return false;
+        }
+
+        // Map the computed distance to the [0,2] range on the border of the line.
+        dist = Clamp((dist - (realLineWidth - 1.0f)), 0.0f, 2.0f);
+
+        // Alpha is computed from the function exp2(-2(x)^2).
+        dist *= dist;
+        float alpha = exp2(-2.0f * dist);
+
+        color.a *= alpha;
+
+        return true;
     }
 
     float DemoTriangleShaderWireframePatternPixelShader::EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, float3& edgeSqDists, float3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2)
@@ -408,88 +491,5 @@ namespace yw
 
         float edgeSqDistsArray[3] = { edgeSqDists.x, edgeSqDists.y, edgeSqDists.z };
         return sqrt(edgeSqDistsArray[edgeOrder0]);
-    }
-
-    // Shader main entry.
-    bool DemoTriangleShaderWireframePatternPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
-    {
-        const float lineWidth = 4.0f;
-        const float fadeDistance = 50;
-        const float patternPeriod = 1.5;
-
-        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
-        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
-
-        // Constants.
-        const uint32_t infoA[] = { 0, 0, 0, 0, 1, 1, 2 };
-        const uint32_t infoB[] = { 1, 1, 2, 0, 2, 1, 2 };
-        const uint32_t infoAd[] = { 2, 2, 1, 1, 0, 0, 0 };
-        const uint32_t infoBd[] = { 2, 2, 1, 2, 0, 2, 1 };
-        const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
-
-        // Get input value.
-        const float4& inputPos = input[0];
-        const float4& inputEdgeA = input[1];
-        const float4& inputEdgeB = input[2];
-        const int32_t inputCase = (int32_t)input[3].x;
-
-        // Compute the shortest square distance between the fragment and the edges.
-        float3 edgeSqDists;
-        float3 edgeCoords;
-        uint32_t edgeOrder0 = 0xffffffff;
-        uint32_t edgeOrder1 = 0xffffffff;
-        uint32_t edgeOrder2 = 0xffffffff;
-        float dist = EvalMinDistanceToEdgesExt(input, edgeSqDists, edgeCoords, edgeOrder0, edgeOrder1, edgeOrder2);
-
-        float outputEdgeSqDists[3] = { edgeSqDists.x, edgeSqDists.y, edgeSqDists.z };
-        float outputEdgeCoords[3] = { edgeCoords.x, edgeCoords.y, edgeCoords.z };
-
-        // Standard wire color
-        color = wireColor;
-        float realLineWidth = 0.5f * lineWidth;
-
-        // Except if on the diagonal edge
-        if (infoEdge0[inputCase] == edgeOrder0)
-        {
-            if (dist > lineWidth + 1.0f)
-            {
-                color.a = 0.0f;
-                return false;
-            }
-
-            float patternPos = ((int32_t)abs(outputEdgeCoords[edgeOrder0]) % (int32_t)(patternPeriod * 2.0f * lineWidth)) - lineWidth;
-            dist = (patternPos * patternPos + dist * dist);
-
-            color = patternColor;
-            realLineWidth = lineWidth;
-
-            // Filling the corners near the vertices with the WireColor
-            if (outputEdgeSqDists[edgeOrder1] < pow(0.5f * lineWidth + 1.0f, 2.0f))
-            {
-                dist = outputEdgeSqDists[edgeOrder1];
-                color = wireColor;
-                realLineWidth = 0.5f * lineWidth;
-            }
-
-            dist = sqrt(dist);
-        }
-        // Cull fragments too far from the edge.
-        else if (dist > 0.5f * lineWidth + 1.0f)
-        {
-            color.a = 0.0f;
-            return false;
-        }
-
-        // Map the computed distance to the [0,2] range on the border of the line.
-        dist = Clamp((dist - (realLineWidth - 1.0f)), 0.0f, 2.0f);
-
-        // Alpha is computed from the function exp2(-2(x)^2).
-        dist *= dist;
-        float alpha = exp2(-2.0f * dist);
-
-        color.a *= alpha;
-
-        return true;
     }
 }

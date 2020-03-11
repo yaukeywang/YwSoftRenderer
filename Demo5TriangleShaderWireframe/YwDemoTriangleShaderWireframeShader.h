@@ -32,6 +32,16 @@ namespace yw
     protected:
         // Shader main entry.
         bool Execute(Yw3dShaderRegister* shaderRegister0, Yw3dShaderRegister* shaderRegister1, Yw3dShaderRegister* shaderRegister2);
+
+    private:
+        // From window pixel pos to projection frame at the specified z (view frame). 
+        inline float2 ProjectToWindow(float4 viewport, float4 pos)
+        {
+            return float2(
+                viewport.x * 0.5f * ((pos.x / pos.w) + 1) + viewport.z,
+                viewport.y * 0.5f * (1.0f - (pos.y / pos.w)) + viewport.w
+            );
+        }
     };
 
     // Wireframe default pixel shader.
@@ -41,11 +51,12 @@ namespace yw
         // Whether kill pixel or not.
         bool MightKillPixels();
 
-        // Get minimum edge distance.
-        float EvalMinDistanceToEdges(const Yw3dShaderRegister* input);
-
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+
+    private:
+        // Get minimum edge distance.
+        float EvalMinDistanceToEdges(const Yw3dShaderRegister* input);
     };
 
     // Wireframe pattern pixel shader.
@@ -55,11 +66,12 @@ namespace yw
         // Whether kill pixel or not.
         bool MightKillPixels();
 
-        // Get minimum edge distance.
-        float EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, float3& edgeSqDists, float3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2);
-
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+
+    private:
+        // Get minimum edge distance.
+        float EvalMinDistanceToEdgesExt(const Yw3dShaderRegister* input, float3& edgeSqDists, float3& edgeCoords, uint32_t& edgeOrder0, uint32_t& edgeOrder1, uint32_t& edgeOrder2);
     };
 }
 

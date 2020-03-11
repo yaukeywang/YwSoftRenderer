@@ -24,8 +24,8 @@ int main(int argc, char** argv)
     yw::ApplicationCreationFlags creationFlags;
     creationFlags.windowTitle = _T("DemoTriangleShaderWireframe");
 
-    uint32_t windowWidth = 640;
-    uint32_t windowHeight = 480;
+    uint32_t windowWidth = 400;
+    uint32_t windowHeight = 300;
 
 #if defined(__amigaos4__) || defined(_AMIGAOS4)
     if (3 == argc)

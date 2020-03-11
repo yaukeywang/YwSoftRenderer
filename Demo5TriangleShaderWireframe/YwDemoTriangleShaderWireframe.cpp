@@ -87,13 +87,14 @@ namespace yw
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
         Yw3dDevice* device = graphics->GetYw3dDevice();
         Camera* camera = graphics->GetCurrentCamera();
+        DemoTriangleShaderWireframeApp* app = (DemoTriangleShaderWireframeApp*)(GetScene()->GetApplication());
 
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
 
         // Set rotation.
         Matrix44 matRotate;
-        Matrix44RotationY(matRotate, ((DemoTriangleShaderWireframeApp*)(GetScene()->GetApplication()))->GetModelRotationAngle());
+        Matrix44RotationY(matRotate, app->GetModelRotationAngle());
         matWorld *= matRotate;
 
         // Set scale.
@@ -121,15 +122,13 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_DestBlend, Yw3d_Blend_InvSrcAlpha);
 
         // Set viewport matrix to triangle shader.
-        const Matrix44* matViewport = nullptr;
-        device->GetViewportMatrix(matViewport);
-        m_TriangleShader->SetMatrix(0, *matViewport);
+        m_TriangleShader->SetVector(0, Vector4((float)app->GetWindowWidth(), (float)app->GetWindowHeight(), 0.0f, 0.0f));
 
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetTriangleShader(m_TriangleShader);
-        //graphics->SetPixelShader(m_DefaultPixelShader);
-        graphics->SetPixelShader(m_PatternPixelShader);
+        graphics->SetPixelShader(m_DefaultPixelShader);
+        //graphics->SetPixelShader(m_PatternPixelShader);
         
         // Render model.
         //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
