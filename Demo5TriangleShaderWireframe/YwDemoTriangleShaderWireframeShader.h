@@ -35,7 +35,7 @@ namespace yw
 
     private:
         // From window pixel pos to projection frame at the specified z (view frame). 
-        inline float2 ProjectToWindow(float4 viewport, float4 pos)
+        inline float2 ProjectToWindow(const float4& viewport, float4 pos)
         {
             return float2(
                 viewport.x * 0.5f * ((pos.x / pos.w) + 1) + viewport.z,
