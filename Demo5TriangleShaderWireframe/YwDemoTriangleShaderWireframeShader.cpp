@@ -6,6 +6,14 @@
 namespace yw
 {
     // ------------------------------------------------------------------
+    // Constants.
+    const uint32_t infoA[] = { 0, 0, 0, 0, 1, 1, 2 };
+    const uint32_t infoB[] = { 1, 1, 2, 0, 2, 1, 2 };
+    const uint32_t infoAd[] = { 2, 2, 1, 1, 0, 0, 0 };
+    const uint32_t infoBd[] = { 2, 2, 1, 2, 0, 2, 1 };
+    const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
+
+    // ------------------------------------------------------------------
     // Wireframe vertex shader.
 
     // Vertex input format:
@@ -50,13 +58,6 @@ namespace yw
 
     bool DemoTriangleShaderWireframeTriangleShader::Execute(Yw3dShaderRegister* shaderRegister0, Yw3dShaderRegister* shaderRegister1, Yw3dShaderRegister* shaderRegister2)
     {
-        // Constants.
-        const uint32_t infoA[] = { 0, 0, 0, 0, 1, 1, 2 };
-        const uint32_t infoB[] = { 1, 1, 2, 0, 2, 1, 2 };
-        const uint32_t infoAd[] = { 2, 2, 1, 1, 0, 0, 0 };
-        const uint32_t infoBd[] = { 2, 2, 1, 2, 0, 2, 1 };
-        const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
-
         // Get input pos.
         float4 inputPos0 = shaderRegister0[0];
         float4 inputPos1 = shaderRegister1[0];
@@ -219,13 +220,12 @@ namespace yw
     // Shader main entry.
     bool DemoTriangleShaderWireframeDefaultPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
-        const float lineWidth = 1.6f;
-        const float fadeDistance = 50.0f;
-        const float patternPeriod = 1.0f;
-
-        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
-        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
+        const float lineWidth = GetFloat(0);
+        const float fadeDistance = GetFloat(1);
+        const float patternPeriod = GetFloat(2);
+        const float4 fillColor = GetVector(0);
+        const float4 wireColor = GetVector(1);
+        const float4 patternColor = GetVector(2);
 
         // Compute the shortest distance between the fragment and the edges.
         float dist = EvalMinDistanceToEdges(input);
@@ -313,20 +313,12 @@ namespace yw
     // Shader main entry.
     bool DemoTriangleShaderWireframePatternPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
-        const float lineWidth = 1.5f;
-        const float fadeDistance = 50;
-        const float patternPeriod = 1.5;
-
-        const float4 fillColor = float4(0.1f, 0.2f, 0.4f, 1.0f);
-        const float4 wireColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-        const float4 patternColor = float4(1.0f, 1.0f, 0.5f, 1.0f);
-
-        // Constants.
-        const uint32_t infoA[] = { 0, 0, 0, 0, 1, 1, 2 };
-        const uint32_t infoB[] = { 1, 1, 2, 0, 2, 1, 2 };
-        const uint32_t infoAd[] = { 2, 2, 1, 1, 0, 0, 0 };
-        const uint32_t infoBd[] = { 2, 2, 1, 2, 0, 2, 1 };
-        const uint32_t infoEdge0[] = { 0, 2, 0, 0, 0, 0, 2 };
+        const float lineWidth = GetFloat(0);
+        const float fadeDistance = GetFloat(1);
+        const float patternPeriod = GetFloat(2);
+        const float4 fillColor = GetVector(0);
+        const float4 wireColor = GetVector(1);
+        const float4 patternColor = GetVector(2);
 
         // Get input value.
         const float4& inputPos = input[0];

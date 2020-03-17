@@ -47,6 +47,14 @@ namespace yw
         class DemoTriangleShaderWireframeTriangleShader* m_TriangleShader;
         class DemoTriangleShaderWireframeDefaultPixelShader* m_DefaultPixelShader;
         class DemoTriangleShaderWireframePatternPixelShader* m_PatternPixelShader;
+
+        // Shader parameters.
+        float m_LineWidth;
+        float m_FadeDistance;
+        float m_PatternPeriod;
+        Vector4 m_FillColor;
+        Vector4 m_WireColor;
+        Vector4 m_PatternColor;
     };
 }
 

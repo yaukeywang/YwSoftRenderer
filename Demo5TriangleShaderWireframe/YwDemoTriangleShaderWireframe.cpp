@@ -22,7 +22,10 @@ namespace yw
         m_VertexShader(nullptr),
         m_TriangleShader(nullptr),
         m_DefaultPixelShader(nullptr),
-        m_PatternPixelShader(nullptr)
+        m_PatternPixelShader(nullptr),
+        m_LineWidth(1.7f),
+        m_FadeDistance(50),
+        m_PatternPeriod(1.5f)
     {
     }
 
@@ -72,6 +75,14 @@ namespace yw
         m_TriangleShader = new DemoTriangleShaderWireframeTriangleShader();
         m_DefaultPixelShader = new DemoTriangleShaderWireframeDefaultPixelShader();
         m_PatternPixelShader = new DemoTriangleShaderWireframePatternPixelShader();
+
+        // Set default shader parameters.
+        m_LineWidth = 1.5f;
+        m_FadeDistance = 50.0f;
+        m_PatternPeriod = 1.5f;
+        m_FillColor = Vector4(0.1f, 0.2f, 0.4f, 1.0f);
+        m_WireColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+        m_PatternColor = Vector4(1.0f, 1.0f, 0.5f, 1.0f);
 
         return true;
     }
@@ -123,6 +134,22 @@ namespace yw
 
         // Set viewport matrix to triangle shader.
         m_TriangleShader->SetVector(0, Vector4((float)app->GetWindowWidth(), (float)app->GetWindowHeight(), 0.0f, 0.0f));
+
+        // Set default pixel shader parameters.
+        m_DefaultPixelShader->SetFloat(0, m_LineWidth);
+        m_DefaultPixelShader->SetFloat(1, m_FadeDistance);
+        m_DefaultPixelShader->SetFloat(2, m_PatternPeriod);
+        m_DefaultPixelShader->SetVector(0, m_FillColor);
+        m_DefaultPixelShader->SetVector(1, m_WireColor);
+        m_DefaultPixelShader->SetVector(2, m_PatternColor);
+
+        // Set pattern pixel shader parameters.
+        m_PatternPixelShader->SetFloat(0, m_LineWidth);
+        m_PatternPixelShader->SetFloat(1, m_FadeDistance);
+        m_PatternPixelShader->SetFloat(2, m_PatternPeriod);
+        m_PatternPixelShader->SetVector(0, m_FillColor);
+        m_PatternPixelShader->SetVector(1, m_WireColor);
+        m_PatternPixelShader->SetVector(2, m_PatternColor);
 
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
