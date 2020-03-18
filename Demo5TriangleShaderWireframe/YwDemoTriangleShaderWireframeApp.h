@@ -33,7 +33,22 @@ namespace yw
 
     public:
         // Current model rotation angle.
-        float GetModelRotationAngle() const;
+        inline float GetModelRotationAngle() const
+        {
+            return m_ModelRotateAngle;
+        }
+
+        // Get line width.
+        inline float GetLineWidth() const
+        {
+            return m_LineWidth;
+        }
+
+        // Get pattern period.
+        inline float GetPatternPeriod() const
+        {
+            return m_PatternPeriod;
+        }
 
     private:
         // Current camera.
@@ -47,6 +62,12 @@ namespace yw
 
         // The model rotation angle.
         float m_ModelRotateAngle;
+
+        // Line width.
+        float m_LineWidth;
+        
+        // Pattern period.
+        float m_PatternPeriod;
     };
 }
 

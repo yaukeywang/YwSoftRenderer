@@ -14,7 +14,9 @@ namespace yw
         m_Camera(nullptr),
         m_DemoTriangleShaderWireframeHandle(0),
         m_UpdateTextTime(0.0f),
-        m_ModelRotateAngle(0.0f)
+        m_ModelRotateAngle(0.0f),
+        m_LineWidth(1.5f),
+        m_PatternPeriod(1.5f)
     {
 
     }
@@ -36,8 +38,8 @@ namespace yw
         m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 1.0f, 100.0f);
 
         // Calculation view matrix.
-        m_Camera->SetPosition(Vector3(0.0f, 2.5f, -2.0f));
-        m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        m_Camera->SetPosition(Vector3(0.0f, 1.5f, -2.0f));
+        m_Camera->SetLookAt(Vector3(0.0f, 0.38f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
         Vector4 clearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -106,6 +108,8 @@ namespace yw
             int32_t deltaY = 0;
             m_Input->GetMouseMovement(&deltaX, &deltaY);
             //m_ModelRotateAngle -= (float)deltaX * 0.015f;
+            m_LineWidth = Clamp(m_LineWidth - (float)deltaX * 0.015f, 0.0f, 10.0f);
+            m_PatternPeriod = Clamp(m_PatternPeriod - (float)deltaY * 0.015f, 1.0f, 20.0f);
         }
     }
 
@@ -120,10 +124,5 @@ namespace yw
         m_Camera->ClearToSceneColor();
         m_Camera->RenderPass(-1);
         m_Camera->EndRender(true);
-    }
-
-    float DemoTriangleShaderWireframeApp::GetModelRotationAngle() const
-    {
-        return m_ModelRotateAngle;
     }
 }

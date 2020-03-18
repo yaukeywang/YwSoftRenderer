@@ -213,8 +213,8 @@ namespace yw
 
     bool DemoTriangleShaderWireframeDefaultPixelShader::MightKillPixels()
     {
-        //return false; // Can use alpha blend.
-        return true; // Discard pixel if pixel shader return false.
+        return false; // Can use alpha blend.
+        //return true; // Discard pixel if pixel shader return false.
     }
 
     // Shader main entry.
@@ -306,8 +306,8 @@ namespace yw
 
     bool DemoTriangleShaderWireframePatternPixelShader::MightKillPixels()
     {
-        //return false; // Can use alpha blend.
-        return true; // Discard pixel if pixel shader return false.
+        return false; // Can use alpha blend.
+        //return true; // Discard pixel if pixel shader return false.
     }
 
     // Shader main entry.
@@ -350,7 +350,7 @@ namespace yw
                 return false;
             }
 
-            float patternPos = ((int32_t)abs(outputEdgeCoords[edgeOrder0]) % (int32_t)(patternPeriod * 2.0f * lineWidth)) - lineWidth;
+            float patternPos = fmod(abs(outputEdgeCoords[edgeOrder0]), patternPeriod * 2.0f * lineWidth + 1e-4f) - lineWidth;
             dist = (patternPos * patternPos + dist * dist);
 
             color = patternColor;
@@ -419,10 +419,6 @@ namespace yw
             {
                 std::swap(edgeOrder0, edgeOrder1);
             }
-
-            edgeSqDists.x = inoutEdgeSqDists[0];
-            edgeSqDists.y = inoutEdgeSqDists[1];
-            edgeSqDists.z = inoutEdgeSqDists[2];
         }
         // The tricky case, compute the distances and get the min from the 2D lines
         // given from the geometry shader.
@@ -475,10 +471,6 @@ namespace yw
                 inoutEdgeSqDists[2] = 0;
                 edgeCoords.z = 0;
             }
-
-            edgeSqDists.x = inoutEdgeSqDists[0];
-            edgeSqDists.y = inoutEdgeSqDists[1];
-            edgeSqDists.z = inoutEdgeSqDists[2];
         }
 
         float edgeSqDistsArray[3] = { edgeSqDists.x, edgeSqDists.y, edgeSqDists.z };

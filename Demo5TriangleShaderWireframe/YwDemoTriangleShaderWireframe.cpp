@@ -55,10 +55,10 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
-        m_ModelHandle = resManager->LoadResource("SoccerBall.obj");
+        m_ModelHandle = resManager->LoadResource("teapot.obj");
         if (m_ModelHandle <= 0)
         {
-            LOGE(_T("Load resource \"SoccerBall.obj\" failed."));
+            LOGE(_T("Load resource \"teapot.obj\" failed."));
             return false;
         }
 
@@ -66,7 +66,7 @@ namespace yw
         m_Model = (Model*)resManager->GetResource(m_ModelHandle);
         if (nullptr == m_Model)
         {
-            LOGE(_T("Get resource \"SoccerBall.obj\" failed."));
+            LOGE(_T("Get resource \"teapot.obj\" failed."));
             return false;
         }
 
@@ -100,6 +100,11 @@ namespace yw
         Camera* camera = graphics->GetCurrentCamera();
         DemoTriangleShaderWireframeApp* app = (DemoTriangleShaderWireframeApp*)(GetScene()->GetApplication());
 
+        // Get shader parameters.
+        m_LineWidth = app->GetLineWidth();
+        m_PatternPeriod = app->GetPatternPeriod();
+
+        // Identity the world.
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
 
@@ -110,7 +115,7 @@ namespace yw
 
         // Set scale.
         Matrix44 matScale;
-        Matrix44Scaling(matScale, 0.15f, 0.15f, 0.15f);
+        Matrix44Scaling(matScale, 0.3f, 0.3f, 0.3f);
         matWorld *= matScale;
 
         // Set world transform to camera.
@@ -154,8 +159,8 @@ namespace yw
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_VertexShader);
         graphics->SetTriangleShader(m_TriangleShader);
-        graphics->SetPixelShader(m_DefaultPixelShader);
-        //graphics->SetPixelShader(m_PatternPixelShader);
+        //graphics->SetPixelShader(m_DefaultPixelShader);
+        graphics->SetPixelShader(m_PatternPixelShader);
         
         // Render model.
         //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);

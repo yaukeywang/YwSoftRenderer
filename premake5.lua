@@ -578,21 +578,21 @@ project "Demo5TriangleShaderWireframe"
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SoccerBall.obj"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:linux" }
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SoccerBall.obj"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:macosx" }
         postbuildcommands
         {
             '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SoccerBall.obj"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
         }
 
 project "Demo6PBR"
