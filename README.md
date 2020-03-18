@@ -19,7 +19,7 @@ Code in `DeprecatedCode` folder is obsolete, only used for reference and will be
 - [x] `Texture Data Loading` module.
 - [x] More `Basic` demos.
 - [x] Basic `Shading with Light` demo (Blinn-Phong, Normal-Mapping).
-- [x] `Triangle Shader` demo. (with some issue)
+- [x] `Triangle Shader` demo.
 - [ ] `PBR` demo. **[Working on...]**
 - [ ] `Alpha Blending` support.
 - [ ] `Triangle Shader with Dynamic Vertex Generating` support.
@@ -47,7 +47,7 @@ Code in `DeprecatedCode` folder is obsolete, only used for reference and will be
 ![Demo 4 Normal Mapping](Demo4NormalMapping/Demo4NormalMapping.png)
 
 #### Demo 5: Triangle Shader Wireframe
-![Demo 5 Triangle Shader Wireframe](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe.png)
+![Demo 5 Triangle Shader Wireframe](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe.png) ![Demo 5 Triangle Shader Wireframe 1](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe1.png) ![Demo 5 Triangle Shader Wireframe 2](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe2.png)
 
 #### Demo 6: PBR (Unity BRDF 1: Desney Diffuse + Torrance-Sparrow Specular (D=GGX,F=Schlick,V=Smith), IBL is wroking on.)
 ![Demo 6 PBR](Demo6PBR/Demo6PBR.png)
