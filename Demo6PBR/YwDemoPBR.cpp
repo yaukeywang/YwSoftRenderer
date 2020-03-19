@@ -26,7 +26,8 @@ namespace yw
         m_VertexShader(nullptr),
         m_PixelShader(nullptr),
         m_Metallic(0.0f),
-        m_Smoothness(0.0f)
+        m_Smoothness(0.0f),
+        m_SmoothnessScale(1.0f)
     {
     }
 
@@ -99,15 +100,16 @@ namespace yw
 
         // Create vertex and pixel shader.
         m_VertexShader = new DemoPBRVertexShader();
-        m_PixelShader = new DemoPBRPixelShader();
+        m_PixelShader = new DemoPBRMetallicSetupPixelShader();
 
         // Initialize environments.
         m_LightDirection.Set(0.0f, -0.3f, 1.0f);
         m_LightColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
         m_AlbedoColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
-        m_SpecularColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
+        m_SpecularColor.Set(0.2f, 0.2f, 0.2f, 1.0f);
         m_Metallic = 0.5f;
         m_Smoothness = 0.5f;
+        m_SmoothnessScale = 1.0f;
 
         return true;
     }
@@ -131,8 +133,9 @@ namespace yw
         //Vector3 lightDir = m_LightDirection;
 
         // Get material parameters.
-        m_Metallic = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetMetallic();
-        m_Smoothness = ((DemoPBRApp*)(GetScene()->GetApplication()))->GetSmoothness();
+        m_Metallic = 0.625f; //((DemoPBRApp*)(GetScene()->GetApplication()))->GetMetallic();
+        m_Smoothness = 0.6f; //((DemoPBRApp*)(GetScene()->GetApplication()))->GetSmoothness();
+        m_SmoothnessScale = 1.0f;
 
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
@@ -168,14 +171,11 @@ namespace yw
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
         // Update shader parameters.
-        m_Metallic = 0.625f;
-        m_Smoothness = 0.6f;
-
         m_PixelShader->SetVector(0, lightDir);
         m_PixelShader->SetVector(1, m_LightColor);
         m_PixelShader->SetVector(2, m_AlbedoColor);
-        m_PixelShader->SetVector(3, camera->GetForward());
-
+        m_PixelShader->SetVector(3, m_SpecularColor);
+        m_PixelShader->SetVector(4, camera->GetForward());
         m_PixelShader->SetFloat(0, m_Metallic);
         m_PixelShader->SetFloat(1, m_Smoothness);
 
@@ -208,6 +208,7 @@ namespace yw
         // Set shader parameters.
         m_PixelShader->SetFloat(0, m_Metallic);
         m_PixelShader->SetFloat(1, m_Smoothness);
+        m_PixelShader->SetFloat(2, m_SmoothnessScale);
 
         // Render model.
         //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);

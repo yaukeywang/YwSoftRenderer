@@ -86,12 +86,14 @@ namespace yw
         float3 lightDir = normalize(GetVector(0));
         float4 lightColor = GetVector(1);
         float4 albedo = GetVector(2);
-        float3 viewDir = normalize(GetVector(3));
-        float metallic = GetFloat(0);
-        float smoothness = GetFloat(1);
+        float4 specularColor = GetVector(3);
+        float3 viewDir = normalize(GetVector(4));
+        float metallic = GetFloat(0); // _Metallic/"Metallic"
+        float smoothness = GetFloat(1); // _Glossiness/"Smoothness"
+        float smoothnessScale = GetFloat(2); // _GlossMapScale/"Smoothness Scale"
 
         // Calculating the final brdf.
-        FragmentCommonData s = FragmentSetup(albedo, texColor, hasMetallicGlossMap, metallic, metallicGlossMap, smoothness);
+        FragmentCommonData s = FragmentSetup(albedo, texColor, hasMetallicGlossMap, metallicGlossMap, specularColor, metallic, smoothness, smoothnessScale);
         float4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, lightColor, s.oneMinusReflectivity, s.smoothness, worldNormal, -viewDir, -lightDir);
         color = c;
 

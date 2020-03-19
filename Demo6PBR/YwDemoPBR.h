@@ -55,8 +55,15 @@ namespace yw
         Vector4 m_LightColor;
         Vector4 m_AlbedoColor;
         Vector4 m_SpecularColor;
+
+        // _Metallic/"Metallic"
         float m_Metallic;
+
+        // _Glossiness/"Smoothness"
         float m_Smoothness;
+
+        // _GlossMapScale/"Smoothness Scale"
+        float m_SmoothnessScale;
     };
 }
 

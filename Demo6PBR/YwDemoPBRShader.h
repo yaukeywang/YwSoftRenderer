@@ -35,6 +35,15 @@ namespace yw
     // We use gamma color space default.
     #define UNITY_COLORSPACE_GAMMA 1
 
+    // Energy conservation for Specular workflow is Monochrome. For instance: Red metal will make diffuse Black not Cyan
+    #ifndef UNITY_CONSERVE_ENERGY
+        #define UNITY_CONSERVE_ENERGY 1
+    #endif
+
+    #ifndef UNITY_CONSERVE_ENERGY_MONOCHROME
+        #define UNITY_CONSERVE_ENERGY_MONOCHROME 1
+    #endif
+
     // Color space constants.
     #ifdef UNITY_COLORSPACE_GAMMA
         #define unity_ColorSpaceGrey float4(0.5f, 0.5f, 0.5f, 0.5f)
@@ -58,7 +67,7 @@ namespace yw
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
 
-    private:
+    protected:
         // Fragment common data used for pbr.
         struct FragmentCommonData
         {
@@ -76,13 +85,13 @@ namespace yw
         // Using Metallic Texture Alpha as smoothness source.
         // albedoTexture - Metallic Texture parameter.
         // glossMapScale - smoothness parameter.
-        inline FragmentCommonData FragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicGlossMap, float metallicScale, float4 metallicGlossMap, float glossMapScale)
+        inline FragmentCommonData FragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
         {
             // Get alpha.
             float alpha = albedoTint.a * albedoColor.a;
 
             // Get fragment from metallic setup.
-            FragmentCommonData o = MetallicSetup(albedoTint, albedoColor, hasMetallicGlossMap, metallicScale, metallicGlossMap, glossMapScale);
+            FragmentCommonData o = OnFragmentSetup(albedoTint, albedoColor, hasMetallicOrSpecularGlossMap, metallicOrSpecularGlossMap, specularColor, metallic, glossiness, glossMapScale);
 
             // NOTE: shader relies on pre-multiply alpha-blend (_SrcBlend = One, _DstBlend = OneMinusSrcAlpha)
             o.diffColor = PreMultiplyAlpha(o.diffColor, alpha, o.oneMinusReflectivity, /*out*/ o.alpha);
@@ -90,15 +99,15 @@ namespace yw
             return o;
         }
 
-        inline FragmentCommonData MetallicSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicGlossMap, float metallicScale, float4 metallicGlossMap, float glossMapScale)
+        inline FragmentCommonData MetallicSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicGlossMap, float4 metallicGlossMap, float metallic, float glossiness, float glossMapScale)
         {
-            float2 metallicGloss = MetallicGloss(hasMetallicGlossMap, metallicScale, metallicGlossMap, glossMapScale);
-            float metallic = metallicGloss.x;
+            float2 metallicGloss = MetallicGloss(hasMetallicGlossMap, metallicGlossMap, metallic, glossiness, glossMapScale);
+            float metallicFinal = metallicGloss.x;
             float smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.
 
             float oneMinusReflectivity = 0.5f;
             float3 specColor;
-            float3 diffColor = DiffuseAndSpecularFromMetallic(Albedo(albedoTint, albedoColor), metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity);
+            float3 diffColor = DiffuseAndSpecularFromMetallic(Albedo(albedoTint, albedoColor), metallicFinal, /*out*/ specColor, /*out*/ oneMinusReflectivity);
 
             FragmentCommonData o = FragmentCommonData();
             o.diffColor = diffColor;
@@ -108,7 +117,24 @@ namespace yw
             return o;
         }
 
-        inline float2 MetallicGloss(bool hasMetallicGlossMap, float metallic, float4 metallicGlossMap, float glossMapScale)
+        inline FragmentCommonData SpecularSetup(float4 albedoTint, float4 albedoColor, bool hasSpecularGlossMap, float4 specularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        {
+            half4 specGloss = SpecularGloss(hasSpecularGlossMap, specularGlossMap, specularColor, metallic, glossiness, glossMapScale);
+            half3 specColor = specGloss;
+            half smoothness = specGloss.a;
+
+            half oneMinusReflectivity;
+            half3 diffColor = EnergyConservationBetweenDiffuseAndSpecular(Albedo(albedoTint, albedoColor), specColor, /*out*/ oneMinusReflectivity);
+
+            FragmentCommonData o = FragmentCommonData();
+            o.diffColor = diffColor;
+            o.specColor = specColor;
+            o.oneMinusReflectivity = oneMinusReflectivity;
+            o.smoothness = smoothness;
+            return o;
+        }
+
+        inline float2 MetallicGloss(bool hasMetallicGlossMap, float4 metallicGlossMap, float metallic, float glossiness, float glossMapScale)
         {
             float2 mg;
             if (hasMetallicGlossMap)
@@ -119,10 +145,26 @@ namespace yw
             else
             {
                 mg.r = metallic;
-                mg.g = glossMapScale;
+                mg.g = glossiness;
             }
 
             return mg;
+        }
+
+        inline half4 SpecularGloss(bool hasSpecularGlossMap, float4 specularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        {
+            half4 sg;
+            if (hasSpecularGlossMap)
+            {
+                sg = specularGlossMap;
+                sg.a *= glossMapScale;
+            }
+            else {
+                sg = specularColor;
+                sg.a = glossiness;
+            }
+
+            return sg;
         }
 
         inline float3 DiffuseAndSpecularFromMetallic(float3 albedo, float metallic, /*out*/ float3& specColor, /*out*/ float& oneMinusReflectivity)
@@ -130,6 +172,19 @@ namespace yw
             specColor = lerp((float3)unity_ColorSpaceDielectricSpec, albedo, metallic);
             oneMinusReflectivity = OneMinusReflectivityFromMetallic(metallic);
             return albedo * oneMinusReflectivity;
+        }
+
+        // Diffuse/Spec Energy conservation
+        inline half3 EnergyConservationBetweenDiffuseAndSpecular(half3 albedo, half3 specColor, /*out*/ half& oneMinusReflectivity)
+        {
+            oneMinusReflectivity = 1 - SpecularStrength(specColor);
+        #if !UNITY_CONSERVE_ENERGY
+            return albedo;
+        #elif UNITY_CONSERVE_ENERGY_MONOCHROME
+            return albedo * oneMinusReflectivity;
+        #else
+            return albedo * (half3(1, 1, 1) - specColor);
+        #endif
         }
 
         inline float OneMinusReflectivityFromMetallic(float metallic)
@@ -141,6 +196,17 @@ namespace yw
             //                  = alpha - metallic * alpha
             float oneMinusDielectricSpec = unity_ColorSpaceDielectricSpec.a;
             return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;
+        }
+
+        inline half SpecularStrength(half3 specular)
+        {
+        #if (SHADER_TARGET < 30)
+            // SM2.0: instruction count limitation
+            // SM2.0: simplified SpecularStrength
+            return specular.r; // Red channel - because most metals are either monocrhome or with redish/yellowish tint
+        #else
+            return max(max(specular.r, specular.g), specular.b);
+        #endif
         }
 
         inline float3 Albedo(float4 albedoTint, float4 albedoColor)
@@ -197,7 +263,7 @@ namespace yw
         // Ref: http://jcgt.org/published/0003/02/03/paper.pdf
         inline float SmithJointGGXVisibilityTerm(float NdotL, float NdotV, float roughness)
         {
-#if 0
+        #if 0
             // Original formulation:
             //  lambda_v    = (-1 + sqrt(a2 * (1 - NdotL2) / NdotL2 + 1)) * 0.5f;
             //  lambda_l    = (-1 + sqrt(a2 * (1 - NdotV2) / NdotV2 + 1)) * 0.5f;
@@ -213,19 +279,19 @@ namespace yw
             // Simplify visibility term: (2.0f * NdotL * NdotV) /  ((4.0f * NdotL * NdotV) * (lambda_v + lambda_l + 1e-5f));
             return 0.5f / (lambdaV + lambdaL + 1e-5f);  // This function is not intended to be running on Mobile,
                                                         // therefore epsilon is smaller than can be represented by half
-#else
+        #else
             // Approximation of the above formulation (simplify the sqrt, not mathematically correct but close enough)
             float a = roughness;
             float lambdaV = NdotL * (NdotV * (1 - a) + a);
             float lambdaL = NdotV * (NdotL * (1 - a) + a);
 
-#if defined(SHADER_API_SWITCH)
-            return 0.5f / (lambdaV + lambdaL + 1e-4f); // work-around against hlslcc rounding error
-#else
-            return 0.5f / (lambdaV + lambdaL + 1e-5f);
-#endif
+            #if defined(SHADER_API_SWITCH)
+                return 0.5f / (lambdaV + lambdaL + 1e-4f); // work-around against hlslcc rounding error
+            #else
+                return 0.5f / (lambdaV + lambdaL + 1e-5f);
+            #endif
 
-#endif
+        #endif
         }
 
         inline float GGXTerm(float NdotH, float roughness)
@@ -368,6 +434,29 @@ namespace yw
         inline float3 UnpackNormal(float4 packedNormal)
         {
             return packedNormal * 2.0f - float4(1.0f);
+        }
+
+    protected:
+        virtual FragmentCommonData OnFragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale) = 0;
+    };
+
+    // PBR Metallic Setup pixel shader.
+    class DemoPBRMetallicSetupPixelShader : public DemoPBRPixelShader
+    {
+    protected:
+        virtual inline FragmentCommonData OnFragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        {
+            return MetallicSetup(albedoTint, albedoColor, hasMetallicOrSpecularGlossMap, metallicOrSpecularGlossMap, metallic, glossiness, glossMapScale);
+        }
+    };
+
+    // PBR Specular Setup pixel shader.
+    class DemoPBRSpecularSetupPixelShader : public DemoPBRPixelShader
+    {
+    protected:
+        virtual inline FragmentCommonData OnFragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        {
+            return SpecularSetup(albedoTint, albedoColor, hasMetallicOrSpecularGlossMap, metallicOrSpecularGlossMap, specularColor, metallic, glossiness, glossMapScale);
         }
     };
 }
