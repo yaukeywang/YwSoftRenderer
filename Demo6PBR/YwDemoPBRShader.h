@@ -360,17 +360,32 @@ namespace yw
 
         inline float2 Pow4(const float2& x)
         {
-            return x * x * x * x;
+            //return x * x * x * x;
+            return float2(
+                x.x * x.x * x.x * x.x,
+                x.y * x.y * x.y * x.y
+            );
         }
 
         inline float3 Pow4(const float3& x)
         {
-            return x * x * x * x;
+            //return x * x * x * x;
+            return float3(
+                x.x * x.x * x.x * x.x,
+                x.y * x.y * x.y * x.y,
+                x.z * x.z * x.z * x.z
+            );
         }
 
         inline float4 Pow4(const float4& x)
         {
-            return x * x * x * x;
+            //return x * x * x * x;
+            return float4(
+                x.x * x.x * x.x * x.x,
+                x.y * x.y * x.y * x.y,
+                x.z * x.z * x.z * x.z,
+                x.w * x.w * x.w * x.w
+            );
         }
 
         //-----------------------------------------------------------------------------
@@ -384,17 +399,32 @@ namespace yw
 
         inline float2 Pow5(const float2& x)
         {
-            return x * x * x * x * x;
+            //return x * x * x * x * x;
+            return float2(
+                x.x * x.x * x.x * x.x * x.x,
+                x.y * x.y * x.y * x.y * x.y
+            );
         }
 
         inline float3 Pow5(const float3& x)
         {
-            return x * x * x * x * x;
+            //return x * x * x * x * x;
+            return float3(
+                x.x * x.x * x.x * x.x * x.x,
+                x.y * x.y * x.y * x.y * x.y,
+                x.z * x.z * x.z * x.z * x.z
+            );
         }
 
         inline float4 Pow5(const float4& x)
         {
-            return x * x * x * x * x;
+            //return x * x * x * x * x;
+            return float4(
+                x.x * x.x * x.x * x.x * x.x,
+                x.y * x.y * x.y * x.y * x.y,
+                x.z * x.z * x.z * x.z * x.z,
+                x.w * x.w * x.w * x.w * x.w
+            );
         }
 
         //-------------------------------------------------------------------------------------
