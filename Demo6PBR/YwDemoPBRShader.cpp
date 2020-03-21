@@ -100,7 +100,7 @@ namespace yw
         return true;
     }
 
-    float4 DemoPBRPixelShader::UNITY_BRDF_PBS(float3 diffColor, float3 specColor, float3 lightColor, float oneMinusReflectivity, float smoothness, float3 normal, float3 viewDir, float3 lightDir)
+    float4 DemoPBRPixelShader::UNITY_BRDF_PBS(const float3& diffColor, const float3& specColor, const float3& lightColor, float oneMinusReflectivity, float smoothness, const float3& normal, const float3& viewDir, const float3& lightDir)
     {
         float perceptualRoughness = SmoothnessToPerceptualRoughness(smoothness);
         float3 halfDir = Unity_SafeNormalize(lightDir + viewDir);

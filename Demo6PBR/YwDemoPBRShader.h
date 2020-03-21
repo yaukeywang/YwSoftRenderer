@@ -85,7 +85,7 @@ namespace yw
         // Using Metallic Texture Alpha as smoothness source.
         // albedoTexture - Metallic Texture parameter.
         // glossMapScale - smoothness parameter.
-        inline FragmentCommonData FragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        inline FragmentCommonData FragmentSetup(const float4& albedoTint, const float4& albedoColor, bool hasMetallicOrSpecularGlossMap, const float4& metallicOrSpecularGlossMap, const float4& specularColor, float metallic, float glossiness, float glossMapScale)
         {
             // Get alpha.
             float alpha = albedoTint.a * albedoColor.a;
@@ -99,7 +99,7 @@ namespace yw
             return o;
         }
 
-        inline FragmentCommonData MetallicSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicGlossMap, float4 metallicGlossMap, float metallic, float glossiness, float glossMapScale)
+        inline FragmentCommonData MetallicSetup(const float4& albedoTint, const float4& albedoColor, bool hasMetallicGlossMap, const float4& metallicGlossMap, float metallic, float glossiness, float glossMapScale)
         {
             float2 metallicGloss = MetallicGloss(hasMetallicGlossMap, metallicGlossMap, metallic, glossiness, glossMapScale);
             float metallicFinal = metallicGloss.x;
@@ -117,7 +117,7 @@ namespace yw
             return o;
         }
 
-        inline FragmentCommonData SpecularSetup(float4 albedoTint, float4 albedoColor, bool hasSpecularGlossMap, float4 specularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        inline FragmentCommonData SpecularSetup(const float4& albedoTint, const float4& albedoColor, bool hasSpecularGlossMap, const float4& specularGlossMap, const float4& specularColor, float metallic, float glossiness, float glossMapScale)
         {
             half4 specGloss = SpecularGloss(hasSpecularGlossMap, specularGlossMap, specularColor, metallic, glossiness, glossMapScale);
             half3 specColor = specGloss;
@@ -134,7 +134,7 @@ namespace yw
             return o;
         }
 
-        inline float2 MetallicGloss(bool hasMetallicGlossMap, float4 metallicGlossMap, float metallic, float glossiness, float glossMapScale)
+        inline float2 MetallicGloss(bool hasMetallicGlossMap, const float4& metallicGlossMap, float metallic, float glossiness, float glossMapScale)
         {
             float2 mg;
             if (hasMetallicGlossMap)
@@ -151,7 +151,7 @@ namespace yw
             return mg;
         }
 
-        inline half4 SpecularGloss(bool hasSpecularGlossMap, float4 specularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        inline half4 SpecularGloss(bool hasSpecularGlossMap, const float4& specularGlossMap, const float4& specularColor, float metallic, float glossiness, float glossMapScale)
         {
             half4 sg;
             if (hasSpecularGlossMap)
@@ -167,7 +167,7 @@ namespace yw
             return sg;
         }
 
-        inline float3 DiffuseAndSpecularFromMetallic(float3 albedo, float metallic, /*out*/ float3& specColor, /*out*/ float& oneMinusReflectivity)
+        inline float3 DiffuseAndSpecularFromMetallic(const float3& albedo, float metallic, /*out*/ float3& specColor, /*out*/ float& oneMinusReflectivity)
         {
             specColor = lerp((float3)unity_ColorSpaceDielectricSpec, albedo, metallic);
             oneMinusReflectivity = OneMinusReflectivityFromMetallic(metallic);
@@ -175,7 +175,7 @@ namespace yw
         }
 
         // Diffuse/Spec Energy conservation
-        inline half3 EnergyConservationBetweenDiffuseAndSpecular(half3 albedo, half3 specColor, /*out*/ half& oneMinusReflectivity)
+        inline half3 EnergyConservationBetweenDiffuseAndSpecular(const half3& albedo, const half3& specColor, /*out*/ half& oneMinusReflectivity)
         {
             oneMinusReflectivity = 1 - SpecularStrength(specColor);
         #if !UNITY_CONSERVE_ENERGY
@@ -198,7 +198,7 @@ namespace yw
             return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;
         }
 
-        inline half SpecularStrength(half3 specular)
+        inline half SpecularStrength(const half3& specular)
         {
         #if (SHADER_TARGET < 30)
             // SM2.0: instruction count limitation
@@ -209,13 +209,14 @@ namespace yw
         #endif
         }
 
-        inline float3 Albedo(float4 albedoTint, float4 albedoColor)
+        inline float3 Albedo(const float4& albedoTint, const float4& albedoColor)
         {
-            float3 albedo = (float3)albedoTint * (float3)albedoColor;
+            //float3 albedo = (float3)albedoTint * (float3)albedoColor;
+            float3 albedo = float3(albedoTint.r * albedoColor.r, albedoTint.g * albedoColor.g, albedoTint.b * albedoColor.b);
             return albedo;
         }
 
-        inline float3 PreMultiplyAlpha(float3 diffColor, float alpha, float oneMinusReflectivity, /*out*/ float outModifiedAlpha)
+        inline float3 PreMultiplyAlpha(const float3& diffColor, float alpha, float oneMinusReflectivity, /*out*/ float outModifiedAlpha)
         {
         #if defined(_ALPHAPREMULTIPLY_ON)
             // NOTE: shader relies on pre-multiply alpha-blend (_SrcBlend = One, _DstBlend = OneMinusSrcAlpha)
@@ -255,7 +256,7 @@ namespace yw
         // * GGX for NDF
         // * Smith for Visiblity term
         // * Schlick approximation for Fresnel
-        float4 UNITY_BRDF_PBS(float3 diffColor, float3 specColor, float3 lightColor, float oneMinusReflectivity, float smoothness, float3 normal, float3 viewDir, float3 lightDir);
+        float4 UNITY_BRDF_PBS(const float3& diffColor, const float3& specColor, const float3& lightColor, float oneMinusReflectivity, float smoothness, const float3& normal, const float3& viewDir, const float3& lightDir);
 
         // Note: Disney diffuse must be multiply by diffuseAlbedo / PI. This is done outside of this function.
         float DisneyDiffuse(float NdotV, float NdotL, float LdotH, float perceptualRoughness);
@@ -331,20 +332,20 @@ namespace yw
         //-----------------------------------------------------------------------------
         // Helper for fresnel calculation.
 
-        inline float3 FresnelTerm(float3 F0, float cosA)
+        inline float3 FresnelTerm(const float3& F0, float cosA)
         {
             float t = Pow5(1.0f - cosA);   // ala Schlick interpoliation
             return F0 + (float3(1.0f) - F0) * t;
         }
 
-        inline float3 FresnelLerp(float3 F0, float3 F90, float cosA)
+        inline float3 FresnelLerp(const float3& F0, const float3& F90, float cosA)
         {
             float t = Pow5(1.0f - cosA);   // ala Schlick interpoliation
             return lerp(F0, F90, t);
         }
 
         // approximage Schlick with ^4 instead of ^5
-        inline float3 FresnelLerpFast(float3 F0, float3 F90, float cosA)
+        inline float3 FresnelLerpFast(const float3& F0, const float3& F90, float cosA)
         {
             float t = Pow4(1 - cosA);
             return lerp(F0, F90, t);
@@ -357,17 +358,17 @@ namespace yw
             return x * x * x * x;
         }
 
-        inline float2 Pow4(float2 x)
+        inline float2 Pow4(const float2& x)
         {
             return x * x * x * x;
         }
 
-        inline float3 Pow4(float3 x)
+        inline float3 Pow4(const float3& x)
         {
             return x * x * x * x;
         }
 
-        inline float4 Pow4(float4 x)
+        inline float4 Pow4(const float4& x)
         {
             return x * x * x * x;
         }
@@ -381,17 +382,17 @@ namespace yw
             return x * x * x * x * x;
         }
 
-        inline float2 Pow5(float2 x)
+        inline float2 Pow5(const float2& x)
         {
             return x * x * x * x * x;
         }
 
-        inline float3 Pow5(float3 x)
+        inline float3 Pow5(const float3& x)
         {
             return x * x * x * x * x;
         }
 
-        inline float4 Pow5(float4 x)
+        inline float4 Pow5(const float4& x)
         {
             return x * x * x * x * x;
         }
@@ -414,14 +415,14 @@ namespace yw
             //float specPower = PerceptualRoughnessToSpecPower(perceptualRoughness);
             //float mip = GetSpecPowToMip (specPower, 7);
         */
-        inline float3 Unity_SafeNormalize(float3 inVec)
+        inline float3 Unity_SafeNormalize(const float3& inVec)
         {
             float dp3 = max(0.001f, dot(inVec, inVec));
             return inVec / sqrt(dp3);
         }
 
         // Unpack a scaled normal from normal map pixel.
-        inline float3 UnpackScaleNormal(float4 packedNormal, float bumpScale)
+        inline float3 UnpackScaleNormal(const float4& packedNormal, float bumpScale)
         {
             float3 normal = UnpackNormal(packedNormal);
             normal.x *= bumpScale;
@@ -431,20 +432,20 @@ namespace yw
         }
 
         // Unpack a normal from normal map pixel.
-        inline float3 UnpackNormal(float4 packedNormal)
+        inline float3 UnpackNormal(const float4& packedNormal)
         {
             return packedNormal * 2.0f - float4(1.0f);
         }
 
     protected:
-        virtual FragmentCommonData OnFragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale) = 0;
+        virtual FragmentCommonData OnFragmentSetup(const float4& albedoTint, const float4& albedoColor, bool hasMetallicOrSpecularGlossMap, const float4& metallicOrSpecularGlossMap, const float4& specularColor, float metallic, float glossiness, float glossMapScale) = 0;
     };
 
     // PBR Metallic Setup pixel shader.
     class DemoPBRMetallicSetupPixelShader : public DemoPBRPixelShader
     {
     protected:
-        virtual inline FragmentCommonData OnFragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        virtual inline FragmentCommonData OnFragmentSetup(const float4& albedoTint, const float4& albedoColor, bool hasMetallicOrSpecularGlossMap, const float4& metallicOrSpecularGlossMap, const float4& specularColor, float metallic, float glossiness, float glossMapScale)
         {
             return MetallicSetup(albedoTint, albedoColor, hasMetallicOrSpecularGlossMap, metallicOrSpecularGlossMap, metallic, glossiness, glossMapScale);
         }
@@ -454,7 +455,7 @@ namespace yw
     class DemoPBRSpecularSetupPixelShader : public DemoPBRPixelShader
     {
     protected:
-        virtual inline FragmentCommonData OnFragmentSetup(float4 albedoTint, float4 albedoColor, bool hasMetallicOrSpecularGlossMap, float4 metallicOrSpecularGlossMap, float4 specularColor, float metallic, float glossiness, float glossMapScale)
+        virtual inline FragmentCommonData OnFragmentSetup(const float4& albedoTint, const float4& albedoColor, bool hasMetallicOrSpecularGlossMap, const float4& metallicOrSpecularGlossMap, const float4& specularColor, float metallic, float glossiness, float glossMapScale)
         {
             return SpecularSetup(albedoTint, albedoColor, hasMetallicOrSpecularGlossMap, metallicOrSpecularGlossMap, specularColor, metallic, glossiness, glossMapScale);
         }
