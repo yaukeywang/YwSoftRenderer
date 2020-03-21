@@ -1098,21 +1098,21 @@ namespace yw
         case Yw3d_TSI_3Coords:
             switch (textureSampler.textureSamplerStates[Yw3d_TSS_AddressW])
             {
-            case Yw3d_TA_Wrap: w -= ftol(w);
+            case Yw3d_TA_Wrap: w -= floor(w);
             case Yw3d_TA_Clamp: w = Saturate(w); break;
             default: color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); LOGE(_T("Yw3dDevice::SampleTexture: value of texture sampler state Yw3d_TSS_AddressW is invalid.\n")); return Yw3d_E_InvalidState;
             }
         case Yw3d_TSI_2Coords:
             switch (textureSampler.textureSamplerStates[Yw3d_TSS_AddressV])
             {
-            case Yw3d_TA_Wrap: v -= ftol(v);
+            case Yw3d_TA_Wrap: v -= floor(v);
             case Yw3d_TA_Clamp: v = Saturate(v); break;
             default: color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); LOGE(_T("Yw3dDevice::SampleTexture: value of texture sampler state Yw3d_TSS_AddressV is invalid.\n")); return Yw3d_E_InvalidState;
             }
 
             switch (textureSampler.textureSamplerStates[Yw3d_TSS_AddressU])
             {
-            case Yw3d_TA_Wrap: u -= ftol(u);
+            case Yw3d_TA_Wrap: u -= floor(u);
             case Yw3d_TA_Clamp: u = Saturate(u); break;
             default: color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); LOGE(_T("Yw3dDevice::SampleTexture: value of texture sampler state Yw3d_TSS_AddressU is invalid.\n")); return Yw3d_E_InvalidState;
             }

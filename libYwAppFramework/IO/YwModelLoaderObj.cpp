@@ -72,12 +72,11 @@ namespace yw
         {
             uint64_t result = 0;
 
-            result |= ((uint64_t)(o.positionIndex & 0x0000ffff) << 48);     // Very important.
-            result |= ((uint64_t)(o.texcoordIndex & 0x0000ffff) << 32);     // Mostly important.
-            result |= ((uint64_t)(o.normalIndex & 0x0000ffff) << 16);       // Very important, but mostly same with position count.
-            result |= (uint64_t)(o.tangentIndex & 0x0000ffff);              // Very important, but mostly same with position count.
-            result += o.colorIndex * 10;                                    // No data.
-            result += o.texcoord2Index;                                     // Same with texcoordIndex.
+            // Only these attributes valid for obj model.
+            result |= ((uint64_t)(o.positionIndex & 0x0000ffff) << 48);
+            result |= ((uint64_t)(o.normalIndex & 0x0000ffff) << 32);
+            result |= ((uint64_t)(o.tangentIndex & 0x0000ffff) << 16);
+            result |= (uint64_t)(o.texcoordIndex & 0x0000ffff);
 
             return result;
         }
@@ -86,12 +85,10 @@ namespace yw
         {
             uint32_t result = 0;
 
-            result |= ((uint32_t)(o.positionIndex & 0x0000ffff) << 16);     // Very important.
-            result |= (uint32_t)(o.texcoordIndex & 0x0000ffff);             // Mostly important.
-            result += o.normalIndex * 1000;                                 // Very important, but mostly same with position count.
-            result += o.tangentIndex * 100;                                 // Very important, but mostly same with position count.
-            result += o.colorIndex * 10;                                    // No data.
-            result += o.texcoord2Index;                                     // Same with texcoordIndex.
+            result |= ((uint32_t)(o.positionIndex & 0x0000ffff) << 16); // Very important.
+            result |= (uint32_t)(o.texcoordIndex & 0x0000ffff);         // Mostly important.
+            result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
+            result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
 
             return result;
         }
@@ -139,13 +136,12 @@ namespace yw
     {
         bool operator()(const ModelVertexAttributeIndex&l, const ModelVertexAttributeIndex& r) const
         {
+            // Only these attributes valid for obj model.
             return (
                 (l.positionIndex == r.positionIndex) &&
                 (l.normalIndex == r.normalIndex) &&
-                (l.normalIndex == r.tangentIndex) &&
-                (l.normalIndex == r.colorIndex) &&
-                (l.texcoordIndex == r.texcoordIndex) &&
-                (l.texcoord2Index == r.texcoord2Index)
+                (l.tangentIndex == r.tangentIndex) &&
+                (l.texcoordIndex == r.texcoordIndex)
                 );
         }
     };
