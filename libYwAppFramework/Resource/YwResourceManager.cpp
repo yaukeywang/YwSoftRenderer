@@ -5,7 +5,7 @@
 #include "YwBaseApplication.h"
 #include "YwGraphics.h"
 #include "YwModel.h"
-#include "YwModelLoaderObj.h"
+#include "ModelLoaderWavefrontObj.h"
 #include "YwTextureLoaderBmp.h"
 #include "YwTextureLoaderPng.h"
 #include "YwTextureLoaderTga.h"
@@ -158,7 +158,7 @@ namespace yw
         Model* model = nullptr;
 
         // Load model data by loader.
-        ModelLoaderObj modelLoader;
+        ModelLoaderWavefrontObj modelLoader;
         if (!modelLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &model, true, false, 90.0f, &fileName))
         {
             YW_SAFE_DELETE(model);

@@ -15,14 +15,14 @@
 namespace yw
 {
     // Base model loader class.
-    class ModelLoaderObj : public IModelLoader
+    class ModelLoaderWavefrontObj : public IModelLoader
     {
     public:
         // Constructor.
-        ModelLoaderObj();
+        ModelLoaderWavefrontObj();
         
         // Destructor.
-        ~ModelLoaderObj();
+        ~ModelLoaderWavefrontObj();
 
     private:
         // Load model from kinds of data.

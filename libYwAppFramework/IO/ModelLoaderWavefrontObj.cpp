@@ -7,7 +7,7 @@
 // YW model loader for obj file class.
 
 #include "YwModel.h"
-#include "YwModelLoaderObj.h"
+#include "ModelLoaderWavefrontObj.h"
 #include "YwFileIO.h"
 #include <unordered_map>
 
@@ -167,24 +167,24 @@ namespace yw
         }
     }
 
-    ModelLoaderObj::ModelLoaderObj() : 
+    ModelLoaderWavefrontObj::ModelLoaderWavefrontObj() : 
         IModelLoader()
     {
         
     }
     
-    ModelLoaderObj::~ModelLoaderObj()
+    ModelLoaderWavefrontObj::~ModelLoaderWavefrontObj()
     {
         // Release each group.
     }
 
-    bool ModelLoaderObj::LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
+    bool ModelLoaderWavefrontObj::LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
     {
         LoadWavefrontObjFromData(model, data, calculateNormals, calculateNormalAngle);
         return true;
     }
 
-    void ModelLoaderObj::LoadWavefrontObjFromData(Model* objModel, const uint8_t* objData, bool calculateNormals, float calculateNormalAngle)
+    void ModelLoaderWavefrontObj::LoadWavefrontObjFromData(Model* objModel, const uint8_t* objData, bool calculateNormals, float calculateNormalAngle)
     {
         // Make a first pass through the file to get a count of the number of vertices, normals, texcoords & triangles.
         FirstPass(objModel, (const char*)objData);
@@ -209,7 +209,7 @@ namespace yw
         ProcessOtherData(objModel);
     }
 
-    void ModelLoaderObj::FirstPass(Model* model, const char* objData)
+    void ModelLoaderWavefrontObj::FirstPass(Model* model, const char* objData)
     {
         uint32_t numPositions = 0;           /* number of vertices in model */
         uint32_t numNormals = 0;            /* number of normals in model */
@@ -410,7 +410,7 @@ namespace yw
         }
     }
 
-    void ModelLoaderObj::SecondPass(class Model* model, const char* objData)
+    void ModelLoaderWavefrontObj::SecondPass(class Model* model, const char* objData)
     {
         uint32_t numPositions = 0;      /* number of positions in model */
         uint32_t numNormals = 0;        /* number of normals in model */
@@ -736,7 +736,7 @@ namespace yw
 #endif
     }
 
-    void ModelLoaderObj::CalculateFacetNormals(Model* model)
+    void ModelLoaderWavefrontObj::CalculateFacetNormals(Model* model)
     {
         assert(nullptr != model);
         assert(model->m_Positions.size() > 0);
@@ -759,7 +759,7 @@ namespace yw
         }
     }
 
-    void ModelLoaderObj::CalculateVertexNormals(Model* model, float angle)
+    void ModelLoaderWavefrontObj::CalculateVertexNormals(Model* model, float angle)
     {
         assert(nullptr != model);
         assert(model->m_FacetNormals.size() > 0);
@@ -918,7 +918,7 @@ namespace yw
         normals.clear();
     }
 
-    void ModelLoaderObj::CalculateVertexTangent(class Model* model)
+    void ModelLoaderWavefrontObj::CalculateVertexTangent(class Model* model)
     {
         // Skip if no texture coordinates data.
         if (model->m_Texcoords.size() <= 0)
@@ -953,7 +953,7 @@ namespace yw
         }
     }
 
-    void ModelLoaderObj::CalculateVertexTangentTBN(class Model* model)
+    void ModelLoaderWavefrontObj::CalculateVertexTangentTBN(class Model* model)
     {
         // Skip if no texture coordinates data.
         if (model->m_Texcoords.size() <= 0)
@@ -1022,7 +1022,7 @@ namespace yw
         }
     }
 
-    void ModelLoaderObj::ProcessOtherData(class Model* model)
+    void ModelLoaderWavefrontObj::ProcessOtherData(class Model* model)
     {
         assert(model->m_Texcoords.size() == model->m_Texcoord2s.size());
         for (int32_t i = 0; i < (int32_t)model->m_Texcoords.size(); i++)
@@ -1040,7 +1040,7 @@ namespace yw
         }
     }
 
-    void ModelLoaderObj::ReadMTL(Model* model, StringA name)
+    void ModelLoaderWavefrontObj::ReadMTL(Model* model, StringA name)
     {
         // Read material.
     }
