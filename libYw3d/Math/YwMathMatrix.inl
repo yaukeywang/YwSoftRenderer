@@ -821,9 +821,9 @@ namespace yw
     {
         Matrix44FromQuaternion(out, rotation);
 
-        out._11 *= scaling.x; out._12 *= scaling.x; out._13 *= scaling.x;
-        out._21 *= scaling.y; out._22 *= scaling.y; out._23 *= scaling.z;
-        out._31 *= scaling.z; out._32 *= scaling.z; out._33 *= scaling.z;
+        out._11 *= scaling.x; out._12 *= scaling.y; out._13 *= scaling.z;
+        out._21 *= scaling.x; out._22 *= scaling.y; out._23 *= scaling.z;
+        out._31 *= scaling.x; out._32 *= scaling.y; out._33 *= scaling.z;
         out._41 = translation.x; out._42 = translation.y; out._43 = translation.z;
 
         return out;
