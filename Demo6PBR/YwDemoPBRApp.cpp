@@ -14,12 +14,12 @@ namespace yw
         m_Camera(nullptr),
         m_DemoPBRHandle(0),
         m_UpdateTextTime(0.0f),
-        m_ModelRotateAngle(0.0f),
         m_LightRotateAngle(0.0f),
         m_Metallic(0.4f),
-        m_Smoothness(0.5f)
+        m_Smoothness(0.5f),
+        m_Drag(false)
     {
-
+        m_ArcBall.Reset();
     }
 
     DemoPBRApp::~DemoPBRApp()
@@ -36,11 +36,12 @@ namespace yw
         }
 
         // Calculation projection matrix.
-        m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 1.0f, 100.0f);
+        m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 
         // Calculation view matrix.
-        m_Camera->SetPosition(Vector3(0.0f, 1.0f, -1.5f));
-        m_Camera->SetLookAt(Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        //m_Camera->SetPosition(Vector3(0.0f, 0.0f, -35.5f));
+        m_Camera->SetPosition(Vector3(0.0f, 0.0f, -1.5f));
+        m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
         Vector4 clearColor(54.0f / 255.0f, 77.0f / 255.0f, 118.0f / 255.0f, 255.0f);
@@ -59,6 +60,9 @@ namespace yw
         {
             return false;
         }
+
+        // Init the viewing arc ball.
+        m_ArcBall.SetWindow(GetWindowWidth(), GetWindowHeight(), 1.0f);
 
         return true;
     }
@@ -101,20 +105,35 @@ namespace yw
             #endif
         }
 
-        // Update rotation angle.
-        m_ModelRotateAngle += GetDeltaTime() * 0.5f;
-        //m_LightRotateAngle += GetDeltaTime() * 0.5f;
+        // Get mouse position.
+        int32_t mouseX = 0;
+        int32_t mouseY = 0;
+        m_Input->GetMousePosition(&mouseX, &mouseY);
+
+        // Check mouse down to do the operation.
         if (m_Input->MouseButtonDown(0))
         {
-            int32_t deltaX = 0;
-            int32_t deltaY = 0;
-            m_Input->GetMouseMovement(&deltaX, &deltaY);
+            //int32_t deltaX = 0;
+            //int32_t deltaY = 0;
+            //m_Input->GetMouseMovement(&deltaX, &deltaY);
 
-            //m_ModelRotateAngle -= (float)deltaX * 0.015f;
-            m_LightRotateAngle -= (float)deltaX * 0.0015f;
-
-            m_Metallic = Saturate(m_Metallic - (float)deltaX * 0.0015f);
-            m_Smoothness = Saturate(m_Smoothness - (float)deltaY * 0.0015f);
+            if (!m_Drag)
+            {
+                m_Drag = true;
+                m_ArcBall.OnBegin(mouseX, mouseY);
+            }
+            else
+            {
+                m_ArcBall.OnMove(mouseX, mouseY);
+            }
+        }
+        else
+        {
+            if (m_Drag)
+            {
+                m_Drag = false;
+                m_ArcBall.OnEnd();
+            }
         }
     }
 

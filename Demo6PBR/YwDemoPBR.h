@@ -40,11 +40,13 @@ namespace yw
         class Model* m_Model;
         class Yw3dTexture* m_ModelTexture;
         class Yw3dTexture* m_ModelNormalTexture;
+        class Yw3dTexture* m_ModelSpecularTexture;
 
         // Resource handle.
         HRESOURCE m_ModelHandle;
         HRESOURCE m_ModelTextureHandle;
         HRESOURCE m_ModelNormalTextureHandle;
+        HRESOURCE m_ModelSpecularTextureHandle;
 
         // Shader related.
         class DemoPBRVertexShader* m_VertexShader;
