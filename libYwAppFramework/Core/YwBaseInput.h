@@ -63,7 +63,12 @@ namespace yw
 
         // Get mouse wheel movement.
         // @return mouse delta movement, maybe negative.
-        virtual int GetMouseWheelMovement() const = 0;
+        virtual int32_t GetMouseWheelMovement() const = 0;
+
+        // Get mouse current position in window coordinate.
+        // @param[in,out] posX current position x in window.
+        // @param[in,out] posY current position y in window.
+        virtual void GetMousePosition(int32_t* posX, int32_t* posY) const  = 0;
 
     protected:
         // The parent application class.

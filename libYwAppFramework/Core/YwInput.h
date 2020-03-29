@@ -46,45 +46,31 @@ namespace yw
 
         // Get if key down.
         // @return true if key down, false is not.
-        inline bool KeyDown(char keyCode)
-        {
-            return (m_Keys[keyCode] & 0x80) ? true : false;
-        }
+        bool KeyDown(char keyCode);
 
         // Get if key up.
         // @return true if key up, false is not.
-        inline bool KeyUp(char keyCode)
-        {
-            return (m_Keys[keyCode] & 0x80) ? false : true;
-        }
+        bool KeyUp(char keyCode);
 
         // Get if mouse down.
         // @return true if mouse button down, false is not.
-        inline bool MouseButtonDown(uint32_t keyCode) 
-        {
-            return (m_MouseState.rgbButtons[keyCode] & 0x80) ? true : false;
-        }
+        bool MouseButtonDown(uint32_t keyCode);
 
         // Get if mouse up.
         // @return true if mouse button up, false is not.
-        inline bool MouseButtonUp(uint32_t keyCode)
-        {
-            return (m_MouseState.rgbButtons[keyCode] & 0x80) ? false : true;
-        }
+        bool MouseButtonUp(uint32_t keyCode);
          
         // Get mouse movement.
-        inline void GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const
-        {
-            *deltaX = m_MouseState.lX;
-            *deltaY = m_MouseState.lY;
-        }
+        void GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const;
 
         // Get mouse wheel movement.
         // @return mouse delta movement, maybe negative
-        inline int GetMouseWheelMovement() const
-        {
-            return m_MouseState.lZ;
-        }
+        int32_t GetMouseWheelMovement() const;
+
+        // Get mouse current position in window coordinate.
+        // @param[in,out] posX current position x in window.
+        // @param[in,out] posY current position y in window.
+        void GetMousePosition(int32_t* posX, int32_t* posY) const;
 
     private:
         // Acquire input devices.
@@ -162,7 +148,12 @@ namespace yw
         
         // Get mouse wheel movement.
         // @return mouse delta movement, maybe negative
-        int GetMouseWheelMovement() const;
+        int32_t GetMouseWheelMovement() const;
+
+        // Get mouse current position in window coordinate.
+        // @param[in,out] posX current position x in window.
+        // @param[in,out] posY current position y in window.
+        void GetMousePosition(int32_t* posX, int32_t* posY) const;
     };
 }
 
@@ -217,7 +208,12 @@ namespace yw
         
         // Get mouse wheel movement.
         // @return mouse delta movement, maybe negative
-        int GetMouseWheelMovement() const;
+        int32_t GetMouseWheelMovement() const;
+
+        // Get mouse current position in window coordinate.
+        // @param[in,out] posX current position x in window.
+        // @param[in,out] posY current position y in window.
+        void GetMousePosition(int32_t* posX, int32_t* posY) const;
     };
 }
 
@@ -272,7 +268,12 @@ namespace yw
         
         // Get mouse wheel movement.
         // @return mouse delta movement, maybe negative
-        int GetMouseWheelMovement() const;
+        int32_t GetMouseWheelMovement() const;
+
+        // Get mouse current position in window coordinate.
+        // @param[in,out] posX current position x in window.
+        // @param[in,out] posY current position y in window.
+        void GetMousePosition(int32_t* posX, int32_t* posY) const;
     };
 }
 

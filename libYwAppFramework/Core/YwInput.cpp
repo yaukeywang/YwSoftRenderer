@@ -84,6 +84,49 @@ namespace yw
         }
     }
 
+    bool YwInputWindows::KeyDown(char keyCode)
+    {
+        return (m_Keys[keyCode] & 0x80) ? true : false;
+    }
+
+    bool YwInputWindows::KeyUp(char keyCode)
+    {
+        return (m_Keys[keyCode] & 0x80) ? false : true;
+    }
+
+    bool YwInputWindows::MouseButtonDown(uint32_t keyCode)
+    {
+        return (m_MouseState.rgbButtons[keyCode] & 0x80) ? true : false;
+    }
+
+    bool YwInputWindows::MouseButtonUp(uint32_t keyCode)
+    {
+        return (m_MouseState.rgbButtons[keyCode] & 0x80) ? false : true;
+    }
+
+    void YwInputWindows::GetMouseMovement(int32_t* deltaX, int32_t* deltaY) const
+    {
+        *deltaX = m_MouseState.lX;
+        *deltaY = m_MouseState.lY;
+    }
+
+    int32_t YwInputWindows::GetMouseWheelMovement() const
+    {
+        return m_MouseState.lZ;
+    }
+
+    void YwInputWindows::GetMousePosition(int32_t* posX, int32_t* posY) const
+    {
+        POINT pos;
+        GetCursorPos(&pos);
+
+        RECT rc;
+        GetWindowRect(GetApplication()->GetWindowHandle(), &rc);
+
+        *posX = pos.x - rc.left;
+        *posY = pos.y - rc.top;
+    }
+
     void YwInputWindows::AcquireDevices()
     {
         m_DIDeviceKeyboard->Acquire();
@@ -153,6 +196,11 @@ namespace yw
     {
         return 0;
     }
+
+    void YwInputLinux::GetMousePosition(int32_t* posX, int32_t* posY) const
+    {
+
+    }
 }
 
 #endif
@@ -211,6 +259,11 @@ namespace yw
     {
         return 0;
     }
+
+    void YwInputMacOSX::GetMousePosition(int32_t* posX, int32_t* posY) const
+    {
+
+    }
 }
 
 #endif
@@ -250,12 +303,12 @@ namespace yw
         return false;
     }
     
-    bool YwInputMacOSX::MouseButtonDown(uint32_t keyCode)
+    bool YwInputAmigaOS4::MouseButtonDown(uint32_t keyCode)
     {
         return false;
     }
     
-    bool YwInputMacOSX::MouseButtonUp(uint32_t keyCode)
+    bool YwInputAmigaOS4::MouseButtonUp(uint32_t keyCode)
     {
         return false;
     }
@@ -268,6 +321,11 @@ namespace yw
     int YwInputAmigaOS4::GetMouseWheelMovement() const
     {
         return 0;
+    }
+
+    void YwInputAmigaOS4::GetMousePosition(int32_t* posX, int32_t* posY) const
+    {
+
     }
 }
 
