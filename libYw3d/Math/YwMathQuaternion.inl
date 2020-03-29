@@ -27,7 +27,7 @@ namespace yw
         this->w = w;
     }
 
-    inline Quaternion::Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z)
+    inline Quaternion::Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z), w(q.w)
     {
     }
 
@@ -265,6 +265,14 @@ namespace yw
     inline Quaternion& QuaternionIdentity(Quaternion& out)
     {
         out.Set(0.0f, 0.0f, 0.0f, 1.0f);
+        return out;
+    }
+
+    inline Quaternion& QuaternionNormalize(Quaternion& out, const Quaternion& v)
+    {
+        float length = v.Length();
+        out = v / length;
+
         return out;
     }
 

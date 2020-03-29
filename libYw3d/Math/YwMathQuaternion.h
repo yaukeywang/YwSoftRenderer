@@ -62,6 +62,9 @@ namespace yw
     // Set quaternion identity.
     Quaternion& QuaternionIdentity(Quaternion& out);
 
+    // Normalize a quaternion.
+    Quaternion& QuaternionNormalize(Quaternion& out, const Quaternion& v);
+
     // Dot product of quaternion.
     float QuaternionDot(const Quaternion& left, const Quaternion& right);
 

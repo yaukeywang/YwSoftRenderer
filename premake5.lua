@@ -141,7 +141,8 @@ project "libYwAppFramework"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -172,8 +173,8 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwFileIO.cpp",
         "libYwAppFramework/IO/YwModelLoader.h",
         "libYwAppFramework/IO/YwModelLoader.cpp",
-        "libYwAppFramework/IO/YwModelLoaderObj.h",
-        "libYwAppFramework/IO/YwModelLoaderObj.cpp",
+        "libYwAppFramework/IO/ModelLoaderWavefrontObj.h",
+        "libYwAppFramework/IO/ModelLoaderWavefrontObj.cpp",
         "libYwAppFramework/IO/YwTextureLoader.h",
         "libYwAppFramework/IO/YwTextureLoader.cpp",
         "libYwAppFramework/IO/YwTextureLoaderBmp.h",
@@ -194,7 +195,10 @@ project "libYwAppFramework"
         "libYwAppFramework/ThirdParty/libtarga/*.cpp",
         "libYwAppFramework/ThirdParty/zlib/*.h",
         "libYwAppFramework/ThirdParty/zlib/*.c",
-        "libYwAppFramework/ThirdParty/zlib/*.cpp"
+        "libYwAppFramework/ThirdParty/zlib/*.cpp",
+
+        "libYwAppFramework/Utility/*.h",
+        "libYwAppFramework/Utility/*.cpp"
     }
 
     vpaths 
@@ -206,7 +210,8 @@ project "libYwAppFramework"
         ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.c", "libYwAppFramework/ThirdParty/*.cpp" },
         ["ThirdParty/libpng"] = {"libYwAppFramework/ThirdParty/libpng/*.h", "libYwAppFramework/ThirdParty/libpng/*.inl", "libYwAppFramework/ThirdParty/libpng/*.c", "libYwAppFramework/ThirdParty/libpng/*.cpp"},
         ["ThirdParty/libtarga"] = {"libYwAppFramework/ThirdParty/libtarga/*.h", "libYwAppFramework/ThirdParty/libtarga/*.inl", "libYwAppFramework/ThirdParty/libtarga/*.c", "libYwAppFramework/ThirdParty/libtarga/*.cpp"},
-        ["ThirdParty/zlib"] = {"libYwAppFramework/ThirdParty/zlib/*.h", "libYwAppFramework/ThirdParty/zlib/*.inl", "libYwAppFramework/ThirdParty/zlib/*.c", "libYwAppFramework/ThirdParty/zlib/*.cpp"}
+        ["ThirdParty/zlib"] = {"libYwAppFramework/ThirdParty/zlib/*.h", "libYwAppFramework/ThirdParty/zlib/*.inl", "libYwAppFramework/ThirdParty/zlib/*.c", "libYwAppFramework/ThirdParty/zlib/*.cpp"},
+        ["Utility"] = {"libYwAppFramework/Utility/*.h", "libYwAppFramework/Utility/*.inl", "libYwAppFramework/Utility/*.c", "libYwAppFramework/Utility/*.cpp"}
     }
 
     links
@@ -240,7 +245,8 @@ project "Demo1Triangle"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -301,7 +307,8 @@ project "Demo2Model"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -379,7 +386,8 @@ project "Demo3BlinnPhong"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -454,7 +462,8 @@ project "Demo4NormalMapping"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -535,7 +544,8 @@ project "Demo5TriangleShaderWireframe"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -612,7 +622,8 @@ project "Demo6PBR"
         "libYwAppFramework/ThirdParty",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib"
+        "libYwAppFramework/ThirdParty/zlib",
+        "libYwAppFramework/Utility"
     }
 
     files
@@ -657,7 +668,11 @@ project "Demo6PBR"
             '{MKDIR} "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair_D.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:linux" }
@@ -666,7 +681,11 @@ project "Demo6PBR"
             '{MKDIR} "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair_D.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"'
         }
 
     filter { "system:macosx" }
@@ -675,5 +694,9 @@ project "Demo6PBR"
             '{MKDIR} "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/SM_Chair_D.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"'
         }
