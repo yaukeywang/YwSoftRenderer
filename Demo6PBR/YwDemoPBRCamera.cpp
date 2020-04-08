@@ -9,7 +9,7 @@
 namespace yw
 {
     DemoPBRCamera::DemoPBRCamera(Graphics* graphics) :
-        Camera(graphics)
+        ArcBallCamera(graphics)
     {
     }
 

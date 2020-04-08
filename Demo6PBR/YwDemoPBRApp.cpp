@@ -30,19 +30,10 @@ namespace yw
     {
         // Create camera.
         m_Camera = new DemoPBRCamera(GetGraphics());
-        if (!m_Camera->CreateRenderCamera(GetWindowWidth(), GetWindowHeight()))
+        if (!m_Camera->Initialize(GetWindowWidth(), GetWindowHeight(), 1.0f, 1.0f, YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f, Vector3(0.0f, 0.0f, -1.5f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), 0.5f, 5.0f))
         {
             return false;
         }
-
-        // Calculation projection matrix.
-        m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-
-        // Calculation view matrix.
-        //m_Camera->SetPosition(Vector3(0.0f, 0.0f, -35.5f));
-        m_Camera->SetPosition(Vector3(0.0f, 0.0f, -1.5f));
-        m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        m_Camera->CalculateView();
 
         Vector4 clearColor(54.0f / 255.0f, 77.0f / 255.0f, 118.0f / 255.0f, 255.0f);
         GetScene()->SetClearColor(clearColor);
@@ -105,6 +96,18 @@ namespace yw
             #endif
         }
 
+        // Get mouse wheel.
+        int32_t mouseWheel = m_Input->GetMouseWheelMovement();
+        if (0 != mouseWheel)
+        {
+            //Vector3 cameraPos = m_Camera->GetPosition();
+            //cameraPos.z = Clamp(cameraPos.z + 0.00015f * (float)mouseWheel, -3.5f, -0.5f);
+            //m_Camera->SetPosition(cameraPos);
+            //m_Camera->CalculateView();
+
+            m_Camera->OnScroll(mouseWheel);
+        }
+
         // Get mouse position.
         int32_t mouseX = 0;
         int32_t mouseY = 0;
@@ -121,10 +124,17 @@ namespace yw
             {
                 m_Drag = true;
                 m_ArcBall.OnBegin(mouseX, mouseY);
+                m_Camera->OnBeginViewArcBall(mouseX, mouseY);
             }
             else
             {
                 m_ArcBall.OnMove(mouseX, mouseY);
+                m_Camera->OnMoveViewArcBall(mouseX, mouseY);
+
+                //Quaternion inv;
+                //QuaternionInverse(inv, m_ArcBall.GetRotation());
+                //m_Camera->SetRotationByArchBall(m_ArcBall.GetRotationMatrix());
+                //m_Camera->CalculateView();
             }
         }
         else
@@ -133,6 +143,12 @@ namespace yw
             {
                 m_Drag = false;
                 m_ArcBall.OnEnd();
+                m_Camera->OnEndViewArcBall();
+
+                //Quaternion inv;
+                //QuaternionInverse(inv, m_ArcBall.GetRotation());
+                //m_Camera->SetRotationByArchBall(m_ArcBall.GetRotationMatrix());
+                //m_Camera->CalculateView();
             }
         }
     }

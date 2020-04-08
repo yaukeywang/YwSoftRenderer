@@ -140,7 +140,7 @@ namespace yw
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
         Yw3dDevice* device = graphics->GetYw3dDevice();
-        Camera* camera = graphics->GetCurrentCamera();
+        DemoPBRCamera* camera = (DemoPBRCamera*)(graphics->GetCurrentCamera());
         DemoPBRApp* app = (DemoPBRApp*)(GetScene()->GetApplication());
 
         // Update light direction.
@@ -158,7 +158,8 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), app->GetModelRotation(), Vector3(0.0f, 0.0f, 0.0f));
+        //Quaternion iden;
+        Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), camera->GetViewRotation(), Vector3(0.0f, 0.0f, 0.0f));
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);

@@ -136,6 +136,12 @@ namespace yw
             m_Position = position;
         }
 
+        // Get current look at position.
+        inline const Vector3& GetLookAtPosition() const
+        {
+            return m_LookAtPosition;
+        }
+
         // Set relative position.
         inline void SetRelativePosition(const Vector3& relativePosition)
         {
@@ -177,8 +183,10 @@ namespace yw
         // Set look at orientation.
         inline void SetLookAt(const Vector3& position, const Vector3& up)
         {
+            m_LookAtPosition = position;
+
             Matrix44 matTemp;
-            Matrix44LookAtLH(matTemp, m_Position, position, up);
+            Matrix44LookAtLH(matTemp, m_Position, m_LookAtPosition, up);
             QuaternionFromMatrix44(m_Rotation, matTemp);
         }
 
@@ -200,11 +208,11 @@ namespace yw
             return m_Up;
         }
 
-    private:
+    protected:
         // Build frustum after calculating projection and view.
         void BuildFrustum();
 
-    private:
+    protected:
         // The graphics class as parent.
         class Graphics* m_Graphics;
 
@@ -237,6 +245,9 @@ namespace yw
 
         // The camera position.
         Vector3 m_Position;
+
+        // The camera look at position.
+        Vector3 m_LookAtPosition;
 
         // The camera rotation;
         Quaternion m_Rotation;

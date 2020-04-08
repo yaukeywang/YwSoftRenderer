@@ -4,11 +4,11 @@
 #ifndef __YW_DEMO_PBR_CAMERA_H__
 #define __YW_DEMO_PBR_CAMERA_H__
 
-#include "YwCamera.h"
+#include "YwArcBallCamera.h"
 
 namespace yw
 {
-    class DemoPBRCamera : public Camera
+    class DemoPBRCamera : public ArcBallCamera
     {
     public:
         // Constructor.
