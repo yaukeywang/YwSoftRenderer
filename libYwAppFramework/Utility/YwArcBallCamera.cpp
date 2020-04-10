@@ -10,8 +10,9 @@ namespace yw
         Camera(graphics),
         m_WorldArcBall(nullptr),
         m_ViewArcBall(nullptr),
-        m_MinZoomDistance(0.1f),
-        m_MaxZoomDistance(10.0f)
+        m_MinViewRadius(0.1f),
+        m_MaxViewRadius(10.0f),
+        m_ViewRadius(1.5f)
     {
         m_WorldArcBall = new ArcBall();
         m_ViewArcBall = new ArcBall();
@@ -38,8 +39,8 @@ namespace yw
         const Vector3& position, 
         const Vector3& lookAt, 
         const Vector3& up, 
-        float minZoom, 
-        float maxZoom
+        float minViewRadius, 
+        float maxViewRadius
     )
     {
         // Create camera.
@@ -57,11 +58,12 @@ namespace yw
         CalculateView();
 
         // Set zoom info.
-        m_MinZoomDistance = minZoom;
-        m_MaxZoomDistance = maxZoom;
-        if (m_MaxZoomDistance < m_MinZoomDistance)
+        m_MinViewRadius = minViewRadius;
+        m_MaxViewRadius = maxViewRadius;
+        m_ViewRadius = (position - lookAt).Length();
+        if (m_MaxViewRadius < m_MinViewRadius)
         {
-            std::swap(m_MinZoomDistance, m_MaxZoomDistance);
+            std::swap(m_MinViewRadius, m_MaxViewRadius);
         }
 
         // Init arc ball.
@@ -95,16 +97,19 @@ namespace yw
     void ArcBallCamera::OnBeginViewArcBall(int32_t screenX, int32_t screenY)
     {
         m_ViewArcBall->OnBegin(screenX, screenY);
+        UpdateRotationByViewArchBall();
     }
 
     void ArcBallCamera::OnMoveViewArcBall(int32_t screenX, int32_t screenY)
     {
         m_ViewArcBall->OnMove(screenX, screenY);
+        UpdateRotationByViewArchBall();
     }
 
     void ArcBallCamera::OnEndViewArcBall()
     {
         m_ViewArcBall->OnEnd();
+        UpdateRotationByViewArchBall();
     }
 
     void ArcBallCamera::OnScroll(int32_t delta)
@@ -114,17 +119,16 @@ namespace yw
             return;
         }
 
+        // Calculate new radius.
+        m_ViewRadius -= delta * (0.1f / 360.0f);
+        m_ViewRadius = max(m_MinViewRadius, m_ViewRadius);
+        m_ViewRadius = min(m_MaxViewRadius, m_ViewRadius);
+
         // Calculate new position.
-        Vector3 newPosition = GetPosition() - m_Forward * -(delta * (0.1f / 360.0f));
-        float distance = (newPosition - GetLookAtPosition()).SquaredLength();
-        if (distance < (m_MinZoomDistance * m_MinZoomDistance) || distance >(m_MaxZoomDistance * m_MaxZoomDistance))
-        {
-            return;
-        }
+        Vector3 newPosition = GetLookAtPosition() - GetForward() * m_ViewRadius;
 
         // Set new position.
         SetPosition(newPosition);
-        SetLookAt(m_LookAtPosition, m_Up);
         CalculateView();
     }
 
@@ -146,5 +150,38 @@ namespace yw
     const Matrix44& ArcBallCamera::GetViewRotationMatrix()
     {
         return m_ViewArcBall->GetRotationMatrix();
+    }
+
+    void ArcBallCamera::UpdateRotationByViewArchBall()
+    {
+        // Get view arc ball inverse rotation.
+        Matrix44 viewArcBallRotation;
+        Matrix44Inverse(viewArcBallRotation, m_ViewArcBall->GetRotationMatrix());
+
+        // Calculating up vector by rotation.
+        Vector3 worldUp;
+        Vector3 localUp(0.0f, 1.0f, 0.0f);
+        Vector3TransformCoord(worldUp, localUp, viewArcBallRotation);
+
+        // Calculating forward vector by rotation.
+        Vector3 worldForward;
+        Vector3 localForward(0.0f, 0.0f, 1.0f);
+        Vector3TransformCoord(worldForward, localForward, viewArcBallRotation);
+
+        // Calculating new camera position from look at position.
+        const Vector3& lookAtPosition = GetLookAtPosition();
+        SetPosition(lookAtPosition - worldForward * m_ViewRadius);
+        
+        // Get final look at matrix.
+        Matrix44 matTemp;
+        Matrix44LookAtLH(matTemp, GetPosition(), lookAtPosition, worldUp);
+
+        // Get final rotation that applied to view matrix.
+        Quaternion finalRotation;
+        QuaternionFromMatrix44(finalRotation, matTemp);
+        SetRotation(finalRotation);
+
+        // Update view matrix.
+        CalculateView();
     }
 }

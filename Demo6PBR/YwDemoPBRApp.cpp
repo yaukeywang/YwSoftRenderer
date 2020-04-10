@@ -30,7 +30,7 @@ namespace yw
     {
         // Create camera.
         m_Camera = new DemoPBRCamera(GetGraphics());
-        if (!m_Camera->Initialize(GetWindowWidth(), GetWindowHeight(), 1.0f, 1.0f, YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f, Vector3(0.0f, 0.0f, -1.5f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), 0.5f, 5.0f))
+        if (!m_Camera->Initialize(GetWindowWidth(), GetWindowHeight(), 1.0f, 1.0f, YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f, Vector3(0.0f, 0.0f, -1.5f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), 1.0f, 2.5f))
         {
             return false;
         }
@@ -124,11 +124,13 @@ namespace yw
             {
                 m_Drag = true;
                 m_ArcBall.OnBegin(mouseX, mouseY);
+                //m_Camera->OnBeginWorldArcBall(mouseX, mouseY);
                 m_Camera->OnBeginViewArcBall(mouseX, mouseY);
             }
             else
             {
                 m_ArcBall.OnMove(mouseX, mouseY);
+                //m_Camera->OnMoveWorldArcBall(mouseX, mouseY);
                 m_Camera->OnMoveViewArcBall(mouseX, mouseY);
 
                 //Quaternion inv;
@@ -143,6 +145,7 @@ namespace yw
             {
                 m_Drag = false;
                 m_ArcBall.OnEnd();
+                //m_Camera->OnEndWorldArcBall();
                 m_Camera->OnEndViewArcBall();
 
                 //Quaternion inv;

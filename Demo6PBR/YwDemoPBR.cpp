@@ -158,8 +158,8 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        //Quaternion iden;
-        Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), camera->GetViewRotation(), Vector3(0.0f, 0.0f, 0.0f));
+        Quaternion iden;
+        Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), iden/*camera->GetWorldRotation()*/, Vector3(0.0f, 0.0f, 0.0f));
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);

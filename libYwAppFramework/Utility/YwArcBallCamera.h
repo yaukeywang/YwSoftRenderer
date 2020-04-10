@@ -31,6 +31,8 @@ namespace yw
         // @param[in] position camera position.
         // @param[in] lookAt camera look at position.
         // @param[in] up camera up vector.
+        // @param[in] minViewRadius camera min radius from look at position to camera position.
+        // @param[in] maxViewRadius camera max radius from look at position to camera position.
         // @return bool true if the function succeeds, otherwise false.
         bool Initialize(
             uint32_t width, 
@@ -44,8 +46,8 @@ namespace yw
             const Vector3& position, 
             const Vector3& lookAt, 
             const Vector3& up, 
-            float minZoom, 
-            float maxZoom
+            float minViewRadius,
+            float maxViewRadius
         );
 
         // Reset arc ball.
@@ -98,17 +100,24 @@ namespace yw
         const Matrix44& GetViewRotationMatrix();
 
     private:
-        // The arc ball used for this viewing camera.
+        // Update camera rotation by view arch ball.
+        void UpdateRotationByViewArchBall();
+
+    private:
+        // The arc ball used for rotating object in world.
         class ArcBall* m_WorldArcBall;
 
-        // The arc ball used for object in world.
+        // The arc ball used for rotating this viewing camera.
         class ArcBall* m_ViewArcBall;
 
         // Minimal zoom.
-        float m_MinZoomDistance;
+        float m_MinViewRadius;
 
         // Maximum zoom.
-        float m_MaxZoomDistance;
+        float m_MaxViewRadius;
+
+        // View radius from look at position to camera position.
+        float m_ViewRadius;
     };
 }
 
