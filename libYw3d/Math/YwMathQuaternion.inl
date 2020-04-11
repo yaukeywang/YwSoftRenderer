@@ -64,9 +64,21 @@ namespace yw
     inline Quaternion Quaternion::operator *(const Quaternion& q) const
     {
         Quaternion value;
-        value.x = w * q.x + x * q.w + y * q.z - z * q.y;
-        value.y = w * q.y - x * q.z + y * q.w + z * q.x;
-        value.z = w * q.z + x * q.y - y * q.x + z * q.w;
+
+        // This is standard version. rotation from right to left.
+        // a * b * c gives us a combination of rotation c, b and a.
+        //value.x = w * q.x + x * q.w + y * q.z - z * q.y;
+        //value.y = w * q.y - x * q.z + y * q.w + z * q.x;
+        //value.z = w * q.z + x * q.y - y * q.x + z * q.w;
+        //value.w = w * q.w - x * q.x - y * q.y - z * q.z;
+
+        // This is improved version, rotation from left to right.
+        // We want a * b * c give us a combination of rotation a, b and c.
+        // So, we do a litter trick here.
+        // Check <<3D Math Primer for Graphics and Game Development>> Character 10.4.8 "Quaternion Multiplication (Cross Product)" for more details.
+        value.x = w * q.x + x * q.w + z * q.y - y * q.z;
+        value.y = w * q.y + x * q.z + y * q.w - z * q.x;
+        value.z = w * q.z - x * q.y + y * q.x + z * q.w;
         value.w = w * q.w - x * q.x - y * q.y - z * q.z;
 
         return value;
@@ -108,11 +120,7 @@ namespace yw
 
     inline Quaternion& Quaternion::operator *=(const Quaternion& q)
     {
-        Quaternion value;
-        value.x = w * q.x + x * q.w + y * q.z - z * q.y;
-        value.y = w * q.y - x * q.z + y * q.w + z * q.x;
-        value.z = w * q.z + x * q.y - y * q.x + z * q.w;
-        value.w = w * q.w - x * q.x - y * q.y - z * q.z;
+        Quaternion value = *this * q;
         *this = value;
 
         return *this;
@@ -284,12 +292,8 @@ namespace yw
 
     inline Quaternion& QuaternionCross(Quaternion& out, const Quaternion& left, const Quaternion& right)
     {
-        out.Set(
-            left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
-            left.w * right.y - left.x * right.z + left.y * right.w + left.z * right.x,
-            left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w,
-            left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z
-        );
+        Quaternion result = left * right;
+        out.Set(result.x, result.y, result.z, result.w);
 
         return out;
     }

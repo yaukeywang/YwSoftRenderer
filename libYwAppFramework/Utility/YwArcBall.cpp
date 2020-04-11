@@ -87,8 +87,7 @@ namespace yw
         {
             m_CurrentPoint = ScreenToVector(x, y);
             m_DeltaRotation = QuaternionFromBallPoints(m_PreviousMovePoint, m_CurrentPoint);
-            //m_CurrentRotation = m_PreviousRotation * QuaternionFromBallPoints(m_PreviousPoint, m_CurrentPoint);
-            m_CurrentRotation = QuaternionFromBallPoints(m_PreviousPoint, m_CurrentPoint) * m_PreviousRotation;
+            m_CurrentRotation = m_PreviousRotation * QuaternionFromBallPoints(m_PreviousPoint, m_CurrentPoint);
             m_PreviousMovePoint = m_CurrentPoint;
         }
     }
