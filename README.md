@@ -50,4 +50,4 @@ Code in `DeprecatedCode` folder is obsolete, only used for reference and will be
 ![Demo 5 Triangle Shader Wireframe](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe.png) ![Demo 5 Triangle Shader Wireframe 1](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe1.png) ![Demo 5 Triangle Shader Wireframe 2](Demo5TriangleShaderWireframe/Demo5TriangleShaderWireframe2.png)
 
 #### Demo 6: PBR (Unity BRDF 1: Desney Diffuse + Torrance-Sparrow Specular (D=GGX,F=Schlick,V=Smith), IBL is wroking on.)
-![Demo 6 PBR](Demo6PBR/Demo6PBR.png)
+![Demo 6 PBR Chair](Demo6PBR/Demo6PBR.png) ![Demo 6 PBR Unity Adam Lu Head](Demo6PBR/Demo6PBR-Unity-Lu.png)
