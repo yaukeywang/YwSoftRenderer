@@ -19,7 +19,7 @@ namespace yw
         m_Smoothness(0.5f),
         m_Drag(false)
     {
-        m_ArcBall.Reset();
+        
     }
 
     DemoPBRApp::~DemoPBRApp()
@@ -29,8 +29,17 @@ namespace yw
     bool DemoPBRApp::CreateWorld()
     {
         // Create camera.
+        Quaternion initRotation;
+        QuaternionFromEuler(initRotation, 0.0f, -90.0f * DEG_TO_RAD, 0.0f);
         m_Camera = new DemoPBRCamera(GetGraphics());
-        if (!m_Camera->Initialize(GetWindowWidth(), GetWindowHeight(), 1.0f, 1.0f, YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f, Vector3(0.0f, 0.0f, -1.5f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), 1.0f, 2.5f))
+        if (!m_Camera->Initialize(
+            GetWindowWidth(), GetWindowHeight(), 
+            YW_PI / 6.0f, 4.0f / 3.0f, 0.1f, 100.0f, 
+            Vector3(0.0f, 0.0f, -1.3f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), 
+            0.5f, 2.5f, 
+            true, 1.0f, ABCRA_All, initRotation,
+            false, 1.0f, ABCRA_All, initRotation
+        ))
         {
             return false;
         }
@@ -51,9 +60,6 @@ namespace yw
         {
             return false;
         }
-
-        // Init the viewing arc ball.
-        m_ArcBall.SetWindow(GetWindowWidth(), GetWindowHeight(), 1.0f);
 
         return true;
     }
@@ -100,11 +106,6 @@ namespace yw
         int32_t mouseWheel = m_Input->GetMouseWheelMovement();
         if (0 != mouseWheel)
         {
-            //Vector3 cameraPos = m_Camera->GetPosition();
-            //cameraPos.z = Clamp(cameraPos.z + 0.00015f * (float)mouseWheel, -3.5f, -0.5f);
-            //m_Camera->SetPosition(cameraPos);
-            //m_Camera->CalculateView();
-
             m_Camera->OnScroll(mouseWheel);
         }
 
@@ -116,27 +117,14 @@ namespace yw
         // Check mouse down to do the operation.
         if (m_Input->MouseButtonDown(0))
         {
-            //int32_t deltaX = 0;
-            //int32_t deltaY = 0;
-            //m_Input->GetMouseMovement(&deltaX, &deltaY);
-
             if (!m_Drag)
             {
                 m_Drag = true;
-                m_ArcBall.OnBegin(mouseX, mouseY);
-                //m_Camera->OnBeginWorldArcBall(mouseX, mouseY);
-                m_Camera->OnBeginViewArcBall(mouseX, mouseY);
+                m_Camera->OnBegin(mouseX, mouseY);
             }
             else
             {
-                m_ArcBall.OnMove(mouseX, mouseY);
-                //m_Camera->OnMoveWorldArcBall(mouseX, mouseY);
-                m_Camera->OnMoveViewArcBall(mouseX, mouseY);
-
-                //Quaternion inv;
-                //QuaternionInverse(inv, m_ArcBall.GetRotation());
-                //m_Camera->SetRotationByArchBall(m_ArcBall.GetRotationMatrix());
-                //m_Camera->CalculateView();
+                m_Camera->OnMove(mouseX, mouseY);
             }
         }
         else
@@ -144,14 +132,7 @@ namespace yw
             if (m_Drag)
             {
                 m_Drag = false;
-                m_ArcBall.OnEnd();
-                //m_Camera->OnEndWorldArcBall();
-                m_Camera->OnEndViewArcBall();
-
-                //Quaternion inv;
-                //QuaternionInverse(inv, m_ArcBall.GetRotation());
-                //m_Camera->SetRotationByArchBall(m_ArcBall.GetRotationMatrix());
-                //m_Camera->CalculateView();
+                m_Camera->OnEnd();
             }
         }
     }

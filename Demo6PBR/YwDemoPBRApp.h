@@ -6,7 +6,6 @@
 
 #include "YwApplication.h"
 #include "YwScene.h"
-#include "YwArcBall.h"
 
 namespace yw
 {
@@ -51,12 +50,6 @@ namespace yw
             return m_Smoothness;
         }
 
-        // Get model viewing rotation.
-        inline const Quaternion& GetModelRotation()
-        {
-            return m_ArcBall.GetRotation();
-        }
-
     private:
         // Current camera.
         class DemoPBRCamera* m_Camera;
@@ -78,9 +71,6 @@ namespace yw
 
         // User is dragging or not.
         bool m_Drag;
-
-        // The arc ball to view the model.
-        ArcBall m_ArcBall;
     };
 }
 

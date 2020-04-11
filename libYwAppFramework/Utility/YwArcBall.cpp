@@ -6,7 +6,13 @@
 
 namespace yw
 {
-    ArcBall::ArcBall()
+    ArcBall::ArcBall() : 
+        m_Width(0),
+        m_Height(0),
+        m_Radius(1.0f),
+        m_RadiusTranslation(0.0f),
+        m_IsDrag(false),
+        m_RotationAxisFlag(ABRA_All)
     {
         Reset();
 
@@ -34,15 +40,20 @@ namespace yw
         m_Radius = 1.0f;
         m_RadiusTranslation = 1.0f;
         m_IsDrag = false;
+        m_RotationAxisFlag = ABRA_All;
         
     }
 
-    void ArcBall::SetWindow(int32_t width, int32_t height, float radius)
+    void ArcBall::SetWindow(int32_t width, int32_t height, float radius, int32_t rotationAxisFlag, const Quaternion& initRotation)
     {
         m_Width = width;
         m_Height = height;
         m_Radius = radius;
         m_Center = Vector2(m_Width / 2.0f, m_Height / 2.0f);
+        m_RotationAxisFlag = rotationAxisFlag;
+
+        m_PreviousRotation = initRotation;
+        m_CurrentRotation = initRotation;
     }
 
     void ArcBall::SetOffset(int32_t x, int32_t y)
@@ -127,7 +138,16 @@ namespace yw
             z = sqrtf(1.0f - mag);
         }
 
-        return Vector3(x, y, z);
+        return OnPostProcessScreenToVector(Vector3(x, y, z));
+    }
+
+    Vector3& ArcBall::OnPostProcessScreenToVector(Vector3& v)
+    {
+        v.x = (0 == (ABRA_X & m_RotationAxisFlag)) ? v.x : 0.0f;
+        v.y = (0 == (ABRA_Y & m_RotationAxisFlag)) ? v.y : 0.0f;
+        v.z = (0 == (ABRA_Z & m_RotationAxisFlag)) ? v.z : 0.0f;
+
+        return v;
     }
 
     Quaternion ArcBall::QuaternionFromBallPoints(Vector3& start, Vector3& end)

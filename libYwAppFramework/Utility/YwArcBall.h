@@ -10,6 +10,16 @@
 
 namespace yw
 {
+    // Arc ball rotation axis.
+    enum ArcBallRotationAxis
+    {
+        ABRA_All = 0,    // Rotate only around arbitrary axis.
+        ABRA_X = 1 << 0, // Rotate only around x axis.
+        ABRA_Y = 1 << 1, // Rotate only around y axis.
+        ABRA_Z = 1 << 2, // Rotate only around z axis.
+    };
+
+    // Arc ball class.
     class ArcBall
     {
     public:
@@ -21,7 +31,7 @@ namespace yw
         void Reset();
 
         // Set window size and radius of arc ball.
-        void SetWindow(int32_t width, int32_t height, float radius = 1.0f);
+        void SetWindow(int32_t width, int32_t height, float radius = 1.0f, int32_t rotationAxisFlag = ABRA_All, const Quaternion& initRotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
 
         // Set arc ball's offset.
         void SetOffset(int32_t nX, int32_t nY);
@@ -56,6 +66,9 @@ namespace yw
         // Convert scree point to normalized sphere point.
         Vector3	ScreenToVector(int32_t screenX, int32_t screenY);
 
+        // On post-process the result of ScreenToVector.
+        Vector3& OnPostProcessScreenToVector(Vector3& v);
+
         // Calculating the rotation quaternion from start point to end point on arch ball.
         Quaternion QuaternionFromBallPoints(Vector3& start, Vector3& end);
 
@@ -78,8 +91,11 @@ namespace yw
         // Arc ball's radius for translating the target.
         float m_RadiusTranslation;
 
-        // Arc-Ball is dragged or not.
+        // Arc ball is dragged or not.
         bool m_IsDrag;
+
+        // Arc ball's rotation axis flag.
+        int32_t m_RotationAxisFlag;
 
         // Previous rotation of this Arc-Ball.
         Quaternion m_PreviousRotation;
