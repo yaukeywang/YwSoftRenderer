@@ -7,7 +7,7 @@
 // YW model loader for obj file class.
 
 #include "YwModel.h"
-#include "ModelLoaderWavefrontObj.h"
+#include "YwModelLoaderWavefrontObj.h"
 #include "YwFileIO.h"
 #include <unordered_map>
 

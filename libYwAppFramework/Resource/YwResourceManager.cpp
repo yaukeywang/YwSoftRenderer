@@ -5,7 +5,7 @@
 #include "YwBaseApplication.h"
 #include "YwGraphics.h"
 #include "YwModel.h"
-#include "ModelLoaderWavefrontObj.h"
+#include "YwModelLoaderWavefrontObj.h"
 #include "YwTextureLoaderBmp.h"
 #include "YwTextureLoaderPng.h"
 #include "YwTextureLoaderTga.h"
