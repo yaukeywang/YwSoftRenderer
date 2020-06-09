@@ -2435,7 +2435,7 @@ namespace yw
     void Yw3dDevice::CalculateTriangleGradients(const Yw3dVSOutput* vsOutput0, const Yw3dVSOutput* vsOutput1, const Yw3dVSOutput* vsOutput2)
     {
         // References:
-        // Physically Based Rendering, Third Edition : Page 158 - Compute triangle partial derivatives.
+        // Physically Based Rendering, Third Edition : Page 158 - 3.6.2 Triangle Intersection - Compute triangle partial derivatives.
         // Partial derivatives, Directional derivatives, Gradient.
         // pi = p0 + (∂p/∂u)*ui + (∂p/∂v)*vi.
 
