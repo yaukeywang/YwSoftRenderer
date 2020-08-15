@@ -65,106 +65,82 @@ namespace yw
         return buffer;
     }
 
-    // Hash function of ModelVertexAttributeIndex.
-    struct ModelVertexAttributeIndexHashFunc
+    // Find vertex index in vertex format element cache.
+    // Reference: https://github.com/gameknife/SoftRenderer/blob/769eeccc8dedd3b1be0a876db7378f66eed401ac/code/SoftRenderer/SrObjLoader.cpp#L32.
+    uint32_t add_vertex_attribute(std::vector<ModelVertexFormat>& vertices, std::vector<ModelVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const ModelVertexFormat& newVertex)
     {
-        uint64_t hash_64(const ModelVertexAttributeIndex& o) const
+        // If this vertex doesn't already exist in the Vertices list, create a new entry.
+        // Add the index of the vertex to the Indices list.
+        bool foundVertex = false;
+        uint32_t vertexIndex = 0;
+
+        // Since it's very slow to check every element in the vertex list, a hashtable stores
+        // vertex indices according to the vertex position's index as reported by the OBJ file.
+        if ((uint32_t)indexCache.size() > newVertexPositionIndex)
         {
-            uint64_t result = 0;
+            ModelVertexIndex* vertexIndexNode = indexCache[newVertexPositionIndex];
+            while (nullptr != vertexIndexNode)
+            {
+                const ModelVertexFormat* vertexFormat = vertices.data() + vertexIndexNode->index;
 
-            // Only these attributes valid for obj model.
-            result |= ((uint64_t)(o.positionIndex & 0x0000ffff) << 48);
-            result |= ((uint64_t)(o.normalIndex & 0x0000ffff) << 32);
-            result |= ((uint64_t)(o.tangentIndex & 0x0000ffff) << 16);
-            result |= (uint64_t)(o.texcoordIndex & 0x0000ffff);
+                // If this vertex is identical to the vertex already in the list, simply
+                // point the index buffer to the existing vertex.
+                if (0 == memcmp(&newVertex, vertexFormat, sizeof(ModelVertexFormat)))
+                {
+                    foundVertex = true;
+                    vertexIndex = vertexIndexNode->index;
 
-            return result;
+                    break;
+                }
+
+                vertexIndexNode = vertexIndexNode->next;
+            }
         }
 
-        uint32_t hash_32(const ModelVertexAttributeIndex& o) const
+        // Vertex was not found in the list. Create a new entry, both within the Vertices list
+        // and also within the hashtable cache.
+        if (!foundVertex)
         {
-            uint32_t result = 0;
+            // Add to the Vertices list.
+            vertexIndex = (uint32_t)vertices.size();
+            vertices.push_back(newVertex);
 
-            result |= ((uint32_t)(o.positionIndex & 0x0000ffff) << 16); // Very important.
-            result |= (uint32_t)(o.texcoordIndex & 0x0000ffff);         // Mostly important.
-            result += o.normalIndex * 1000;                             // Very important, but mostly same with position count.
-            result += o.tangentIndex * 100;                             // Very important, but mostly same with position count.
+            // Add this to the hashtable.
+            ModelVertexIndex* newVertexIndexNode = new ModelVertexIndex();
+            if (nullptr == newVertexIndexNode)
+            {
+                return 0;
+            }
 
-            return result;
+            newVertexIndexNode->index = vertexIndex;
+            newVertexIndexNode->next = nullptr;
+
+            // Grow the cache if needed.
+            if ((uint32_t)indexCache.size() <= newVertexPositionIndex)
+            {
+                indexCache.resize(newVertexPositionIndex + 1, nullptr);
+            }
+
+            // Add to the end of the linked list.
+            ModelVertexIndex* curVertexIndexNode = indexCache[newVertexPositionIndex];
+            if (nullptr == curVertexIndexNode)
+            {
+                // This is the head element.
+                indexCache[newVertexPositionIndex] = newVertexIndexNode;
+            }
+            else
+            {
+                // Find the tail.
+                while (nullptr != curVertexIndexNode->next)
+                {
+                    curVertexIndexNode = curVertexIndexNode->next;
+                }
+
+                curVertexIndexNode->next = newVertexIndexNode;
+            }
         }
 
-        size_t operator()(const ModelVertexAttributeIndex& o) const
-        {
-            size_t result = 0;
-
-        #if defined(_WIN32) || defined(WIN32)
-            // Windows.
-            #if defined(_WIN64) /* defined(_WIN64) */
-                return hash_64(o);
-            #else
-                return hash_32(o);
-            #endif
-        #elif defined(LINUX_X11) || defined(_LINUX)
-            // Linux
-            #if defined(__LP64__) /* defined(__LP64__) */
-                return hash_64(o);
-            #else
-                return hash_32(o);
-            #endif
-        #elif defined(_MAC_OSX)
-            // OSX
-            #if defined(__LP64__) /* defined(__LP64__) */
-                return hash_64(o);
-            #else
-                return hash_32(o);
-            #endif
-        #elif defined(__amigaos4__) || defined(_AMIGAOS4)
-            // OSX
-            #if defined(__LP64__) /* defined(__LP64__) */
-                return hash_64(o);
-            #else
-                return hash_32(o);
-            #endif
-        #endif
-
-            return result;
-        }
-    };
-
-    // Compare function of ModelVertexAttributeIndex.
-    struct ModelVertexAttributeIndexCompareFunc
-    {
-        bool operator()(const ModelVertexAttributeIndex&l, const ModelVertexAttributeIndex& r) const
-        {
-            // Only these attributes valid for obj model.
-            return (
-                (l.positionIndex == r.positionIndex) &&
-                (l.normalIndex == r.normalIndex) &&
-                (l.tangentIndex == r.tangentIndex) &&
-                (l.texcoordIndex == r.texcoordIndex)
-                );
-        }
-    };
-
-    // Process vertex attribute cache.
-    uint32_t add_vertex_attribute(
-        std::vector<ModelVertexAttributeIndex>* verticesCache, 
-        std::unordered_map<ModelVertexAttributeIndex, uint32_t, ModelVertexAttributeIndexHashFunc, ModelVertexAttributeIndexCompareFunc>* verticesAttributes,
-        ModelVertexAttributeIndex* vertex)
-    {
-        std::unordered_map<ModelVertexAttributeIndex, uint32_t>::const_iterator itFind = verticesAttributes->find(*vertex);
-        if (verticesAttributes->end() == itFind)
-        {
-            uint32_t vertexIndex = (uint32_t)verticesCache->size();
-            verticesCache->push_back(*vertex);
-            verticesAttributes->insert(std::pair<ModelVertexAttributeIndex, uint32_t>(*vertex, vertexIndex));
-
-            return vertexIndex;
-        }
-        else
-        {
-            return itFind->second;
-        }
+        return vertexIndex;
     }
 
     ModelLoaderWavefrontObj::ModelLoaderWavefrontObj() : 
@@ -427,15 +403,16 @@ namespace yw
         int32_t n = 0;
         int32_t t = 0;
 
+        // Vertex format node and vertex index in vertex index buffer.
+        ModelVertexFormat vertex;
+        uint32_t vertexIndex = 0;
+
         /* set the pointer shortcuts */
         Vector3* vertices = &(model->m_Positions[0]);        /* array of vertices  */
         Vector3* normals = &(model->m_Normals[0]);          /* array of normals */
         Vector2* texcoords = &(model->m_Texcoords[0]);      /* array of texture coordinates */
         ModelGroup* group = model->m_Groups.front();        /* current group pointer */
         void* material = nullptr;                           /* current material (Need to implement) */
-
-        // All triangle vertex attributes cache.
-        std::unordered_map<ModelVertexAttributeIndex, uint32_t, ModelVertexAttributeIndexHashFunc, ModelVertexAttributeIndexCompareFunc> verticesAttributeIndices;
 
         /* on the second pass through the file, read all the data into the
         allocated arrays */
@@ -496,34 +473,60 @@ namespace yw
                 if (strstr(buf, "//"))
                 {
                     /* v//n */
+                    
+                    // Vertex 0.
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d//%d", &v, &n);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     n = (n < 0 ? n + numNormals : n) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.normal = normals[n];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+                    
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = v;
                     TRIANGLE(numTriangles)->m_NormalIndices[0] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 1.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d//%d", &v, &n);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     n = (n < 0 ? n + numNormals : n) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.normal = normals[n];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+                    
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = v;
                     TRIANGLE(numTriangles)->m_NormalIndices[1] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 2.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d//%d", &v, &n);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     n = (n < 0 ? n + numNormals : n) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.normal = normals[n];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+                    
                     TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                     TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
 
+                    // Vertex n.
                     while (nullptr != movingAhead)
                     {
                         movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
@@ -531,17 +534,25 @@ namespace yw
                         v = (v < 0 ? v + numPositions : v) - 1;
                         n = (n < 0 ? n + numNormals : n) - 1;
 
+                        vertex.Reset();
+                        vertex.position = vertices[v];
+                        vertex.normal = normals[n];
+                        vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+                        
                         TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
                         TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
                         TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                         TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n));
+                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                        group->m_TriangleIndices.push_back(vertexIndex);
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -550,40 +561,69 @@ namespace yw
                 else if (sscanf(buf, "%d/%d/%d", &v, &t, &n) == 3)
                 {
                     /* v/t/n */
+
+                    // Vertex 0.
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     t = (t < 0 ? t + numTexcoords : t) - 1;
                     n = (n < 0 ? n + numNormals : n) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.texcoord = texcoords[t];
+                    vertex.normal = normals[n];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t;
                     TRIANGLE(numTriangles)->m_NormalIndices[0] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 1.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     t = (t < 0 ? t + numTexcoords : t) - 1;
                     n = (n < 0 ? n + numNormals : n) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.texcoord = texcoords[t];
+                    vertex.normal = normals[n];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t;
                     TRIANGLE(numTriangles)->m_NormalIndices[1] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 2.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d/%d", &v, &t, &n);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     t = (t < 0 ? t + numTexcoords : t) - 1;
                     n = (n < 0 ? n + numNormals : n) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.texcoord = texcoords[t];
+                    vertex.normal = normals[n];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
                     TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
 
+                    // Vertex n.
                     while (nullptr != movingAhead)
                     {
                         movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
@@ -592,20 +632,29 @@ namespace yw
                         t = (t < 0 ? t + numTexcoords : t) - 1;
                         n = (n < 0 ? n + numNormals : n) - 1;
 
+                        vertex.Reset();
+                        vertex.position = vertices[v];
+                        vertex.texcoord = texcoords[t];
+                        vertex.normal = normals[n];
+                        vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                         TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
                         TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
                         TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
                         TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, n, n, -1, t, t));
+                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                        group->m_TriangleIndices.push_back(vertexIndex);
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -614,34 +663,60 @@ namespace yw
                 else if (sscanf(buf, "%d/%d", &v, &t) == 2)
                 {
                     /* v/t */
+
+                    // Vertex 0.
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     t = (t < 0 ? t + numTexcoords : t) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.texcoord = texcoords[t];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = t;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 1.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     t = (t < 0 ? t + numTexcoords : t) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.texcoord = texcoords[t];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = t;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 2.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d/%d", &v, &t);
                     v = (v < 0 ? v + numPositions : v) - 1;
                     t = (t < 0 ? t + numTexcoords : t) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertex.texcoord = texcoords[t];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
 
+                    // Vertex n.
                     while (nullptr != movingAhead)
                     {
                         movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
@@ -649,17 +724,25 @@ namespace yw
                         v = (v < 0 ? v + numPositions : v) - 1;
                         t = (t < 0 ? t + numTexcoords : t) - 1;
 
+                        vertex.Reset();
+                        vertex.position = vertices[v];
+                        vertex.texcoord = texcoords[t];
+                        vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                         TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
                         TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v, v, v, -1, t, t));
+                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                        group->m_TriangleIndices.push_back(vertexIndex);
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
@@ -668,42 +751,72 @@ namespace yw
                 else
                 {
                     /* v */
+
+                    // Vertex 0.
                     const char* movingAhead = curPos;
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d", &v);
                     v = (v < 0 ? v + numPositions : v) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = v;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 1.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d", &v);
                     v = (v < 0 ? v + numPositions : v) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = v;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
+                    // Vertex 2.
                     movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                     sscanf(buf, "%d", &v);
                     v = (v < 0 ? v + numPositions : v) - 1;
+
+                    vertex.Reset();
+                    vertex.position = vertices[v];
+                    vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                     TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v));
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                    group->m_TriangleIndices.push_back(vertexIndex);
 
                     group->m_Triangles.push_back(numTriangles);
                     numTriangles++;
 
+                    // Vertex n.
                     while (nullptr != movingAhead)
                     {
                         movingAhead = sscanf_string_and_go_ahead(movingAhead, "%s", buf);
                         sscanf(buf, "%d", &v);
                         v = (v < 0 ? v + numPositions : v) - 1;
 
+                        vertex.Reset();
+                        vertex.position = vertices[v];
+                        vertexIndex = add_vertex_attribute(model->m_Vertices, model->m_VertexIndexCache, v, vertex);
+
                         TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
                         TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
+                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
 
                         TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = add_vertex_attribute(&model->m_Vertices, &verticesAttributeIndices, &ModelVertexAttributeIndex(v));
+                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = vertexIndex;
+                        group->m_TriangleIndices.push_back(vertexIndex);
 
                         group->m_Triangles.push_back(numTriangles);
                         numTriangles++;
