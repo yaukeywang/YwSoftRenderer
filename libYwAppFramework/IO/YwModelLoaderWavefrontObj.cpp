@@ -19,52 +19,6 @@ namespace yw
     // Helper to read triangle in model.
     #define TRIANGLE(x) (model->m_Triangles[(x)])
 
-    // Scanning a string with sscanf and moving ahead with skipping white-space, stopped when empty or '\n' is found.
-    const char* sscanf_string_and_go_ahead(const char* buffer, const char* format, const char* destination)
-    {
-        if (strlen(buffer) == 0)
-        {
-            return nullptr;
-        }
-
-        while (' ' == *buffer)
-        {
-            buffer++;
-            if (('\0' == *buffer) || ('\n' == *buffer))
-            {
-                return nullptr;
-            }
-        }
-
-        if ('\n' == *buffer)
-        {
-            return nullptr;
-        }
-
-        int32_t result = sscanf(buffer, format, destination);
-        if (result <= 0)
-        {
-            return nullptr;
-        }
-
-        buffer += strlen(destination);
-        while (' ' == *buffer)
-        {
-            buffer++;
-            if (('\0' == *buffer) || ('\n' == *buffer))
-            {
-                break;
-            }
-        }
-
-        if ('\n' == *buffer)
-        {
-            return nullptr;
-        }
-
-        return buffer;
-    }
-
     // Find vertex index in vertex format element cache.
     // Reference: https://github.com/gameknife/SoftRenderer/blob/769eeccc8dedd3b1be0a876db7378f66eed401ac/code/SoftRenderer/SrObjLoader.cpp#L32.
     uint32_t add_model_vertex_into_cache(std::vector<ModelVertex>& vertices, std::vector<ModelVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const ModelVertex& newVertex)
