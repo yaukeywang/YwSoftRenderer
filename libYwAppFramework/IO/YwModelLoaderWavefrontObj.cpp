@@ -179,13 +179,13 @@ namespace yw
             {
                 // comment.
             }
-            else if (0 == strcmp(command, "m"))
+            else if (0 == strcmp(command, "mtllib"))
             {
                 modelData >> commandName;
                 model->m_MaterialName = commandName;
                 ReadMTL(model, commandName);
             }
-            else if (0 == strcmp(command, "u"))
+            else if (0 == strcmp(command, "usemtl"))
             {
                 modelData >> commandName;
                 material = nullptr; // Find material.
