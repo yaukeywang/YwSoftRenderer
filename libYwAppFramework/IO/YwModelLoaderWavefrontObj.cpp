@@ -106,14 +106,11 @@ namespace yw
             vertices.push_back(newVertex);
 
             // Add this to the hashtable.
-            ModelVertexIndex* newVertexIndexNode = new ModelVertexIndex();
+            ModelVertexIndex* newVertexIndexNode = new ModelVertexIndex(vertexIndex, nullptr);
             if (nullptr == newVertexIndexNode)
             {
                 return 0;
             }
-
-            newVertexIndexNode->index = vertexIndex;
-            newVertexIndexNode->next = nullptr;
 
             // Grow the cache if needed.
             if ((uint32_t)indexCache.size() <= newVertexPositionIndex)
@@ -1064,6 +1061,18 @@ namespace yw
             model->m_Tangents[triangle->m_PositionIndices[1]] = Vector4(tangent, 1.0f);
             model->m_Tangents[triangle->m_PositionIndices[2]] = Vector4(tangent, 1.0f);
         }
+
+        // Update all tangets in final vertex format cache.
+        for (int32_t i = 0; i < (int32_t)model->m_VertexIndexCache.size(); i++)
+        {
+            ModelVertexIndex* vertexIndexNode = model->m_VertexIndexCache[i];
+            while (nullptr != vertexIndexNode)
+            {
+                ModelVertexFormat* vertexFormat = &(model->m_Vertices[vertexIndexNode->index]);
+                vertexFormat->tangent = model->m_Tangents[i];
+                vertexIndexNode = vertexIndexNode->next;
+            }
+        }
     }
 
     void ModelLoaderWavefrontObj::CalculateVertexTangentTBN(class Model* model)
@@ -1132,6 +1141,18 @@ namespace yw
             Vector3 tangentXYZ = Vector3Reject(Vector3(), t, n).Normalize();
             float tangentW = (Vector3Dot(Vector3Cross(Vector3(), t, b), n) > 0.0f) ? 1.0f : -1.0f;
             vertexTangent.Set(tangentXYZ.x, tangentXYZ.y, tangentXYZ.z, tangentW);
+        }
+
+        // Update all tangets in final vertex format cache.
+        for (int32_t i = 0; i < (int32_t)model->m_VertexIndexCache.size(); i++)
+        {
+            ModelVertexIndex* vertexIndexNode = model->m_VertexIndexCache[i];
+            while (nullptr != vertexIndexNode)
+            {
+                ModelVertexFormat* vertexFormat = &(model->m_Vertices[vertexIndexNode->index]);
+                vertexFormat->tangent = model->m_Tangents[i];
+                vertexIndexNode = vertexIndexNode->next;
+            }
         }
     }
 

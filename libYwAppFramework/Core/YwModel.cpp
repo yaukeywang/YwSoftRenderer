@@ -131,23 +131,7 @@ namespace yw
         }
 
         // Fill vertex buffer data, through by triangles.
-        memcpy(vertexFormat, m_Vertices.data(), sizeof(ModelVertexFormat) * (uint32_t)m_Vertices.size());
-        //for (int32_t i = 0; i < (int32_t)m_Triangles.size(); i++)
-        //{
-        //    ModelTriangle* triangle = m_Triangles[i];
-        //    for (int32_t j = 0; j < 3; j++)
-        //    {
-        //        uint32_t vertexIndex = triangle->m_VertexAttributeIndices[j];
-        //        ModelVertexFormat& vf = vertexFormat[vertexIndex];
-        //        ModelVertexAttributeIndex& vai = m_Vertices[vertexIndex];
-        //        vf.position = m_Positions[vai.positionIndex];
-        //        vf.normal = m_Normals[vai.normalIndex];
-        //        vf.tangent = ((m_Tangents.size() > 0) && (vai.tangentIndex >= 0)) ? m_Tangents[vai.tangentIndex] : Vector3::Zero();
-        //        vf.color = ((m_Colors.size() > 0) && (vai.colorIndex >= 0)) ? m_Colors[vai.colorIndex] : Vector4::White();
-        //        vf.texcoord = ((m_Texcoords.size() > 0) && (vai.texcoordIndex >= 0)) ? m_Texcoords[vai.texcoordIndex] : Vector2::Zero();
-        //        vf.texcoord2 = ((m_Texcoord2s.size() > 0) && (vai.texcoord2Index >= 0)) ? m_Texcoord2s[vai.texcoord2Index] : Vector2::Zero();
-        //    }
-        //}
+        memcpy(vertexFormat, m_Vertices.data(), (uint32_t)m_Vertices.size() * sizeof(ModelVertexFormat));
 
         // Release old index buffer data.
         for (int i = 0; i < (int32_t)m_IndexBuffers.size(); i++)
@@ -166,15 +150,19 @@ namespace yw
                 continue;
             }
 
+            // Get total triangle count in this group.
             int32_t triangleCount = (int32_t)group->m_Triangles.size();
             if (triangleCount <= 0)
             {
                 continue;
             }
 
+            // Get total index buffer data length of this grop.
+            uint32_t indexDataLength = (uint32_t)group->m_TriangleIndices.size() * sizeof(uint32_t);
+
             // Create index buffer.
             Yw3dIndexBuffer* indexBuffer = nullptr;
-            if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, sizeof(uint32_t) * (uint32_t)group->m_TriangleIndices.size(), Yw3d_FMT_INDEX32)))
+            if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, indexDataLength, Yw3d_FMT_INDEX32)))
             {
                 return false;
             }
@@ -187,7 +175,7 @@ namespace yw
             }
 
             // Fill index buffer data.
-            memcpy(indices, group->m_TriangleIndices.data(), sizeof(uint32_t) * (uint32_t)group->m_TriangleIndices.size());
+            memcpy(indices, group->m_TriangleIndices.data(), indexDataLength);
 
             // Push the index buffer of this group.
             m_IndexBuffers.push_back(ModelIndexBufferElement(indexBuffer, triangleCount));
