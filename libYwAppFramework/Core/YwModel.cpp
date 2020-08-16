@@ -118,35 +118,20 @@ namespace yw
 
         // Create vertex buffer, release old vertex buffer data.
         YW_SAFE_RELEASE(m_VertexBuffer);
-        if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(ModelVertexFormat) * (uint32_t)m_Vertices.size())))
+        if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(ModelVertex) * (uint32_t)m_Vertices.size())))
         {
             return false;
         }
 
         // Get vertex buffer pointer.
-        ModelVertexFormat* vertexFormat = nullptr;
+        ModelVertex* vertexFormat = nullptr;
         if (YW3D_FAILED(m_VertexBuffer->GetPointer(0, (void**)&vertexFormat)))
         {
             return false;
         }
 
         // Fill vertex buffer data, through by triangles.
-        for (int32_t i = 0; i < (int32_t)m_Triangles.size(); i++)
-        {
-            ModelTriangle* triangle = m_Triangles[i];
-            for (int32_t j = 0; j < 3; j++)
-            {
-                uint32_t vertexIndex = triangle->m_VertexAttributeIndices[j];
-                ModelVertexFormat& vf = vertexFormat[vertexIndex];
-                ModelVertexAttributeIndex& vai = m_Vertices[vertexIndex];
-                vf.position = m_Positions[vai.positionIndex];
-                vf.normal = m_Normals[vai.normalIndex];
-                vf.tangent = ((m_Tangents.size() > 0) && (vai.tangentIndex >= 0)) ? m_Tangents[vai.tangentIndex] : Vector3::Zero();
-                vf.color = ((m_Colors.size() > 0) && (vai.colorIndex >= 0)) ? m_Colors[vai.colorIndex] : Vector4::White();
-                vf.texcoord = ((m_Texcoords.size() > 0) && (vai.texcoordIndex >= 0)) ? m_Texcoords[vai.texcoordIndex] : Vector2::Zero();
-                vf.texcoord2 = ((m_Texcoord2s.size() > 0) && (vai.texcoord2Index >= 0)) ? m_Texcoord2s[vai.texcoord2Index] : Vector2::Zero();
-            }
-        }
+        memcpy(vertexFormat, m_Vertices.data(), (uint32_t)m_Vertices.size() * sizeof(ModelVertex));
 
         // Release old index buffer data.
         for (int i = 0; i < (int32_t)m_IndexBuffers.size(); i++)
@@ -165,15 +150,19 @@ namespace yw
                 continue;
             }
 
+            // Get total triangle count in this group.
             int32_t triangleCount = (int32_t)group->m_Triangles.size();
             if (triangleCount <= 0)
             {
                 continue;
             }
 
+            // Get total index buffer data length of this grop.
+            uint32_t indexDataLength = (uint32_t)group->m_TriangleIndices.size() * sizeof(uint32_t);
+
             // Create index buffer.
             Yw3dIndexBuffer* indexBuffer = nullptr;
-            if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, sizeof(uint16_t) * triangleCount * 3, Yw3d_FMT_INDEX16)))
+            if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, indexDataLength, Yw3d_FMT_INDEX32)))
             {
                 return false;
             }
@@ -186,15 +175,9 @@ namespace yw
             }
 
             // Fill index buffer data.
-            for (int32_t j = 0; j < triangleCount; j++)
-            {
-                ModelTriangle* triangle = m_Triangles[group->m_Triangles[j]];
-                for (int32_t k = 0; k < 3; k++)
-                {
-                    *indices++ = triangle->m_VertexAttributeIndices[k];
-                }
-            }
+            memcpy(indices, group->m_TriangleIndices.data(), indexDataLength);
 
+            // Push the index buffer of this group.
             m_IndexBuffers.push_back(ModelIndexBufferElement(indexBuffer, triangleCount));
         }
 
@@ -215,7 +198,7 @@ namespace yw
         }
 
         device->SetVertexFormat(m_VertexFormat);
-        device->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertexFormat));
+        device->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertex));
 
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
@@ -242,7 +225,7 @@ namespace yw
         }
 
         graphics->SetVertexFormat(m_VertexFormat);
-        graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertexFormat));
+        graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertex));
 
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
@@ -265,6 +248,20 @@ namespace yw
         m_Tangents.clear();
         m_Colors.clear();
         m_Vertices.clear();
+
+        // Clear all vertex cache index info.
+        for (int32_t i = 0; i < (int32_t)m_VertexIndexCache.size(); i++)
+        {
+            ModelVertexIndex* indexInfo = m_VertexIndexCache[i];
+            while (nullptr != indexInfo)
+            {
+                ModelVertexIndex* nextIndexInfo = indexInfo->next;
+                YW_SAFE_DELETE(indexInfo);
+                indexInfo = nextIndexInfo;
+            }
+        }
+
+        m_VertexIndexCache.clear();
 
         // Clear all group.
         for (size_t i = 0; i < m_Groups.size(); i++)
