@@ -60,7 +60,7 @@ namespace yw
         uint32_t m_Texcoords2Indices[3];
 
         // Vertex attribute index array.
-        uint32_t m_VertexAttributeIndices[3];
+        uint32_t m_VertexIndices[3];
 
         // Facet normal index of triangle.
         uint32_t m_FacetNormalIndex;

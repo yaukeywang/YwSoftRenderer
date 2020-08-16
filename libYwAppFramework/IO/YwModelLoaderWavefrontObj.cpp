@@ -116,12 +116,13 @@ namespace yw
         // Load all basic data like vertices, normals, texcoords & triangles.
         LoadBasicData(objModel, (const char*)objData);
 
-        // Calculate facet normals is necessary.
-        CalculateFacetNormals(objModel);
-
         // Calculate normal if this obj file does not contains any normal.
         if (calculateNormals || (objModel->m_Normals.size() <= 0))
         {
+            // Calculate facet normals is necessary.
+            CalculateFacetNormals(objModel);
+
+            // Calculate vertex normals using facet normals.
             CalculateVertexNormals(objModel, calculateNormalAngle);
         }
 
@@ -281,7 +282,7 @@ namespace yw
 
                     // Add this vertex into cache.
                     modelVertexIndex = add_model_vertex_into_cache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[faceIdx] = modelVertexIndex;
+                    TRIANGLE(numTriangles)->m_VertexIndices[faceIdx] = modelVertexIndex;
                     group->m_TriangleIndices.push_back(modelVertexIndex);
                 }
 
@@ -344,18 +345,18 @@ namespace yw
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
                     TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
-                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
+                    TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
+                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexIndices[0]);
 
                     // Vertex 1.
                     TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
                     TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
                     TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
-                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
+                    TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
+                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexIndices[2]);
 
                     // Vertex 2.
-                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = modelVertexIndex;
+                    TRIANGLE(numTriangles)->m_VertexIndices[2] = modelVertexIndex;
                     group->m_TriangleIndices.push_back(modelVertexIndex);
 
                     group->m_Triangles.push_back(numTriangles);
@@ -551,6 +552,17 @@ namespace yw
         }
 
         normals.clear();
+
+        // Update vertex normal in vertex element buffer.
+        for (uint32_t i = 0; i < (uint32_t)model->m_Triangles.size(); i++)
+        {
+            ModelTriangle* triangle = TRIANGLE(i);
+            for (uint32_t j = 0; j < 3; j++)
+            {
+                ModelVertex* modelVertex = &(model->m_Vertices[triangle->m_VertexIndices[j]]);
+                modelVertex->normal = model->m_Normals[triangle->m_NormalIndices[j]];
+            }
+        }
     }
 
     void ModelLoaderWavefrontObj::CalculateVertexTangent(class Model* model)
