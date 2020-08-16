@@ -129,7 +129,7 @@ namespace yw
         //CalculateVertexTangent(objModel);
         CalculateVertexTangentTBN(objModel);
 
-        // Process secondary texture coordinates.
+        // Process other data.
         ProcessOtherData(objModel);
     }
 
@@ -164,9 +164,7 @@ namespace yw
         /* current material (Need to implement) */
         void* material = nullptr;
 
-        /* on the second pass through the file, read all the data into the
-        allocated arrays */
-        //const char* curPos = objData;
+        // Reading and parsing through all the data until reaching the end.
         while (true)
         {
             modelData >> command;
@@ -293,73 +291,75 @@ namespace yw
                 // Extra faces.
                 while ('\n' != modelData.peek())
                 {
-                    if (' ' != modelData.peek())
+                    // Invalid vertex position index when no more data. (v >= 1)
+                    modelData >> v;
+                    if (v <= 0)
                     {
-                        // Add a triangle.
-                        model->m_Triangles.push_back(new ModelTriangle());
+                        break;
+                    }
 
-                        // Reset vertex data.
-                        modelVertex.Reset();
+                    // Add a triangle.
+                    model->m_Triangles.push_back(new ModelTriangle());
 
-                        // Read vertex.
-                        modelData >> v;
-                        v = (v < 0 ? v + numPositions : v) - 1;
-                        modelVertex.position = vertices[v];
-                        TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
+                    // Reset vertex data.
+                    modelVertex.Reset();
+
+                    // Read vertex.
+                    //modelData >> v;
+                    v = (v < 0 ? v + numPositions : v) - 1;
+                    modelVertex.position = vertices[v];
+                    TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
+
+                    if ('/' == modelData.peek())
+                    {
+                        modelData.ignore();
+                        if ('/' != modelData.peek())
+                        {
+                            // v/t/n or v/t.
+
+                            // Read textoord.
+                            modelData >> t;
+                            t = (t < 0 ? t + numTexcoords : t) - 1;
+                            modelVertex.texcoord = texcoords[t];
+                            TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
+                        }
 
                         if ('/' == modelData.peek())
                         {
+                            // v//n
                             modelData.ignore();
-                            if ('/' != modelData.peek())
-                            {
-                                // v/t/n or v/t.
 
-                                // Read textoord.
-                                modelData >> t;
-                                t = (t < 0 ? t + numTexcoords : t) - 1;
-                                modelVertex.texcoord = texcoords[t];
-                                TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
-                            }
-
-                            if ('/' == modelData.peek())
-                            {
-                                // v//n
-                                modelData.ignore();
-
-                                // Read normal.
-                                modelData >> n;
-                                n = (n < 0 ? n + numNormals : n) - 1;
-                                modelVertex.normal = normals[n];
-                                TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
-                            }
+                            // Read normal.
+                            modelData >> n;
+                            n = (n < 0 ? n + numNormals : n) - 1;
+                            modelVertex.normal = normals[n];
+                            TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
                         }
-
-                        // Add this vertex into cache.
-                        modelVertexIndex = add_model_vertex_into_cache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
-
-                        // Vertex 0.
-                        TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
-                        TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
-                        TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
-                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
-
-                        // Vertex 1.
-                        TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
-                        TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
-                        TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
-                        group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
-
-                        // Vertex 2.
-                        TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = modelVertexIndex;
-                        group->m_TriangleIndices.push_back(modelVertexIndex);
-
-                        group->m_Triangles.push_back(numTriangles);
-                        numTriangles++;
                     }
 
-                    modelData.ignore();
+                    // Add this vertex into cache.
+                    modelVertexIndex = add_model_vertex_into_cache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
+
+                    // Vertex 0.
+                    TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
+                    TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0];
+                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[0]);
+
+                    // Vertex 1.
+                    TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
+                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
+                    TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2];
+                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexAttributeIndices[2]);
+
+                    // Vertex 2.
+                    TRIANGLE(numTriangles)->m_VertexAttributeIndices[2] = modelVertexIndex;
+                    group->m_TriangleIndices.push_back(modelVertexIndex);
+
+                    group->m_Triangles.push_back(numTriangles);
+                    numTriangles++;
                 }
             }
             else
@@ -369,15 +369,6 @@ namespace yw
 
             modelData.ignore(1000, '\n');
         }
-
-#if 0
-        /* Announce the memory requirements. (Minimum required) */
-        printf("Obj Model Memory: %d bytes\n",
-            numPositions * 3 * sizeof(Vector3) +
-            numNormals * 3 * sizeof(Vector3) * (numNormals ? 1 : 0) +
-            numTexcoords * 3 * sizeof(Vector2) * (numTexcoords ? 1 : 0) +
-            numTriangles * sizeof(ModelTriangle));
-#endif
     }
 
     void ModelLoaderWavefrontObj::CalculateFacetNormals(Model* model)
