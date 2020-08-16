@@ -118,20 +118,20 @@ namespace yw
 
         // Create vertex buffer, release old vertex buffer data.
         YW_SAFE_RELEASE(m_VertexBuffer);
-        if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(ModelVertexFormat) * (uint32_t)m_Vertices.size())))
+        if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(ModelVertex) * (uint32_t)m_Vertices.size())))
         {
             return false;
         }
 
         // Get vertex buffer pointer.
-        ModelVertexFormat* vertexFormat = nullptr;
+        ModelVertex* vertexFormat = nullptr;
         if (YW3D_FAILED(m_VertexBuffer->GetPointer(0, (void**)&vertexFormat)))
         {
             return false;
         }
 
         // Fill vertex buffer data, through by triangles.
-        memcpy(vertexFormat, m_Vertices.data(), (uint32_t)m_Vertices.size() * sizeof(ModelVertexFormat));
+        memcpy(vertexFormat, m_Vertices.data(), (uint32_t)m_Vertices.size() * sizeof(ModelVertex));
 
         // Release old index buffer data.
         for (int i = 0; i < (int32_t)m_IndexBuffers.size(); i++)
@@ -198,7 +198,7 @@ namespace yw
         }
 
         device->SetVertexFormat(m_VertexFormat);
-        device->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertexFormat));
+        device->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertex));
 
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
@@ -225,7 +225,7 @@ namespace yw
         }
 
         graphics->SetVertexFormat(m_VertexFormat);
-        graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertexFormat));
+        graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(ModelVertex));
 
         int32_t renderedGroups = 0;
         for (int32_t i = 0; i < (int32_t)m_IndexBuffers.size(); i++, renderedGroups++)
@@ -248,6 +248,20 @@ namespace yw
         m_Tangents.clear();
         m_Colors.clear();
         m_Vertices.clear();
+
+        // Clear all vertex cache index info.
+        for (int32_t i = 0; i < (int32_t)m_VertexIndexCache.size(); i++)
+        {
+            ModelVertexIndex* indexInfo = m_VertexIndexCache[i];
+            while (nullptr != indexInfo)
+            {
+                ModelVertexIndex* nextIndexInfo = indexInfo->next;
+                YW_SAFE_DELETE(indexInfo);
+                indexInfo = nextIndexInfo;
+            }
+        }
+
+        m_VertexIndexCache.clear();
 
         // Clear all group.
         for (size_t i = 0; i < m_Groups.size(); i++)

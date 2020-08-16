@@ -37,11 +37,8 @@ namespace yw
         // Load Wavefront-Obj form data.
         void LoadWavefrontObjFromData(Model* model, const uint8_t* objData, bool calculateNormals, float calculateNormalAngle);
 
-        // First pass of process.
-        void FirstPass(Model* model, const char* objData);
-        
         // Second pass of process.
-        void SecondPass(class Model* model, const char* objData);
+        void LoadBasicData(class Model* model, const char* objData);
 
         // Calculate facet normals.
         void CalculateFacetNormals(class Model* model);

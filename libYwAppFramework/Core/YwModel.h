@@ -11,7 +11,7 @@
 namespace yw
 {
     // Define vertex format.
-    struct ModelVertexFormat
+    struct ModelVertex
     {
         Vector3 position;
         Vector3 normal;
@@ -20,8 +20,8 @@ namespace yw
         Vector2 texcoord;
         Vector2 texcoord2;
 
-        ModelVertexFormat() { Reset(); }
-        void Reset() { memset(this, 0, sizeof(ModelVertexFormat)); }
+        ModelVertex() { Reset(); }
+        void Reset() { memset(this, 0, sizeof(ModelVertex)); }
     };
 
     // Index of model vertex in cache.
@@ -190,7 +190,7 @@ namespace yw
         std::vector<Vector4> m_Colors;
 
         // All model vertices.
-        std::vector<ModelVertexFormat> m_Vertices;
+        std::vector<ModelVertex> m_Vertices;
         
         // All model vertex indices cache.
         std::vector<ModelVertexIndex*> m_VertexIndexCache;
