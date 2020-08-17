@@ -179,7 +179,7 @@ namespace yw
 
             if (0 == strcmp(command, "#"))
             {
-                // comment.
+                // Comments.
             }
             else if (0 == strcmp(command, "mtllib"))
             {
@@ -193,6 +193,10 @@ namespace yw
                 material = nullptr; // Find material.
                 group->m_Material = nullptr; // Need to implement material. Material is 'buf'.
                 //group->material = material = glmFindMaterial(model, buf);
+            }
+            else if (0 == strcmp(command, "usemap"))
+            {
+                // Material map.
             }
             else if (0 == strcmp(command, "g"))
             {
@@ -228,11 +232,16 @@ namespace yw
                 texcoords.push_back(Vector2(u, 1.0f - v));
                 numTexcoords++;
             }
-            else if (0 == strcmp(command, "f"))
+            else if (0 == strcmp(command, "f") && (numPositions > 0))
             {
                 // v//n or v/t/n or v/t or v.
 
+                // Add "Empty-Data" (same length with positions) if texcoords and normals are not provided.
+                texcoords.empty() ? texcoords.resize(numPositions) : 0;
+                normals.empty() ? normals.resize(numPositions) : 0;
+
                 // Used for parsing face data.
+                // v = "Position Index", n = "Normal Index", t = "Texture Coordinate index".
                 int32_t v = 0;
                 int32_t n = 0;
                 int32_t t = 0;
@@ -244,7 +253,7 @@ namespace yw
                 // Add a triangle.
                 model->m_Triangles.push_back(new ModelTriangle());
 
-                // Base 3 vertex of firrst face.
+                // Base 3 vertex of first face.
                 for (int32_t faceIdx = 0; faceIdx < 3; faceIdx++)
                 {
                     // Reset vertex data.
@@ -263,7 +272,7 @@ namespace yw
                         {
                             // v/t/n or v/t.
 
-                            // Read textoord.
+                            // Read texcoord.
                             modelData >> t;
                             t = (t < 0 ? t + numTexcoords : t) - 1;
                             modelVertex.texcoord = texcoords[t];
@@ -321,7 +330,7 @@ namespace yw
                         {
                             // v/t/n or v/t.
 
-                            // Read textoord.
+                            // Read texcoord.
                             modelData >> t;
                             t = (t < 0 ? t + numTexcoords : t) - 1;
                             modelVertex.texcoord = texcoords[t];
@@ -368,7 +377,9 @@ namespace yw
             }
             else
             {
-                // This should not happen.
+                // Invalid data or other command we are current not support.
+                //assert(false);
+                LOGE_A("ModelLoaderWavefrontObj.LoadBasicData: Invalid data or not support command provided, command = \"%s\".", command);
             }
 
             modelData.ignore(1000, '\n');
@@ -647,9 +658,9 @@ namespace yw
             const Vector3& p1 = model->m_Positions[i1];
             const Vector3& p2 = model->m_Positions[i2];
 
-            const Vector2& w0 = model->m_Texcoords[i0];
-            const Vector2& w1 = model->m_Texcoords[i1];
-            const Vector2& w2 = model->m_Texcoords[i2];
+            const Vector2& w0 = model->m_Texcoords[triangle->m_TexcoordsIndices[0]];
+            const Vector2& w1 = model->m_Texcoords[triangle->m_TexcoordsIndices[1]];
+            const Vector2& w2 = model->m_Texcoords[triangle->m_TexcoordsIndices[2]];
 
             Vector3 e1 = p1 - p0;
             Vector3 e2 = p2 - p0;
