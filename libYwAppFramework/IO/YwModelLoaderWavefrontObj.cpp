@@ -3,6 +3,10 @@
 // Modified version of glm.h
 // Nate Robins, 1997, 2000
 // nate@pobox.com, http://www.pobox.com/~nate
+// Update at 2020-08-17.
+// with some other reference:
+// https://github.com/gameknife/SoftRenderer/blob/769eeccc8dedd3b1be0a876db7378f66eed401ac/code/SoftRenderer/SrObjLoader.cpp
+// in https://github.com/gameknife/SoftRenderer
 // Wavefront OBJ model file format reader/writer/manipulator.
 // YW model loader for obj file class.
 
@@ -20,7 +24,6 @@ namespace yw
     #define TRIANGLE(x) (model->m_Triangles[(x)])
 
     // Find vertex index in vertex format element cache.
-    // Reference: https://github.com/gameknife/SoftRenderer/blob/769eeccc8dedd3b1be0a876db7378f66eed401ac/code/SoftRenderer/SrObjLoader.cpp#L32.
     uint32_t add_model_vertex_into_cache(std::vector<ModelVertex>& vertices, std::vector<ModelVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const ModelVertex& newVertex)
     {
         // If this vertex doesn't already exist in the Vertices list, create a new entry.
@@ -629,6 +632,7 @@ namespace yw
         // Allocate temporary storage for tangents and bitangents and initialize to zeros.
         std::vector<Vector3> tangent(vertexCount);
         std::vector<Vector3> bitangent(vertexCount);
+        std::vector<Vector3> normals(vertexCount);
 
         // Calculate tangent and bitangent for each triangle and add to all three vertices.
         for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
@@ -664,6 +668,10 @@ namespace yw
             bitangent[i0] += b;
             bitangent[i1] += b;
             bitangent[i2] += b;
+
+            normals[i0] = model->m_Normals[triangle->m_NormalIndices[0]];
+            normals[i1] = model->m_Normals[triangle->m_NormalIndices[1]];
+            normals[i2] = model->m_Normals[triangle->m_NormalIndices[2]];
         }
 
         // Orthonormalize each tangent and calculate the handedness.
@@ -671,7 +679,7 @@ namespace yw
         {
             const Vector3& t = tangent[i];
             const Vector3& b = bitangent[i];
-            const Vector3& n = model->m_Normals[i];
+            const Vector3& n = normals[i];
             Vector4& vertexTangent = model->m_Tangents[i];
             
             // We use left-handed.

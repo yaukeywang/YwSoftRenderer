@@ -1,13 +1,17 @@
 // Add by Yaukey at 2019-03-01.
-// YW mesh loader for obj file class.
+// YW model loader for obj file class.
 // Modified version of glm.h
 // Nate Robins, 1997, 2000
 // nate@pobox.com, http://www.pobox.com/~nate
+// Update at 2020-08-17.
+// with some other reference:
+// https://github.com/gameknife/SoftRenderer/blob/769eeccc8dedd3b1be0a876db7378f66eed401ac/code/SoftRenderer/SrObjLoader.cpp
+// in https://github.com/gameknife/SoftRenderer
 // Wavefront OBJ model file format reader/writer/manipulator.
 // YW model loader for obj file class.
 
-#ifndef __YW_MODEL_LOADER_OBJ_H__
-#define __YW_MODEL_LOADER_OBJ_H__
+#ifndef __YW_MODEL_LOADER_WAVEFRONT_OBJ_H__
+#define __YW_MODEL_LOADER_WAVEFRONT_OBJ_H__
 
 #include <stdio.h>
 #include "YwModelLoader.h"
@@ -75,4 +79,4 @@ namespace yw
     };
 }
 
-#endif // !__YW_MODEL_LOADER_OBJ_H__
+#endif // !__YW_MODEL_LOADER_WAVEFRONT_OBJ_H__

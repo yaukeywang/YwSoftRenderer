@@ -24,7 +24,7 @@ namespace yw
         void Reset() { memset(this, 0, sizeof(ModelVertex)); }
     };
 
-    // Index of model vertex in cache.
+    // Index info of model vertex in cache.
     struct ModelVertexIndex
     {
         uint32_t index;
