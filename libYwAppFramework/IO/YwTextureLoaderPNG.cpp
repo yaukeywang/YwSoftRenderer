@@ -1,7 +1,7 @@
 // Add by Yaukey at 2019-06-26.
 // YW texture loader for png class.
 
-#include "YwTextureLoaderPng.h"
+#include "YwTextureLoaderPNG.h"
 #include "Yw3d.h"
 
 #if defined(_WIN32) || defined(WIN32)

@@ -6,9 +6,9 @@
 #include "YwGraphics.h"
 #include "YwModel.h"
 #include "YwModelLoaderWavefrontObj.h"
-#include "YwTextureLoaderBmp.h"
-#include "YwTextureLoaderPng.h"
-#include "YwTextureLoaderTga.h"
+#include "YwTextureLoaderBMP.h"
+#include "YwTextureLoaderPNG.h"
+#include "YwTextureLoaderTGA.h"
 
 namespace yw
 {

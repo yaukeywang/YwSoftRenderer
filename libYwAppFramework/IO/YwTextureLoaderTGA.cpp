@@ -1,7 +1,7 @@
 // Add by Yaukey at 2019-08-20.
 // YW texture loader for tga class.
 
-#include "YwTextureLoaderTga.h"
+#include "YwTextureLoaderTGA.h"
 #include "Yw3d.h"
 #include "libtarga.h"
 

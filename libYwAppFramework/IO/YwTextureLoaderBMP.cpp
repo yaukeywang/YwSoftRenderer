@@ -5,7 +5,7 @@
 // 2. Color table is not supported;
 // 3. Only support 24-bit/32-bit depth true color format.
 
-#include "YwTextureLoaderBmp.h"
+#include "YwTextureLoaderBMP.h"
 #include "Yw3d.h"
 
 namespace yw
