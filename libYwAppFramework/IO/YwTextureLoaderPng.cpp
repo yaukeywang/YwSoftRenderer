@@ -32,18 +32,18 @@ namespace yw
         wrapper->offset += (uint32_t)length;
     }
 
-    TextureLoaderPng::TextureLoaderPng() : 
+    TextureLoaderPNG::TextureLoaderPNG() : 
         ITextureLoader()
     {
 
     }
 
-    TextureLoaderPng::~TextureLoaderPng()
+    TextureLoaderPNG::~TextureLoaderPNG()
     {
 
     }
 
-    bool TextureLoaderPng::LoadFormData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPNG::LoadFromData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         // Create base structure.
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

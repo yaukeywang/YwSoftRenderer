@@ -34,7 +34,7 @@ namespace yw
         // @param[in] dataLength - length in bytes of data.
         // @param[in] device used to create texture.
         // @param[out] texture the loaded data to fill.
-        virtual bool LoadFormData(uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture) = 0;
+        virtual bool LoadFromData(uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture) = 0;
     };
 }
 

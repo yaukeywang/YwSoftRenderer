@@ -179,7 +179,7 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderBmp bmpLoader;
+        TextureLoaderBMP bmpLoader;
         if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
         {
             YW_SAFE_RELEASE(texture);
@@ -201,7 +201,7 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderPng pngLoader;
+        TextureLoaderPNG pngLoader;
         if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
         {
             YW_SAFE_RELEASE(texture);
@@ -223,7 +223,7 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderTga tgaLoader;
+        TextureLoaderTGA tgaLoader;
         if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
         {
             YW_SAFE_RELEASE(texture);

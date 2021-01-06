@@ -7,18 +7,18 @@
 
 namespace yw
 {
-    TextureLoaderTga::TextureLoaderTga() : 
+    TextureLoaderTGA::TextureLoaderTGA() : 
         ITextureLoader()
     {
 
     }
 
-    TextureLoaderTga::~TextureLoaderTga()
+    TextureLoaderTGA::~TextureLoaderTGA()
     {
 
     }
 
-    bool TextureLoaderTga::LoadFormData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderTGA::LoadFromData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         int32_t texWidth = 0;
         int32_t texHeight = 0;
