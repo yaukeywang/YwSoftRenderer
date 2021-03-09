@@ -97,7 +97,8 @@ namespace yw
             Vector4 texColor;
             SampleTexture(texColor, samplerNumber, u, v, 0.0f, &vDdx, &vDdy);
 
-            return saturate(texColor);
+            // Return sampled texture color.
+            return texColor;
         }
 
         // Sample texture color.
@@ -125,8 +126,8 @@ namespace yw
 
             // Sample the texture.
             Yw3dResult result = SampleTexture(color, samplerNumber, u, v, 0.0f, &vDdx, &vDdy);
-            saturate(color);
 
+            // Return sample state, success or not.
             return YW3D_SUCCESSFUL(result);
         }
 
