@@ -16,10 +16,13 @@
 
 namespace yw
 {
+    // ------------------------------------------------------------------
+    // For png raw info.
+
     // Png data read wrapper.
     struct PngDataWrapper
     {
-        uint8_t* data;
+        const uint8_t* data;
         uint32_t offset;
     };
 
@@ -27,10 +30,13 @@ namespace yw
     static void png_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
     {
         PngDataWrapper* wrapper = (PngDataWrapper*)png_get_io_ptr(png_ptr);
-        uint8_t* io_ptr = wrapper->data + wrapper->offset;
+        const uint8_t* io_ptr = wrapper->data + wrapper->offset;
         memcpy(data, io_ptr, length);
         wrapper->offset += (uint32_t)length;
     }
+
+    // ------------------------------------------------------------------
+    // For texture loader.
 
     TextureLoaderPNG::TextureLoaderPNG() : 
         ITextureLoader()
@@ -43,7 +49,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderPNG::LoadFromData(uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPNG::LoadFromData(const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         // Create base structure.
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

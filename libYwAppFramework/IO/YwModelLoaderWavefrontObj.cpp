@@ -12,7 +12,6 @@
 
 #include "YwModel.h"
 #include "YwModelLoaderWavefrontObj.h"
-#include "YwFileIO.h"
 #include <sstream>
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
@@ -20,11 +19,24 @@
 
 namespace yw
 {
+    // ------------------------------------------------------------------
+    // Model data parser helper.
+
     // Helper to read triangle in model.
     #define TRIANGLE(x) (model->m_Triangles[(x)])
 
+    /* Node: general purpose node. */
+    struct TriangleVertexNode
+    {
+        uint32_t m_Index;
+        bool m_Averaged;
+        TriangleVertexNode* m_Next;
+
+        TriangleVertexNode() : m_Index(0), m_Averaged(false), m_Next(nullptr) {}
+    };
+
     // Find vertex index in vertex format element cache.
-    uint32_t add_model_vertex_into_cache(std::vector<ModelVertex>& vertices, std::vector<ModelVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const ModelVertex& newVertex)
+    static uint32_t _AddModelVertexIntoCache(std::vector<ModelVertex>& vertices, std::vector<ModelVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const ModelVertex& newVertex)
     {
         // If this vertex doesn't already exist in the Vertices list, create a new entry.
         // Add the index of the vertex to the Indices list.
@@ -96,6 +108,9 @@ namespace yw
 
         return vertexIndex;
     }
+
+    // ------------------------------------------------------------------
+    // Wavefront data processing.
 
     ModelLoaderWavefrontObj::ModelLoaderWavefrontObj() : 
         IModelLoader()
@@ -293,7 +308,7 @@ namespace yw
                     }
 
                     // Add this vertex into cache.
-                    modelVertexIndex = add_model_vertex_into_cache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
+                    modelVertexIndex = _AddModelVertexIntoCache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
                     TRIANGLE(numTriangles)->m_VertexIndices[faceIdx] = modelVertexIndex;
                     group->m_TriangleIndices.push_back(modelVertexIndex);
                 }
@@ -351,7 +366,7 @@ namespace yw
                     }
 
                     // Add this vertex into cache.
-                    modelVertexIndex = add_model_vertex_into_cache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
+                    modelVertexIndex = _AddModelVertexIntoCache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
 
                     // Vertex 0.
                     TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
@@ -424,22 +439,22 @@ namespace yw
         std::vector<Vector3> normals(model->m_Triangles.size() * 3);
 
         /* allocate a structure that will hold a linked list of triangle indices for each vertex */
-        std::vector<Node*> members(model->m_Positions.size(), nullptr);
+        std::vector<TriangleVertexNode*> members(model->m_Positions.size(), nullptr);
 
         /* for every triangle, create a node for each vertex in it */
         for (uint32_t i = 0; i < (uint32_t)model->m_Triangles.size(); i++)
         {
-            Node* node = new Node();
+            TriangleVertexNode* node = new TriangleVertexNode();
             node->m_Index = i;
             node->m_Next = members[TRIANGLE(i)->m_PositionIndices[0]];
             members[TRIANGLE(i)->m_PositionIndices[0]] = node;
 
-            node = new Node();
+            node = new TriangleVertexNode();
             node->m_Index = i;
             node->m_Next = members[TRIANGLE(i)->m_PositionIndices[1]];
             members[TRIANGLE(i)->m_PositionIndices[1]] = node;
 
-            node = new Node();
+            node = new TriangleVertexNode();
             node->m_Index = i;
             node->m_Next = members[TRIANGLE(i)->m_PositionIndices[2]];
             members[TRIANGLE(i)->m_PositionIndices[2]] = node;
@@ -451,7 +466,7 @@ namespace yw
         {
             /* calculate an average normal for this vertex by averaging the
                 facet normal of every triangle this vertex is in */
-            Node* node = members[i];
+            TriangleVertexNode* node = members[i];
             if (nullptr == node)
             {
                 LOGE(_T("CalculateVertexNormals(): vertex w/o a triangle\n"));
@@ -544,10 +559,10 @@ namespace yw
         /* free the member information */
         for (uint32_t i = 0; i < (uint32_t)model->m_Positions.size(); i++)
         {
-            Node* node = members[i];
+            TriangleVertexNode* node = members[i];
             while (nullptr != node)
             {
-                Node* tail = node;
+                TriangleVertexNode* tail = node;
                 node = node->m_Next;
                 YW_SAFE_DELETE(tail);
             }

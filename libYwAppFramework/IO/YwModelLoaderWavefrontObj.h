@@ -65,17 +65,6 @@ namespace yw
         // Read material.
         // $Implement.
         void ReadMTL(class Model* model, StringA name);
-
-    private:
-        /* Node: general purpose node. */
-        struct Node
-        {
-            uint32_t m_Index;
-            bool m_Averaged;
-            Node* m_Next;
-
-            Node() : m_Index(0), m_Averaged(false), m_Next(nullptr) {}
-        };
     };
 }
 
