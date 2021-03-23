@@ -70,17 +70,17 @@ namespace yw
         // @param[in] mipLevel mip-level that is requested, 0 being the largest mip-level.
         // @param[out] data receives the pointer to the texture-data.
         // @param[in] rect area that will be locked and accessible. (Pass in 0 to lock entire texture.)
-        // @return s_ok if the function succeeds.
-        // @return Yw3d_S_OK if one or more parameters were invalid.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_InvalidState if the texture is already locked.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
         // @note Locking the entire texture is a lot faster than locking a sub-region, because no lock-buffer has to be created and the application may write to the texture directly.
         Yw3dResult LockRect(uint32_t mipLevel, void** data, const Yw3dRect* rect);
 
         // Unlocks the given mip-level; modifications to the texture will become active.
-        // @param[in] i_iMipLevel mip-level, 0 being the largest mip-level.
-        // @return s_ok if the function succeeds.
-        // @return e_invalidparameters if one or more parameters were invalid.
+        // @param[in] mipLevel mip-level, 0 being the largest mip-level.
+        // @return Yw3d_S_OK if the function succeeds.
+        // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         Yw3dResult UnlockRect(uint32_t mipLevel);
 
         // Returns a surface-pointer to a given texture mip-level.

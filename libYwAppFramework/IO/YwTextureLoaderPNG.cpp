@@ -127,8 +127,8 @@ namespace yw
         }
 
         // Get raw data.
-        uint8_t* rawData = new uint8_t[dimensionY * png_get_rowbytes(png_ptr, info_ptr)];
-        uint8_t* curData = rawData;
+        uint8_t* texDataRaw = new uint8_t[dimensionY * png_get_rowbytes(png_ptr, info_ptr)];
+        uint8_t* curData = texDataRaw;
         uint8_t** rowsData = new uint8_t * [dimensionY];
         for (uint32_t i = 0; i < dimensionY; i++)
         {
@@ -150,7 +150,7 @@ namespace yw
         Yw3dResult resLock = (*texture)->LockRect(0, (void**)&textureData, nullptr);
         if (YW3D_FAILED(resLock))
         {
-            YW_SAFE_DELETE_ARRAY(rawData);
+            YW_SAFE_DELETE_ARRAY(texDataRaw);
             YW_SAFE_RELEASE(*texture);
             return false;
         }
@@ -159,23 +159,26 @@ namespace yw
         const float colorScale = 1.0f / 255.0f;
 
         // Fill data.
-        curData = rawData;
+        uint8_t* srcTextureData = texDataRaw;
         for (uint32_t yIdx = 0; yIdx < dimensionY; yIdx++)
         {
             for (uint32_t xIdx = 0; xIdx < dimensionX; xIdx++)
             {
-                (*textureData++) = (float)((*curData++) * colorScale);
-                (*textureData++) = (float)((*curData++) * colorScale);
-                (*textureData++) = (float)((*curData++) * colorScale);
+                (*textureData++) = (float)((*srcTextureData++) * colorScale);
+                (*textureData++) = (float)((*srcTextureData++) * colorScale);
+                (*textureData++) = (float)((*srcTextureData++) * colorScale);
                 if (hasAlpha)
                 {
-                    (*textureData++) = (float)((*curData++) * colorScale);
+                    (*textureData++) = (float)((*srcTextureData++) * colorScale);
                 }
             }
         }
 
-        YW_SAFE_DELETE_ARRAY(rawData);
+        
         (*texture)->UnlockRect(0);
+
+        // Release raw image data.
+        YW_SAFE_DELETE_ARRAY(texDataRaw);
 
         return true;
     }

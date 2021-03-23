@@ -23,8 +23,8 @@ namespace yw
         int32_t texWidth = 0;
         int32_t texHeight = 0;
         int32_t alphaBits = 0;
-        uint8_t* rawData = (uint8_t*)tga_load_data((void*)data, dataLength, &texWidth, &texHeight, &alphaBits, TGA_TRUECOLOR_32);
-        if (nullptr == rawData)
+        uint8_t* texDataRaw = (uint8_t*)tga_load_data((void*)data, dataLength, &texWidth, &texHeight, &alphaBits, TGA_TRUECOLOR_32);
+        if (nullptr == texDataRaw)
         {
             return false;
         }
@@ -55,29 +55,30 @@ namespace yw
 
         // Fill data.
         // Tga file line is from bottom to top.
+        uint8_t* srcTextureData = texDataRaw;
         for (int32_t yIdx = 0; yIdx < texHeight; yIdx++)
         {
             for (int32_t xIdx = 0; xIdx < texWidth; xIdx++)
             {
                 int32_t texIndex = (texHeight - 1 - yIdx) * texWidth + xIdx;
-                int32_t bmpIndex = yIdx * pitch + xIdx * bbp;
+                int32_t tgaIndex = yIdx * pitch + xIdx * bbp;
 
                 if (hasAlpha)
                 {
                     Vector4* texData = (Vector4*)textureData + texIndex;
-                    uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
-                    texData->r = (float)((*bmpData) * colorScale);
-                    texData->g = (float)((*(bmpData + 1)) * colorScale);
-                    texData->b = (float)((*(bmpData + 2)) * colorScale);
-                    texData->a = (float)((*(bmpData + 3)) * colorScale);
+                    uint8_t* tgaData = (uint8_t*)(srcTextureData + tgaIndex);
+                    texData->r = (float)((*tgaData) * colorScale);
+                    texData->g = (float)((*(tgaData + 1)) * colorScale);
+                    texData->b = (float)((*(tgaData + 2)) * colorScale);
+                    texData->a = (float)((*(tgaData + 3)) * colorScale);
                 }
                 else
                 {
                     Vector3* texData = (Vector3*)textureData + texIndex;
-                    uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
-                    texData->r = (float)((*bmpData) * colorScale);
-                    texData->g = (float)((*(bmpData + 1)) * colorScale);
-                    texData->b = (float)((*(bmpData + 2)) * colorScale);
+                    uint8_t* tgaData = (uint8_t*)(srcTextureData + tgaIndex);
+                    texData->r = (float)((*tgaData) * colorScale);
+                    texData->g = (float)((*(tgaData + 1)) * colorScale);
+                    texData->b = (float)((*(tgaData + 2)) * colorScale);
                 }
             }
         }
@@ -86,8 +87,8 @@ namespace yw
         (*texture)->UnlockRect(0);
 
         // Release tga image data.
-        tga_release(rawData);
-        rawData = nullptr;
+        tga_release(texDataRaw);
+        texDataRaw = nullptr;
 
         return true;
     }
