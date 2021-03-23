@@ -181,6 +181,8 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwTextureLoaderBMP.cpp",
         "libYwAppFramework/IO/YwTextureLoaderPNG.h",
         "libYwAppFramework/IO/YwTextureLoaderPNG.cpp",
+        "libYwAppFramework/IO/YwTextureLoaderRGBE.h",
+        "libYwAppFramework/IO/YwTextureLoaderRGBE.cpp",
         "libYwAppFramework/IO/YwTextureLoaderTGA.h",
         "libYwAppFramework/IO/YwTextureLoaderTGA.cpp",
 
