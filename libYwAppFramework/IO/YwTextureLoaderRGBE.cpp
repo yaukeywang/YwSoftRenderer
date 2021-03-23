@@ -169,7 +169,7 @@ namespace yw
     }
 
     // Simple read routine. will not correctly handle run length encoding.
-    bool _RGBE_ReadPixels(const uint8_t* srcData, float* dstData, int pixels)
+    static bool _RGBE_ReadPixels(const uint8_t* srcData, float* dstData, int pixels)
     {
         uint8_t* srcDataHead = (uint8_t*)srcData;
         uint8_t rgbe[4];
@@ -187,19 +187,17 @@ namespace yw
     }
 
     // Reading pixels. Will correctly handle run length encoding.
-    bool _RGBE_ReadPixels_RLE(const uint8_t* srcData, float* dstData, int32_t scanline_width, int32_t num_scanlines)
+    static bool _RGBE_ReadPixels_RLE(const uint8_t* srcData, float* dstData, int32_t scanline_width, int32_t num_scanlines)
     {
         uint8_t* srcDataHead = (uint8_t*)srcData;
-        uint8_t rgbe[4];
-        int32_t i, count;
-        uint8_t buf[2];
-
+        
         if ((scanline_width < 8) || (scanline_width > 0x7fff))
         {
             /* run length encoding is not allowed so read flat*/
             return _RGBE_ReadPixels(srcData, dstData, scanline_width * num_scanlines);
         }
-            
+        
+        // Scanline buffer.
         uint8_t* scanline_buffer = nullptr;
 
         /* read in each successive scanline */
@@ -211,6 +209,7 @@ namespace yw
             //}
 
             // Get rgbe origin data.
+            uint8_t rgbe[4];
             memcpy(rgbe, srcDataHead, sizeof(rgbe));
             srcDataHead += (sizeof(rgbe) / sizeof(rgbe[0]));
 
@@ -244,7 +243,7 @@ namespace yw
             uint8_t* ptr = &scanline_buffer[0];
 
             /* read each of the four channels for the scanline into the buffer */
-            for (i = 0; i < 4; i++)
+            for (int32_t i = 0; i < 4; i++)
             {
                 uint8_t* ptr_end = &scanline_buffer[(i + 1)*scanline_width];
                 while (ptr < ptr_end)
@@ -254,13 +253,14 @@ namespace yw
                     //    return rgbe_error(rgbe_read_error, NULL);
                     //}
 
-                    memcpy(srcDataHead, buf, sizeof(buf));
+                    uint8_t buf[2];
+                    memcpy(buf, srcDataHead, sizeof(buf));
                     srcDataHead += (sizeof(buf) / sizeof(buf[0]));
 
                     if (buf[0] > 128) 
                     {
                         /* a run of the same value */
-                        count = buf[0] - 128;
+                        int32_t count = buf[0] - 128;
                         if ((count == 0) || (count > ptr_end - ptr)) {
                             YW_SAFE_DELETE_ARRAY(scanline_buffer);
                             //return rgbe_error(rgbe_format_error, "bad scanline data");
@@ -276,7 +276,7 @@ namespace yw
                     else 
                     {
                         /* a non-run */
-                        count = buf[0];
+                        int32_t count = buf[0];
                         if ((0 == count) || (count > ptr_end - ptr))
                         {
                             YW_SAFE_DELETE_ARRAY(scanline_buffer);
@@ -293,7 +293,7 @@ namespace yw
                             //    return rgbe_error(rgbe_read_error, NULL);
                             //}
 
-                            memcpy(srcDataHead, ptr, sizeof(*ptr) * count);
+                            memcpy(ptr, srcDataHead, sizeof(*ptr) * count);
                             srcDataHead += count;
 
                             ptr += count;
@@ -303,7 +303,7 @@ namespace yw
             }
 
             /* now convert data from buffer into floats */
-            for (i = 0; i < scanline_width; i++)
+            for (int32_t i = 0; i < scanline_width; i++)
             {
                 rgbe[0] = scanline_buffer[i];
                 rgbe[1] = scanline_buffer[i + scanline_width];
@@ -338,12 +338,68 @@ namespace yw
     {
         // Get file header first.
         RGBEHeader header;
-        if (_RGBE_ReadHeader(data, &header) < 0)
+        int32_t headerSize = _RGBE_ReadHeader(data, &header);
+        if (headerSize < 0)
         {
             LOGE(_T("TextureLoaderRGBE¡£LoadFromData: Wrong RGBE file header."));
             return false;
         }
 
-        return false;
+        // Read texture data.
+        uint8_t* texDataRLE = (uint8_t*)(data + headerSize);
+        int32_t texWidth = header.width;
+        int32_t texHeight = header.height;
+        int32_t bbp = 3;
+        int32_t pitch = bbp * texWidth;
+
+        float* texDataRaw = new float[texWidth * texHeight * bbp];
+        if (!_RGBE_ReadPixels_RLE(texDataRLE, texDataRaw, texWidth, texHeight))
+        {
+            return false;
+        }
+
+        // Create texture from device.
+        YW_SAFE_RELEASE(*texture);
+        if (YW3D_FAILED(device->CreateTexture(texture, texWidth, texHeight, 0, Yw3d_FMT_R32G32B32F)))
+        {
+            return false;
+        }
+
+        // Lock texture data.
+        float* textureData = nullptr;
+        Yw3dResult resLock = (*texture)->LockRect(0, (void**)&textureData, nullptr);
+        if (YW3D_FAILED(resLock))
+        {
+            YW_SAFE_RELEASE(*texture);
+            return false;
+        }
+
+        // Normalized color scale.
+        const float colorScale = 1.0f / 255.0f;
+
+        // Fill data.
+        float* srcTextureData = texDataRaw;
+        for (int32_t yIdx = 0; yIdx < texHeight; yIdx++)
+        {
+            for (int32_t xIdx = 0; xIdx < texWidth; xIdx++)
+            {
+                int32_t texIndex = (texHeight - 1 - yIdx) * texWidth + xIdx;
+                int32_t hdrIndex = yIdx * pitch + xIdx * bbp;
+
+                Vector3* texData = (Vector3*)textureData + texIndex;
+                float* hdrData = srcTextureData + hdrIndex;
+                texData->r = (float)((*hdrData) * colorScale);
+                texData->g = (float)((*(hdrData + 1)) * colorScale);
+                texData->b = (float)((*(hdrData + 2)) * colorScale);
+            }
+        }
+
+        // Unlock texture.
+        (*texture)->UnlockRect(0);
+
+        // Release raw image data.
+        YW_SAFE_DELETE_ARRAY(texDataRaw);
+
+        return true;
     }
 }
