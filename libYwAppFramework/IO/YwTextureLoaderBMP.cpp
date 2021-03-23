@@ -81,7 +81,7 @@ namespace yw
         int32_t pitch = ((texWidth * bbp) + 3) / 4 * 4;
 
         // Read texture data.
-        uint8_t* texDataStart = (uint8_t*)(data + fileHeader->bfOffBits);
+        uint8_t* texDataRaw = (uint8_t*)(data + fileHeader->bfOffBits);
         //uint8_t* texDataStart = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
 
         // Create texture from device.
@@ -104,7 +104,7 @@ namespace yw
         const float colorScale = 1.0f / 255.0f;
 
         // Fill data.
-        uint8_t* rawData = texDataStart;
+        uint8_t* srcTextureData = texDataRaw;
         for (int32_t yIdx = 0; yIdx < texHeight; yIdx++)
         {
             for (int32_t xIdx = 0; xIdx < texWidth; xIdx++)
@@ -115,7 +115,7 @@ namespace yw
                 if (Yw3d_FMT_R32G32B32A32F == textureFormat)
                 {
                     Vector4* texData = (Vector4*)textureData + texIndex;
-                    uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
+                    uint8_t* bmpData = (uint8_t*)(srcTextureData + bmpIndex);
                     texData->b = (float)((*bmpData) * colorScale);
                     texData->g = (float)((*(bmpData + 1)) * colorScale);
                     texData->r = (float)((*(bmpData + 2)) * colorScale);
@@ -124,7 +124,7 @@ namespace yw
                 else
                 {
                     Vector3* texData = (Vector3*)textureData + texIndex;
-                    uint8_t* bmpData = (uint8_t*)(rawData + bmpIndex);
+                    uint8_t* bmpData = (uint8_t*)(srcTextureData + bmpIndex);
                     texData->b = (float)((*bmpData) * colorScale);
                     texData->g = (float)((*(bmpData + 1)) * colorScale);
                     texData->r = (float)((*(bmpData + 2)) * colorScale);
