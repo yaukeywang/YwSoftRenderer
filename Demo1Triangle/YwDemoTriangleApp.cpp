@@ -53,9 +53,10 @@ namespace yw
 
         DemoTriangle* demoTriangle = (DemoTriangle*)GetScene()->GetEntity(m_DemoTriangleHandle);
         if (!demoTriangle->Initialize(
-            Vector3(-1.0f, 0.0f, 0.0f), Vector4::Red(),
-            Vector3(0.0f, sqrtf(3.0f), 0.0f), Vector4::Green(),
-            Vector3(1.0f, 0.0f, 0.0f), Vector4::Blue()
+            Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f),
+            Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f),
+            Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f),
+            Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f)
         ))
         {
             return false;
@@ -107,12 +108,12 @@ namespace yw
         {
             int32_t deltaX = 0;
             int32_t deltaY = 0;
-            m_Input->GetMouseMovement(&deltaX, &deltaY);
-            m_RotateAngle -= (float)deltaX * 0.015f;
+            //m_Input->GetMouseMovement(&deltaX, &deltaY);
+            //m_RotateAngle -= (float)deltaX * 0.015f;
         }
         else
         {
-            m_RotateAngle += GetDeltaTime() * 3.0f;
+            //m_RotateAngle += GetDeltaTime() * 3.0f;
         }
     }
 

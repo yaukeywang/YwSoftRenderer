@@ -32,7 +32,7 @@ namespace yw
             {
             case 0:
                 // Vertex color.
-                return Yw3d_SRT_Vector4;
+                return Yw3d_SRT_Vector2;
             default:
                 return Yw3d_SRT_Unused;
             }
@@ -50,7 +50,7 @@ namespace yw
 
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
-            color = input[0];
+            color = Vector4::Green();
             return true;
         }
     };
@@ -87,9 +87,10 @@ namespace yw
     }
 
     bool DemoTriangle::Initialize(
-        const Vector3& pointA, const Vector4& colorA,
-        const Vector3& pointB, const Vector4& colorB,
-        const Vector3& pointC, const Vector4& colorC
+        const Vector3& pointA, const Vector2& uvA,
+        const Vector3& pointB, const Vector2& uvB,
+        const Vector3& pointC, const Vector2& uvC,
+        const Vector3& pointD, const Vector2& uvD
     )
     {
         // Get graphics and device.
@@ -103,8 +104,8 @@ namespace yw
         }
 
         // Create vertex data.
-        m_NumVertices = 3;
-        m_NumPrimitives = 1;
+        m_NumVertices = 4;
+        m_NumPrimitives = 2;
 
         // Create vertex buffer.
         if (YW3D_FAILED(device->CreateVertexBuffer(&m_VertexBuffer, sizeof(Vertexformat) * m_NumVertices)))
@@ -134,15 +135,21 @@ namespace yw
 
         // Combine data.
         vertexFormat[0].position = pointA;
-        vertexFormat[0].color = colorA;
+        vertexFormat[0].uv = uvA;
         vertexFormat[1].position = pointB;
-        vertexFormat[1].color = colorB;
+        vertexFormat[1].uv = uvB;
         vertexFormat[2].position = pointC;
-        vertexFormat[2].color = colorC;
+        vertexFormat[2].uv = uvC;
+        vertexFormat[3].position = pointD;
+        vertexFormat[3].uv = uvD;
 
         indices[0] = 0;
         indices[1] = 1;
         indices[2] = 2;
+
+        indices[3] = 0;
+        indices[4] = 2;
+        indices[5] = 3;
 
         // Create vertex and pixel shader.
         m_VertexShader = new DemoTriangleVertexShader();

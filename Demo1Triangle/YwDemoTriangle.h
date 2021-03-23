@@ -16,7 +16,7 @@ namespace yw
         struct Vertexformat
         {
             Vector3 position;
-            Vector4 color;
+            Vector2 uv;
         };
 
     protected:
@@ -35,9 +35,10 @@ namespace yw
 
         // Initial demo triangle.
         bool Initialize(
-            const Vector3& pointA, const Vector4& colorA,
-            const Vector3& pointB, const Vector4& colorB,
-            const Vector3& pointC, const Vector4& colorC
+            const Vector3& pointA, const Vector2& uvA,
+            const Vector3& pointB, const Vector2& uvB,
+            const Vector3& pointC, const Vector2& uvC,
+            const Vector3& pointD, const Vector2& uvD
         );
 
         // Returns true if the object has been moved -> scenegraph-care.
