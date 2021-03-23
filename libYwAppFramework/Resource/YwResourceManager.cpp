@@ -9,6 +9,7 @@
 #include "YwTextureLoaderBMP.h"
 #include "YwTextureLoaderPNG.h"
 #include "YwTextureLoaderTGA.h"
+#include "YwTextureLoaderRGBE.h"
 
 namespace yw
 {
@@ -36,6 +37,7 @@ namespace yw
         RegisterResourceExtension("bmp", LoadTexture_BMP, UnloadTexture_BMP);
         RegisterResourceExtension("png", LoadTexture_PNG, UnloadTexture_PNG);
         RegisterResourceExtension("tga", LoadTexture_TGA, UnloadTexture_TGA);
+        RegisterResourceExtension("hdr", LoadTexture_HDR, UnloadTexture_HDR);
         RegisterResourceExtension("cube", LoadTexture_Cube, UnloadTexture_Cube);
         RegisterResourceExtension("anim", LoadTexture_Animated, UnloadTexture_Animated);
 
@@ -234,6 +236,28 @@ namespace yw
     }
 
     void ResourceManager::UnloadTexture_TGA(ResourceManager* resourceManager, void* resource)
+    {
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
+        YW_SAFE_RELEASE(texture);
+    }
+
+    void* ResourceManager::LoadTexture_HDR(ResourceManager* resourceManager, const StringA& fileName)
+    {
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderRGBE rgbeLoader;
+        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
+    }
+
+    void ResourceManager::UnloadTexture_HDR(ResourceManager* resourceManager, void* resource)
     {
         Yw3dTexture* texture = (Yw3dTexture*)resource;
         YW_SAFE_RELEASE(texture);

@@ -64,6 +64,9 @@ namespace yw
         static void* LoadTexture_TGA(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_TGA(ResourceManager* resourceManager, void* resource);
 
+        static void* LoadTexture_HDR(ResourceManager* resourceManager, const StringA& fileName);
+        static void UnloadTexture_HDR(ResourceManager* resourceManager, void* resource);
+
         // Load and unload "cube" texture file.
         static void* LoadTexture_Cube(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_Cube(ResourceManager* resourceManager, void* resource);
