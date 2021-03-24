@@ -31,6 +31,16 @@ namespace yw
         return (int32_t)(p - src);
     }
 
+    // Convert srgb color to linear.
+    static float _srgb2linear(float value) {
+        return (float)pow(value, 2.2f);
+    }
+
+    // Convert linear color to srgb.
+    static float _linear2srgb(float value) {
+        return (float)pow(value, 1.0f / 2.2f);
+    }
+
     // RGBE header file magic number.
     #define RGBE_HEADER_MAGIC "#?RADIANCE"
 
@@ -371,9 +381,9 @@ namespace yw
 
                 Vector3* texData = (Vector3*)textureData + texIndex;
                 float* hdrData = srcTextureData + hdrIndex;
-                texData->r = (float)((*hdrData) * colorScale);
-                texData->g = (float)((*(hdrData + 1)) * colorScale);
-                texData->b = (float)((*(hdrData + 2)) * colorScale);
+                texData->r = _linear2srgb((float)((*hdrData) * colorScale));
+                texData->g = _linear2srgb((float)((*(hdrData + 1)) * colorScale));
+                texData->b = _linear2srgb((float)((*(hdrData + 2)) * colorScale));
             }
         }
 
