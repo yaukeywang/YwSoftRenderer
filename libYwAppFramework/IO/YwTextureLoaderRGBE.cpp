@@ -203,11 +203,6 @@ namespace yw
         /* read in each successive scanline */
         while (num_scanlines > 0)
         {
-            //if (fread(rgbe, sizeof(rgbe), 1, fp) < 1) {
-            //    free(scanline_buffer);
-            //    return rgbe_error(rgbe_read_error, NULL);
-            //}
-
             // Get rgbe origin data.
             uint8_t rgbe[4];
             memcpy(rgbe, srcDataHead, sizeof(rgbe));
@@ -248,11 +243,6 @@ namespace yw
                 uint8_t* ptr_end = &scanline_buffer[(i + 1)*scanline_width];
                 while (ptr < ptr_end)
                 {
-                    //if (fread(buf, sizeof(buf[0]) * 2, 1, fp) < 1) {
-                    //    free(scanline_buffer);
-                    //    return rgbe_error(rgbe_read_error, NULL);
-                    //}
-
                     uint8_t buf[2];
                     memcpy(buf, srcDataHead, sizeof(buf));
                     srcDataHead += (sizeof(buf) / sizeof(buf[0]));
@@ -263,7 +253,6 @@ namespace yw
                         int32_t count = buf[0] - 128;
                         if ((count == 0) || (count > ptr_end - ptr)) {
                             YW_SAFE_DELETE_ARRAY(scanline_buffer);
-                            //return rgbe_error(rgbe_format_error, "bad scanline data");
                             LOGE(_T("bad scanline data"));
                             return false;
                         }
@@ -280,7 +269,6 @@ namespace yw
                         if ((0 == count) || (count > ptr_end - ptr))
                         {
                             YW_SAFE_DELETE_ARRAY(scanline_buffer);
-                            //return rgbe_error(rgbe_format_error, "bad scanline data");
                             LOGE(_T("bad scanline data"));
                             return false;
                         }
@@ -288,11 +276,6 @@ namespace yw
                         *ptr++ = buf[1];
                         if (--count > 0)
                         {
-                            //if (fread(ptr, sizeof(*ptr)*count, 1, fp) < 1) {
-                            //    free(scanline_buffer);
-                            //    return rgbe_error(rgbe_read_error, NULL);
-                            //}
-
                             memcpy(ptr, srcDataHead, sizeof(*ptr) * count);
                             srcDataHead += count;
 
@@ -375,7 +358,7 @@ namespace yw
         }
 
         // Normalized color scale.
-        const float colorScale = 1.0f / 255.0f;
+        const float colorScale = 1.0f; // 1.0f / 255.0f;
 
         // Fill data.
         float* srcTextureData = texDataRaw;
@@ -383,7 +366,7 @@ namespace yw
         {
             for (int32_t xIdx = 0; xIdx < texWidth; xIdx++)
             {
-                int32_t texIndex = (texHeight - 1 - yIdx) * texWidth + xIdx;
+                int32_t texIndex = yIdx * texWidth + xIdx;
                 int32_t hdrIndex = yIdx * pitch + xIdx * bbp;
 
                 Vector3* texData = (Vector3*)textureData + texIndex;
