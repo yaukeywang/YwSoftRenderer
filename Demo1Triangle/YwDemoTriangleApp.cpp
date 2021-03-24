@@ -36,8 +36,8 @@ namespace yw
         m_Camera->CalculateProjection(YW_PI / 6.0f, 4.0f / 3.0f, 1.0f, 1000.0f);
 
         // Calculation view matrix.
-        m_Camera->SetPosition(Vector3(0.0f, 0.7f, -5.0f));
-        m_Camera->SetLookAt(Vector3(0.0f, 0.7f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        m_Camera->SetPosition(Vector3(0.0f, 0.0f, -5.0f));
+        m_Camera->SetLookAt(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         m_Camera->CalculateView();
 
         Vector4 clearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -53,10 +53,10 @@ namespace yw
 
         DemoTriangle* demoTriangle = (DemoTriangle*)GetScene()->GetEntity(m_DemoTriangleHandle);
         if (!demoTriangle->Initialize(
-            Vector3(-1.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f),
-            Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f),
-            Vector3(1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f),
-            Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f)
+            Vector3(-2.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f),
+            Vector3(2.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f),
+            Vector3(2.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f),
+            Vector3(-2.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f)
         ))
         {
             return false;

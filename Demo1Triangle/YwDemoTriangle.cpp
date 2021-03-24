@@ -50,7 +50,9 @@ namespace yw
 
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
-            color = Vector4::Green();
+            Vector2 uv = input[0];
+            Vector4 texColor = tex2D(0, 0, uv);
+            color = texColor;
             return true;
         }
     };
@@ -70,6 +72,8 @@ namespace yw
         m_VertexFormat(nullptr),
         m_VertexBuffer(nullptr),
         m_IndexBuffer(nullptr),
+        m_ModelTexture(nullptr),
+        m_ModelTextureHandle(0),
         m_VertexShader(nullptr),
         m_PixelShader(nullptr),
         m_NumVertices(0),
@@ -82,8 +86,16 @@ namespace yw
         YW_SAFE_RELEASE(m_VertexFormat);
         YW_SAFE_RELEASE(m_VertexBuffer);
         YW_SAFE_RELEASE(m_IndexBuffer);
+        YW_SAFE_RELEASE(m_ModelTexture);
         YW_SAFE_RELEASE(m_VertexShader);
         YW_SAFE_RELEASE(m_PixelShader);
+
+        ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
+        if (m_ModelTextureHandle > 0)
+        {
+            resManager->UnloadResource(m_ModelTextureHandle);
+            m_ModelTextureHandle = 0;
+        }
     }
 
     bool DemoTriangle::Initialize(
@@ -96,6 +108,7 @@ namespace yw
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
         Yw3dDevice* device = graphics->GetYw3dDevice();
+        ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Create vertex format.
         if (YW3D_FAILED(device->CreateVertexFormat(&m_VertexFormat, VertexDeclaration, sizeof(VertexDeclaration))))
@@ -155,6 +168,21 @@ namespace yw
         m_VertexShader = new DemoTriangleVertexShader();
         m_PixelShader = new DemoTrianglePixelShader();
 
+        m_ModelTextureHandle = resManager->LoadResource("the_sky_is_on_fire_1k.hdr");
+        //m_ModelTextureHandle = resManager->LoadResource("bricks_color.bmp");
+        if (m_ModelTextureHandle <= 0)
+        {
+            LOGE(_T("Load resource \"Wood.png\" failed."));
+            return false;
+        }
+
+        m_ModelTexture = (Yw3dTexture*)resManager->GetResource(m_ModelTextureHandle);
+        if (nullptr == m_ModelTexture)
+        {
+            LOGE(_T("Get resource \"Wood.png\" failed."));
+            return false;
+        }
+
         return true;
     }
 
@@ -182,6 +210,11 @@ namespace yw
         device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
         device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
         device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+        // Set texture.
+        graphics->SetTexture(0, m_ModelTexture);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
 
         graphics->SetVertexFormat(m_VertexFormat);
         graphics->SetVertexStream(0, m_VertexBuffer, 0, sizeof(Vertexformat));

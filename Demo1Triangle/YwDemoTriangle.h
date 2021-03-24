@@ -6,6 +6,7 @@
 
 #include "Yw3d.h"
 #include "YwEntity.h"
+#include "YwResourceManager.h"
 
 namespace yw
 {
@@ -52,6 +53,10 @@ namespace yw
         Yw3dVertexFormat* m_VertexFormat;
         Yw3dVertexBuffer* m_VertexBuffer;
         Yw3dIndexBuffer* m_IndexBuffer;
+
+        // Texture resource handle.
+        class Yw3dTexture* m_ModelTexture;
+        HRESOURCE m_ModelTextureHandle;
 
         // Shader related.
         class DemoTriangleVertexShader* m_VertexShader;
