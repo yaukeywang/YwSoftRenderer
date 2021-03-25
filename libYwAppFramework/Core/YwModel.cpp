@@ -72,7 +72,7 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)m_Groups.size(); i++)
         {
             ModelGroup* group = m_Groups[i];
-            if (groupName == group->m_Name)
+            if (groupName == group->name)
             {
                 return group;
             }
@@ -151,14 +151,14 @@ namespace yw
             }
 
             // Get total triangle count in this group.
-            int32_t triangleCount = (int32_t)group->m_Triangles.size();
+            int32_t triangleCount = (int32_t)group->triangles.size();
             if (triangleCount <= 0)
             {
                 continue;
             }
 
             // Get total index buffer data length of this grop.
-            uint32_t indexDataLength = (uint32_t)group->m_TriangleIndices.size() * sizeof(uint32_t);
+            uint32_t indexDataLength = (uint32_t)group->triangleIndices.size() * sizeof(uint32_t);
 
             // Create index buffer.
             Yw3dIndexBuffer* indexBuffer = nullptr;
@@ -175,7 +175,7 @@ namespace yw
             }
 
             // Fill index buffer data.
-            memcpy(indices, group->m_TriangleIndices.data(), indexDataLength);
+            memcpy(indices, group->triangleIndices.data(), indexDataLength);
 
             // Push the index buffer of this group.
             m_IndexBuffers.push_back(ModelIndexBufferElement(indexBuffer, triangleCount));

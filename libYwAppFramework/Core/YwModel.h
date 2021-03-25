@@ -48,33 +48,33 @@ namespace yw
     struct ModelTriangle
     {
         // Vertex index array.
-        uint32_t m_PositionIndices[3];
+        uint32_t positionIndices[3];
         
         // Normal index array.
-        uint32_t m_NormalIndices[3];
+        uint32_t normalIndices[3];
         
         // First layer uv array.
-        uint32_t m_TexcoordsIndices[3];
+        uint32_t texcoordsIndices[3];
         
         // Second layer uv array.
-        uint32_t m_Texcoords2Indices[3];
+        uint32_t texcoords2Indices[3];
 
         // Vertex attribute index array.
-        uint32_t m_VertexIndices[3];
+        uint32_t vertexIndices[3];
 
         // Facet normal index of triangle.
-        uint32_t m_FacetNormalIndex;
+        uint32_t facetNormalIndex;
         
         // Constructor.
         ModelTriangle()
         {
             for (int32_t i = 0; i < 3; i++)
             {
-                m_PositionIndices[i] = 0;
-                m_NormalIndices[i] = 0;
-                m_TexcoordsIndices[i] = 0;
-                m_Texcoords2Indices[i] = 0;
-                m_FacetNormalIndex = 0;
+                positionIndices[i] = 0;
+                normalIndices[i] = 0;
+                texcoordsIndices[i] = 0;
+                texcoords2Indices[i] = 0;
+                facetNormalIndex = 0;
             }
         }
 
@@ -88,27 +88,27 @@ namespace yw
     struct ModelGroup
     {
         // Name of this group.
-        StringA m_Name;
+        StringA name;
         
         // All triangle indices.
-        std::vector<uint32_t> m_Triangles;
+        std::vector<uint32_t> triangles;
 
         // All triangle vertex indices.
-        std::vector<uint32_t> m_TriangleIndices;
+        std::vector<uint32_t> triangleIndices;
         
         // Used material. (Not Implemented Yet!)
-        void* m_Material;
+        void* material;
         
         // Constructor.
-        ModelGroup(StringA groupName) : m_Name(groupName), m_Material(nullptr) {}
+        ModelGroup(StringA groupName) : name(groupName), material(nullptr) {}
 
         // Destructor.
         ~ModelGroup()
         {
-            m_Name.clear();
-            m_Triangles.clear();
-            m_TriangleIndices.clear();
-            YW_SAFE_DELETE(m_Material);
+            name.clear();
+            triangles.clear();
+            triangleIndices.clear();
+            YW_SAFE_DELETE(material);
         }
     };
     
