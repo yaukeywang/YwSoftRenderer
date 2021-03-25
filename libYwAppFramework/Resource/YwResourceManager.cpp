@@ -38,6 +38,8 @@ namespace yw
         RegisterResourceExtension("png", LoadTexture_PNG, UnloadTexture_PNG);
         RegisterResourceExtension("tga", LoadTexture_TGA, UnloadTexture_TGA);
         RegisterResourceExtension("hdr", LoadTexture_HDR, UnloadTexture_HDR);
+        RegisterResourceExtension("rgbe", LoadTexture_HDR, UnloadTexture_HDR);
+        RegisterResourceExtension("xyze", LoadTexture_HDR, UnloadTexture_HDR);
         RegisterResourceExtension("cube", LoadTexture_Cube, UnloadTexture_Cube);
         RegisterResourceExtension("anim", LoadTexture_Animated, UnloadTexture_Animated);
 
