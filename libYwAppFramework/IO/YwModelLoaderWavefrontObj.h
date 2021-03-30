@@ -30,12 +30,13 @@ namespace yw
 
     private:
         // Load model from kinds of data.
+        // @param[in] fileName the full path of the model file.
         // @param[in] data model raw data.
         // @param[in] calculateNormals always re-calculate model normals or not.
         // @param[in] calculateNormalAngle the angle used to re-calculate normals.
         // @param[out] model the loaded data to fill.
         // @return true if the model loading ok, false if loading failed.
-        virtual bool LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model);
+        virtual bool LoadFormData(const StringA& fileName, const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model);
         
     private:
         // Load Wavefront-Obj form data.

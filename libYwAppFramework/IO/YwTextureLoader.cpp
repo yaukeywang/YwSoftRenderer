@@ -25,7 +25,7 @@ namespace yw
         }
 
         // Load texture from data.
-        bool res = LoadFromData(textureData, fileSize, device, texture);
+        bool res = LoadFromData(fileName, textureData, fileSize, device, texture);
         if (!res)
         {
             YW_SAFE_DELETE_ARRAY(textureData);

@@ -123,7 +123,7 @@ namespace yw
         // Release each group.
     }
 
-    bool ModelLoaderWavefrontObj::LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
+    bool ModelLoaderWavefrontObj::LoadFormData(const StringA& fileName, const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
     {
         LoadWavefrontObjFromData(model, data, calculateNormals, calculateNormalAngle);
         return true;

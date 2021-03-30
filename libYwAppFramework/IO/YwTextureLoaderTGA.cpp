@@ -18,7 +18,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderTGA::LoadFromData(const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderTGA::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         int32_t texWidth = 0;
         int32_t texHeight = 0;

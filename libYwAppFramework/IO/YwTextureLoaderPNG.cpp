@@ -49,7 +49,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderPNG::LoadFromData(const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPNG::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         // Create base structure.
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -173,7 +173,6 @@ namespace yw
                 }
             }
         }
-
         
         (*texture)->UnlockRect(0);
 

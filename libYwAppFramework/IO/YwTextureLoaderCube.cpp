@@ -37,7 +37,7 @@ namespace yw
 
     }
 
-    bool YwTextureLoaderCube::LoadFromData(const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
+    bool YwTextureLoaderCube::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
     {
         // Alloc a temp buffer to read line.
         char buff[256];

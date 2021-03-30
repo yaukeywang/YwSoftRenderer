@@ -40,7 +40,7 @@ namespace yw
 
         // Try to load obj model from data.
         Model* objModel = *model;
-        LoadFormData(objData, calculateNormals, calculateNormalAngle, objModel);
+        LoadFormData(fileName, objData, calculateNormals, calculateNormalAngle, objModel);
 
         // Release file data.
         YW_SAFE_DELETE_ARRAY(modelData);
