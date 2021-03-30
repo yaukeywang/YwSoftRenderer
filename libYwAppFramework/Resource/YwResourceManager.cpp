@@ -60,25 +60,11 @@ namespace yw
         }
 
         // Not found, loading a new resource.
-        const char* check = fileName.c_str();
-        const char* ext = nullptr;
-        while ('\0' != *check)
-        {
-            if ('.' == *check)
-            {
-                ext = check;
-            }
-
-            check++;
-        }
-
-        if (nullptr == ext)
+        StringA extension = GetFileExtension(fileName);
+        if (extension.empty())
         {
             return 0;
         }
-
-        // Get extension name.
-        StringA extension = ext + 1;
 
         // Get load function.
         RESOURCELOADFUNCTION loadFunc = m_RegisteredEntityExtensionsLoad[extension];
@@ -154,6 +140,18 @@ namespace yw
     {
         m_RegisteredEntityExtensionsLoad[extension] = loadFunction;
         m_RegisteredEntityExtensionsUnload[extension] = unloadFunction;
+    }
+
+    RESOURCELOADFUNCTION ResourceManager::GetResourceLoaderByFileExtension(const StringA& extension)
+    {
+        // Get loader function.
+        RESOURCELOADFUNCTION loadFunc = m_RegisteredEntityExtensionsLoad[extension];
+        if (nullptr == loadFunc)
+        {
+            return nullptr;
+        }
+
+        return loadFunc;
     }
 
     void* ResourceManager::LoadModel(ResourceManager* resourceManager, const StringA& fileName)
@@ -300,5 +298,30 @@ namespace yw
 #else
         return StringA("./Resources");
 #endif
+    }
+
+    StringA ResourceManager::GetFileExtension(const StringA& fileName) const
+    {
+        // Find extension name by file name or path.
+        const char* check = fileName.c_str();
+        const char* ext = nullptr;
+        while ('\0' != *check)
+        {
+            if ('.' == *check)
+            {
+                ext = check;
+            }
+
+            check++;
+        }
+
+        if (nullptr == ext)
+        {
+            return 0;
+        }
+
+        // Get extension name.
+        StringA extension = ext + 1;
+        return extension;
     }
 }
