@@ -62,7 +62,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderBMP::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
+    bool TextureLoaderBMP::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
         // Read bit map file header.
         BitMapFileHeader* fileHeader = (BitMapFileHeader*)data;

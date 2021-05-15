@@ -2,60 +2,45 @@
 // YW texture loader for cube texture class.
 
 #include "YwTextureLoaderCube.h"
+#include "YwTextureLoaderBMP.h"
+#include "YwTextureLoaderPNG.h"
+#include "YwTextureLoaderTGA.h"
+#include "YwTextureLoaderRGBE.h"
+#include <sstream>
+#include "Yw3d.h"
 
 namespace yw
 {
-    // Get a line from string with specified delimiter, return moved distance from src.
-    // NOTE: Content in dst not include delimiter.
-    static int32_t _GetLineFromString(const char* src, char* dst, int32_t dstLength, const char delimiter = '\n')
-    {
-        char* p = (char*)src;
-        char* q = dst;
-        while (p - src < dstLength - 1)
-        {
-            if (delimiter == *p)
-            {
-                p++;
-                break;
-            }
-
-            *q++ = *p++;
-        }
-
-        *q = '\0';
-        return (int32_t)(p - src);
-    }
-
-    YwTextureLoaderCube::YwTextureLoaderCube():
+    TextureLoaderCube::TextureLoaderCube():
         ITextureLoader()
     {
 
     }
 
-    YwTextureLoaderCube::~YwTextureLoaderCube()
+    TextureLoaderCube::~TextureLoaderCube()
     {
 
     }
 
-    bool YwTextureLoaderCube::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
+    bool TextureLoaderCube::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
     {
+        // Use string streaam to parse data.
+        std::stringstream cubeData((const char*)data);
+
         // Alloc a temp buffer to read line.
         char buff[256];
         memset(buff, 0, sizeof(buff));
 
-        // Pointer to raw data.
-        const char* dataHead = (const char*)data;
-
-        // How many data move from the data begining.
-        int32_t dataMoved = 0;
-
         // Cube map face textures.
-        std::vector<StringA> faceTextures;
+        std::vector<StringA> faceTextureNames;
 
         while (true)
         {
-            // Check header magic first.
-            dataMoved += _GetLineFromString(dataHead + dataMoved, buff, sizeof(buff) / sizeof(buff[0]));
+            cubeData >> buff;
+            if (!cubeData)
+            {
+                break;
+            }
 
             // Exit if get a empty line, mean next line is image size, time to break.
             if (0 == strlen(buff))
@@ -63,21 +48,141 @@ namespace yw
                 break;
             }
 
-            faceTextures.push_back(buff);
+            faceTextureNames.push_back(buff);
         }
 
-        uint32_t numTextures = (uint32_t)faceTextures.size();
-        if (6 != numTextures)
+        uint32_t numTextures = (uint32_t)faceTextureNames.size();
+        if (Yw3d_CF_NumCubeFaces != numTextures)
         {
-            LOGE(_T("YwTextureLoaderCube.LoadFromData: Wrong Cube face file count."));
+            LOGE(_T("TextureLoaderCube.LoadFromData: Wrong cube face file count."));
             return false;
         }
 
-        for (int32_t i = 0; i < (int32_t)numTextures; i++)
-        {
+        Yw3dTexture* faceTextures[Yw3d_CF_NumCubeFaces];
+        memset(faceTextures, 0, sizeof(faceTextures));
 
+        StringA fileDataDir = GetFileDirectory(fileName);
+        uint32_t cubeEdgeLength = 0;
+        Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32F;
+        uint32_t cubeFormatBytes = 0;
+        for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+        {
+            StringA faceFileName = fileDataDir + faceTextureNames[i];
+            if (!LoadTextureByFileName(faceFileName, device, &faceTextures[i]))
+            {
+                ReleaseAllLoadedTextures(faceTextures, Yw3d_CF_NumCubeFaces);
+                return;
+            }
+
+            // $Note: Texture width and height must be equal.
+
+            if (0 == i)
+            {
+                cubeEdgeLength = faceTextures[i]->GetWidth();
+                cubeFormat = faceTextures[i]->GetFormat();
+                cubeFormatBytes = faceTextures[i]->GetFormatFloats() * sizeof(float);
+            }
         }
 
+        // Create cube texture.
+        Yw3dCubeTexture* cubeTexture = nullptr;
+        if (YW3D_FAILED(device->CreateCubeTexture(&cubeTexture, cubeEdgeLength, 0, cubeFormat)))
+        {
+            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
+            return false;
+        }
+
+        // Fill loaded textures into cube faces.
+        uint32_t copyBytes = cubeEdgeLength * cubeEdgeLength * cubeFormatBytes;
+        for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+        {
+            uint8_t* dst = nullptr;
+            cubeTexture->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
+
+            uint8_t* src = nullptr;
+            faceTextures[i]->LockRect(0, (void**)src, nullptr);
+            memcpy(dst, src, copyBytes);
+            faceTextures[i]->UnlockRect(0);
+            YW_SAFE_RELEASE(faceTextures[i]);
+
+            cubeTexture->UnlockRect((Yw3dCubeFaces)i, 0);
+        }
+
+        ReleaseAllLoadedTextures(faceTextures, Yw3d_CF_NumCubeFaces);
+
+        // $Note: Maybe problem with "GetWidth" and "GetHeight" when generating mipmap.
+
         return true;
+    }
+
+    StringA TextureLoaderCube::GetFileExtension(const StringA& fileName)
+    {
+        StringA extension;
+        int32_t pos = (int32_t)fileName.find_last_of('.');
+        if (pos < 0)
+        {
+            return extension;
+        }
+
+        extension = fileName.substr(pos + 1, fileName.length() - pos);
+        return extension;
+    }
+
+    StringA TextureLoaderCube::GetFileDirectory(const StringA& fileName)
+    {
+        StringA result;
+        int32_t pos = (int32_t)fileName.find_last_of('/');
+        if (pos < 0)
+        {
+            return result;
+        }
+
+        result = fileName.substr(0, pos + 1);
+        return result;
+    }
+
+    bool TextureLoaderCube::LoadTextureByFileName(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture)
+    {
+        StringA fileExt = GetFileExtension(fileName);
+        ITextureLoader* textureLoader = nullptr;
+        if ("bmp" == fileExt)
+        {
+            textureLoader = new TextureLoaderBMP();
+        }
+        else if ("png" == fileExt)
+        {
+            textureLoader = new TextureLoaderPNG();
+        }
+        else if ("tga" == fileExt)
+        {
+            textureLoader = new TextureLoaderTGA();
+        }
+        else if (("hdr" == fileExt) || ("rgbe" == fileExt) || ("xyze" == fileExt))
+        {
+            textureLoader = new TextureLoaderRGBE();
+        }
+        else
+        {
+            LOGE(_T("TextureLoaderCube.LoadTextureByFileName: Unsupported texture format."));
+            return false;
+        }
+
+        if (!textureLoader->Load(fileName, device, texture, true))
+        {
+            YW_SAFE_DELETE(textureLoader);
+            LOGE(_T("TextureLoaderCube.LoadTextureByFileName: Load texture failed."));
+            return false;
+        }
+
+        YW_SAFE_DELETE(textureLoader);
+        return true;
+    }
+
+    void TextureLoaderCube::ReleaseAllLoadedTextures(Yw3dTexture** textures, int32_t length)
+    {
+        for (int32_t i = 0; i < length; i++)
+        {
+            YW_SAFE_RELEASE(textures[i]);
+        }
     }
 }

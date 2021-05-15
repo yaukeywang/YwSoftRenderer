@@ -10,6 +10,7 @@
 #include "YwTextureLoaderPNG.h"
 #include "YwTextureLoaderTGA.h"
 #include "YwTextureLoaderRGBE.h"
+#include "YwTextureLoaderCube.h"
 
 namespace yw
 {
@@ -265,12 +266,23 @@ namespace yw
 
     void* ResourceManager::LoadTexture_Cube(ResourceManager* resourceManager, const StringA& fileName)
     {
-        assert(nullptr && _T("LoadTexture_Cube is currently not supported!"));
-        return nullptr;
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderCube rgbeLoader;
+        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
     }
 
     void ResourceManager::UnloadTexture_Cube(ResourceManager* resourceManager, void* resource)
     {
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
         YW_SAFE_DELETE(resource);
     }
 

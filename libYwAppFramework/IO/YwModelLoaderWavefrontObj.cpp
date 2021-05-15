@@ -10,9 +10,9 @@
 // Wavefront OBJ model file format reader/writer/manipulator.
 // YW model loader for obj file class.
 
+#include <sstream>
 #include "YwModel.h"
 #include "YwModelLoaderWavefrontObj.h"
-#include <sstream>
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
 //#pragma warning(disable:4996)
