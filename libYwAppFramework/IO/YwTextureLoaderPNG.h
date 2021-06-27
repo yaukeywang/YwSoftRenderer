@@ -24,7 +24,11 @@ namespace yw
         // @param[in] dataLength length in bytes of data.
         // @param[in] device used to create texture.
         // @param[out] texture the loaded data to fill.
-        virtual bool LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture);
+        virtual bool LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class IYw3dBaseTexture** texture);
+
+        // Generate mipmap for texture.
+        // @param[out] texture the loaded data to fill.
+        virtual bool GenerateMipmap(class IYw3dBaseTexture* texture);
     };
 }
 

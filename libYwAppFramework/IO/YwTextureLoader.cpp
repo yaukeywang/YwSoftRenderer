@@ -2,12 +2,13 @@
 // YW texture loader base class.
 
 #include "YwTextureLoader.h"
+#include "Yw3dCubeTexture.h"
 #include "Yw3d.h"
 #include "YwFileIO.h"
 
 namespace yw
 {
-    bool ITextureLoader::Load(const StringA& fileName, Yw3dDevice* device, Yw3dTexture** texture, bool generateMipmap)
+    bool ITextureLoader::Load(const StringA& fileName, Yw3dDevice* device, IYw3dBaseTexture** texture, bool generateMipmap)
     {
         if ((0 == fileName.length()) || (nullptr == device) || (nullptr == texture))
         {
@@ -42,17 +43,44 @@ namespace yw
             return false;
         }
 
-        if (generateMipmap && DetermineIfPowerOf2((*texture)->GetWidth()) && DetermineIfPowerOf2((*texture)->GetHeight()))
+        // Generate texture mipmap.
+        if (generateMipmap && GenerateMipmap(*texture))
         {
-            // Generate texture mipmap.
-            Yw3dResult resMip = (*texture)->GenerateMipSubLevels(0);
-            if (YW3D_FAILED(resMip))
-            {
-                YW_SAFE_RELEASE(*texture);
-                return false;
-            }
+            YW_SAFE_RELEASE(*texture);
+            return false;
         }
 
         return true;
+    }
+
+    bool ITextureLoader::GenerateTextureMipmap(IYw3dBaseTexture* texture)
+    {
+        Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(texture);
+        if (DetermineIfPowerOf2(inputTexture->GetWidth()) && DetermineIfPowerOf2(inputTexture->GetHeight()))
+        {
+            // Generate texture mipmap.
+            Yw3dResult resMip = inputTexture->GenerateMipSubLevels(0);
+            if (YW3D_SUCCESSFUL(resMip))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    bool ITextureLoader::GenerateCubeTextureMipmap(IYw3dBaseTexture* texture)
+    {
+        // $Note: Maybe problem with "GetWidth" and "GetHeight" when generating mipmap.
+
+        // Generate texture mipmap.
+        Yw3dCubeTexture* inputTexture = dynamic_cast<Yw3dCubeTexture*>(texture);
+        Yw3dResult resMip = inputTexture->GenerateMipSubLevels(0);
+        if (YW3D_SUCCESSFUL(resMip))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

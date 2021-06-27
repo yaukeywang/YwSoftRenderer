@@ -22,7 +22,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderCube::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderCube::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, IYw3dBaseTexture** texture)
     {
         // Use string streaam to parse data.
         std::stringstream cubeData((const char*)data);
@@ -71,7 +71,7 @@ namespace yw
             if (!LoadTextureByFileName(faceFileName, device, &faceTextures[i]))
             {
                 ReleaseAllLoadedTextures(faceTextures, Yw3d_CF_NumCubeFaces);
-                return;
+                return false;
             }
 
             // $Note: Texture width and height must be equal.
@@ -84,9 +84,12 @@ namespace yw
             }
         }
 
+        // Convert texture dynamic instance class.
+        Yw3dCubeTexture* inputTexture = dynamic_cast<Yw3dCubeTexture*>(*texture);
+
         // Create cube texture.
-        Yw3dCubeTexture* cubeTexture = nullptr;
-        if (YW3D_FAILED(device->CreateCubeTexture(&cubeTexture, cubeEdgeLength, 0, cubeFormat)))
+        YW_SAFE_RELEASE(inputTexture);
+        if (YW3D_FAILED(device->CreateCubeTexture(&inputTexture, cubeEdgeLength, 0, cubeFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
             return false;
@@ -97,7 +100,7 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
         {
             uint8_t* dst = nullptr;
-            cubeTexture->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
+            inputTexture->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
 
             uint8_t* src = nullptr;
             faceTextures[i]->LockRect(0, (void**)src, nullptr);
@@ -105,14 +108,17 @@ namespace yw
             faceTextures[i]->UnlockRect(0);
             YW_SAFE_RELEASE(faceTextures[i]);
 
-            cubeTexture->UnlockRect((Yw3dCubeFaces)i, 0);
+            inputTexture->UnlockRect((Yw3dCubeFaces)i, 0);
         }
 
         ReleaseAllLoadedTextures(faceTextures, Yw3d_CF_NumCubeFaces);
 
-        // $Note: Maybe problem with "GetWidth" and "GetHeight" when generating mipmap.
-
         return true;
+    }
+
+    bool TextureLoaderCube::GenerateMipmap(IYw3dBaseTexture* texture)
+    {
+        return GenerateCubeTextureMipmap(texture);
     }
 
     StringA TextureLoaderCube::GetFileExtension(const StringA& fileName)
@@ -167,7 +173,8 @@ namespace yw
             return false;
         }
 
-        if (!textureLoader->Load(fileName, device, texture, true))
+        IYw3dBaseTexture* baseTexture = dynamic_cast<IYw3dBaseTexture*>(*texture);
+        if (!textureLoader->Load(fileName, device, &baseTexture, true))
         {
             YW_SAFE_DELETE(textureLoader);
             LOGE(_T("TextureLoaderCube.LoadTextureByFileName: Load texture failed."));

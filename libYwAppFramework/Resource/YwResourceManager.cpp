@@ -183,7 +183,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderBMP bmpLoader;
-        if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -205,7 +205,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderPNG pngLoader;
-        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -227,7 +227,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderTGA tgaLoader;
-        if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -249,7 +249,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderRGBE rgbeLoader;
-        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -271,7 +271,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderCube rgbeLoader;
-        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;

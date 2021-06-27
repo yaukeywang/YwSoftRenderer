@@ -18,7 +18,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderTGA::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderTGA::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, IYw3dBaseTexture** texture)
     {
         int32_t texWidth = 0;
         int32_t texHeight = 0;
@@ -34,16 +34,19 @@ namespace yw
         int32_t pitch = bbp * texWidth;
         Yw3dFormat textureFormat = hasAlpha ? Yw3d_FMT_R32G32B32A32F : Yw3d_FMT_R32G32B32F;
 
+        // Convert texture dynamic instance class.
+        Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(*texture);
+
         // Create texture from device.
-        YW_SAFE_RELEASE(*texture);
-        if (YW3D_FAILED(device->CreateTexture(texture, texWidth, texHeight, 0, textureFormat)))
+        YW_SAFE_RELEASE(inputTexture);
+        if (YW3D_FAILED(device->CreateTexture(&inputTexture, texWidth, texHeight, 0, textureFormat)))
         {
             return false;
         }
 
         // Lock texture data.
         float* textureData = nullptr;
-        Yw3dResult resLock = (*texture)->LockRect(0, (void**)&textureData, nullptr);
+        Yw3dResult resLock = inputTexture->LockRect(0, (void**)&textureData, nullptr);
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_RELEASE(*texture);
@@ -84,12 +87,17 @@ namespace yw
         }
 
         // Unlock texture.
-        (*texture)->UnlockRect(0);
+        inputTexture->UnlockRect(0);
 
         // Release tga image data.
         tga_release(texDataRaw);
         texDataRaw = nullptr;
 
         return true;
+    }
+
+    bool TextureLoaderTGA::GenerateMipmap(IYw3dBaseTexture* texture)
+    {
+        return GenerateTextureMipmap(texture);
     }
 }
