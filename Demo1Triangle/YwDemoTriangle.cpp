@@ -7,7 +7,6 @@
 #include "YwGraphics.h"
 #include "YwScene.h"
 #include "YwBaseApplication.h"
-#include "YwResourceManager.h"
 
 namespace yw
 {
@@ -66,7 +65,7 @@ namespace yw
         YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector4, 1)
     };
 
-    DemoTriangle::DemoTriangle(Scene* scene) : 
+    DemoTriangle::DemoTriangle(Scene* scene) :
         IEntity(scene),
         m_VertexFormat(nullptr),
         m_VertexBuffer(nullptr),
@@ -148,16 +147,6 @@ namespace yw
         // Create vertex and pixel shader.
         m_VertexShader = new DemoTriangleVertexShader();
         m_PixelShader = new DemoTrianglePixelShader();
-
-        ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
-
-        // Load model and texture.
-        HRESOURCE texHandle = resManager->LoadResource("room.cube");
-        if (texHandle <= 0)
-        {
-            LOGE(_T("Load resource \"SM_Chair.obj\" failed."));
-            return false;
-        }
 
         return true;
     }
