@@ -85,18 +85,18 @@ namespace yw
         //uint8_t* texDataStart = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
 
         // Convert texture dynamic instance class.
-        Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(*texture);
+        Yw3dTexture** inputTexture = (Yw3dTexture**)texture;
 
         // Create texture from device.
-        YW_SAFE_RELEASE(inputTexture);
-        if (YW3D_FAILED(device->CreateTexture(&inputTexture, texWidth, texHeight, 0, textureFormat)))
+        YW_SAFE_RELEASE(*inputTexture);
+        if (YW3D_FAILED(device->CreateTexture(inputTexture, texWidth, texHeight, 0, textureFormat)))
         {
             return false;
         }
 
         // Lock texture data.
         float* textureData = nullptr;
-        Yw3dResult resLock = inputTexture->LockRect(0, (void**)&textureData, nullptr);
+        Yw3dResult resLock = (*inputTexture)->LockRect(0, (void**)&textureData, nullptr);
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_RELEASE(*texture);
@@ -136,7 +136,7 @@ namespace yw
         }
 
         // Unlock texture.
-        inputTexture->UnlockRect(0);
+        (*inputTexture)->UnlockRect(0);
 
         return true;
     }

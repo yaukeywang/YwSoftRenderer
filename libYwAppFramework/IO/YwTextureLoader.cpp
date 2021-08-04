@@ -44,7 +44,7 @@ namespace yw
         }
 
         // Generate texture mipmap.
-        if (generateMipmap && GenerateMipmap(*texture))
+        if (generateMipmap && !GenerateMipmap(*texture))
         {
             YW_SAFE_RELEASE(*texture);
             return false;
@@ -56,6 +56,11 @@ namespace yw
     bool ITextureLoader::GenerateTextureMipmap(IYw3dBaseTexture* texture)
     {
         Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(texture);
+        if (nullptr == inputTexture)
+        {
+            return false;
+        }
+
         if (DetermineIfPowerOf2(inputTexture->GetWidth()) && DetermineIfPowerOf2(inputTexture->GetHeight()))
         {
             // Generate texture mipmap.
@@ -75,6 +80,11 @@ namespace yw
 
         // Generate texture mipmap.
         Yw3dCubeTexture* inputTexture = dynamic_cast<Yw3dCubeTexture*>(texture);
+        if (nullptr == inputTexture)
+        {
+            return false;
+        }
+
         Yw3dResult resMip = inputTexture->GenerateMipSubLevels(0);
         if (YW3D_SUCCESSFUL(resMip))
         {
