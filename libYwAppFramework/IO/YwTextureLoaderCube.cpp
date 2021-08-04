@@ -85,11 +85,11 @@ namespace yw
         }
 
         // Convert texture dynamic instance class.
-        Yw3dCubeTexture* inputTexture = dynamic_cast<Yw3dCubeTexture*>(*texture);
+        Yw3dCubeTexture** inputTexture = (Yw3dCubeTexture**)texture;
 
         // Create cube texture.
-        YW_SAFE_RELEASE(inputTexture);
-        if (YW3D_FAILED(device->CreateCubeTexture(&inputTexture, cubeEdgeLength, 0, cubeFormat)))
+        YW_SAFE_RELEASE(*inputTexture);
+        if (YW3D_FAILED(device->CreateCubeTexture(inputTexture, cubeEdgeLength, 0, cubeFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
             return false;
@@ -100,7 +100,7 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
         {
             uint8_t* dst = nullptr;
-            inputTexture->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
+            (*inputTexture)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
 
             uint8_t* src = nullptr;
             faceTextures[i]->LockRect(0, (void**)src, nullptr);
@@ -108,7 +108,7 @@ namespace yw
             faceTextures[i]->UnlockRect(0);
             YW_SAFE_RELEASE(faceTextures[i]);
 
-            inputTexture->UnlockRect((Yw3dCubeFaces)i, 0);
+            (*inputTexture)->UnlockRect((Yw3dCubeFaces)i, 0);
         }
 
         ReleaseAllLoadedTextures(faceTextures, Yw3d_CF_NumCubeFaces);
@@ -173,8 +173,8 @@ namespace yw
             return false;
         }
 
-        IYw3dBaseTexture* baseTexture = dynamic_cast<IYw3dBaseTexture*>(*texture);
-        if (!textureLoader->Load(fileName, device, &baseTexture, true))
+        IYw3dBaseTexture** baseTexture = (IYw3dBaseTexture**)texture;
+        if (!textureLoader->Load(fileName, device, baseTexture, true))
         {
             YW_SAFE_DELETE(textureLoader);
             LOGE(_T("TextureLoaderCube.LoadTextureByFileName: Load texture failed."));
