@@ -46,16 +46,8 @@ namespace yw
 
         if (0 == mipLevels)
         {
-            // Create a full chain.
-            uint32_t srcWidth = width;
-            uint32_t srcHeight = height;
-
-            do
-            {
-                ++mipLevels;
-                srcWidth >>= 1;
-                srcHeight >>= 1;
-            } while ((0 != srcWidth) && (0 != srcHeight));
+            // Get max mipmap levels.
+            mipLevels = (uint32_t)floor(log2(max(width, height))) + 1;
         }
 
         m_MipLevelsData = new Yw3dSurface*[mipLevels];
@@ -88,8 +80,8 @@ namespace yw
                 break;
             }
 
-            width >>= 1;
-            height >>= 1;
+            width = (uint32_t)floor(width >> 1);
+            height = (uint32_t)floor(height >> 1);
         } while ((0 != width) && (0 != height));
 
         return Yw3d_S_OK;
@@ -152,7 +144,7 @@ namespace yw
                 m_MipLevelsData[mipLevelB]->SamplePoint(colorB, u, v);
             }
 
-            const float interpolation = texMipLevel - (float)mipLevelA;// TODO: Not accurate.
+            const float interpolation = texMipLevel - (float)mipLevelA; // TODO: Not accurate.
             Vector4Lerp(color, colorA, colorB, interpolation);
         }
         else
@@ -204,85 +196,283 @@ namespace yw
             // Get original width and height from source mip level.
             const uint32_t srcWidth = GetWidth(level - 1);
             const uint32_t srcHeight = GetHeight(level - 1);
+            const uint32_t dstWidth = GetWidth(level);
+            const uint32_t dstHeight = GetHeight(level);
 
             switch (GetFormat())
             {
             case Yw3d_FMT_R32F:
                 {
-                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
-                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData++)
+                        if (DetermineIfPowerOf2(srcHeight))
                         {
-                            const float srcPixels[4] = 
+                            const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth };
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData++)
                             {
-                                srcData[indexRows[0] + idxX],
-                                srcData[indexRows[0] + idxX + 1],
-                                srcData[indexRows[1] + idxX],
-                                srcData[indexRows[1] + idxX + 1]
-                            };
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const float srcPixels[4] =
+                                    {
+                                        srcData[indexRows[0] + (2 * idxX)],
+                                        srcData[indexRows[0] + (2 * idxX + 1)],
+                                        srcData[indexRows[1] + (2 * idxX)],
+                                        srcData[indexRows[1] + (2 * idxX + 1)]
+                                    };
 
-                            *destData = (srcPixels[0] + srcPixels[1] + srcPixels[2] + srcPixels[3]) * 0.25f;
+                                    *destData = (srcPixels[0] + srcPixels[1] + srcPixels[2] + srcPixels[3]) * 0.25f;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const float row0 = w0 * srcData[indexRows[0] + (2 * idxX)] + w1 * srcData[indexRows[0] + (2 * idxX + 1)] + w2 * srcData[indexRows[0] + (2 * idxX + 2)];
+                                    const float row1 = w0 * srcData[indexRows[1] + (2 * idxX)] + w1 * srcData[indexRows[1] + (2 * idxX + 1)] + w2 * srcData[indexRows[1] + (2 * idxX + 2)];
+
+                                    *destData = (row0 + row1) * 0.5f;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            const float h0 = (float)(dstHeight - idxY) / (float)(2 * dstHeight + 1);
+                            const float h1 = (float)dstHeight / (2 * dstHeight + 1);
+                            const float h2 = (float)(1 + idxY) / (2 * dstHeight + 1);
+
+                            const uint32_t indexRows[3] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth, (2 * idxY + 2) * srcWidth };
+
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData++)
+                            {
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const float row0 = (srcData[indexRows[0] + (2 * idxX)] + srcData[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
+                                    const float row1 = (srcData[indexRows[1] + (2 * idxX)] + srcData[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
+                                    const float row2 = (srcData[indexRows[2] + (2 * idxX)] + srcData[indexRows[2] + (2 * idxX + 1)]) * 0.5f;
+
+                                    *destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const float row0 = w0 * srcData[indexRows[0] + (2 * idxX)] + w1 * srcData[indexRows[0] + (2 * idxX + 1)] + w2 * srcData[indexRows[0] + (2 * idxX + 2)];
+                                    const float row1 = w0 * srcData[indexRows[1] + (2 * idxX)] + w1 * srcData[indexRows[1] + (2 * idxX + 1)] + w2 * srcData[indexRows[1] + (2 * idxX + 2)];
+                                    const float row2 = w0 * srcData[indexRows[2] + (2 * idxX)] + w1 * srcData[indexRows[2] + (2 * idxX + 1)] + w2 * srcData[indexRows[2] + (2 * idxX + 2)];
+
+                                    *destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                            }
                         }
                     }
                 }
                 break;
             case Yw3d_FMT_R32G32F:
                 {
-                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
-                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData += 2)
+                        if (DetermineIfPowerOf2(srcHeight))
                         {
-                            const Vector2* srcPixels[4] =
+                            const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth };
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 2)
                             {
-                                &((Vector2*)srcData)[indexRows[0] + idxX],
-                                &((Vector2*)srcData)[indexRows[0] + idxX + 1],
-                                &((Vector2*)srcData)[indexRows[1] + idxX],
-                                &((Vector2*)srcData)[indexRows[1] + idxX + 1]
-                            };
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const Vector2* srcPixels[4] =
+                                    {
+                                        &((Vector2*)srcData)[indexRows[0] + (2 * idxX)],
+                                        &((Vector2*)srcData)[indexRows[0] + (2 * idxX + 1)],
+                                        &((Vector2*)srcData)[indexRows[1] + (2 * idxX)],
+                                        &((Vector2*)srcData)[indexRows[1] + (2 * idxX + 1)]
+                                    };
 
-                            *(Vector2*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                                    *(Vector2*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const Vector2 row0 = w0 * ((Vector2*)srcData)[indexRows[0] + (2 * idxX)] + w1 * ((Vector2*)srcData)[indexRows[0] + (2 * idxX + 1)] + w2 * ((Vector2*)srcData)[indexRows[0] + (2 * idxX + 2)];
+                                    const Vector2 row1 = w0 * ((Vector2*)srcData)[indexRows[1] + (2 * idxX)] + w1 * ((Vector2*)srcData)[indexRows[1] + (2 * idxX + 1)] + w2 * ((Vector2*)srcData)[indexRows[1] + (2 * idxX + 2)];
+
+                                    *(Vector2*)destData = (row0 + row1) * 0.5f;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            const float h0 = (float)(dstHeight - idxY) / (float)(2 * dstHeight + 1);
+                            const float h1 = (float)dstHeight / (2 * dstHeight + 1);
+                            const float h2 = (float)(1 + idxY) / (2 * dstHeight + 1);
+
+                            const uint32_t indexRows[3] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth, (2 * idxY + 2) * srcWidth };
+
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 2)
+                            {
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const Vector2 row0 = (((Vector2*)srcData)[indexRows[0] + (2 * idxX)] + ((Vector2*)srcData)[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
+                                    const Vector2 row1 = (((Vector2*)srcData)[indexRows[1] + (2 * idxX)] + ((Vector2*)srcData)[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
+                                    const Vector2 row2 = (((Vector2*)srcData)[indexRows[2] + (2 * idxX)] + ((Vector2*)srcData)[indexRows[2] + (2 * idxX + 1)]) * 0.5f;
+
+                                    *(Vector2*)destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const Vector2 row0 = w0 * ((Vector2*)srcData)[indexRows[0] + (2 * idxX)] + w1 * ((Vector2*)srcData)[indexRows[0] + (2 * idxX + 1)] + w2 * ((Vector2*)srcData)[indexRows[0] + (2 * idxX + 2)];
+                                    const Vector2 row1 = w0 * ((Vector2*)srcData)[indexRows[1] + (2 * idxX)] + w1 * ((Vector2*)srcData)[indexRows[1] + (2 * idxX + 1)] + w2 * ((Vector2*)srcData)[indexRows[1] + (2 * idxX + 2)];
+                                    const Vector2 row2 = w0 * ((Vector2*)srcData)[indexRows[2] + (2 * idxX)] + w1 * ((Vector2*)srcData)[indexRows[2] + (2 * idxX + 1)] + w2 * ((Vector2*)srcData)[indexRows[2] + (2 * idxX + 2)];
+
+                                    *(Vector2*)destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                            }
                         }
                     }
                 }
                 break;
             case Yw3d_FMT_R32G32B32F:
                 {
-                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
-                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData += 3)
+                        if (DetermineIfPowerOf2(srcHeight))
                         {
-                            const Vector3* srcPixels[4] =
+                            const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth };
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 3)
                             {
-                                &((Vector3*)srcData)[indexRows[0] + idxX],
-                                &((Vector3*)srcData)[indexRows[0] + idxX + 1],
-                                &((Vector3*)srcData)[indexRows[1] + idxX],
-                                &((Vector3*)srcData)[indexRows[1] + idxX + 1]
-                            };
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const Vector3* srcPixels[4] =
+                                    {
+                                        &((Vector3*)srcData)[indexRows[0] + (2 * idxX)],
+                                        &((Vector3*)srcData)[indexRows[0] + (2 * idxX + 1)],
+                                        &((Vector3*)srcData)[indexRows[1] + (2 * idxX)],
+                                        &((Vector3*)srcData)[indexRows[1] + (2 * idxX + 1)]
+                                    };
 
-                            *(Vector3*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                                    *(Vector3*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const Vector3 row0 = w0 * ((Vector3*)srcData)[indexRows[0] + (2 * idxX)] + w1 * ((Vector3*)srcData)[indexRows[0] + (2 * idxX + 1)] + w2 * ((Vector3*)srcData)[indexRows[0] + (2 * idxX + 2)];
+                                    const Vector3 row1 = w0 * ((Vector3*)srcData)[indexRows[1] + (2 * idxX)] + w1 * ((Vector3*)srcData)[indexRows[1] + (2 * idxX + 1)] + w2 * ((Vector3*)srcData)[indexRows[1] + (2 * idxX + 2)];
+
+                                    *(Vector3*)destData = (row0 + row1) * 0.5f;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            const float h0 = (float)(dstHeight - idxY) / (float)(2 * dstHeight + 1);
+                            const float h1 = (float)dstHeight / (2 * dstHeight + 1);
+                            const float h2 = (float)(1 + idxY) / (2 * dstHeight + 1);
+
+                            const uint32_t indexRows[3] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth, (2 * idxY + 2) * srcWidth };
+
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 3)
+                            {
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const Vector3 row0 = (((Vector3*)srcData)[indexRows[0] + (2 * idxX)] + ((Vector3*)srcData)[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
+                                    const Vector3 row1 = (((Vector3*)srcData)[indexRows[1] + (2 * idxX)] + ((Vector3*)srcData)[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
+                                    const Vector3 row2 = (((Vector3*)srcData)[indexRows[2] + (2 * idxX)] + ((Vector3*)srcData)[indexRows[2] + (2 * idxX + 1)]) * 0.5f;
+
+                                    *(Vector3*)destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const Vector3 row0 = w0 * ((Vector3*)srcData)[indexRows[0] + (2 * idxX)] + w1 * ((Vector3*)srcData)[indexRows[0] + (2 * idxX + 1)] + w2 * ((Vector3*)srcData)[indexRows[0] + (2 * idxX + 2)];
+                                    const Vector3 row1 = w0 * ((Vector3*)srcData)[indexRows[1] + (2 * idxX)] + w1 * ((Vector3*)srcData)[indexRows[1] + (2 * idxX + 1)] + w2 * ((Vector3*)srcData)[indexRows[1] + (2 * idxX + 2)];
+                                    const Vector3 row2 = w0 * ((Vector3*)srcData)[indexRows[2] + (2 * idxX)] + w1 * ((Vector3*)srcData)[indexRows[2] + (2 * idxX + 1)] + w2 * ((Vector3*)srcData)[indexRows[2] + (2 * idxX + 2)];
+
+                                    *(Vector3*)destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                            }
                         }
                     }
                 }
                 break;
             case Yw3d_FMT_R32G32B32A32F:
                 {
-                    for (uint32_t idxY = 0; idxY < srcHeight; idxY += 2)
+                    for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        const uint32_t indexRows[2] = { idxY * srcWidth, (idxY + 1) * srcWidth };
-                        for (uint32_t idxX = 0; idxX < srcWidth; idxX += 2, destData += 4)
+                        if (DetermineIfPowerOf2(srcHeight))
                         {
-                            const Vector4* srcPixels[4] =
+                            const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth};
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 4)
                             {
-                                &((Vector4*)srcData)[indexRows[0] + idxX],
-                                &((Vector4*)srcData)[indexRows[0] + idxX + 1],
-                                &((Vector4*)srcData)[indexRows[1] + idxX],
-                                &((Vector4*)srcData)[indexRows[1] + idxX + 1]
-                            };
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const Vector4* srcPixels[4] =
+                                    {
+                                        &((Vector4*)srcData)[indexRows[0] + (2 * idxX)],
+                                        &((Vector4*)srcData)[indexRows[0] + (2 * idxX + 1)],
+                                        &((Vector4*)srcData)[indexRows[1] + (2 * idxX)],
+                                        &((Vector4*)srcData)[indexRows[1] + (2 * idxX + 1)]
+                                    };
 
-                            *(Vector4*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                                    *(Vector4*)destData = (*srcPixels[0] + *srcPixels[1] + *srcPixels[2] + *srcPixels[3]) * 0.25f;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const Vector4 row0 = w0 * ((Vector4*)srcData)[indexRows[0] + (2 * idxX)] + w1 * ((Vector4*)srcData)[indexRows[0] + (2 * idxX + 1)] + w2 * ((Vector4*)srcData)[indexRows[0] + (2 * idxX + 2)];
+                                    const Vector4 row1 = w0 * ((Vector4*)srcData)[indexRows[1] + (2 * idxX)] + w1 * ((Vector4*)srcData)[indexRows[1] + (2 * idxX + 1)] + w2 * ((Vector4*)srcData)[indexRows[1] + (2 * idxX + 2)];
+
+                                    *(Vector4*)destData = (row0 + row1) * 0.5f;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            const float h0 = (float)(dstHeight - idxY) / (float)(2 * dstHeight + 1);
+                            const float h1 = (float)dstHeight / (2 * dstHeight + 1);
+                            const float h2 = (float)(1 + idxY) / (2 * dstHeight + 1);
+
+                            const uint32_t indexRows[3] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth, (2 * idxY + 2) * srcWidth };
+
+                            for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 4)
+                            {
+                                if (DetermineIfPowerOf2(srcWidth))
+                                {
+                                    const Vector4 row0 = (((Vector4*)srcData)[indexRows[0] + (2 * idxX)] + ((Vector4*)srcData)[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
+                                    const Vector4 row1 = (((Vector4*)srcData)[indexRows[1] + (2 * idxX)] + ((Vector4*)srcData)[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
+                                    const Vector4 row2 = (((Vector4*)srcData)[indexRows[2] + (2 * idxX)] + ((Vector4*)srcData)[indexRows[2] + (2 * idxX + 1)]) * 0.5f;
+
+                                    *(Vector4*)destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                                else
+                                {
+                                    const float w0 = (float)(dstWidth - idxX) / (float)(2.0f * dstWidth + 1.0f);
+                                    const float w1 = (float)dstWidth / (2.0f * dstWidth + 1.0f);
+                                    const float w2 = (float)(1 + idxX) / (2.0f * dstWidth + 1.0f);
+
+                                    const Vector4 row0 = w0 * ((Vector4*)srcData)[indexRows[0] + (2 * idxX)] + w1 * ((Vector4*)srcData)[indexRows[0] + (2 * idxX + 1)] + w2 * ((Vector4*)srcData)[indexRows[0] + (2 * idxX + 2)];
+                                    const Vector4 row1 = w0 * ((Vector4*)srcData)[indexRows[1] + (2 * idxX)] + w1 * ((Vector4*)srcData)[indexRows[1] + (2 * idxX + 1)] + w2 * ((Vector4*)srcData)[indexRows[1] + (2 * idxX + 2)];
+                                    const Vector4 row2 = w0 * ((Vector4*)srcData)[indexRows[2] + (2 * idxX)] + w1 * ((Vector4*)srcData)[indexRows[2] + (2 * idxX + 1)] + w2 * ((Vector4*)srcData)[indexRows[2] + (2 * idxX + 2)];
+
+                                    *(Vector4*)destData = h0 * row0 + h1 * row1 + h2 * row2;
+                                }
+                            }
                         }
                     }
                 }
