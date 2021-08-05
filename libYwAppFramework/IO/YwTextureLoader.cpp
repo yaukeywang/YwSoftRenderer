@@ -61,14 +61,11 @@ namespace yw
             return false;
         }
 
-        if (DetermineIfPowerOf2(inputTexture->GetWidth()) && DetermineIfPowerOf2(inputTexture->GetHeight()))
+        // Generate texture mipmap.
+        Yw3dResult resMip = inputTexture->GenerateMipSubLevels(0);
+        if (YW3D_SUCCESSFUL(resMip))
         {
-            // Generate texture mipmap.
-            Yw3dResult resMip = inputTexture->GenerateMipSubLevels(0);
-            if (YW3D_SUCCESSFUL(resMip))
-            {
-                return true;
-            }
+            return true;
         }
         
         return false;
