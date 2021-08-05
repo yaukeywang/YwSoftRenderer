@@ -10,6 +10,7 @@
 #include "YwTextureLoaderPNG.h"
 #include "YwTextureLoaderTGA.h"
 #include "YwTextureLoaderRGBE.h"
+#include "YwTextureLoaderCube.h"
 
 namespace yw
 {
@@ -38,6 +39,8 @@ namespace yw
         RegisterResourceExtension("png", LoadTexture_PNG, UnloadTexture_PNG);
         RegisterResourceExtension("tga", LoadTexture_TGA, UnloadTexture_TGA);
         RegisterResourceExtension("hdr", LoadTexture_HDR, UnloadTexture_HDR);
+        RegisterResourceExtension("rgbe", LoadTexture_HDR, UnloadTexture_HDR);
+        RegisterResourceExtension("xyze", LoadTexture_HDR, UnloadTexture_HDR);
         RegisterResourceExtension("cube", LoadTexture_Cube, UnloadTexture_Cube);
         RegisterResourceExtension("anim", LoadTexture_Animated, UnloadTexture_Animated);
 
@@ -58,25 +61,11 @@ namespace yw
         }
 
         // Not found, loading a new resource.
-        const char* check = fileName.c_str();
-        const char* ext = nullptr;
-        while ('\0' != *check)
-        {
-            if ('.' == *check)
-            {
-                ext = check;
-            }
-
-            check++;
-        }
-
-        if (nullptr == ext)
+        StringA extension = GetFileExtension(fileName);
+        if (extension.empty())
         {
             return 0;
         }
-
-        // Get extension name.
-        StringA extension = ext + 1;
 
         // Get load function.
         RESOURCELOADFUNCTION loadFunc = m_RegisteredEntityExtensionsLoad[extension];
@@ -154,6 +143,18 @@ namespace yw
         m_RegisteredEntityExtensionsUnload[extension] = unloadFunction;
     }
 
+    RESOURCELOADFUNCTION ResourceManager::GetResourceLoaderByFileExtension(const StringA& extension)
+    {
+        // Get loader function.
+        RESOURCELOADFUNCTION loadFunc = m_RegisteredEntityExtensionsLoad[extension];
+        if (nullptr == loadFunc)
+        {
+            return nullptr;
+        }
+
+        return loadFunc;
+    }
+
     void* ResourceManager::LoadModel(ResourceManager* resourceManager, const StringA& fileName)
     {
         // Define a model.
@@ -182,7 +183,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderBMP bmpLoader;
-        if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -204,7 +205,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderPNG pngLoader;
-        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -226,7 +227,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderTGA tgaLoader;
-        if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -248,7 +249,7 @@ namespace yw
 
         // Load texture data by loader.
         TextureLoaderRGBE rgbeLoader;
-        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), &texture, true))
+        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -265,12 +266,23 @@ namespace yw
 
     void* ResourceManager::LoadTexture_Cube(ResourceManager* resourceManager, const StringA& fileName)
     {
-        assert(nullptr && _T("LoadTexture_Cube is currently not supported!"));
-        return nullptr;
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderCube rgbeLoader;
+        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
     }
 
     void ResourceManager::UnloadTexture_Cube(ResourceManager* resourceManager, void* resource)
     {
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
         YW_SAFE_DELETE(resource);
     }
 
@@ -298,5 +310,30 @@ namespace yw
 #else
         return StringA("./Resources");
 #endif
+    }
+
+    StringA ResourceManager::GetFileExtension(const StringA& fileName) const
+    {
+        // Find extension name by file name or path.
+        const char* check = fileName.c_str();
+        const char* ext = nullptr;
+        while ('\0' != *check)
+        {
+            if ('.' == *check)
+            {
+                ext = check;
+            }
+
+            check++;
+        }
+
+        if (nullptr == ext)
+        {
+            return 0;
+        }
+
+        // Get extension name.
+        StringA extension = ext + 1;
+        return extension;
     }
 }

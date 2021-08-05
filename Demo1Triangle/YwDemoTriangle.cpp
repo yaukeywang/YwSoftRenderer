@@ -67,7 +67,7 @@ namespace yw
         YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector4, 1)
     };
 
-    DemoTriangle::DemoTriangle(Scene* scene) : 
+    DemoTriangle::DemoTriangle(Scene* scene) :
         IEntity(scene),
         m_VertexFormat(nullptr),
         m_VertexBuffer(nullptr),

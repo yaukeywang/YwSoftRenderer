@@ -327,7 +327,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderRGBE::LoadFromData(const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
+    bool TextureLoaderRGBE::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, IYw3dBaseTexture** texture)
     {
         // Get file header first.
         RGBEHeader header;
@@ -351,16 +351,19 @@ namespace yw
             return false;
         }
 
+        // Convert texture dynamic instance class.
+        Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(*texture);
+
         // Create texture from device.
-        YW_SAFE_RELEASE(*texture);
-        if (YW3D_FAILED(device->CreateTexture(texture, texWidth, texHeight, 0, Yw3d_FMT_R32G32B32F)))
+        YW_SAFE_RELEASE(inputTexture);
+        if (YW3D_FAILED(device->CreateTexture(&inputTexture, texWidth, texHeight, 0, Yw3d_FMT_R32G32B32F)))
         {
             return false;
         }
 
         // Lock texture data.
         float* textureData = nullptr;
-        Yw3dResult resLock = (*texture)->LockRect(0, (void**)&textureData, nullptr);
+        Yw3dResult resLock = inputTexture->LockRect(0, (void**)&textureData, nullptr);
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_RELEASE(*texture);
@@ -388,11 +391,16 @@ namespace yw
         }
 
         // Unlock texture.
-        (*texture)->UnlockRect(0);
+        inputTexture->UnlockRect(0);
 
         // Release raw image data.
         YW_SAFE_DELETE_ARRAY(texDataRaw);
 
         return true;
+    }
+
+    bool TextureLoaderRGBE::GenerateMipmap(IYw3dBaseTexture* texture)
+    {
+        return GenerateTextureMipmap(texture);
     }
 }

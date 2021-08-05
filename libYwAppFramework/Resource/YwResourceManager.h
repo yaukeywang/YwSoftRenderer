@@ -44,6 +44,19 @@ namespace yw
         // Get a loaded resource.
         void* GetResource(HRESOURCE hResource) const;
 
+    public:
+        // Get resource load function by file extension.
+        RESOURCELOADFUNCTION GetResourceLoaderByFileExtension(const StringA& extension);
+
+        // Get disk file path.
+        StringA GetDiskFilePath(const StringA& fileName) const;
+
+        // Get data root path.
+        StringA GetDataPath() const;
+
+        // Get file extension by file name or path.
+        StringA GetFileExtension(const StringA& fileName) const;
+
     protected:
         // Register a load/unload function for a resource extension.
         void RegisterResourceExtension(const StringA& extension, RESOURCELOADFUNCTION loadFunction, RESOURCEUNLOADFUNCTION unloadFunction);
@@ -74,12 +87,6 @@ namespace yw
         // Load and unload "animated" texture file.
         static void* LoadTexture_Animated(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_Animated(ResourceManager* resourceManager, void* resource);
-
-        // Get disk file path.
-        StringA GetDiskFilePath(const StringA& fileName) const;
-
-        // Get data root path.
-        StringA GetDataPath() const;
 
     public:
         // Get parent application.

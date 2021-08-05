@@ -37,12 +37,31 @@ namespace yw
     {
         // Resource should released by resource manager.
         m_Model = nullptr;
+        m_ModelTexture = nullptr;
+        m_ModelNormalTexture = nullptr;
+        m_ModelSpecularTexture = nullptr;
 
-        // Release model.
+        // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
+
         if (m_ModelHandle > 0)
         {
             resManager->UnloadResource(m_ModelHandle);
+        }
+
+        if (m_ModelTextureHandle > 0)
+        {
+            resManager->UnloadResource(m_ModelTextureHandle);
+        }
+
+        if (m_ModelNormalTextureHandle > 0)
+        {
+            resManager->UnloadResource(m_ModelNormalTextureHandle);
+        }
+
+        if (m_ModelSpecularTextureHandle > 0)
+        {
+            resManager->UnloadResource(m_ModelSpecularTextureHandle);
         }
 
         YW_SAFE_RELEASE(m_VertexShader);
@@ -101,14 +120,14 @@ namespace yw
         }
 
         m_ModelNormalTexture = (Yw3dTexture*)resManager->GetResource(m_ModelNormalTextureHandle);
-        if (nullptr == m_ModelTexture)
+        if (nullptr == m_ModelNormalTexture)
         {
             LOGE(_T("Get resource \"Lieutenant_head_normal.tga\" failed."));
             return false;
         }
 
         m_ModelSpecularTexture = (Yw3dTexture*)resManager->GetResource(m_ModelSpecularTextureHandle);
-        if (nullptr == m_ModelTexture)
+        if (nullptr == m_ModelSpecularTexture)
         {
             LOGE(_T("Get resource \"Lieutenant_head_specular.tga\" failed."));
             return false;

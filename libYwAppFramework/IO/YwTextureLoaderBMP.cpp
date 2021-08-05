@@ -62,7 +62,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderBMP::LoadFromData(const uint8_t* data, uint32_t dataLength, class Yw3dDevice* device, class Yw3dTexture** texture)
+    bool TextureLoaderBMP::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, IYw3dBaseTexture** texture)
     {
         // Read bit map file header.
         BitMapFileHeader* fileHeader = (BitMapFileHeader*)data;
@@ -84,16 +84,19 @@ namespace yw
         uint8_t* texDataRaw = (uint8_t*)(data + fileHeader->bfOffBits);
         //uint8_t* texDataStart = (uint8_t*)(data + sizeof(BitMapFileHeader) + sizeof(BitMapInfoHeader));
 
+        // Convert texture dynamic instance class.
+        Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(*texture);
+
         // Create texture from device.
-        YW_SAFE_RELEASE(*texture);
-        if (YW3D_FAILED(device->CreateTexture(texture, texWidth, texHeight, 0, textureFormat)))
+        YW_SAFE_RELEASE(inputTexture);
+        if (YW3D_FAILED(device->CreateTexture(&inputTexture, texWidth, texHeight, 0, textureFormat)))
         {
             return false;
         }
 
         // Lock texture data.
         float* textureData = nullptr;
-        Yw3dResult resLock = (*texture)->LockRect(0, (void**)&textureData, nullptr);
+        Yw3dResult resLock = inputTexture->LockRect(0, (void**)&textureData, nullptr);
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_RELEASE(*texture);
@@ -133,8 +136,13 @@ namespace yw
         }
 
         // Unlock texture.
-        (*texture)->UnlockRect(0);
+        inputTexture->UnlockRect(0);
 
         return true;
+    }
+
+    bool TextureLoaderBMP::GenerateMipmap(IYw3dBaseTexture* texture)
+    {
+        return GenerateTextureMipmap(texture);
     }
 }

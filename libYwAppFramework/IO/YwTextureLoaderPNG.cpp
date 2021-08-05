@@ -49,7 +49,7 @@ namespace yw
 
     }
 
-    bool TextureLoaderPNG::LoadFromData(const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, Yw3dTexture** texture)
+    bool TextureLoaderPNG::LoadFromData(const StringA& fileName, const uint8_t* data, uint32_t dataLength, Yw3dDevice* device, IYw3dBaseTexture** texture)
     {
         // Create base structure.
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -118,9 +118,12 @@ namespace yw
         bool hasAlpha = (PNG_COLOR_TYPE_RGB_ALPHA == color_type);
         Yw3dFormat textureFormat = hasAlpha ? Yw3d_FMT_R32G32B32A32F : Yw3d_FMT_R32G32B32F;
 
+        // Convert texture dynamic instance class.
+        Yw3dTexture* inputTexture = dynamic_cast<Yw3dTexture*>(*texture);
+
         // Create texture from device.
-        YW_SAFE_RELEASE(*texture);
-        if (YW3D_FAILED(device->CreateTexture(texture, dimensionX, dimensionY, 0, textureFormat)))
+        YW_SAFE_RELEASE(inputTexture);
+        if (YW3D_FAILED(device->CreateTexture(&inputTexture, dimensionX, dimensionY, 0, textureFormat)))
         {
             png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
             return false;
@@ -147,7 +150,7 @@ namespace yw
 
         // Lock texture data.
         float* textureData = nullptr;
-        Yw3dResult resLock = (*texture)->LockRect(0, (void**)&textureData, nullptr);
+        Yw3dResult resLock = inputTexture->LockRect(0, (void**)&textureData, nullptr);
         if (YW3D_FAILED(resLock))
         {
             YW_SAFE_DELETE_ARRAY(texDataRaw);
@@ -173,13 +176,17 @@ namespace yw
                 }
             }
         }
-
         
-        (*texture)->UnlockRect(0);
+        inputTexture->UnlockRect(0);
 
         // Release raw image data.
         YW_SAFE_DELETE_ARRAY(texDataRaw);
 
         return true;
+    }
+
+    bool TextureLoaderPNG::GenerateMipmap(IYw3dBaseTexture* texture)
+    {
+        return GenerateTextureMipmap(texture);
     }
 }

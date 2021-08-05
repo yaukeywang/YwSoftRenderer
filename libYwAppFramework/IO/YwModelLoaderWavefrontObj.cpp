@@ -10,9 +10,9 @@
 // Wavefront OBJ model file format reader/writer/manipulator.
 // YW model loader for obj file class.
 
+#include <sstream>
 #include "YwModel.h"
 #include "YwModelLoaderWavefrontObj.h"
-#include <sstream>
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
 //#pragma warning(disable:4996)
@@ -123,7 +123,7 @@ namespace yw
         // Release each group.
     }
 
-    bool ModelLoaderWavefrontObj::LoadFormData(const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
+    bool ModelLoaderWavefrontObj::LoadFormData(const StringA& fileName, const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
     {
         LoadWavefrontObjFromData(model, data, calculateNormals, calculateNormalAngle);
         return true;
@@ -206,7 +206,7 @@ namespace yw
             {
                 modelData >> commandName;
                 material = nullptr; // Find material.
-                group->m_Material = nullptr; // Need to implement material. Material is 'buf'.
+                group->material = nullptr; // Need to implement material. Material is 'buf'.
                 //group->material = material = glmFindMaterial(model, buf);
             }
             else if (0 == strcmp(command, "usemap"))
@@ -217,7 +217,7 @@ namespace yw
             {
                 modelData >> commandName;
                 group = model->AddGroup(commandName);
-                group->m_Material = material; // Need to implement material.
+                group->material = material; // Need to implement material.
                 //group = glmFindGroup(model, buf);
                 //group->material = material;
             }
@@ -278,7 +278,7 @@ namespace yw
                     modelData >> v;
                     v = (v < 0 ? v + numPositions : v) - 1;
                     modelVertex.position = vertices[v];
-                    TRIANGLE(numTriangles)->m_PositionIndices[faceIdx] = v;
+                    TRIANGLE(numTriangles)->positionIndices[faceIdx] = v;
 
                     if ('/' == modelData.peek())
                     {
@@ -291,7 +291,7 @@ namespace yw
                             modelData >> t;
                             t = (t < 0 ? t + numTexcoords : t) - 1;
                             modelVertex.texcoord = texcoords[t];
-                            TRIANGLE(numTriangles)->m_TexcoordsIndices[faceIdx] = t;
+                            TRIANGLE(numTriangles)->texcoordsIndices[faceIdx] = t;
                         }
 
                         if ('/' == modelData.peek())
@@ -303,17 +303,17 @@ namespace yw
                             modelData >> n;
                             n = (n < 0 ? n + numNormals : n) - 1;
                             modelVertex.normal = normals[n];
-                            TRIANGLE(numTriangles)->m_NormalIndices[faceIdx] = n;
+                            TRIANGLE(numTriangles)->normalIndices[faceIdx] = n;
                         }
                     }
 
                     // Add this vertex into cache.
                     modelVertexIndex = _AddModelVertexIntoCache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
-                    TRIANGLE(numTriangles)->m_VertexIndices[faceIdx] = modelVertexIndex;
-                    group->m_TriangleIndices.push_back(modelVertexIndex);
+                    TRIANGLE(numTriangles)->vertexIndices[faceIdx] = modelVertexIndex;
+                    group->triangleIndices.push_back(modelVertexIndex);
                 }
 
-                group->m_Triangles.push_back(numTriangles);
+                group->triangles.push_back(numTriangles);
                 numTriangles++;
 
                 // Extra faces.
@@ -336,7 +336,7 @@ namespace yw
                     //modelData >> v;
                     v = (v < 0 ? v + numPositions : v) - 1;
                     modelVertex.position = vertices[v];
-                    TRIANGLE(numTriangles)->m_PositionIndices[2] = v;
+                    TRIANGLE(numTriangles)->positionIndices[2] = v;
 
                     if ('/' == modelData.peek())
                     {
@@ -349,7 +349,7 @@ namespace yw
                             modelData >> t;
                             t = (t < 0 ? t + numTexcoords : t) - 1;
                             modelVertex.texcoord = texcoords[t];
-                            TRIANGLE(numTriangles)->m_TexcoordsIndices[2] = t;
+                            TRIANGLE(numTriangles)->texcoordsIndices[2] = t;
                         }
 
                         if ('/' == modelData.peek())
@@ -361,7 +361,7 @@ namespace yw
                             modelData >> n;
                             n = (n < 0 ? n + numNormals : n) - 1;
                             modelVertex.normal = normals[n];
-                            TRIANGLE(numTriangles)->m_NormalIndices[2] = n;
+                            TRIANGLE(numTriangles)->normalIndices[2] = n;
                         }
                     }
 
@@ -369,24 +369,24 @@ namespace yw
                     modelVertexIndex = _AddModelVertexIntoCache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
 
                     // Vertex 0.
-                    TRIANGLE(numTriangles)->m_PositionIndices[0] = TRIANGLE(numTriangles - 1)->m_PositionIndices[0];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[0] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[0];
-                    TRIANGLE(numTriangles)->m_NormalIndices[0] = TRIANGLE(numTriangles - 1)->m_NormalIndices[0];
-                    TRIANGLE(numTriangles)->m_VertexIndices[0] = TRIANGLE(numTriangles - 1)->m_VertexIndices[0];
-                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexIndices[0]);
+                    TRIANGLE(numTriangles)->positionIndices[0] = TRIANGLE(numTriangles - 1)->positionIndices[0];
+                    TRIANGLE(numTriangles)->texcoordsIndices[0] = TRIANGLE(numTriangles - 1)->texcoordsIndices[0];
+                    TRIANGLE(numTriangles)->normalIndices[0] = TRIANGLE(numTriangles - 1)->normalIndices[0];
+                    TRIANGLE(numTriangles)->vertexIndices[0] = TRIANGLE(numTriangles - 1)->vertexIndices[0];
+                    group->triangleIndices.push_back(TRIANGLE(numTriangles - 1)->vertexIndices[0]);
 
                     // Vertex 1.
-                    TRIANGLE(numTriangles)->m_PositionIndices[1] = TRIANGLE(numTriangles - 1)->m_PositionIndices[2];
-                    TRIANGLE(numTriangles)->m_TexcoordsIndices[1] = TRIANGLE(numTriangles - 1)->m_TexcoordsIndices[2];
-                    TRIANGLE(numTriangles)->m_NormalIndices[1] = TRIANGLE(numTriangles - 1)->m_NormalIndices[2];
-                    TRIANGLE(numTriangles)->m_VertexIndices[1] = TRIANGLE(numTriangles - 1)->m_VertexIndices[2];
-                    group->m_TriangleIndices.push_back(TRIANGLE(numTriangles - 1)->m_VertexIndices[2]);
+                    TRIANGLE(numTriangles)->positionIndices[1] = TRIANGLE(numTriangles - 1)->positionIndices[2];
+                    TRIANGLE(numTriangles)->texcoordsIndices[1] = TRIANGLE(numTriangles - 1)->texcoordsIndices[2];
+                    TRIANGLE(numTriangles)->normalIndices[1] = TRIANGLE(numTriangles - 1)->normalIndices[2];
+                    TRIANGLE(numTriangles)->vertexIndices[1] = TRIANGLE(numTriangles - 1)->vertexIndices[2];
+                    group->triangleIndices.push_back(TRIANGLE(numTriangles - 1)->vertexIndices[2]);
 
                     // Vertex 2.
-                    TRIANGLE(numTriangles)->m_VertexIndices[2] = modelVertexIndex;
-                    group->m_TriangleIndices.push_back(modelVertexIndex);
+                    TRIANGLE(numTriangles)->vertexIndices[2] = modelVertexIndex;
+                    group->triangleIndices.push_back(modelVertexIndex);
 
-                    group->m_Triangles.push_back(numTriangles);
+                    group->triangles.push_back(numTriangles);
                     numTriangles++;
                 }
             }
@@ -413,10 +413,10 @@ namespace yw
         model->m_FacetNormals.resize(model->m_Triangles.size());
         for (uint32_t i = 0; i < (uint32_t)model->m_Triangles.size(); i++)
         {
-            model->m_Triangles[i]->m_FacetNormalIndex = i;
+            model->m_Triangles[i]->facetNormalIndex = i;
 
-            Vector3 u = model->m_Positions[TRIANGLE(i)->m_PositionIndices[1]] - model->m_Positions[TRIANGLE(i)->m_PositionIndices[0]];
-            Vector3 v = model->m_Positions[TRIANGLE(i)->m_PositionIndices[2]] - model->m_Positions[TRIANGLE(i)->m_PositionIndices[0]];
+            Vector3 u = model->m_Positions[TRIANGLE(i)->positionIndices[1]] - model->m_Positions[TRIANGLE(i)->positionIndices[0]];
+            Vector3 v = model->m_Positions[TRIANGLE(i)->positionIndices[2]] - model->m_Positions[TRIANGLE(i)->positionIndices[0]];
 
             Vector3& facetNormal = model->m_FacetNormals[i];
             Vector3Cross(facetNormal, u, v);
@@ -446,18 +446,18 @@ namespace yw
         {
             TriangleVertexNode* node = new TriangleVertexNode();
             node->m_Index = i;
-            node->m_Next = members[TRIANGLE(i)->m_PositionIndices[0]];
-            members[TRIANGLE(i)->m_PositionIndices[0]] = node;
+            node->m_Next = members[TRIANGLE(i)->positionIndices[0]];
+            members[TRIANGLE(i)->positionIndices[0]] = node;
 
             node = new TriangleVertexNode();
             node->m_Index = i;
-            node->m_Next = members[TRIANGLE(i)->m_PositionIndices[1]];
-            members[TRIANGLE(i)->m_PositionIndices[1]] = node;
+            node->m_Next = members[TRIANGLE(i)->positionIndices[1]];
+            members[TRIANGLE(i)->positionIndices[1]] = node;
 
             node = new TriangleVertexNode();
             node->m_Index = i;
-            node->m_Next = members[TRIANGLE(i)->m_PositionIndices[2]];
-            members[TRIANGLE(i)->m_PositionIndices[2]] = node;
+            node->m_Next = members[TRIANGLE(i)->positionIndices[2]];
+            members[TRIANGLE(i)->positionIndices[2]] = node;
         }
 
         /* calculate the average normal for each vertex */
@@ -483,12 +483,12 @@ namespace yw
                 facet normals is greater than the cosine of the threshold
                 angle -- or, said another way, the angle between the two
                     facet normals is less than (or equal to) the threshold angle */
-                float dot = Vector3Dot(model->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex],
-                    model->m_FacetNormals[TRIANGLE(members[i]->m_Index)->m_FacetNormalIndex]);
+                float dot = Vector3Dot(model->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex],
+                    model->m_FacetNormals[TRIANGLE(members[i]->m_Index)->facetNormalIndex]);
                 if (dot > cos_angle)
                 {
                     node->m_Averaged = true;
-                    average += model->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
+                    average += model->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex];
                     avg = 1;            /* we averaged at least one normal! */
                 }
                 else 
@@ -517,34 +517,34 @@ namespace yw
                 if (node->m_Averaged)
                 {
                     /* if this node was averaged, use the average normal */
-                    if (TRIANGLE(node->m_Index)->m_PositionIndices[0] == i)
+                    if (TRIANGLE(node->m_Index)->positionIndices[0] == i)
                     {
-                        TRIANGLE(node->m_Index)->m_NormalIndices[0] = avg;
+                        TRIANGLE(node->m_Index)->normalIndices[0] = avg;
                     }
-                    else if (TRIANGLE(node->m_Index)->m_PositionIndices[1] == i)
+                    else if (TRIANGLE(node->m_Index)->positionIndices[1] == i)
                     {
-                        TRIANGLE(node->m_Index)->m_NormalIndices[1] = avg;
+                        TRIANGLE(node->m_Index)->normalIndices[1] = avg;
                     }
-                    else if (TRIANGLE(node->m_Index)->m_PositionIndices[2] == i)
+                    else if (TRIANGLE(node->m_Index)->positionIndices[2] == i)
                     {
-                        TRIANGLE(node->m_Index)->m_NormalIndices[2] = avg;
+                        TRIANGLE(node->m_Index)->normalIndices[2] = avg;
                     }
                 }
                 else
                 {
                     /* if this node wasn't averaged, use the facet normal */
-                    normals[numNormals] = model->m_FacetNormals[TRIANGLE(node->m_Index)->m_FacetNormalIndex];
-                    if (TRIANGLE(node->m_Index)->m_PositionIndices[0] == i)
+                    normals[numNormals] = model->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex];
+                    if (TRIANGLE(node->m_Index)->positionIndices[0] == i)
                     {
-                        TRIANGLE(node->m_Index)->m_NormalIndices[0] = numNormals;
+                        TRIANGLE(node->m_Index)->normalIndices[0] = numNormals;
                     }
-                    else if (TRIANGLE(node->m_Index)->m_PositionIndices[1] == i)
+                    else if (TRIANGLE(node->m_Index)->positionIndices[1] == i)
                     {
-                        TRIANGLE(node->m_Index)->m_NormalIndices[1] = numNormals;
+                        TRIANGLE(node->m_Index)->normalIndices[1] = numNormals;
                     }
-                    else if (TRIANGLE(node->m_Index)->m_PositionIndices[2] == i)
+                    else if (TRIANGLE(node->m_Index)->positionIndices[2] == i)
                     {
-                        TRIANGLE(node->m_Index)->m_NormalIndices[2] = numNormals;
+                        TRIANGLE(node->m_Index)->normalIndices[2] = numNormals;
                     }
 
                     numNormals++;
@@ -588,8 +588,8 @@ namespace yw
             ModelTriangle* triangle = TRIANGLE(i);
             for (uint32_t j = 0; j < 3; j++)
             {
-                ModelVertex* modelVertex = &(model->m_Vertices[triangle->m_VertexIndices[j]]);
-                modelVertex->normal = model->m_Normals[triangle->m_NormalIndices[j]];
+                ModelVertex* modelVertex = &(model->m_Vertices[triangle->vertexIndices[j]]);
+                modelVertex->normal = model->m_Normals[triangle->normalIndices[j]];
             }
         }
     }
@@ -611,21 +611,21 @@ namespace yw
         {
             const ModelTriangle* triangle = TRIANGLE(i);
 
-            const Vector3& v0 = model->m_Positions[triangle->m_PositionIndices[0]];
-            const Vector3& v1 = model->m_Positions[triangle->m_PositionIndices[1]];
-            const Vector3& v2 = model->m_Positions[triangle->m_PositionIndices[2]];
+            const Vector3& v0 = model->m_Positions[triangle->positionIndices[0]];
+            const Vector3& v1 = model->m_Positions[triangle->positionIndices[1]];
+            const Vector3& v2 = model->m_Positions[triangle->positionIndices[2]];
 
-            const float texCoordY0 = model->m_Texcoords[triangle->m_TexcoordsIndices[0]].y;
-            const float texCoordY1 = model->m_Texcoords[triangle->m_TexcoordsIndices[1]].y;
-            const float texCoordY2 = model->m_Texcoords[triangle->m_TexcoordsIndices[2]].y;
+            const float texCoordY0 = model->m_Texcoords[triangle->texcoordsIndices[0]].y;
+            const float texCoordY1 = model->m_Texcoords[triangle->texcoordsIndices[1]].y;
+            const float texCoordY2 = model->m_Texcoords[triangle->texcoordsIndices[2]].y;
 
             const Vector3 deltaVertex[2] = { v1 - v0, v2 - v0 };
             const float deltaTexCoordY[2] = { texCoordY1 - texCoordY0, texCoordY2 - texCoordY0 };
             const Vector3 tangent = (deltaVertex[0] * deltaTexCoordY[1] - deltaVertex[1] * deltaTexCoordY[0]).Normalize();
             
-            model->m_Tangents[triangle->m_PositionIndices[0]] = Vector4(tangent, 1.0f);
-            model->m_Tangents[triangle->m_PositionIndices[1]] = Vector4(tangent, 1.0f);
-            model->m_Tangents[triangle->m_PositionIndices[2]] = Vector4(tangent, 1.0f);
+            model->m_Tangents[triangle->positionIndices[0]] = Vector4(tangent, 1.0f);
+            model->m_Tangents[triangle->positionIndices[1]] = Vector4(tangent, 1.0f);
+            model->m_Tangents[triangle->positionIndices[2]] = Vector4(tangent, 1.0f);
         }
 
         // Update all tangets in final vertex format cache.
@@ -665,17 +665,17 @@ namespace yw
         {
             const ModelTriangle* triangle = TRIANGLE(i);
 
-            const uint32_t i0 = triangle->m_PositionIndices[0];
-            const uint32_t i1 = triangle->m_PositionIndices[1];
-            const uint32_t i2 = triangle->m_PositionIndices[2];
+            const uint32_t i0 = triangle->positionIndices[0];
+            const uint32_t i1 = triangle->positionIndices[1];
+            const uint32_t i2 = triangle->positionIndices[2];
 
             const Vector3& p0 = model->m_Positions[i0];
             const Vector3& p1 = model->m_Positions[i1];
             const Vector3& p2 = model->m_Positions[i2];
 
-            const Vector2& w0 = model->m_Texcoords[triangle->m_TexcoordsIndices[0]];
-            const Vector2& w1 = model->m_Texcoords[triangle->m_TexcoordsIndices[1]];
-            const Vector2& w2 = model->m_Texcoords[triangle->m_TexcoordsIndices[2]];
+            const Vector2& w0 = model->m_Texcoords[triangle->texcoordsIndices[0]];
+            const Vector2& w1 = model->m_Texcoords[triangle->texcoordsIndices[1]];
+            const Vector2& w2 = model->m_Texcoords[triangle->texcoordsIndices[2]];
 
             Vector3 e1 = p1 - p0;
             Vector3 e2 = p2 - p0;
@@ -695,9 +695,9 @@ namespace yw
             bitangent[i1] += b;
             bitangent[i2] += b;
 
-            normals[i0] = model->m_Normals[triangle->m_NormalIndices[0]];
-            normals[i1] = model->m_Normals[triangle->m_NormalIndices[1]];
-            normals[i2] = model->m_Normals[triangle->m_NormalIndices[2]];
+            normals[i0] = model->m_Normals[triangle->normalIndices[0]];
+            normals[i1] = model->m_Normals[triangle->normalIndices[1]];
+            normals[i2] = model->m_Normals[triangle->normalIndices[2]];
         }
 
         // Orthonormalize each tangent and calculate the handedness.
