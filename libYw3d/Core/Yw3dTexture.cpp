@@ -171,6 +171,7 @@ namespace yw
         Yw3dSurface** curMipLevelData = m_MipLevelsData + 1;
         while ((0 != surfaceWidth) && (0 != surfaceHeight))
         {
+            YW_SAFE_RELEASE(*curMipLevelData);
             Yw3dResult resMipLevel = m_Device->CreateSurface(curMipLevelData, surfaceWidth, surfaceHeight, textureFormat);
             if (YW3D_FAILED(resMipLevel))
             {
