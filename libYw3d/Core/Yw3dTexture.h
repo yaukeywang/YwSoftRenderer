@@ -52,7 +52,8 @@ namespace yw
         Yw3dResult SampleTexture(Vector4& color, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates);
 
     public:
-        // Generates mip-sublevels through downsampling (using a box-filter) a given source mip-level.
+        // Generates mip-sublevels through downsampling (using a box-filter) a given source mip-level with POT or NPOT.
+        // For more information, please visit: https://www.nvidia.com/en-us/drivers/np2-mipmapping/ <<Non-Power-of-Two Mipmapping>> or https://download.nvidia.com/developer/Papers/2005/NP2_Mipmapping/NP2_Mipmap_Creation.pdf <<Non-Power-of-Two Mipmap Creation>>.
         // @param[in] srcLevel the mip-level which will be taken as the starting point.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
