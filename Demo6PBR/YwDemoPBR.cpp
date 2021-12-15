@@ -17,10 +17,11 @@ namespace yw
 
     DemoPBR::DemoPBR(Scene* scene) :
         IEntity(scene),
-        m_Model(nullptr),
+        m_ModelSkySphere(nullptr),
         m_ModelTexture(nullptr),
         m_ModelNormalTexture(nullptr),
         m_ModelSpecularTexture(nullptr),
+        m_ModelSkySphereHandle(0),
         m_ModelHandle(0),
         m_ModelTextureHandle(0),
         m_ModelNormalTextureHandle(0),
@@ -43,6 +44,11 @@ namespace yw
 
         // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
+
+        if (m_ModelSkySphereHandle > 0)
+        {
+            resManager->UnloadResource(m_ModelSkySphereHandle);
+        }
 
         if (m_ModelHandle > 0)
         {
@@ -76,6 +82,13 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
+        m_ModelSkySphereHandle = resManager->LoadResource("sphere.obj");
+        if (m_ModelSkySphereHandle <= 0)
+        {
+            LOGE(_T("Load resource \"sphere.obj\" failed."));
+            return false;
+        }
+
         m_ModelHandle = resManager->LoadResource("Lu_Head.obj");
         if (m_ModelHandle <= 0)
         {
@@ -105,6 +118,13 @@ namespace yw
         }
 
         // Get model and texture.
+        m_ModelSkySphere = (Model*)resManager->GetResource(m_ModelSkySphereHandle);
+        if (nullptr == m_ModelSkySphere)
+        {
+            LOGE(_T("Get resource \"sphere.obj\" failed."));
+            return false;
+        }
+
         m_Model = (Model*)resManager->GetResource(m_ModelHandle);
         if (nullptr == m_Model)
         {
@@ -177,7 +197,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
+        Matrix44Transformation(matWorld, Vector3(2.5f, 2.5f, 2.5f), camera->GetWorldRotation(), camera->GetPosition());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -188,6 +208,8 @@ namespace yw
         device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
         device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
         device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
 
         // Set texture.
         graphics->SetTexture(0, m_ModelTexture);
@@ -226,7 +248,7 @@ namespace yw
         graphics->SetPixelShader(m_PixelShader);
 
         // Render model.
-        //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
-        m_Model->Render(device);
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
+        m_ModelSkySphere->Render(device);
     }
 }

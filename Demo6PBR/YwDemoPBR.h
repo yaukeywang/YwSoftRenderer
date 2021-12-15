@@ -37,12 +37,14 @@ namespace yw
 
     private:
         // Model and texture resources.
+        class Model* m_ModelSkySphere;
         class Model* m_Model;
         class Yw3dTexture* m_ModelTexture;
         class Yw3dTexture* m_ModelNormalTexture;
         class Yw3dTexture* m_ModelSpecularTexture;
 
         // Resource handle.
+        HRESOURCE m_ModelSkySphereHandle;
         HRESOURCE m_ModelHandle;
         HRESOURCE m_ModelTextureHandle;
         HRESOURCE m_ModelNormalTextureHandle;
