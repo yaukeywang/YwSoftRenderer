@@ -18,14 +18,19 @@ namespace yw
     DemoPBR::DemoPBR(Scene* scene) :
         IEntity(scene),
         m_ModelSkySphere(nullptr),
-        m_ModelTexture(nullptr),
-        m_ModelNormalTexture(nullptr),
-        m_ModelSpecularTexture(nullptr),
+        m_ModelPBR(nullptr),
+        m_ModelSkySphereTexture(nullptr),
+        m_ModelPBRTexture(nullptr),
+        m_ModelPBRNormalTexture(nullptr),
+        m_ModelPBRSpecularTexture(nullptr),
         m_ModelSkySphereHandle(0),
-        m_ModelHandle(0),
-        m_ModelTextureHandle(0),
-        m_ModelNormalTextureHandle(0),
-        m_ModelSpecularTextureHandle(0),
+        m_ModelPBRHandle(0),
+        m_ModelSkySphereTextureHandle(0),
+        m_ModelPBRTextureHandle(0),
+        m_ModelPBRNormalTextureHandle(0),
+        m_ModelPBRSpecularTextureHandle(0),
+        m_SkyVertexShader(nullptr),
+        m_SkyPixelShader(nullptr),
         m_VertexShader(nullptr),
         m_PixelShader(nullptr),
         m_Metallic(0.0f),
@@ -37,10 +42,12 @@ namespace yw
     DemoPBR::~DemoPBR()
     {
         // Resource should released by resource manager.
-        m_Model = nullptr;
-        m_ModelTexture = nullptr;
-        m_ModelNormalTexture = nullptr;
-        m_ModelSpecularTexture = nullptr;
+        m_ModelSkySphere = nullptr;
+        m_ModelPBR = nullptr;
+        m_ModelSkySphereTexture = nullptr;
+        m_ModelPBRTexture = nullptr;
+        m_ModelPBRNormalTexture = nullptr;
+        m_ModelPBRSpecularTexture = nullptr;
 
         // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
@@ -50,26 +57,33 @@ namespace yw
             resManager->UnloadResource(m_ModelSkySphereHandle);
         }
 
-        if (m_ModelHandle > 0)
+        if (m_ModelPBRHandle > 0)
         {
-            resManager->UnloadResource(m_ModelHandle);
+            resManager->UnloadResource(m_ModelPBRHandle);
         }
 
-        if (m_ModelTextureHandle > 0)
+        if (m_ModelSkySphereTextureHandle > 0)
         {
-            resManager->UnloadResource(m_ModelTextureHandle);
+            resManager->UnloadResource(m_ModelSkySphereTextureHandle);
         }
 
-        if (m_ModelNormalTextureHandle > 0)
+        if (m_ModelPBRTextureHandle > 0)
         {
-            resManager->UnloadResource(m_ModelNormalTextureHandle);
+            resManager->UnloadResource(m_ModelPBRTextureHandle);
         }
 
-        if (m_ModelSpecularTextureHandle > 0)
+        if (m_ModelPBRNormalTextureHandle > 0)
         {
-            resManager->UnloadResource(m_ModelSpecularTextureHandle);
+            resManager->UnloadResource(m_ModelPBRNormalTextureHandle);
         }
 
+        if (m_ModelPBRSpecularTextureHandle > 0)
+        {
+            resManager->UnloadResource(m_ModelPBRSpecularTextureHandle);
+        }
+
+        YW_SAFE_RELEASE(m_SkyVertexShader);
+        YW_SAFE_RELEASE(m_SkyPixelShader);
         YW_SAFE_RELEASE(m_VertexShader);
         YW_SAFE_RELEASE(m_PixelShader);
     }
@@ -89,29 +103,36 @@ namespace yw
             return false;
         }
 
-        m_ModelHandle = resManager->LoadResource("Lu_Head.obj");
-        if (m_ModelHandle <= 0)
+        m_ModelPBRHandle = resManager->LoadResource("Lu_Head.obj");
+        if (m_ModelPBRHandle <= 0)
         {
             LOGE(_T("Load resource \"Lu_Head.obj\" failed."));
             return false;
         }
 
-        m_ModelTextureHandle = resManager->LoadResource("Lieutenant_head_diffuse.tga");
-        if (m_ModelTextureHandle <= 0)
+        m_ModelSkySphereTextureHandle = resManager->LoadResource("Room/room.cube");
+        if (m_ModelSkySphereTextureHandle <= 0)
+        {
+            LOGE(_T("Load resource \"Room/room.cube\" failed."));
+            return false;
+        }
+
+        m_ModelPBRTextureHandle = resManager->LoadResource("Lieutenant_head_diffuse.tga");
+        if (m_ModelPBRTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"Lieutenant_head_diffuse.tga\" failed."));
             return false;
         }
 
-        m_ModelNormalTextureHandle = resManager->LoadResource("Lieutenant_head_normal.tga");
-        if (m_ModelNormalTextureHandle <= 0)
+        m_ModelPBRNormalTextureHandle = resManager->LoadResource("Lieutenant_head_normal.tga");
+        if (m_ModelPBRNormalTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"Lieutenant_head_normal.tga\" failed."));
             return false;
         }
 
-        m_ModelSpecularTextureHandle = resManager->LoadResource("Lieutenant_head_specular.tga");
-        if (m_ModelSpecularTextureHandle <= 0)
+        m_ModelPBRSpecularTextureHandle = resManager->LoadResource("Lieutenant_head_specular.tga");
+        if (m_ModelPBRSpecularTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"Lieutenant_head_specular.tga\" failed."));
             return false;
@@ -125,35 +146,44 @@ namespace yw
             return false;
         }
 
-        m_Model = (Model*)resManager->GetResource(m_ModelHandle);
-        if (nullptr == m_Model)
+        m_ModelPBR = (Model*)resManager->GetResource(m_ModelPBRHandle);
+        if (nullptr == m_ModelPBR)
         {
             LOGE(_T("Get resource \"Lu_Head.obj\" failed."));
             return false;
         }
 
-        m_ModelTexture = (Yw3dTexture*)resManager->GetResource(m_ModelTextureHandle);
-        if (nullptr == m_ModelTexture)
+        m_ModelSkySphereTexture = (Yw3dCubeTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
+        if (nullptr == m_ModelSkySphereTexture)
+        {
+            LOGE(_T("Get resource \"room.cube\" failed."));
+            return false;
+        }
+
+        m_ModelPBRTexture = (Yw3dTexture*)resManager->GetResource(m_ModelPBRTextureHandle);
+        if (nullptr == m_ModelPBRTexture)
         {
             LOGE(_T("Get resource \"Lieutenant_head_diffuse.tga\" failed."));
             return false;
         }
 
-        m_ModelNormalTexture = (Yw3dTexture*)resManager->GetResource(m_ModelNormalTextureHandle);
-        if (nullptr == m_ModelNormalTexture)
+        m_ModelPBRNormalTexture = (Yw3dTexture*)resManager->GetResource(m_ModelPBRNormalTextureHandle);
+        if (nullptr == m_ModelPBRNormalTexture)
         {
             LOGE(_T("Get resource \"Lieutenant_head_normal.tga\" failed."));
             return false;
         }
 
-        m_ModelSpecularTexture = (Yw3dTexture*)resManager->GetResource(m_ModelSpecularTextureHandle);
-        if (nullptr == m_ModelSpecularTexture)
+        m_ModelPBRSpecularTexture = (Yw3dTexture*)resManager->GetResource(m_ModelPBRSpecularTextureHandle);
+        if (nullptr == m_ModelPBRSpecularTexture)
         {
             LOGE(_T("Get resource \"Lieutenant_head_specular.tga\" failed."));
             return false;
         }
 
         // Create vertex and pixel shader.
+        m_SkyVertexShader = new DemoPBRSkyVertexShader();
+        m_SkyPixelShader = new DemoPBRSkyPixelShader();
         m_VertexShader = new DemoPBRVertexShader();
         m_PixelShader = new DemoPBRSpecularSetupPixelShader();
 
@@ -197,7 +227,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(2.5f, 2.5f, 2.5f), camera->GetWorldRotation(), camera->GetPosition());
+        Matrix44Transformation(matWorld, Vector3(2.0f, 2.0f, 2.0f), camera->GetWorldRotation(), camera->GetPosition());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -212,21 +242,21 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
 
         // Set texture.
-        graphics->SetTexture(0, m_ModelTexture);
+        graphics->SetTexture(0, m_ModelSkySphereTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        graphics->SetTexture(1, m_ModelNormalTexture);
+        graphics->SetTexture(1, m_ModelPBRNormalTexture);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        graphics->SetTexture(2, m_ModelSpecularTexture);
+        graphics->SetTexture(2, m_ModelPBRSpecularTexture);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
@@ -244,11 +274,11 @@ namespace yw
         m_PixelShader->SetFloat(2, m_SmoothnessScale);
 
         // Set vertex and pixel shader.
-        graphics->SetVertexShader(m_VertexShader);
-        graphics->SetPixelShader(m_PixelShader);
+        graphics->SetVertexShader(m_SkyVertexShader);
+        graphics->SetPixelShader(m_SkyPixelShader);
 
         // Render model.
-        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
+        //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
         m_ModelSkySphere->Render(device);
     }
 }
