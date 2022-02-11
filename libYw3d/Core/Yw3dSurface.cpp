@@ -176,14 +176,14 @@ namespace yw
             }
             break;
         case Yw3d_FMT_R32G32B32A32F:
-        {
-            const Vector4* pixelData = (const Vector4*)m_Data;
+            {
+                const Vector4* pixelData = (const Vector4*)m_Data;
 
-            Vector4 colorRows[2];
-            Vector4Lerp(colorRows[0], pixelData[pixelRows[0] + pixelX], pixelData[pixelRows[0] + pixelX2], pixelInterpoltaions[0]);
-            Vector4Lerp(colorRows[1], pixelData[pixelRows[1] + pixelX], pixelData[pixelRows[1] + pixelX2], pixelInterpoltaions[0]);
-            Vector4Lerp(outColor, colorRows[0], colorRows[1], pixelInterpoltaions[1]);
-        }
+                Vector4 colorRows[2];
+                Vector4Lerp(colorRows[0], pixelData[pixelRows[0] + pixelX], pixelData[pixelRows[0] + pixelX2], pixelInterpoltaions[0]);
+                Vector4Lerp(colorRows[1], pixelData[pixelRows[1] + pixelX], pixelData[pixelRows[1] + pixelX2], pixelInterpoltaions[0]);
+                Vector4Lerp(outColor, colorRows[0], colorRows[1], pixelInterpoltaions[1]);
+            }
             break;
         default:
             // This can not happen.
