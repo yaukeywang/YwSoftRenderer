@@ -36,19 +36,29 @@ namespace yw
         void Render(int32_t pass);
 
     private:
-        // Model and texture resources.
-        class Model* m_Model;
-        class Yw3dTexture* m_ModelTexture;
-        class Yw3dTexture* m_ModelNormalTexture;
-        class Yw3dTexture* m_ModelSpecularTexture;
+        // Model resources.
+        class Model* m_ModelSkySphere;
+        class Model* m_ModelPBR;
 
-        // Resource handle.
-        HRESOURCE m_ModelHandle;
-        HRESOURCE m_ModelTextureHandle;
-        HRESOURCE m_ModelNormalTextureHandle;
-        HRESOURCE m_ModelSpecularTextureHandle;
+        // Texture resources.
+        class Yw3dCubeTexture* m_ModelSkySphereTexture;
+        class Yw3dTexture* m_ModelPBRTexture;
+        class Yw3dTexture* m_ModelPBRNormalTexture;
+        class Yw3dTexture* m_ModelPBRSpecularTexture;
+
+        // Model Resource handle.
+        HRESOURCE m_ModelSkySphereHandle;
+        HRESOURCE m_ModelPBRHandle;
+
+        // Texture Resource handle.
+        HRESOURCE m_ModelSkySphereTextureHandle;
+        HRESOURCE m_ModelPBRTextureHandle;
+        HRESOURCE m_ModelPBRNormalTextureHandle;
+        HRESOURCE m_ModelPBRSpecularTextureHandle;
 
         // Shader related.
+        class DemoPBRSkyVertexShader* m_SkyVertexShader;
+        class DemoPBRSkyPixelShader* m_SkyPixelShader;
         class DemoPBRVertexShader* m_VertexShader;
         class DemoPBRPixelShader* m_PixelShader;
 
@@ -58,13 +68,13 @@ namespace yw
         Vector4 m_AlbedoColor;
         Vector4 m_SpecularColor;
 
-        // _Metallic/"Metallic"
+        // _Metallic/"Metallic".
         float m_Metallic;
 
-        // _Glossiness/"Smoothness"
+        // _Glossiness/"Smoothness".
         float m_Smoothness;
 
-        // _GlossMapScale/"Smoothness Scale"
+        // _GlossMapScale/"Smoothness Scale".
         float m_SmoothnessScale;
     };
 }

@@ -6,6 +6,50 @@
 namespace yw
 {
     // ------------------------------------------------------------------
+    // Sky vertex shader.
+
+    // Vertex input format:
+    // 0 - Vector3 position;
+    void DemoPBRSkyVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+    {
+        // The projection vertex position.
+        position = vsShaderInput[0] * (*GetWVPMatrix());
+
+        // Use skymesh vertex position, in local space, as index into cubemap.
+        vsShaderOutput[0] = vsShaderInput[0];
+    }
+
+    Yw3dShaderRegisterType DemoPBRSkyVertexShader::GetOutputRegisters(uint32_t shaderRegister)
+    {
+        switch (shaderRegister)
+        {
+        case 0:
+            return Yw3d_SRT_Vector3; // Vertex local position.
+        default:
+            return Yw3d_SRT_Unused;
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Sky pixel shader.
+
+    bool DemoPBRSkyPixelShader::MightKillPixels()
+    {
+        return false;
+    }
+
+    bool DemoPBRSkyPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    {
+        // Sample main texture.
+        float3 texCoord = input[0];
+        float4 texColor;
+        SampleTexture(texColor, 0, texCoord.x, texCoord.y, texCoord.z);
+        color = texColor;
+
+        return true;
+    }
+
+    // ------------------------------------------------------------------
     // PBR vertex shader.
 
     // Vertex input format:

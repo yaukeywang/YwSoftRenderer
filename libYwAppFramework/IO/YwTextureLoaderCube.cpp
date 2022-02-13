@@ -103,7 +103,7 @@ namespace yw
             (*inputTexture)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
 
             uint8_t* src = nullptr;
-            faceTextures[i]->LockRect(0, (void**)src, nullptr);
+            faceTextures[i]->LockRect(0, (void**)&src, nullptr);
             memcpy(dst, src, copyBytes);
             faceTextures[i]->UnlockRect(0);
             YW_SAFE_RELEASE(faceTextures[i]);
