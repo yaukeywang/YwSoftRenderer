@@ -51,8 +51,20 @@ namespace yw
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
         {
             Vector2 uv = input[0];
-            Vector4 texColor = tex2D(0, 0, uv);
-            color = texColor;
+            Vector4 hdrColor = tex2D(0, 0, uv);
+
+            const float exposure = 0.3f;
+            const float gamma = 2.2f;
+
+            // exposure tone mapping
+            Vector3 expSrc = -hdrColor * exposure;
+            Vector3 mapped = Vector3(1.0f, 1.0f, 1.0f) - Vector3(exp(expSrc.x), exp(expSrc.y), exp(expSrc.z));
+
+            // gamma correction 
+            float gammaExp = 1.0f / gamma;
+            mapped = Vector3(pow(mapped.r, gammaExp), pow(mapped.g, gammaExp), pow(mapped.b, gammaExp));
+
+            color = mapped;
             return true;
         }
     };
@@ -168,7 +180,7 @@ namespace yw
         m_VertexShader = new DemoTriangleVertexShader();
         m_PixelShader = new DemoTrianglePixelShader();
 
-        m_ModelTextureHandle = resManager->LoadResource("the_sky_is_on_fire_1k.hdr");
+        m_ModelTextureHandle = resManager->LoadResource("lilienstein_1k.hdr");
         //m_ModelTextureHandle = resManager->LoadResource("bricks_color.bmp");
         if (m_ModelTextureHandle <= 0)
         {
