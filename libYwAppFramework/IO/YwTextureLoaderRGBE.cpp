@@ -384,9 +384,9 @@ namespace yw
 
                 Vector3* texData = (Vector3*)textureData + texIndex;
                 float* hdrData = srcTextureData + hdrIndex;
-                texData->r = _linear2srgb((float)((*hdrData) * colorScale));
-                texData->g = _linear2srgb((float)((*(hdrData + 1)) * colorScale));
-                texData->b = _linear2srgb((float)((*(hdrData + 2)) * colorScale));
+                texData->r = (float)((*hdrData) * colorScale);
+                texData->g = (float)((*(hdrData + 1)) * colorScale);
+                texData->b = (float)((*(hdrData + 2)) * colorScale);
             }
         }
 

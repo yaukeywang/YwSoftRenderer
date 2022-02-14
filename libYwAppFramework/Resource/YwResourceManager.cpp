@@ -270,8 +270,8 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderCube rgbeLoader;
-        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        TextureLoaderCube cubeLoader;
+        if (!cubeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;

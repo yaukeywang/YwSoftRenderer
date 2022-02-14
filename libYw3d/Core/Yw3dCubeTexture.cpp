@@ -63,14 +63,14 @@ namespace yw
         // source: https://www.nvidia.com/object/cube_map_ogl_tutorial.html
 
         // major axis 
-        // direction     target                              sc     tc    ma 
-        // ----------    ---------------------------------   ---    ---   --- 
-        //  +rx          GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT   -rz    -ry   rx 
-        //  -rx          GL_TEXTURE_CUBE_MAP_NEGATIVE_X_EXT   +rz    -ry   rx 
-        //  +ry          GL_TEXTURE_CUBE_MAP_POSITIVE_Y_EXT   +rx    +rz   ry 
-        //  -ry          GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_EXT   +rx    -rz   ry 
-        //  +rz          GL_TEXTURE_CUBE_MAP_POSITIVE_Z_EXT   +rx    -ry   rz 
-        //  -rz          GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_EXT   -rx    -ry   rz
+        // direction     target                              sc    tc    ma 
+        // ----------    ---------------------------------   ---   ---   --- 
+        //  +rx          GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT  -rz   -ry   rx 
+        //  -rx          GL_TEXTURE_CUBE_MAP_NEGATIVE_X_EXT  +rz   -ry   rx 
+        //  +ry          GL_TEXTURE_CUBE_MAP_POSITIVE_Y_EXT  +rx   +rz   ry 
+        //  -ry          GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_EXT  +rx   -rz   ry 
+        //  +rz          GL_TEXTURE_CUBE_MAP_POSITIVE_Z_EXT  +rx   -ry   rz 
+        //  -rz          GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_EXT  -rx   -ry   rz
 
         float cu = 0.0f;
         float cv = 0.0f;
@@ -81,7 +81,7 @@ namespace yw
         const float absV = fabsf(v);
         const float absW = fabsf(w);
 
-        if ((absU > absV) && (absU > absW))
+        if ((absU >= absV) && (absU >= absW))
         {
             if (u >= 0.0f)
             {
@@ -100,9 +100,9 @@ namespace yw
                 invMag = 1.0f / absU;
             }
         }
-        else if ((absV > absU) && (absV > absW))
+        else if ((absV >= absU) && (absV >= absW))
         {
-            if (u >= 0.0f)
+            if (v >= 0.0f)
             {
                 // Major axis direction: +ry.
                 face = Yw3d_CF_Positive_Y;
@@ -119,7 +119,7 @@ namespace yw
                 invMag = 1.0f / absV;
             }
         }
-        else //if ((absW > absU) && (absW > absV))
+        else //if ((absW >= absU) && (absW >= absV))
         {
             if (w >= 0)
             {
@@ -139,11 +139,11 @@ namespace yw
             }
         }
 
-        // s = (sc/|ma| + 1) / 2.
-        // t = (tc/|ma| + 1) / 2.
+        // s = (sc / |ma| + 1) / 2.
+        // t = (tc / |ma| + 1) / 2.
         invMag *= 0.5f;
-        const float finalU = cu * invMag + 0.5f;
-        const float finalV = cv * invMag + 0.5f;
+        const float finalU = /*Saturate*/(cu * invMag + 0.5f);
+        const float finalV = /*Saturate*/(cv * invMag + 0.5f);
 
         return m_CubeFaces[face]->SampleTexture(color, finalU, finalV, 0.0f, xGradient, yGradient, samplerStates);
     }
