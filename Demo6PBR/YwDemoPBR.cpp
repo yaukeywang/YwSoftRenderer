@@ -206,6 +206,7 @@ namespace yw
 
     void DemoPBR::Render(int32_t pass)
     {
+        // Render the entire scene.
         RenderSky(pass);
         RenderPbrModel(pass);
     }
