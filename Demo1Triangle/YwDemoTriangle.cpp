@@ -39,6 +39,20 @@ namespace yw
         }
     };
 
+    Vector3 ACESToneMapping(Vector3 color)
+    {
+        const float A = 2.51;
+        const float B = 0.03;
+        const float C = 2.43;
+        const float D = 0.59;
+        const float E = 0.14;
+        //return (color * (A * color + B)) / (color * (C * color + D) + E);
+
+        const Vector3 LeftRes = color * (A * color + B);
+        const Vector3 RightRes = color * (C * color + D) + E;
+        return Vector3(LeftRes.r / RightRes.r, LeftRes.g / RightRes.g, LeftRes.b / RightRes.b);
+    }
+
     // Triangle pixel shader.
     class DemoTrianglePixelShader : public IYw3dPixelShader
     {
@@ -53,12 +67,13 @@ namespace yw
             Vector2 uv = input[0];
             Vector4 hdrColor = tex2D(0, 0, uv);
 
-            const float exposure = 0.3f;
+            const float exposure = 0.7f;
             const float gamma = 2.2f;
 
             // exposure tone mapping
             Vector3 expSrc = -hdrColor * exposure;
             Vector3 mapped = Vector3(1.0f, 1.0f, 1.0f) - Vector3(exp(expSrc.x), exp(expSrc.y), exp(expSrc.z));
+            //Vector3 mapped = ACESToneMapping(hdrColor);
 
             // gamma correction 
             float gammaExp = 1.0f / gamma;
