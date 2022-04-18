@@ -41,11 +41,11 @@ namespace yw
 
     Vector3 ACESToneMapping(Vector3 color)
     {
-        const float A = 2.51;
-        const float B = 0.03;
-        const float C = 2.43;
-        const float D = 0.59;
-        const float E = 0.14;
+        const float A = 2.51f;
+        const float B = 0.03f;
+        const float C = 2.43f;
+        const float D = 0.59f;
+        const float E = 0.14f;
         //return (color * (A * color + B)) / (color * (C * color + D) + E);
 
         const Vector3 LeftRes = color * (A * color + B);
@@ -67,6 +67,7 @@ namespace yw
             Vector2 uv = input[0];
             Vector4 hdrColor = tex2D(0, 0, uv);
 
+#if 0
             const float exposure = 0.7f;
             const float gamma = 2.2f;
 
@@ -80,6 +81,11 @@ namespace yw
             mapped = Vector3(pow(mapped.r, gammaExp), pow(mapped.g, gammaExp), pow(mapped.b, gammaExp));
 
             color = mapped;
+#else
+            const float gammaExp = 1.0f / 2.2f;
+            color = Vector4(pow(hdrColor.r, gammaExp), pow(hdrColor.g, gammaExp), pow(hdrColor.b, gammaExp), hdrColor.a);
+#endif
+
             return true;
         }
     };
