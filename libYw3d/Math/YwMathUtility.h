@@ -111,6 +111,14 @@ namespace yw
         return a + (b - a) * t;
     }
 
+    // Determining if an integer is a times of 2.
+    // @param[in] n the number to determining.
+    // @return true if n is times of 2, otherwise not.
+    inline bool DetermineIfTimesOf2(uint32_t n)
+    {
+        return (n && !(n & 1));
+    }
+
     // Determining if an integer is a power of 2.
     // http://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
     // @param[in] n the number to determining.

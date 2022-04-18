@@ -230,12 +230,12 @@ namespace yw
                 {
                     for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        if (DetermineIfPowerOf2(srcHeight))
+                        if (DetermineIfTimesOf2(srcHeight))
                         {
                             const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth };
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData++)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const float srcPixels[4] =
                                     {
@@ -270,7 +270,7 @@ namespace yw
 
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData++)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const float row0 = (srcData[indexRows[0] + (2 * idxX)] + srcData[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
                                     const float row1 = (srcData[indexRows[1] + (2 * idxX)] + srcData[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
@@ -299,12 +299,12 @@ namespace yw
                 {
                     for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        if (DetermineIfPowerOf2(srcHeight))
+                        if (DetermineIfTimesOf2(srcHeight))
                         {
                             const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth };
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 2)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const Vector2* srcPixels[4] =
                                     {
@@ -339,7 +339,7 @@ namespace yw
 
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 2)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const Vector2 row0 = (((Vector2*)srcData)[indexRows[0] + (2 * idxX)] + ((Vector2*)srcData)[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
                                     const Vector2 row1 = (((Vector2*)srcData)[indexRows[1] + (2 * idxX)] + ((Vector2*)srcData)[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
@@ -368,12 +368,12 @@ namespace yw
                 {
                     for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        if (DetermineIfPowerOf2(srcHeight))
+                        if (DetermineIfTimesOf2(srcHeight))
                         {
                             const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth };
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 3)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const Vector3* srcPixels[4] =
                                     {
@@ -408,7 +408,7 @@ namespace yw
 
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 3)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const Vector3 row0 = (((Vector3*)srcData)[indexRows[0] + (2 * idxX)] + ((Vector3*)srcData)[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
                                     const Vector3 row1 = (((Vector3*)srcData)[indexRows[1] + (2 * idxX)] + ((Vector3*)srcData)[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
@@ -437,12 +437,12 @@ namespace yw
                 {
                     for (uint32_t idxY = 0; idxY < dstHeight; idxY++)
                     {
-                        if (DetermineIfPowerOf2(srcHeight))
+                        if (DetermineIfTimesOf2(srcHeight))
                         {
                             const uint32_t indexRows[2] = { 2 * idxY * srcWidth, (2 * idxY + 1) * srcWidth};
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 4)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const Vector4* srcPixels[4] =
                                     {
@@ -477,7 +477,7 @@ namespace yw
 
                             for (uint32_t idxX = 0; idxX < dstWidth; idxX++, destData += 4)
                             {
-                                if (DetermineIfPowerOf2(srcWidth))
+                                if (DetermineIfTimesOf2(srcWidth))
                                 {
                                     const Vector4 row0 = (((Vector4*)srcData)[indexRows[0] + (2 * idxX)] + ((Vector4*)srcData)[indexRows[0] + (2 * idxX + 1)]) * 0.5f;
                                     const Vector4 row1 = (((Vector4*)srcData)[indexRows[1] + (2 * idxX)] + ((Vector4*)srcData)[indexRows[1] + (2 * idxX + 1)]) * 0.5f;
