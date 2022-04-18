@@ -24,7 +24,7 @@ namespace yw
     {
     public:
         ArcBall();
-        ~ArcBall();
+        virtual ~ArcBall();
 
     public:
         // Reset all parameters.
