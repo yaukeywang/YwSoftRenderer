@@ -676,7 +676,21 @@ project "Demo6PBR"
             '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{MKDIR} "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/room.cube"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
         }
 
     filter { "system:linux" }
@@ -689,7 +703,21 @@ project "Demo6PBR"
             '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{MKDIR} "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/room.cube"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
         }
 
     filter { "system:macosx" }
@@ -702,5 +730,19 @@ project "Demo6PBR"
             '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
             '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"'
+            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"',
+            '{MKDIR} "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/room.cube"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
+            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
         }

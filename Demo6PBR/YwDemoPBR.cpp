@@ -31,8 +31,8 @@ namespace yw
         m_ModelPBRSpecularTextureHandle(0),
         m_SkyVertexShader(nullptr),
         m_SkyPixelShader(nullptr),
-        m_VertexShader(nullptr),
-        m_PixelShader(nullptr),
+        m_PbrVertexShader(nullptr),
+        m_PbrPixelShader(nullptr),
         m_Metallic(0.0f),
         m_Smoothness(0.0f),
         m_SmoothnessScale(1.0f)
@@ -84,8 +84,8 @@ namespace yw
 
         YW_SAFE_RELEASE(m_SkyVertexShader);
         YW_SAFE_RELEASE(m_SkyPixelShader);
-        YW_SAFE_RELEASE(m_VertexShader);
-        YW_SAFE_RELEASE(m_PixelShader);
+        YW_SAFE_RELEASE(m_PbrVertexShader);
+        YW_SAFE_RELEASE(m_PbrPixelShader);
     }
 
     bool DemoPBR::Initialize()
@@ -184,8 +184,8 @@ namespace yw
         // Create vertex and pixel shader.
         m_SkyVertexShader = new DemoPBRSkyVertexShader();
         m_SkyPixelShader = new DemoPBRSkyPixelShader();
-        m_VertexShader = new DemoPBRVertexShader();
-        m_PixelShader = new DemoPBRSpecularSetupPixelShader();
+        m_PbrVertexShader = new DemoPBRVertexShader();
+        m_PbrPixelShader = new DemoPBRSpecularSetupPixelShader();
 
         // Initialize environments.
         m_LightDirection.Set(0.0f, -0.5f, 1.0f);
@@ -206,6 +206,61 @@ namespace yw
 
     void DemoPBR::Render(int32_t pass)
     {
+        // Render the entire scene.
+        RenderSky(pass);
+        RenderPbrModel(pass);
+    }
+
+    void DemoPBR::RenderSky(int32_t pass)
+    {
+        // Render sky.
+
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        Yw3dDevice* device = graphics->GetYw3dDevice();
+        DemoPBRCamera* camera = (DemoPBRCamera*)(graphics->GetCurrentCamera());
+        DemoPBRApp* app = (DemoPBRApp*)(GetScene()->GetApplication());
+
+        Matrix44 matWorld;
+        Matrix44Identity(matWorld);
+
+        // Apply model rotation.
+        Matrix44Transformation(matWorld, Vector3(10.0f, 10.0f, 10.0f), camera->GetWorldRotation(), camera->GetPosition());
+
+        // Set world transform to camera.
+        camera->SetWorldMatrix(matWorld);
+
+        // This should be from device.
+        Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
+        device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
+        device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
+        device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
+        device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+        // Set states.
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
+        // Set sky texture.
+        graphics->SetTexture(0, m_ModelSkySphereTexture);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+        // Set vertex and pixel shader.
+        graphics->SetVertexShader(m_SkyVertexShader);
+        graphics->SetPixelShader(m_SkyPixelShader);
+
+        // Render sky model.
+        m_ModelSkySphere->Render(device);
+    }
+
+    void DemoPBR::RenderPbrModel(int32_t pass)
+    {
+        // Render pbr model.
+
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
         Yw3dDevice* device = graphics->GetYw3dDevice();
@@ -227,7 +282,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(2.0f, 2.0f, 2.0f), camera->GetWorldRotation(), camera->GetPosition());
+        Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -239,10 +294,12 @@ namespace yw
         device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
         device->SetTransform(Yw3d_TS_WVP, &matProjection);
 
-        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+        // Set states.
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
         // Set texture.
-        graphics->SetTexture(0, m_ModelSkySphereTexture);
+        graphics->SetTexture(0, m_ModelPBRTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
@@ -264,21 +321,20 @@ namespace yw
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
         // Update shader parameters.
-        m_PixelShader->SetVector(0, lightDir);
-        m_PixelShader->SetVector(1, m_LightColor * 1.5f);
-        m_PixelShader->SetVector(2, m_AlbedoColor);
-        m_PixelShader->SetVector(3, m_SpecularColor);
-        m_PixelShader->SetVector(4, camera->GetForward());
-        m_PixelShader->SetFloat(0, m_Metallic);
-        m_PixelShader->SetFloat(1, m_Smoothness);
-        m_PixelShader->SetFloat(2, m_SmoothnessScale);
+        m_PbrPixelShader->SetVector(0, lightDir);
+        m_PbrPixelShader->SetVector(1, m_LightColor * 1.5f);
+        m_PbrPixelShader->SetVector(2, m_AlbedoColor);
+        m_PbrPixelShader->SetVector(3, m_SpecularColor);
+        m_PbrPixelShader->SetVector(4, camera->GetForward());
+        m_PbrPixelShader->SetFloat(0, m_Metallic);
+        m_PbrPixelShader->SetFloat(1, m_Smoothness);
+        m_PbrPixelShader->SetFloat(2, m_SmoothnessScale);
 
-        // Set vertex and pixel shader.
-        graphics->SetVertexShader(m_SkyVertexShader);
-        graphics->SetPixelShader(m_SkyPixelShader);
+        // Set pbr vertex and pixel shader.
+        graphics->SetVertexShader(m_PbrVertexShader);
+        graphics->SetPixelShader(m_PbrPixelShader);
 
         // Render model.
-        //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_WireFrame);
-        m_ModelSkySphere->Render(device);
+        m_ModelPBR->Render(device);
     }
 }

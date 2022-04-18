@@ -36,6 +36,13 @@ namespace yw
         void Render(int32_t pass);
 
     private:
+        // Render sky environment.
+        void RenderSky(int32_t pass);
+
+        // Render pbr model.
+        void RenderPbrModel(int32_t pass);
+
+    private:
         // Model resources.
         class Model* m_ModelSkySphere;
         class Model* m_ModelPBR;
@@ -59,8 +66,8 @@ namespace yw
         // Shader related.
         class DemoPBRSkyVertexShader* m_SkyVertexShader;
         class DemoPBRSkyPixelShader* m_SkyPixelShader;
-        class DemoPBRVertexShader* m_VertexShader;
-        class DemoPBRPixelShader* m_PixelShader;
+        class DemoPBRVertexShader* m_PbrVertexShader;
+        class DemoPBRPixelShader* m_PbrPixelShader;
 
         // Lighting params.
         Vector3 m_LightDirection;
