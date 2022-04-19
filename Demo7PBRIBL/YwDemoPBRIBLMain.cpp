@@ -1,7 +1,7 @@
 // Add by Yaukey at 2020-04-18.
 // YW Soft Renderer demo with PBR-IBL main entry class.
 
-#include "YwDemoPBRIBLIBLApp.h"
+#include "YwDemoPBRIBLApp.h"
 
 // ------------------------------------------------------------------
 // Platform-dependent code.

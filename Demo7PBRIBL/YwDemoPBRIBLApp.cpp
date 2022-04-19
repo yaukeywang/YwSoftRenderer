@@ -1,9 +1,9 @@
 // Add by Yaukey at 2020-04-18.
 // YW Soft Renderer demo with PBR-IBL application class.
 
-#include "YwDemoPBRIBLIBLApp.h"
-#include "YwDemoPBRIBLIBL.h"
-#include "YwDemoPBRIBLIBLCamera.h"
+#include "YwDemoPBRIBLApp.h"
+#include "YwDemoPBRIBL.h"
+#include "YwDemoPBRIBLCamera.h"
 #include "YwInput.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
@@ -55,8 +55,8 @@ namespace yw
             return false;
         }
 
-        DemoPBRIBL* DemoPBRIBL = (DemoPBRIBL*)GetScene()->GetEntity(m_DemoPBRIBLHandle);
-        if (!DemoPBRIBL->Initialize())
+        DemoPBRIBL* demoPBRIBL = (DemoPBRIBL*)GetScene()->GetEntity(m_DemoPBRIBLHandle);
+        if (!demoPBRIBL->Initialize())
         {
             return false;
         }

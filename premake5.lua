@@ -246,10 +246,6 @@ project "Demo1Triangle"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/ThirdParty",
-        "libYwAppFramework/ThirdParty/libpng",
-        "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
 
@@ -308,10 +304,6 @@ project "Demo2Model"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/ThirdParty",
-        "libYwAppFramework/ThirdParty/libpng",
-        "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
 
@@ -387,10 +379,6 @@ project "Demo3BlinnPhong"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/ThirdParty",
-        "libYwAppFramework/ThirdParty/libpng",
-        "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
 
@@ -463,10 +451,6 @@ project "Demo4NormalMapping"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/ThirdParty",
-        "libYwAppFramework/ThirdParty/libpng",
-        "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
 
@@ -545,10 +529,6 @@ project "Demo5TriangleShaderWireframe"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/ThirdParty",
-        "libYwAppFramework/ThirdParty/libpng",
-        "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
 
@@ -623,10 +603,6 @@ project "Demo6PBR"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/ThirdParty",
-        "libYwAppFramework/ThirdParty/libpng",
-        "libYwAppFramework/ThirdParty/libtarga",
-        "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
 
@@ -745,4 +721,78 @@ project "Demo6PBR"
             '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
             '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
             '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
+        }
+
+project "Demo7PBRIBL"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/Utility"
+    }
+
+    files
+    { 
+        "Demo7PBRIBL/YwDemoPBRIBL.h",
+        "Demo7PBRIBL/YwDemoPBRIBL.cpp",
+        "Demo7PBRIBL/YwDemoPBRIBLApp.h",
+        "Demo7PBRIBL/YwDemoPBRIBLApp.cpp",
+        "Demo7PBRIBL/YwDemoPBRIBLCamera.h",
+        "Demo7PBRIBL/YwDemoPBRIBLCamera.cpp",
+        "Demo7PBRIBL/YwDemoPBRIBLMain.cpp",
+        "Demo7PBRIBL/YwDemoPBRIBLShader.h",
+        "Demo7PBRIBL/YwDemoPBRIBLShader.cpp"
+    }
+
+    vpaths 
+    {
+        ["*"] = { "Demo7PBRIBL/Yw*.h", "Demo7PBRIBL/Yw*.inl", "Demo7PBRIBL/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. absdstdatadir .. '"',
+            '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"'
         }

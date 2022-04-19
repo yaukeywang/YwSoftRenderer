@@ -1,10 +1,10 @@
 // Add by Yaukey at 2022-04-18.
 // YW Soft Renderer demo with PBR-IBL class.
 
-#include "YwDemoPBRIBLIBL.h"
-#include "YwDemoPBRIBLIBLApp.h"
-#include "YwDemoPBRIBLIBLCamera.h"
-#include "YwDemoPBRIBLIBLShader.h"
+#include "YwDemoPBRIBL.h"
+#include "YwDemoPBRIBLApp.h"
+#include "YwDemoPBRIBLCamera.h"
+#include "YwDemoPBRIBLShader.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
 #include "YwBaseApplication.h"
