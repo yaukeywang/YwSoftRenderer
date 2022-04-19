@@ -45,44 +45,44 @@ namespace yw
     private:
         // Model resources.
         class Model* m_ModelSkySphere;
-        class Model* m_ModelPBR;
+        //class Model* m_ModelPBR;
 
         // Texture resources.
         class Yw3dCubeTexture* m_ModelSkySphereTexture;
-        class Yw3dTexture* m_ModelPBRTexture;
-        class Yw3dTexture* m_ModelPBRNormalTexture;
-        class Yw3dTexture* m_ModelPBRSpecularTexture;
+        //class Yw3dTexture* m_ModelPBRTexture;
+        //class Yw3dTexture* m_ModelPBRNormalTexture;
+        //class Yw3dTexture* m_ModelPBRSpecularTexture;
 
         // Model Resource handle.
         HRESOURCE m_ModelSkySphereHandle;
-        HRESOURCE m_ModelPBRHandle;
+        //HRESOURCE m_ModelPBRHandle;
 
         // Texture Resource handle.
         HRESOURCE m_ModelSkySphereTextureHandle;
-        HRESOURCE m_ModelPBRTextureHandle;
-        HRESOURCE m_ModelPBRNormalTextureHandle;
-        HRESOURCE m_ModelPBRSpecularTextureHandle;
+        //HRESOURCE m_ModelPBRTextureHandle;
+        //HRESOURCE m_ModelPBRNormalTextureHandle;
+        //HRESOURCE m_ModelPBRSpecularTextureHandle;
 
         // Shader related.
         class DemoPBRIBLSkyVertexShader* m_SkyVertexShader;
         class DemoPBRIBLSkyPixelShader* m_SkyPixelShader;
-        class DemoPBRIBLVertexShader* m_PbrVertexShader;
-        class DemoPBRIBLPixelShader* m_PbrPixelShader;
+        //class DemoPBRIBLVertexShader* m_PbrVertexShader;
+        //class DemoPBRIBLPixelShader* m_PbrPixelShader;
 
-        // Lighting params.
-        Vector3 m_LightDirection;
-        Vector4 m_LightColor;
-        Vector4 m_AlbedoColor;
-        Vector4 m_SpecularColor;
+        //// Lighting params.
+        //Vector3 m_LightDirection;
+        //Vector4 m_LightColor;
+        //Vector4 m_AlbedoColor;
+        //Vector4 m_SpecularColor;
 
-        // _Metallic/"Metallic".
-        float m_Metallic;
+        //// _Metallic/"Metallic".
+        //float m_Metallic;
 
-        // _Glossiness/"Smoothness".
-        float m_Smoothness;
+        //// _Glossiness/"Smoothness".
+        //float m_Smoothness;
 
-        // _GlossMapScale/"Smoothness Scale".
-        float m_SmoothnessScale;
+        //// _GlossMapScale/"Smoothness Scale".
+        //float m_SmoothnessScale;
     };
 }
 
