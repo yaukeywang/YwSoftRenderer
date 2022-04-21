@@ -228,15 +228,15 @@ namespace yw
         const float zFar = 10.0f;
 
         // Create a temp render target.
-        Yw3dRenderTarget* rtCubeMap = nullptr;
-        if (YW3D_FAILED(device->CreateRenderTarget(&rtCubeMap, targetWidth, targetHeight, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        Yw3dRenderTarget* rtCubemap = nullptr;
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtCubemap, targetWidth, targetHeight, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             return false;
         }
 
         // Backup old render target.
         Yw3dRenderTarget* rtCurrent = device->AcquireRenderTarget();
-        device->SetRenderTarget(rtCubeMap);
+        device->SetRenderTarget(rtCubemap);
 
         // Backup old viewport matrix.sss
         const Matrix44* matViewportCurrentPointer;
@@ -261,6 +261,10 @@ namespace yw
         Matrix44 matProjection;
         Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
 
+        // Create shader.
+        DemoPBRIBLEquirectangularMapVertexShader* equirectangularMapVertexShader = new DemoPBRIBLEquirectangularMapVertexShader();
+        DemoPBRIBLEquirectangularMapPixelShader* equirectangularMapPixelShader = new DemoPBRIBLEquirectangularMapPixelShader();
+
         // Create cube map.
         Yw3dCubeTexture** texCube = nullptr;
         if (YW3D_FAILED(device->CreateCubeTexture(texCube, cubeLength, 0, cubeFormat)))
@@ -277,7 +281,7 @@ namespace yw
             (*texCube)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
 
             // Render to target and copy to cube face.
-            device->Clear(nullptr, Vector4::Zero(), 1.0f, 0.0f);
+            device->Clear(nullptr, Vector4::Zero(), 1.0f, 0);
 
             // This should be from device.
             Matrix44 matWorld;
@@ -296,17 +300,22 @@ namespace yw
             device->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
             // Set vertex and pixel shader.
-            graphics->SetVertexShader(nullptr);
-            graphics->SetPixelShader(nullptr);
+            graphics->SetVertexShader(equirectangularMapVertexShader);
+            graphics->SetPixelShader(equirectangularMapPixelShader);
 
             // Render this face.
             m_ModelSkySphere->Render(device);
 
             // Copy pixels to cube face.
             uint8_t* src = nullptr;
+            Yw3dSurface* colorBuffer = rtCubemap->AcquireColorBuffer();
+            colorBuffer->LockRect((void**)&src, nullptr);
             //faceTextures[i]->LockRect(0, (void**)&src, nullptr);
             memcpy(dst, src, copyBytes);
 
+            colorBuffer->UnlockRect();
+            YW_SAFE_RELEASE(colorBuffer);
+            
             (*texCube)->UnlockRect((Yw3dCubeFaces)i, 0);
         }
 
@@ -314,7 +323,9 @@ namespace yw
         device->SetViewportMatrix(&matViewportCurrent);
         device->SetRenderTarget(rtCurrent);
         YW_SAFE_RELEASE(rtCurrent);
-        YW_SAFE_RELEASE(rtCubeMap);
+        YW_SAFE_RELEASE(rtCubemap);
+        YW_SAFE_RELEASE(equirectangularMapVertexShader);
+        YW_SAFE_RELEASE(equirectangularMapPixelShader);
 
         return true;
     }
