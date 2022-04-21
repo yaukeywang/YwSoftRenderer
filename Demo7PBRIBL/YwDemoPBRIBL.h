@@ -36,6 +36,9 @@ namespace yw
         void Render(int32_t pass);
 
     private:
+        // Convert equirectangular map to cube map.
+        bool RenderEquirectangularMapToCubeMap();
+
         // Render sky environment.
         void RenderSky(int32_t pass);
 

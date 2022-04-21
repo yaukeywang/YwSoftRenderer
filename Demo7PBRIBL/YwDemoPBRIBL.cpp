@@ -211,6 +211,28 @@ namespace yw
         RenderPbrModel(pass);
     }
 
+    bool DemoPBRIBL::RenderEquirectangularMapToCubeMap()
+    {
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        Yw3dDevice* device = graphics->GetYw3dDevice();
+
+        // Create a temp render target.
+        Yw3dRenderTarget* cubeRenderTarget = nullptr;
+        if (YW3D_FAILED(device->CreateRenderTarget(&cubeRenderTarget, 512, 512, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        {
+            return false;
+        }
+
+        // Backup old render target.
+        Yw3dRenderTarget* curRenderTarget = device->AcquireRenderTarget();
+        device->SetRenderTarget(cubeRenderTarget);
+
+        YW_SAFE_RELEASE(curRenderTarget);
+
+        return true;
+    }
+
     void DemoPBRIBL::RenderSky(int32_t pass)
     {
         // Render sky.
