@@ -30,7 +30,8 @@ namespace yw
     {
         // Create camera.
         Quaternion initRotation;
-        QuaternionFromEuler(initRotation, 0.0f, 90.0f * DEG_TO_RAD, 0.0f);
+        //QuaternionFromEuler(initRotation, 0.0f, 90.0f * DEG_TO_RAD, 0.0f);
+        QuaternionFromEuler(initRotation, 0.0f, 0.0f, 0.0f);
         m_Camera = new DemoPBRIBLCamera(GetGraphics());
         if (!m_Camera->Initialize(
             GetWindowWidth(), GetWindowHeight(), 

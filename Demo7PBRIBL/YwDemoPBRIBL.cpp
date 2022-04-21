@@ -220,32 +220,101 @@ namespace yw
         // Render constants.
         const int32_t targetWidth = 512;
         const int32_t targetHeight = 512;
-        const float fovy = YW_PI * 0.5f;
-        const float aspect = 0.0f;
-        const float ZNear = 0.0f;
-        const float zFar = 1.0f;
+        const int32_t cubeLength = 512;
+        const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32F;
+        const float fovy = YW_PI / 2.0f;
+        const float aspect = 1.0f;
+        const float ZNear = 0.1f;
+        const float zFar = 10.0f;
 
         // Create a temp render target.
-        Yw3dRenderTarget* cubeRenderTarget = nullptr;
-        if (YW3D_FAILED(device->CreateRenderTarget(&cubeRenderTarget, targetWidth, targetHeight, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        Yw3dRenderTarget* rtCubeMap = nullptr;
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtCubeMap, targetWidth, targetHeight, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             return false;
         }
 
         // Backup old render target.
-        Yw3dRenderTarget* curRenderTarget = device->AcquireRenderTarget();
-        device->SetRenderTarget(cubeRenderTarget);
+        Yw3dRenderTarget* rtCurrent = device->AcquireRenderTarget();
+        device->SetRenderTarget(rtCubeMap);
+
+        // Backup old viewport matrix.sss
+        const Matrix44* matViewportCurrentPointer;
+        device->GetViewportMatrix(matViewportCurrentPointer);
+        Matrix44 matViewportCurrent(*matViewportCurrentPointer);
 
         // Set device viewport.
-        Matrix44 viewPortMatrix;
-        Matrix44Viewport(viewPortMatrix, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
-        device->SetViewportMatrix(&viewPortMatrix);
+        Matrix44 matViewportCubeMap;
+        Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+        device->SetViewportMatrix(&matViewportCubeMap);
 
         // Construct view matrices.
+        Matrix44 matViews[6];
+        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 1.0f));
+        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 1.0f));
+        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, -1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, -1.0f, 0.0f));
 
         // Construct projection matrix.
+        Matrix44 matProjection;
+        Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
 
-        YW_SAFE_RELEASE(curRenderTarget);
+        // Create cube map.
+        Yw3dCubeTexture** texCube = nullptr;
+        if (YW3D_FAILED(device->CreateCubeTexture(texCube, cubeLength, 0, cubeFormat)))
+        {
+            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
+            return false;
+        }
+
+        // Create cube map face textures.
+        uint32_t copyBytes = cubeLength * cubeLength * cubeFormat;
+        for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+        {
+            uint8_t* dst = nullptr;
+            (*texCube)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
+
+            // Render to target and copy to cube face.
+            device->Clear(nullptr, Vector4::Zero(), 1.0f, 0.0f);
+
+            // This should be from device.
+            Matrix44 matWorld;
+            Matrix44 matProjection = matWorld * matViews[i] * matProjection;
+            device->SetTransform(Yw3d_TS_World, &matWorld);
+            device->SetTransform(Yw3d_TS_View, &matViews[i]);
+            device->SetTransform(Yw3d_TS_Projection, &matProjection);
+            device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+            // Set cube texture.
+            device->SetTexture(0, *texCube);
+            device->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+            device->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+            device->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+            device->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+            device->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+            // Set vertex and pixel shader.
+            graphics->SetVertexShader(nullptr);
+            graphics->SetPixelShader(nullptr);
+
+            // Render this face.
+            m_ModelSkySphere->Render(device);
+
+            // Copy pixels to cube face.
+            uint8_t* src = nullptr;
+            //faceTextures[i]->LockRect(0, (void**)&src, nullptr);
+            memcpy(dst, src, copyBytes);
+
+            (*texCube)->UnlockRect((Yw3dCubeFaces)i, 0);
+        }
+
+        // Recovery old states.
+        device->SetViewportMatrix(&matViewportCurrent);
+        device->SetRenderTarget(rtCurrent);
+        YW_SAFE_RELEASE(rtCurrent);
+        YW_SAFE_RELEASE(rtCubeMap);
 
         return true;
     }
