@@ -253,12 +253,12 @@ namespace yw
 
         // Construct view matrices.
         Matrix44 matViews[6];
-        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 1.0f));
-        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 1.0f));
-        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
-        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, -1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, -1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
 
         // Construct projection matrix.
         Matrix44 matProjection;
@@ -288,10 +288,6 @@ namespace yw
 
             // This should be from device.
             Matrix44 matWorld;
-            Quaternion quat;
-            quat.SetIdentity();
-            Matrix44Transformation(matWorld, Vector3(10.0f, 10.0f, 10.0f), quat, Vector3::Zero());
-
             Matrix44 matWVP = matWorld * matViews[i] * matProjection;
             device->SetTransform(Yw3d_TS_World, &matWorld);
             device->SetTransform(Yw3d_TS_View, &matViews[i]);
@@ -328,6 +324,10 @@ namespace yw
             
             m_EnvCubeTexture->UnlockRect((Yw3dCubeFaces)i, 0);
         }
+
+        // Generate mip-map levels.
+        // (如果不生成可能会在shader采样时采样到子level而内存越界，有待细查。)
+        m_EnvCubeTexture->GenerateMipSubLevels(0);
 
         // Recovery old states.
         device->SetViewportMatrix(&matViewportCurrent);
