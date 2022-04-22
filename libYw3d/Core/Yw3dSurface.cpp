@@ -367,7 +367,7 @@ namespace yw
 
         // Lock dest surface data.
         float* destData = nullptr;
-        Yw3dResult lockResult = destSurface->LockRect((void**)destData, destRect);
+        Yw3dResult lockResult = destSurface->LockRect((void**)&destData, destRect);
         if (YW3D_FAILED(lockResult))
         {
             LOGE(_T("Yw3dSurface::CopyToSurface: couldn't lock destination surface!\n"));
