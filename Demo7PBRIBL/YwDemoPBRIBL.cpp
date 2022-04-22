@@ -237,9 +237,13 @@ namespace yw
             return false;
         }
 
-        // Backup old render target.
-        Yw3dRenderTarget* rtCurrent = device->AcquireRenderTarget();
-        device->SetRenderTarget(rtCubemap);
+        // Create cube map.
+        YW_SAFE_RELEASE(m_EnvCubeTexture);
+        if (YW3D_FAILED(device->CreateCubeTexture(&m_EnvCubeTexture, cubeLength, 0, cubeFormat)))
+        {
+            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
+            return false;
+        }
 
         // Backup old viewport matrix.sss
         const Matrix44* matViewportCurrentPointer;
@@ -268,13 +272,27 @@ namespace yw
         DemoPBRIBLEquirectangularMapVertexShader* equirectangularMapVertexShader = new DemoPBRIBLEquirectangularMapVertexShader();
         DemoPBRIBLEquirectangularMapPixelShader* equirectangularMapPixelShader = new DemoPBRIBLEquirectangularMapPixelShader();
 
-        // Create cube map.
-        YW_SAFE_RELEASE(m_EnvCubeTexture);
-        if (YW3D_FAILED(device->CreateCubeTexture(&m_EnvCubeTexture, cubeLength, 0, cubeFormat)))
-        {
-            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
-            return false;
-        }
+        // Push states into stack.
+        graphics->PushStateBlock();
+
+        // Set render target.
+        graphics->SetRenderTarget(rtCubemap);
+
+        // Set states.
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
+        // Set cube texture.
+        graphics->SetTexture(0, m_EnvEquirectangularTexture);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+        // Set vertex and pixel shader.
+        graphics->SetVertexShader(equirectangularMapVertexShader);
+        graphics->SetPixelShader(equirectangularMapPixelShader);
 
         // Create cube map face textures.
         for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
@@ -289,22 +307,6 @@ namespace yw
             device->SetTransform(Yw3d_TS_View, &matViews[i]);
             device->SetTransform(Yw3d_TS_Projection, &matProjection);
             device->SetTransform(Yw3d_TS_WVP, &matWVP);
-
-            // Set cube texture.
-            device->SetTexture(0, m_EnvEquirectangularTexture);
-            device->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-            device->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-            device->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-            device->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-            device->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-            // Set states.
-            device->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
-            device->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
-
-            // Set vertex and pixel shader.
-            device->SetVertexShader(equirectangularMapVertexShader);
-            device->SetPixelShader(equirectangularMapPixelShader);
 
             // Render this face.
             m_ModelSkySphere->Render(device);
@@ -321,17 +323,15 @@ namespace yw
 
         // Generate mip-map levels.
         // (如果不生成可能会在shader采样时采样到子level而内存越界，有待细查。)
-        m_EnvCubeTexture->GenerateMipSubLevels(0);
+        //m_EnvCubeTexture->GenerateMipSubLevels(0);
 
-        // Recovery old states.
+        // Recovery viewport.
         device->SetViewportMatrix(&matViewportCurrent);
-        device->SetRenderTarget(rtCurrent);
-        device->SetTexture(0, nullptr);
-        device->SetVertexShader(nullptr);
-        device->SetPixelShader(nullptr);
-        device->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
 
-        YW_SAFE_RELEASE(rtCurrent);
+        // Pop and restore states from stack.
+        graphics->PopStateBlock();
+
+        // Release temp resources.
         YW_SAFE_RELEASE(rtCubemap);
         YW_SAFE_RELEASE(equirectangularMapVertexShader);
         YW_SAFE_RELEASE(equirectangularMapPixelShader);
