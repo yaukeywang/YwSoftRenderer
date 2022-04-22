@@ -209,6 +209,11 @@ namespace yw
         else
         {
             stateBlock = m_StateBlockPool.front();
+            if (nullptr != stateBlock)
+            {
+                stateBlock->InitializeStates(this);
+            }
+
             m_StateBlockPool.pop_front();
         }
 
@@ -222,6 +227,8 @@ namespace yw
             return;
         }
 
+        //stateBlock->~StateBlock(); // Causing CRASH when calling RestoreStates in destructor!
+        stateBlock->RestoreStates();
         m_StateBlockPool.push_back(stateBlock);
     }
 }

@@ -23,6 +23,9 @@ namespace yw
         ~StateBlock();
 
     public:
+        // Initialize all the states.
+        void InitializeStates(class Graphics* graphics);
+
         // Restore all the states.
         void RestoreStates();
 

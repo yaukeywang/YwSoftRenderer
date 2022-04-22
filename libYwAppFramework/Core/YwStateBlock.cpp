@@ -16,8 +16,19 @@ namespace yw
         m_ChangedIndexBuffer(false),
         m_ChangedRenderTarget(false),
         m_ChangedScissorRect(false),
-        m_ChangedCamera(false)
+        m_ChangedCamera(false),
+        m_VertexFormat(nullptr),
+        m_PrimitiveAssembler(nullptr),
+        m_VertexShader(nullptr),
+        m_TriangleShader(nullptr),
+        m_PixelShader(nullptr),
+        m_IndexBuffer(nullptr),
+        m_RenderTarget(nullptr),
+        m_Camera(nullptr)
+
+
     {
+        InitializeStates(graphics);
     }
 
     StateBlock::~StateBlock()
@@ -25,10 +36,44 @@ namespace yw
         RestoreStates();
     }
 
+    void StateBlock::InitializeStates(Graphics* graphics)
+    {
+        m_Graphics = graphics;
+
+        m_ChangedVertexFormat = false;
+        m_ChangedPrimitiveAssembler = false;
+        m_ChangedVertexShader = false;
+        m_ChangedTriangleShader = false;
+        m_ChangedPixelShader = false;
+        m_ChangedIndexBuffer = false;
+        m_ChangedRenderTarget = false;
+        m_ChangedScissorRect = false;
+        m_ChangedCamera = false;
+
+        m_VertexFormat = nullptr;
+        m_PrimitiveAssembler = nullptr;
+        m_VertexShader = nullptr;
+        m_TriangleShader = nullptr;
+        m_PixelShader = nullptr;
+        m_IndexBuffer = nullptr;
+        m_RenderTarget = nullptr;
+        m_Camera = nullptr;
+
+        m_RenderStates.clear();
+        m_VertexStreams.clear();
+        m_Textures.clear();
+        m_TextureSamplerStates.clear();
+
+    }
+
     void StateBlock::RestoreStates()
     {
         // Get device.
         Yw3dDevice* device = m_Graphics->GetYw3dDevice();
+        if (nullptr == device)
+        {
+            return;
+        }
 
         // Restore render states.
         std::map<Yw3dRenderState, uint32_t>::iterator rsItr = m_RenderStates.begin();
@@ -37,7 +82,10 @@ namespace yw
             device->SetRenderState(rsItr->first, rsItr->second);
         }
 
-        m_RenderStates.clear();
+        if (!m_RenderStates.empty())
+        {
+            m_RenderStates.clear();
+        }
 
         // Restore vertex format.
         if (m_ChangedVertexFormat)
@@ -94,7 +142,10 @@ namespace yw
             YW_SAFE_RELEASE(vsItr->second.vertexBuffer);
         }
 
-        m_VertexStreams.clear();
+        if (!m_VertexStreams.empty())
+        {
+            m_VertexStreams.clear();
+        }
 
         // Restore textures.
         for (std::map<uint32_t, IYw3dBaseTexture*>::iterator texItr = m_Textures.begin(); texItr != m_Textures.end(); ++texItr)
@@ -103,7 +154,10 @@ namespace yw
             YW_SAFE_RELEASE(texItr->second);
         }
 
-        m_Textures.clear();
+        if (!m_Textures.empty())
+        {
+            m_Textures.clear();
+        }
 
         // Restore texture sampler state.
         for (std::map<uint32_t, uint32_t>::iterator texSsItr = m_TextureSamplerStates.begin(); texSsItr != m_TextureSamplerStates.end(); ++texSsItr)
@@ -113,7 +167,10 @@ namespace yw
             device->SetTextureSamplerState(samplerNumber, (Yw3dTextureSamplerState)samplerState, texSsItr->second);
         }
 
-        m_TextureSamplerStates.clear();
+        if (!m_TextureSamplerStates.empty())
+        {
+            m_TextureSamplerStates.clear();
+        }
 
         // Restore render target.
         if (m_ChangedRenderTarget)
