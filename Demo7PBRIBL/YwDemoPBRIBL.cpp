@@ -254,7 +254,7 @@ namespace yw
         // Construct view matrices.
         Matrix44 matViews[6];
         Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
         Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
         Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
         Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
@@ -277,14 +277,10 @@ namespace yw
         }
 
         // Create cube map face textures.
-        uint32_t copyBytes = cubeLength * cubeLength * cubeFormat;
         for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
         {
-            uint8_t* dst = nullptr;
-            m_EnvCubeTexture->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
-
             // Render to target and copy to cube face.
-            device->Clear(nullptr, Vector4::Zero(), 1.0f, 0);
+            device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
 
             // This should be from device.
             Matrix44 matWorld;
@@ -313,16 +309,14 @@ namespace yw
             // Render this face.
             m_ModelSkySphere->Render(device);
 
-            // Copy pixels to cube face.
-            uint8_t* src = nullptr;
-            Yw3dSurface* colorBuffer = rtCubemap->AcquireColorBuffer();
-            colorBuffer->LockRect((void**)&src, nullptr);
-            memcpy(dst, src, copyBytes);
-
-            colorBuffer->UnlockRect();
-            YW_SAFE_RELEASE(colorBuffer);
-            
-            m_EnvCubeTexture->UnlockRect((Yw3dCubeFaces)i, 0);
+            // Copy pixels from render target to cube face.
+            Yw3dSurface* srcSurface = rtCubemap->AcquireColorBuffer();
+            Yw3dTexture* dstCubeFace = m_EnvCubeTexture->AcquireCubeFace((Yw3dCubeFaces)i);
+            Yw3dSurface* dstSurface = dstCubeFace->AcquireMipLevel(0);
+            srcSurface->CopyToSurface(nullptr, dstSurface, nullptr, Yw3d_TF_Linear);
+            YW_SAFE_RELEASE(dstSurface);
+            YW_SAFE_RELEASE(dstCubeFace);
+            YW_SAFE_RELEASE(srcSurface);
         }
 
         // Generate mip-map levels.
