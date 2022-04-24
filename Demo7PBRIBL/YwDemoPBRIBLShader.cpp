@@ -55,12 +55,13 @@ namespace yw
         return true;
     }
 
-
-    // v mustbe normalized.
+    // Convert HDR equirectangular environment map to cubemap equivalent.
+    // v must be normalized.
     Vector2 DemoPBRIBLSkyPixelShader::SampleSphericalMap(const Vector3& v)
     {
         Vector2 uv = Vector2(atan2(v.z, v.x), acos(v.y)); // tan(theta) = z / x; cos(phi) = y / r;
-        uv *= Vector2(0.1591f, 0.3183f); // (1/2pi, 1/pi)
+        uv *= Vector2(-0.1591f, 0.3183f); // (1/2pi, 1/pi)
+        uv += Vector2(0.5f, 0.0f);
         return uv;
     }
 

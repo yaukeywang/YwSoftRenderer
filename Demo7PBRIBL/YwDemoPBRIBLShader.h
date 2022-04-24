@@ -33,6 +33,7 @@ namespace yw
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
 
     private:
+        // Convert HDR equirectangular environment map to cubemap equivalent.
         Vector2 SampleSphericalMap(const Vector3& v);
     };
 
