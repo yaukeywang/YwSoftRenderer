@@ -217,9 +217,17 @@ namespace yw
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
         Yw3dDevice* device = graphics->GetYw3dDevice();
 
+        // Render constants.
+        const int32_t targetWidth = 512;
+        const int32_t targetHeight = 512;
+        const float fovy = YW_PI * 0.5f;
+        const float aspect = 0.0f;
+        const float ZNear = 0.0f;
+        const float zFar = 1.0f;
+
         // Create a temp render target.
         Yw3dRenderTarget* cubeRenderTarget = nullptr;
-        if (YW3D_FAILED(device->CreateRenderTarget(&cubeRenderTarget, 512, 512, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        if (YW3D_FAILED(device->CreateRenderTarget(&cubeRenderTarget, targetWidth, targetHeight, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             return false;
         }
@@ -227,6 +235,15 @@ namespace yw
         // Backup old render target.
         Yw3dRenderTarget* curRenderTarget = device->AcquireRenderTarget();
         device->SetRenderTarget(cubeRenderTarget);
+
+        // Set device viewport.
+        Matrix44 viewPortMatrix;
+        Matrix44Viewport(viewPortMatrix, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+        device->SetViewportMatrix(&viewPortMatrix);
+
+        // Construct view matrices.
+
+        // Construct projection matrix.
 
         YW_SAFE_RELEASE(curRenderTarget);
 
