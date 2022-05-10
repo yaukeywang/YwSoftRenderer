@@ -19,7 +19,7 @@ namespace yw
         IEntity(scene),
         m_ModelSkySphere(nullptr),
         m_ModelPBR(nullptr),
-        m_ModelSkySphereTexture(nullptr),
+        m_EnvEquirectangularTexture(nullptr),
         m_ModelPBRTexture(nullptr),
         m_ModelPBRNormalTexture(nullptr),
         m_ModelPBRSpecularTexture(nullptr),
@@ -44,7 +44,7 @@ namespace yw
         // Resource should released by resource manager.
         m_ModelSkySphere = nullptr;
         m_ModelPBR = nullptr;
-        m_ModelSkySphereTexture = nullptr;
+        m_EnvEquirectangularTexture = nullptr;
         m_ModelPBRTexture = nullptr;
         m_ModelPBRNormalTexture = nullptr;
         m_ModelPBRSpecularTexture = nullptr;
@@ -153,8 +153,8 @@ namespace yw
             return false;
         }
 
-        m_ModelSkySphereTexture = (Yw3dCubeTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
-        if (nullptr == m_ModelSkySphereTexture)
+        m_EnvEquirectangularTexture = (Yw3dCubeTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
+        if (nullptr == m_EnvEquirectangularTexture)
         {
             LOGE(_T("Get resource \"room.cube\" failed."));
             return false;
@@ -242,7 +242,7 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
         // Set sky texture.
-        graphics->SetTexture(0, m_ModelSkySphereTexture);
+        graphics->SetTexture(0, m_EnvEquirectangularTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);

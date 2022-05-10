@@ -51,7 +51,8 @@ namespace yw
         //class Model* m_ModelPBR;
 
         // Texture resources.
-        class Yw3dCubeTexture* m_ModelSkySphereTexture;
+        class Yw3dTexture* m_EnvEquirectangularTexture;
+        class Yw3dCubeTexture* m_EnvCubeTexture;
         //class Yw3dTexture* m_ModelPBRTexture;
         //class Yw3dTexture* m_ModelPBRNormalTexture;
         //class Yw3dTexture* m_ModelPBRSpecularTexture;
@@ -67,8 +68,8 @@ namespace yw
         //HRESOURCE m_ModelPBRSpecularTextureHandle;
 
         // Shader related.
-        class DemoPBRIBLSkyVertexShader* m_SkyVertexShader;
-        class DemoPBRIBLSkyPixelShader* m_SkyPixelShader;
+        class DemoPBRIBLCubeMapVertexShader* m_SkyVertexShader;
+        class DemoPBRIBLCubeMapPixelShader* m_SkyPixelShader;
         //class DemoPBRIBLVertexShader* m_PbrVertexShader;
         //class DemoPBRIBLPixelShader* m_PbrPixelShader;
 

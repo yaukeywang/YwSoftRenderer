@@ -19,7 +19,8 @@ namespace yw
         IEntity(scene),
         m_ModelSkySphere(nullptr),
         //m_ModelPBR(nullptr),
-        m_ModelSkySphereTexture(nullptr),
+        m_EnvEquirectangularTexture(nullptr),
+        m_EnvCubeTexture(nullptr),
         //m_ModelPBRTexture(nullptr),
         //m_ModelPBRNormalTexture(nullptr),
         //m_ModelPBRSpecularTexture(nullptr),
@@ -44,7 +45,7 @@ namespace yw
         // Resource should released by resource manager.
         m_ModelSkySphere = nullptr;
         //m_ModelPBR = nullptr;
-        m_ModelSkySphereTexture = nullptr;
+        m_EnvEquirectangularTexture = nullptr;
         //m_ModelPBRTexture = nullptr;
         //m_ModelPBRNormalTexture = nullptr;
         //m_ModelPBRSpecularTexture = nullptr;
@@ -153,8 +154,8 @@ namespace yw
         //    return false;
         //}
 
-        m_ModelSkySphereTexture = (Yw3dCubeTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
-        if (nullptr == m_ModelSkySphereTexture)
+        m_EnvEquirectangularTexture = (Yw3dTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
+        if (nullptr == m_EnvEquirectangularTexture)
         {
             LOGE(_T("Get resource \"room.cube\" failed."));
             return false;
@@ -182,8 +183,8 @@ namespace yw
         //}
 
         // Create vertex and pixel shader.
-        m_SkyVertexShader = new DemoPBRIBLSkyVertexShader();
-        m_SkyPixelShader = new DemoPBRIBLSkyPixelShader();
+        m_SkyVertexShader = new DemoPBRIBLCubeMapVertexShader();
+        m_SkyPixelShader = new DemoPBRIBLCubeMapPixelShader();
         //m_PbrVertexShader = new DemoPBRIBLVertexShader();
         //m_PbrPixelShader = new DemoPBRIBLSpecularSetupPixelShader();
 
@@ -195,6 +196,8 @@ namespace yw
         //m_Metallic = 0.5f;
         //m_Smoothness = 0.5f;
         //m_SmoothnessScale = 1.0f;
+
+        RenderEquirectangularMapToCubeMap();
 
         return true;
     }
@@ -221,7 +224,7 @@ namespace yw
         const int32_t targetWidth = 512;
         const int32_t targetHeight = 512;
         const int32_t cubeLength = 512;
-        const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32F;
+        const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;
         const float ZNear = 0.1f;
@@ -229,7 +232,7 @@ namespace yw
 
         // Create a temp render target.
         Yw3dRenderTarget* rtCubemap = nullptr;
-        if (YW3D_FAILED(device->CreateRenderTarget(&rtCubemap, targetWidth, targetHeight, Yw3d_FMT_R32G32B32A32F, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtCubemap, targetWidth, targetHeight, cubeFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             return false;
         }
@@ -266,8 +269,8 @@ namespace yw
         DemoPBRIBLEquirectangularMapPixelShader* equirectangularMapPixelShader = new DemoPBRIBLEquirectangularMapPixelShader();
 
         // Create cube map.
-        Yw3dCubeTexture** texCube = nullptr;
-        if (YW3D_FAILED(device->CreateCubeTexture(texCube, cubeLength, 0, cubeFormat)))
+        YW_SAFE_RELEASE(m_EnvCubeTexture);
+        if (YW3D_FAILED(device->CreateCubeTexture(&m_EnvCubeTexture, cubeLength, 0, cubeFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
             return false;
@@ -278,30 +281,38 @@ namespace yw
         for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
         {
             uint8_t* dst = nullptr;
-            (*texCube)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
+            m_EnvCubeTexture->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
 
             // Render to target and copy to cube face.
             device->Clear(nullptr, Vector4::Zero(), 1.0f, 0);
 
             // This should be from device.
             Matrix44 matWorld;
-            Matrix44 matProjection = matWorld * matViews[i] * matProjection;
+            Quaternion quat;
+            quat.SetIdentity();
+            Matrix44Transformation(matWorld, Vector3(10.0f, 10.0f, 10.0f), quat, Vector3::Zero());
+
+            Matrix44 matWVP = matWorld * matViews[i] * matProjection;
             device->SetTransform(Yw3d_TS_World, &matWorld);
             device->SetTransform(Yw3d_TS_View, &matViews[i]);
             device->SetTransform(Yw3d_TS_Projection, &matProjection);
-            device->SetTransform(Yw3d_TS_WVP, &matProjection);
+            device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
             // Set cube texture.
-            device->SetTexture(0, *texCube);
+            device->SetTexture(0, m_EnvEquirectangularTexture);
             device->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
             device->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
             device->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
             device->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
             device->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
+            // Set states.
+            device->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+            device->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
             // Set vertex and pixel shader.
-            graphics->SetVertexShader(equirectangularMapVertexShader);
-            graphics->SetPixelShader(equirectangularMapPixelShader);
+            device->SetVertexShader(equirectangularMapVertexShader);
+            device->SetPixelShader(equirectangularMapPixelShader);
 
             // Render this face.
             m_ModelSkySphere->Render(device);
@@ -310,13 +321,12 @@ namespace yw
             uint8_t* src = nullptr;
             Yw3dSurface* colorBuffer = rtCubemap->AcquireColorBuffer();
             colorBuffer->LockRect((void**)&src, nullptr);
-            //faceTextures[i]->LockRect(0, (void**)&src, nullptr);
             memcpy(dst, src, copyBytes);
 
             colorBuffer->UnlockRect();
             YW_SAFE_RELEASE(colorBuffer);
             
-            (*texCube)->UnlockRect((Yw3dCubeFaces)i, 0);
+            m_EnvCubeTexture->UnlockRect((Yw3dCubeFaces)i, 0);
         }
 
         // Recovery old states.
@@ -344,12 +354,12 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(10.0f, 10.0f, 10.0f), camera->GetWorldRotation(), camera->GetPosition());
+        Matrix44Transformation(matWorld, Vector3::One(), camera->GetWorldRotation(), camera->GetPosition());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
 
-        // This should be from device.
+        // Setting matrices for device.
         Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
         device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
         device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
@@ -361,7 +371,7 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
         // Set sky texture.
-        graphics->SetTexture(0, m_ModelSkySphereTexture);
+        graphics->SetTexture(0, m_EnvCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);

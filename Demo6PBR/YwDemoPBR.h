@@ -48,7 +48,7 @@ namespace yw
         class Model* m_ModelPBR;
 
         // Texture resources.
-        class Yw3dCubeTexture* m_ModelSkySphereTexture;
+        class Yw3dCubeTexture* m_EnvEquirectangularTexture;
         class Yw3dTexture* m_ModelPBRTexture;
         class Yw3dTexture* m_ModelPBRNormalTexture;
         class Yw3dTexture* m_ModelPBRSpecularTexture;
