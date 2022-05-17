@@ -326,6 +326,11 @@ namespace yw
         // Recovery old states.
         device->SetViewportMatrix(&matViewportCurrent);
         device->SetRenderTarget(rtCurrent);
+        device->SetTexture(0, nullptr);
+        device->SetVertexShader(nullptr);
+        device->SetPixelShader(nullptr);
+        device->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
+
         YW_SAFE_RELEASE(rtCurrent);
         YW_SAFE_RELEASE(rtCubemap);
         YW_SAFE_RELEASE(equirectangularMapVertexShader);
