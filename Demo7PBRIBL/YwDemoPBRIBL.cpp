@@ -17,6 +17,7 @@ namespace yw
 
     DemoPBRIBL::DemoPBRIBL(Scene* scene) :
         IEntity(scene),
+        m_RenderedCubeMap(false),
         m_ModelSkySphere(nullptr),
         //m_ModelPBR(nullptr),
         m_EnvEquirectangularTexture(nullptr),
@@ -197,8 +198,6 @@ namespace yw
         //m_Smoothness = 0.5f;
         //m_SmoothnessScale = 1.0f;
 
-        RenderEquirectangularMapToCubeMap();
-
         return true;
     }
 
@@ -209,9 +208,34 @@ namespace yw
 
     void DemoPBRIBL::Render(int32_t pass)
     {
-        // Render the entire scene.
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+
+        if (!m_RenderedCubeMap)
+        {
+            m_RenderedCubeMap = true;
+
+            // Convert hdr equirectangular map to hdr cube map.
+            graphics->PushStateBlock();
+            RenderEquirectangularMapToCubeMap();
+            graphics->PopStateBlock();
+
+            // Generate diffuse irradiance map from hdr cube map.
+
+            // Generate specular pre-filter environment map.
+
+            // Generate specular specular integral BRDF map.
+        }
+
+        // Render sky pass.
+        graphics->PushStateBlock();
         RenderSky(pass);
+        graphics->PopStateBlock();
+
+        // Render model.
+        graphics->PushStateBlock();
         RenderPbrModel(pass);
+        graphics->PushStateBlock();
     }
 
     bool DemoPBRIBL::RenderEquirectangularMapToCubeMap()

@@ -46,6 +46,9 @@ namespace yw
         void RenderPbrModel(int32_t pass);
 
     private:
+        // Has rendered cube map from equirectangular map or not, only need once.
+        bool m_RenderedCubeMap;
+
         // Model resources.
         class Model* m_ModelSkySphere;
         //class Model* m_ModelPBR;

@@ -47,9 +47,7 @@ namespace yw
         float4 texColor;
         SampleTexture(texColor, 0, texCoord.x, texCoord.y);
 
-        // linear to srgb.
-        //texColor = Vector4((float)pow(texColor.x, 1.0f / 2.2f), (float)pow(texColor.y, 1.0f / 2.2f), (float)pow(texColor.z, 1.0f / 2.2f), texColor.a);
-
+        // Equirectangular map is hdr, keep the render target is also hdr.
         color = texColor;
 
         return true;
