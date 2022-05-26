@@ -235,7 +235,7 @@ namespace yw
         // Render model.
         graphics->PushStateBlock();
         RenderPbrModel(pass);
-        graphics->PushStateBlock();
+        graphics->PopStateBlock();
     }
 
     bool DemoPBRIBL::RenderEquirectangularMapToCubeMap()
@@ -296,9 +296,6 @@ namespace yw
         DemoPBRIBLEquirectangularMapVertexShader* equirectangularMapVertexShader = new DemoPBRIBLEquirectangularMapVertexShader();
         DemoPBRIBLEquirectangularMapPixelShader* equirectangularMapPixelShader = new DemoPBRIBLEquirectangularMapPixelShader();
 
-        // Push states into stack.
-        graphics->PushStateBlock();
-
         // Set render target.
         graphics->SetRenderTarget(rtCubemap);
 
@@ -351,9 +348,6 @@ namespace yw
 
         // Recovery viewport.
         device->SetViewportMatrix(&matViewportCurrent);
-
-        // Pop and restore states from stack.
-        graphics->PopStateBlock();
 
         // Release temp resources.
         YW_SAFE_RELEASE(rtCubemap);
