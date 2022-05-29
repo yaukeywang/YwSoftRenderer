@@ -12,7 +12,7 @@ namespace yw
     // Equirectangular map to cube map shader.
 
     // Equirectangular map to cube map vertex shader.
-    class DemoPBRIBLEquirectangularMapVertexShader : public IYw3dVertexShader
+    class DemoPBRIBLEquirectangularMap2CubeMapVertexShader : public IYw3dVertexShader
     {
     protected:
         // Shader main entry.
@@ -23,7 +23,7 @@ namespace yw
     };
 
     // Equirectangular map to cube map pixel shader.
-    class DemoPBRIBLEquirectangularMapPixelShader : public IYw3dPixelShader
+    class DemoPBRIBLEquirectangularMap2CubeMapPixelShader : public IYw3dPixelShader
     {
     protected:
         // Whether kill pixel or not.
@@ -38,7 +38,32 @@ namespace yw
     };
 
     // ------------------------------------------------------------------
-    // Cube map shader.
+    // Cube map to irrandiance map shader.
+
+    // Cube map to irrandiance map vertex shader.
+    class DemoPBRIBLCubeMap2IrrandianceMapVertexShader : public IYw3dVertexShader
+    {
+    protected:
+        // Shader main entry.
+        void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput);
+
+        // Shader stream channel.
+        Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister);
+    };
+
+    // Cube map to irrandiance map pixel shader.
+    class DemoPBRIBLCubeMap2IrrandianceMapPixelShader : public IYw3dPixelShader
+    {
+    protected:
+        // Whether kill pixel or not.
+        bool MightKillPixels();
+
+        // Shader main entry.
+        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+    };
+
+    // ------------------------------------------------------------------
+    // Cube map rendering shader.
 
     // Cube map vertex shader.
     class DemoPBRIBLCubeMapVertexShader : public IYw3dVertexShader

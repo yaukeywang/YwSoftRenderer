@@ -36,8 +36,11 @@ namespace yw
         void Render(int32_t pass);
 
     private:
-        // Convert equirectangular map to cube map.
+        // Convert hdr equirectangular map to hdr cube map.
         bool RenderEquirectangularMapToCubeMap();
+
+        // Convert hdr cube map to hdr irrandiance map.
+        bool RenderCubeMapToIrradianceMap();
 
         // Render sky environment.
         void RenderSky(int32_t pass);

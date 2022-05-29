@@ -215,12 +215,15 @@ namespace yw
         {
             m_RenderedCubeMap = true;
 
-            // Convert hdr equirectangular map to hdr cube map.
+            // Generate hdr cube map from hdr equirectangular map.
             graphics->PushStateBlock();
             RenderEquirectangularMapToCubeMap();
             graphics->PopStateBlock();
 
             // Generate diffuse irradiance map from hdr cube map.
+            graphics->PushStateBlock();
+            RenderCubeMapToIrradianceMap();
+            graphics->PopStateBlock();
 
             // Generate specular pre-filter environment map.
 
@@ -293,8 +296,8 @@ namespace yw
         Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
 
         // Create shader.
-        DemoPBRIBLEquirectangularMapVertexShader* equirectangularMapVertexShader = new DemoPBRIBLEquirectangularMapVertexShader();
-        DemoPBRIBLEquirectangularMapPixelShader* equirectangularMapPixelShader = new DemoPBRIBLEquirectangularMapPixelShader();
+        DemoPBRIBLEquirectangularMap2CubeMapVertexShader* equirectangularMapVertexShader = new DemoPBRIBLEquirectangularMap2CubeMapVertexShader();
+        DemoPBRIBLEquirectangularMap2CubeMapPixelShader* equirectangularMapPixelShader = new DemoPBRIBLEquirectangularMap2CubeMapPixelShader();
 
         // Set render target.
         graphics->SetRenderTarget(rtCubemap);
@@ -343,7 +346,7 @@ namespace yw
         }
 
         // Generate mip-map levels.
-        // (如果不生成可能会在shader采样时采样到子level而内存越界，有待细查。)
+        // (这里没必要生成 mip-map。)
         //m_EnvCubeTexture->GenerateMipSubLevels(0);
 
         // Recovery viewport.
@@ -354,6 +357,11 @@ namespace yw
         YW_SAFE_RELEASE(equirectangularMapVertexShader);
         YW_SAFE_RELEASE(equirectangularMapPixelShader);
 
+        return true;
+    }
+
+    bool DemoPBRIBL::RenderCubeMapToIrradianceMap()
+    {
         return true;
     }
 
