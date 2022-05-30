@@ -85,6 +85,18 @@ namespace yw
 
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+
+    private:
+        float DistributionGGX(const Vector3& N, const Vector3& H, const float roughness);
+
+        // ----------------------------------------------------------------------------
+        // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+        // efficient VanDerCorpus calculation.
+        float RadicalInverse_VdC(uint32_t bits);
+
+        Vector2 Hammersley(const uint32_t i, const uint32_t N);
+
+        Vector3 ImportanceSampleGGX(const Vector2& Xi, const Vector3& N, const float roughness);
     };
 
     // ------------------------------------------------------------------
