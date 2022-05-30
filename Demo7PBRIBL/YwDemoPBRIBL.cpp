@@ -23,6 +23,7 @@ namespace yw
         m_EnvEquirectangularTexture(nullptr),
         m_EnvCubeTexture(nullptr),
         m_IrrandianceCubeTexture(nullptr),
+        m_PrefilterReflectionCubeTexture(nullptr),
         //m_ModelPBRTexture(nullptr),
         //m_ModelPBRNormalTexture(nullptr),
         //m_ModelPBRSpecularTexture(nullptr),
@@ -479,6 +480,131 @@ namespace yw
         YW_SAFE_RELEASE(rtCubemap);
         YW_SAFE_RELEASE(irrandianceMapVertexShader);
         YW_SAFE_RELEASE(irrandianceMapPixelShader);
+
+        return true;
+    }
+
+    bool DemoPBRIBL::RenderPrefilterReflectionMap()
+    {
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        Yw3dDevice* device = graphics->GetYw3dDevice();
+
+        // Render constants.
+        const int32_t targetWidth = 128;
+        const int32_t targetHeight = 128;
+        const int32_t cubeLength = 128;
+        const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
+        const float fovy = YW_PI / 2.0f;
+        const float aspect = 1.0f;
+        const float ZNear = 0.1f;
+        const float zFar = 10.0f;
+
+        // Create a temp render target.
+        Yw3dRenderTarget* rtCubemap = nullptr;
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtCubemap, targetWidth, targetHeight, cubeFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        {
+            return false;
+        }
+
+        // Create cube map.
+        YW_SAFE_RELEASE(m_PrefilterReflectionCubeTexture);
+        if (YW3D_FAILED(device->CreateCubeTexture(&m_PrefilterReflectionCubeTexture, cubeLength, 0, cubeFormat)))
+        {
+            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
+            return false;
+        }
+
+        // Generate mip-map levels to store prefilter result by roughness.
+        m_PrefilterReflectionCubeTexture->GenerateMipSubLevels(0);
+
+        // Backup old viewport matrix.sss
+        const Matrix44* matViewportCurrentPointer;
+        device->GetViewportMatrix(matViewportCurrentPointer);
+        Matrix44 matViewportCurrent(*matViewportCurrentPointer);
+
+        // Set device viewport.
+        Matrix44 matViewportCubeMap;
+        Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+        device->SetViewportMatrix(&matViewportCubeMap);
+
+        // Construct view matrices.
+        Matrix44 matViews[6];
+        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
+
+        // Construct projection matrix.
+        Matrix44 matProjection;
+        Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
+
+        // Create shader.
+        //DemoPBRIBLCubeMap2IrrandianceMapVertexShader* prefilterReflectionMapVertexShader = new DemoPBRIBLCubeMap2IrrandianceMapVertexShader();
+        //DemoPBRIBLCubeMap2IrrandianceMapPixelShader* prefilterReflectionMapPixelShader = new DemoPBRIBLCubeMap2IrrandianceMapPixelShader();
+
+        // Set render target.
+        graphics->SetRenderTarget(rtCubemap);
+
+        // Set states.
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
+        // Set cube texture.
+        graphics->SetTexture(0, m_EnvCubeTexture);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+        // Set vertex and pixel shader.
+        graphics->SetVertexShader(prefilterReflectionMapVertexShader);
+        graphics->SetPixelShader(prefilterReflectionMapPixelShader);
+
+        uint32_t mipLevels = m_PrefilterReflectionCubeTexture->GetMipLevels();
+        for (uint32_t mip = 0; mip < mipLevels; mip++)
+        {
+            // Setting new viewport size and new render target size.
+            // ...
+
+            // Create cube map face textures.
+            for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+            {
+                // Render to target and copy to cube face.
+                device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
+
+                // This should be from device.
+                Matrix44 matWorld;
+                Matrix44 matWVP = matWorld * matViews[i] * matProjection;
+                device->SetTransform(Yw3d_TS_World, &matWorld);
+                device->SetTransform(Yw3d_TS_View, &matViews[i]);
+                device->SetTransform(Yw3d_TS_Projection, &matProjection);
+                device->SetTransform(Yw3d_TS_WVP, &matWVP);
+
+                // Render this face.
+                m_ModelSkySphere->Render(device);
+
+                // Copy pixels from render target to cube face.
+                Yw3dSurface* srcSurface = rtCubemap->AcquireColorBuffer();
+                Yw3dTexture* dstCubeFace = m_PrefilterReflectionCubeTexture->AcquireCubeFace((Yw3dCubeFaces)i);
+                Yw3dSurface* dstSurface = dstCubeFace->AcquireMipLevel(mip);
+                srcSurface->CopyToSurface(nullptr, dstSurface, nullptr, Yw3d_TF_Linear);
+                YW_SAFE_RELEASE(dstSurface);
+                YW_SAFE_RELEASE(dstCubeFace);
+                YW_SAFE_RELEASE(srcSurface);
+            }
+        }
+
+        // Recovery viewport.
+        device->SetViewportMatrix(&matViewportCurrent);
+
+        // Release temp resources.
+        YW_SAFE_RELEASE(rtCubemap);
+        YW_SAFE_RELEASE(prefilterReflectionMapVertexShader);
+        YW_SAFE_RELEASE(prefilterReflectionMapPixelShader);
 
         return true;
     }

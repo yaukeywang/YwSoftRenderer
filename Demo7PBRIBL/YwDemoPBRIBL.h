@@ -42,6 +42,9 @@ namespace yw
         // Convert hdr cube map to hdr irrandiance map.
         bool RenderCubeMapToIrradianceMap();
 
+        // Render prefilter hdr reflection map.
+        bool RenderPrefilterReflectionMap();
+
         // Render sky environment.
         void RenderSky(int32_t pass);
 
@@ -57,9 +60,10 @@ namespace yw
         //class Model* m_ModelPBR;
 
         // Texture resources.
-        class Yw3dTexture* m_EnvEquirectangularTexture;
-        class Yw3dCubeTexture* m_EnvCubeTexture;
-        class Yw3dCubeTexture* m_IrrandianceCubeTexture;
+        Yw3dTexture* m_EnvEquirectangularTexture;
+        Yw3dCubeTexture* m_EnvCubeTexture;
+        Yw3dCubeTexture* m_IrrandianceCubeTexture;
+        Yw3dCubeTexture* m_PrefilterReflectionCubeTexture;
         //class Yw3dTexture* m_ModelPBRTexture;
         //class Yw3dTexture* m_ModelPBRNormalTexture;
         //class Yw3dTexture* m_ModelPBRSpecularTexture;
