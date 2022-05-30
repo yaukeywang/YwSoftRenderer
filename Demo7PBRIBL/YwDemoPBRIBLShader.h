@@ -63,6 +63,31 @@ namespace yw
     };
 
     // ------------------------------------------------------------------
+    // Pre-filter reflection map shader.
+
+    // Pre-filter reflection map vertex shader.
+    class DemoPBRIBLPrefilterReflectionMapVertexShader : public IYw3dVertexShader
+    {
+    protected:
+        // Shader main entry.
+        void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput);
+
+        // Shader stream channel.
+        Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister);
+    };
+
+    // Pre-filter reflection map pixel shader.
+    class DemoPBRIBLPrefilterReflectionMapPixelShader : public IYw3dPixelShader
+    {
+    protected:
+        // Whether kill pixel or not.
+        bool MightKillPixels();
+
+        // Shader main entry.
+        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+    };
+
+    // ------------------------------------------------------------------
     // Cube map rendering shader.
 
     // Cube map vertex shader.

@@ -142,6 +142,43 @@ namespace yw
     }
 
     // ------------------------------------------------------------------
+    // Pre-filter reflection map shader.
+
+    // Pre-filter reflection map vertex shader.
+
+    void DemoPBRIBLPrefilterReflectionMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+    {
+        // The projection vertex position.
+        position = vsShaderInput[0] * (*GetWVPMatrix());
+
+        // Use sky mesh vertex position, in local space, as index into cube map.
+        vsShaderOutput[0] = vsShaderInput[0] * (*GetWorldMatrix());
+    }
+
+    Yw3dShaderRegisterType DemoPBRIBLPrefilterReflectionMapVertexShader::GetOutputRegisters(uint32_t shaderRegister)
+    {
+        switch (shaderRegister)
+        {
+        case 0:
+            return Yw3d_SRT_Vector3; // Vertex local position.
+        default:
+            return Yw3d_SRT_Unused;
+        }
+    }
+
+    // Pre-filter reflection map pixel shader.
+
+    bool DemoPBRIBLPrefilterReflectionMapPixelShader::MightKillPixels()
+    {
+        return false;
+    }
+
+    bool DemoPBRIBLPrefilterReflectionMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    {
+        return true;
+    }
+
+    // ------------------------------------------------------------------
     // Cube map rendering shader.
 
     // Cube map pixel shader.
