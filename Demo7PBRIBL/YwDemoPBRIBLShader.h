@@ -100,6 +100,47 @@ namespace yw
     };
 
     // ------------------------------------------------------------------
+    // Pre-integrate brdf map shader.
+
+    // Pre-integrate brdf map vertex shader.
+    class DemoPBRIBLPreintegrateBRDFMapVertexShader : public IYw3dVertexShader
+    {
+    protected:
+        // Shader main entry.
+        void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput);
+
+        // Shader stream channel.
+        Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister);
+    };
+
+    // Pre-integrate brdf map pixel shader.
+    class DemoPBRIBLPreintegrateBRDFMapPixelShader : public IYw3dPixelShader
+    {
+    protected:
+        // Whether kill pixel or not.
+        bool MightKillPixels();
+
+        // Shader main entry.
+        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+
+    private:
+        // ----------------------------------------------------------------------------
+        // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+        // efficient VanDerCorpus calculation.
+        float RadicalInverse_VdC(uint32_t bits);
+
+        Vector2 Hammersley(const uint32_t i, const uint32_t N);
+
+        Vector3 ImportanceSampleGGX(const Vector2& Xi, const Vector3& N, const float roughness);
+
+        float GeometrySchlickGGX(float NdotV, float roughness);
+
+        float GeometrySmith(const Vector3& N, const Vector3& V, const Vector3& L, float roughness);
+
+        Vector2 IntegrateBRDF(float NdotV, float roughness);
+    };
+
+    // ------------------------------------------------------------------
     // Cube map rendering shader.
 
     // Cube map vertex shader.
