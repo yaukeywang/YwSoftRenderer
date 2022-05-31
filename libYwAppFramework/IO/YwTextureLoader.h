@@ -43,10 +43,10 @@ namespace yw
 
     protected:
         // Generate mipmap for Yw3dTexture.
-        bool GenerateTextureMipmap(IYw3dBaseTexture* texture);
+        bool GenerateTextureMipmap(class IYw3dBaseTexture* texture);
 
         // Generate mipmap for Yw3dCubeTexture.
-        bool GenerateCubeTextureMipmap(IYw3dBaseTexture* texture);
+        bool GenerateCubeTextureMipmap(class IYw3dBaseTexture* texture);
     };
 }
 

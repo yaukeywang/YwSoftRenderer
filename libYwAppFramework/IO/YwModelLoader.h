@@ -39,7 +39,7 @@ namespace yw
         // @param[in] calculateNormalAngle the angle used to re-calculate normals.
         // @param[out] model the loaded data to fill.
         // @return true if the model loading ok, false if loading failed.
-        virtual bool LoadFormData(const StringA& fileName, const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model) = 0;
+        virtual bool LoadFormData(const StringA& fileName, const uint8_t* data, bool calculateNormals, float calculateNormalAngle, class Model* model) = 0;
     };
 }
 
