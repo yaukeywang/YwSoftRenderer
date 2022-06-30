@@ -31,11 +31,12 @@ namespace yw
         // @param[in] u u-component of the lookup-vector.
         // @param[in] v v-component of the lookup-vector.
         // @param[in] w w-component of the lookup-vector.
+        // @param[in] lod level of detail.
         // @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate. If 0 the base mip-level will be chosen and the minification filter will be used for texture sampling.
         // @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate. If 0 the base mip-level will be chosen and the minification filter will be used for texture sampling.
         // @param[in] samplerStates texture sampler states.
         // @return Yw3d_S_OK if the function succeeds.
-        virtual Yw3dResult SampleTexture(Vector4& color, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates) = 0;
+        virtual Yw3dResult SampleTexture(Vector4& color, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates) = 0;
 
     public:
         // Returns a pointer to the associated device. Calling this function will increase the internal reference count of the device. 

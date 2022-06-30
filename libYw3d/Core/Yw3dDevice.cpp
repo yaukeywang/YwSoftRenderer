@@ -1064,7 +1064,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
-    Yw3dResult Yw3dDevice::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
+    Yw3dResult Yw3dDevice::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient)
     {
         if (samplerNumber >= YW3D_MAX_TEXTURE_SAMPLERS)
         {
@@ -1124,7 +1124,7 @@ namespace yw
             return Yw3d_E_InvalidState;
         }
 
-        return texture->SampleTexture(color, u, v, w, xGradient, yGradient, textureSampler.textureSamplerStates);
+        return texture->SampleTexture(color, u, v, w, lod, xGradient, yGradient, textureSampler.textureSamplerStates);
     }
 
     void Yw3dDevice::SetRenderTarget(Yw3dRenderTarget* renderTarget)

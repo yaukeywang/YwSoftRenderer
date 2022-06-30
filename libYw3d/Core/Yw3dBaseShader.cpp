@@ -113,13 +113,13 @@ namespace yw
         return matWVP;
     }
 
-    Yw3dResult IYw3dBaseShader::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient)
+    Yw3dResult IYw3dBaseShader::SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient)
     {
         if (nullptr == m_Device)
         {
             return Yw3d_E_Unknown;
         }
 
-        return m_Device->SampleTexture(color, samplerNumber, u, v, w, xGradient, yGradient);
+        return m_Device->SampleTexture(color, samplerNumber, u, v, w, lod, xGradient, yGradient);
     }
 }

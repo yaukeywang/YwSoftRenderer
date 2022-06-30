@@ -57,7 +57,7 @@ namespace yw
         return Yw3d_TSI_Vector;
     }
 
-    Yw3dResult Yw3dCubeTexture::SampleTexture(Vector4& color, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
+    Yw3dResult Yw3dCubeTexture::SampleTexture(Vector4& color, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
     {
         // Determine face and local u/v coordinates ...
         // source: https://www.nvidia.com/object/cube_map_ogl_tutorial.html
@@ -145,7 +145,7 @@ namespace yw
         const float finalU = /*Saturate*/(cu * invMag + 0.5f);
         const float finalV = /*Saturate*/(cv * invMag + 0.5f);
 
-        return m_CubeFaces[face]->SampleTexture(color, finalU, finalV, 0.0f, xGradient, yGradient, samplerStates);
+        return m_CubeFaces[face]->SampleTexture(color, finalU, finalV, 0.0f, lod, xGradient, yGradient, samplerStates);
     }
 
     Yw3dResult Yw3dCubeTexture::GenerateMipSubLevels(uint32_t srcLevel)

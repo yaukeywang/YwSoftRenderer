@@ -82,13 +82,13 @@ namespace yw
         return Yw3d_TSI_2Coords;
     }
 
-    Yw3dResult Yw3dTexture::SampleTexture(Vector4& color, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
+    Yw3dResult Yw3dTexture::SampleTexture(Vector4& color, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
     {
         uint32_t texFilter = samplerStates[Yw3d_TSS_MinFilter];
-        float texMipLevel = 0.0f;
+        float texMipLevel = lod;
 
         // Choose proper mip level and filter.
-        if ((nullptr != xGradient) && (nullptr != yGradient))
+        if ((nullptr != xGradient) && (nullptr != yGradient) && (texMipLevel <= 0.0f))
         {
             // Compute the mip-level and determine the texture filter type.
             const float lenXGrad = xGradient->x * xGradient->x * m_SquaredWidth + xGradient->y * xGradient->y * m_SquaredHeight;

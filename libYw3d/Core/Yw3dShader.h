@@ -84,10 +84,10 @@ namespace yw
         // Sample texture color.
         // @param[in] shaderRegister texture binded shader register index.
         // @param[in] samplerNumber texture binded texture sampler index.
-        // @param[in] x u of texture sample address.
-        // @param[in] y v of texture sample address.
-        // @return sampled texture color, return Pure-Black(0,0,0,0) if no textture found.
-        inline Vector4 tex2D(uint32_t shaderRegister, uint32_t samplerNumber, float u, float v)
+        // @param[in] s texture sample address.
+        // @param[in] texelOff Offset to be added to obtain the final texel.
+        // @return sampled texture color, return Pure-Black(0,0,0,0) if no texture found.
+        inline Vector4 tex2D(uint32_t shaderRegister, uint32_t samplerNumber, const Vector2& s, int32_t texelOff = 0)
         {
             // Get ddx and ddy for mipmap.
             Vector4 vDdx, vDdy;
@@ -95,7 +95,7 @@ namespace yw
 
             // Sample the texture.
             Vector4 texColor;
-            SampleTexture(texColor, samplerNumber, u, v, 0.0f, &vDdx, &vDdy);
+            SampleTexture(texColor, samplerNumber, s.x, s.y, 0.0f, 0.0f, &vDdx, &vDdy);
 
             // Return sampled texture color.
             return texColor;
@@ -104,31 +104,63 @@ namespace yw
         // Sample texture color.
         // @param[in] shaderRegister texture binded shader register index.
         // @param[in] samplerNumber texture binded texture sampler index.
-        // @param[in] uv texture sample address.
-        // @return sampled texture color, return Pure-Black(1,1,1,1) if no textture found.
-        inline Vector4 tex2D(uint32_t shaderRegister, uint32_t samplerNumber, Vector2 uv)
-        {
-            return tex2D(shaderRegister, samplerNumber, uv.x, uv.y);
-        }
-
-        // Sample texture color and check the state.
-        // @param[out] color receives the color of the pixel to be looked up.
-        // @param[in] shaderRegister texture binded shader register index.
-        // @param[in] samplerNumber texture binded texture sampler index.
-        // @param[in] x u of texture sample address.
-        // @param[in] y v of texture sample address.
-        // @return true if sampling texture succeed, otherwise false.
-        inline bool tex2DSafe(Vector4& color, uint32_t shaderRegister, uint32_t samplerNumber, float u, float v)
+        // @param[in] s texture sample address.
+        //            s.xy Coordinates to perform the lookup. 
+        //            s.w Level of detail.
+        // @param[in] texelOff Offset to be added to obtain the final texel.
+        // @return sampled texture color, return Pure-Black(0,0,0,0) if no texture found.
+        inline Vector4 tex2Dlod(uint32_t shaderRegister, uint32_t samplerNumber, const Vector4& s, int32_t texelOff = 0)
         {
             // Get ddx and ddy for mipmap.
             Vector4 vDdx, vDdy;
             GetPartialDerivatives(shaderRegister, vDdx, vDdy);
 
             // Sample the texture.
-            Yw3dResult result = SampleTexture(color, samplerNumber, u, v, 0.0f, &vDdx, &vDdy);
+            Vector4 texColor;
+            SampleTexture(texColor, samplerNumber, s.x, s.y, 0.0f, s.w, &vDdx, &vDdy);
 
-            // Return sample state, success or not.
-            return YW3D_SUCCESSFUL(result);
+            // Return sampled texture color.
+            return texColor;
+        }
+
+        // Sample cube texture color.
+        // @param[in] shaderRegister texture binded shader register index.
+        // @param[in] samplerNumber texture binded texture sampler index.
+        // @param[in] s Coordinates to perform the lookup.
+        // @return sampled texture color, return Pure-Black(0,0,0,0) if no texture found.
+        inline Vector4 texCUBE(uint32_t shaderRegister, uint32_t samplerNumber, const Vector3& s)
+        {
+            // Get ddx and ddy for mipmap.
+            Vector4 vDdx, vDdy;
+            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+
+            // Sample the texture.
+            Vector4 texColor;
+            SampleTexture(texColor, samplerNumber, s.x, s.y, s.z, 0.0f, &vDdx, &vDdy);
+
+            // Return sampled texture color.
+            return texColor;
+        }
+
+        // Sample cube texture color with specified level of detail.
+        // @param[in] shaderRegister texture binded shader register index.
+        // @param[in] samplerNumber texture binded texture sampler index.
+        // @param[in] s Coordinates to perform the lookup.
+        //            s.xyz Coordinates to perform the lookup. 
+        //            s.w Level of detail.
+        // @return sampled texture color, return Pure-Black(0,0,0,0) if no texture found.
+        inline Vector4 texCUBElod(uint32_t shaderRegister, uint32_t samplerNumber, const Vector4& s)
+        {
+            // Get ddx and ddy for mipmap.
+            Vector4 vDdx, vDdy;
+            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+
+            // Sample the texture.
+            Vector4 texColor;
+            SampleTexture(texColor, samplerNumber, s.x, s.y, s.z, s.w, &vDdx, &vDdy);
+
+            // Return sampled texture color.
+            return texColor;
         }
 
         // Sample texture color and check the state.
@@ -137,9 +169,17 @@ namespace yw
         // @param[in] samplerNumber texture binded texture sampler index.
         // @param[in] uv texture sample address.
         // @return true if sampling texture succeed, otherwise false.
-        inline bool tex2DSafe(Vector4& color, uint32_t shaderRegister, uint32_t samplerNumber, Vector2 uv)
+        inline bool tex2DSafe(Vector4& color, uint32_t shaderRegister, uint32_t samplerNumber, const Vector2& uv, int32_t texelOff = 0)
         {
-            return tex2DSafe(color, shaderRegister, samplerNumber, uv.x, uv.y);
+            // Get ddx and ddy for mipmap.
+            Vector4 vDdx, vDdy;
+            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+
+            // Sample the texture.
+            Yw3dResult result = SampleTexture(color, samplerNumber, uv.x, uv.y, 0.0f, 0.0f, &vDdx, &vDdy);
+
+            // Return sample state, success or not.
+            return YW3D_SUCCESSFUL(result);
         }
 
     private:

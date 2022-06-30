@@ -327,11 +327,12 @@ namespace yw
         // @param[in] u u-component of the lookup-vector.
         // @param[in] v v-component of the lookup-vector.
         // @param[in] w w-component of the lookup-vector.
+        // @param[in] lod level of detail.
         // @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate (optional, base for mip-level calculations).
         // @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate (optional, base for mip-level calculations).
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
-        Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, const Vector4* xGradient = nullptr, const Vector4* yGradient = nullptr);
+        Yw3dResult SampleTexture(Vector4& color, uint32_t samplerNumber, float u, float v, float w = 0.0f, float lod = 0.0f, const Vector4* xGradient = nullptr, const Vector4* yGradient = nullptr);
 
         // Sets the render target.
         // @param[in] renderTarget pointer to the render target.

@@ -43,11 +43,12 @@ namespace yw
         // @param[in] u u-component of the lookup-vector.
         // @param[in] v v-component of the lookup-vector.
         // @param[in] w w-component of the lookup-vector.
+        // @param[in] lod level of detail.
         // @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate. If 0 the base mip-level will be chosen and the minification filter will be used for texture sampling.
         // @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate. If 0 the base mip-level will be chosen and the minification filter will be used for texture sampling.
         // @param[in] samplerStates texture sampler states.
         // @return Yw3d_S_OK if the function succeeds.
-        Yw3dResult SampleTexture(Vector4& color, float u, float v, float w, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates);
+        Yw3dResult SampleTexture(Vector4& color, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates);
 
     public:
         // Generates mip-sublevels through downsampling (using a box-filter) a given source mip-level.
