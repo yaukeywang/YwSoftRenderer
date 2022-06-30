@@ -42,9 +42,7 @@ namespace yw
     {
         // Sample main texture.
         float3 texCoord = input[0];
-        float4 texColor;
-        SampleTexture(texColor, 0, texCoord.x, texCoord.y, texCoord.z);
-        color = texColor;
+        color = texCUBE(0, 0, texCoord);
 
         return true;
     }

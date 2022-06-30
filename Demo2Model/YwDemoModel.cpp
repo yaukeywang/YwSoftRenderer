@@ -92,7 +92,7 @@ namespace yw
 
             Vector2 texCoord = input[3];
             Vector4 texColor;
-            SampleTexture(texColor, 0, texCoord.x, texCoord.y, 0.0f, &vDdx, &vDdy);
+            SampleTexture(texColor, 0, texCoord.x, texCoord.y, 0.0f, 0.0f, &vDdx, &vDdy);
 
             color = texColor;
             return true;

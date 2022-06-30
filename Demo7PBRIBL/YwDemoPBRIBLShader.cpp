@@ -211,8 +211,7 @@ namespace yw
 
                 float mipLevel = (roughness == 0.0f) ? 0.0f : (0.5f * log2(saSample / saTexel));
 
-                //prefilteredColor += textureLod(0, L, mipLevel).rgb * NdotL;
-                prefilteredColor += tex2D(0, 0, L, mipLevel).rgb * NdotL;
+                prefilteredColor += tex2Dlod(0, 0, Vector4(L, mipLevel)) * NdotL;
                 totalWeight += NdotL;
             }
         }
