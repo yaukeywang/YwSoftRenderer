@@ -211,7 +211,7 @@ namespace yw
 
                 float mipLevel = (roughness == 0.0f) ? 0.0f : (0.5f * log2(saSample / saTexel));
 
-                prefilteredColor += tex2Dlod(0, 0, Vector4(L, mipLevel)) * NdotL;
+                prefilteredColor += texCUBElod(0, 0, Vector4(L, mipLevel)) * NdotL;
                 totalWeight += NdotL;
             }
         }
@@ -312,8 +312,8 @@ namespace yw
     {
         // Sample main texture.
         float3 texCoord = input[0];
-        float4 texColor;
-        SampleTexture(texColor, 0, texCoord.x, texCoord.y, texCoord.z);
+        float4 texColor = texCUBElod(0, 0, Vector4(texCoord, 1));
+        //SampleTexture(texColor, 0, texCoord.x, texCoord.y, texCoord.z);
 
         // linear to srgb.
         texColor = Vector4((float)pow(texColor.x, 1.0f / 2.2f), (float)pow(texColor.y, 1.0f / 2.2f), (float)pow(texColor.z, 1.0f / 2.2f), texColor.a);

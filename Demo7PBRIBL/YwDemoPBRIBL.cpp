@@ -353,9 +353,8 @@ namespace yw
             YW_SAFE_RELEASE(srcSurface);
         }
 
-        // Generate mip-map levels.
-        // (这里没必要生成 mip-map。)
-        //m_EnvCubeTexture->GenerateMipSubLevels(0);
+        // Generate mip-map levels, used by prefilter generation.
+        m_EnvCubeTexture->GenerateMipSubLevels(0);
 
         // Recovery viewport.
         device->SetViewportMatrix(&matViewportCurrent);
@@ -552,7 +551,7 @@ namespace yw
         graphics->SetVertexShader(prefilterReflectionMapVertexShader);
         graphics->SetPixelShader(prefilterReflectionMapPixelShader);
 
-        uint32_t mipLevels = m_PrefilterReflectionCubeTexture->GetMipLevels();
+        uint32_t mipLevels = min(5, m_PrefilterReflectionCubeTexture->GetMipLevels());
         for (uint32_t mip = 0; mip < mipLevels; mip++)
         {
             // Get cube edge size by mip level.
@@ -586,6 +585,9 @@ namespace yw
                 device->SetTransform(Yw3d_TS_View, &matViews[i]);
                 device->SetTransform(Yw3d_TS_Projection, &matProjection);
                 device->SetTransform(Yw3d_TS_WVP, &matWVP);
+
+                float roughness = (float)mip / (float)(mipLevels - 1);
+                prefilterReflectionMapPixelShader->SetFloat(0, roughness);
 
                 // Render this face.
                 m_ModelSkySphere->Render(device);
@@ -647,7 +649,7 @@ namespace yw
 
         // Set sky texture.
         //graphics->SetTexture(0, m_EnvCubeTexture);
-        graphics->SetTexture(0, m_IrrandianceCubeTexture);
+        graphics->SetTexture(0, m_PrefilterReflectionCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
