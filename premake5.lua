@@ -139,8 +139,10 @@ project "libYwAppFramework"
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
         "libYwAppFramework/ThirdParty",
+        "libYwAppFramework/ThirdParty/bmp",
         "libYwAppFramework/ThirdParty/libpng",
         "libYwAppFramework/ThirdParty/libtarga",
+        "libYwAppFramework/ThirdParty/rgbe",
         "libYwAppFramework/ThirdParty/zlib",
         "libYwAppFramework/Utility"
     }
@@ -191,12 +193,18 @@ project "libYwAppFramework"
         "libYwAppFramework/Resource/YwResourceManager.h",
         "libYwAppFramework/Resource/YwResourceManager.cpp",
 
+        "libYwAppFramework/ThirdParty/bmp/*.h",
+        "libYwAppFramework/ThirdParty/bmp/*.c",
+        "libYwAppFramework/ThirdParty/bmp/*.cpp",
         "libYwAppFramework/ThirdParty/libpng/*.h",
         "libYwAppFramework/ThirdParty/libpng/*.c",
         "libYwAppFramework/ThirdParty/libpng/*.cpp",
         "libYwAppFramework/ThirdParty/libtarga/*.h",
         "libYwAppFramework/ThirdParty/libtarga/*.c",
         "libYwAppFramework/ThirdParty/libtarga/*.cpp",
+        "libYwAppFramework/ThirdParty/rgbe/*.h",
+        "libYwAppFramework/ThirdParty/rgbe/*.c",
+        "libYwAppFramework/ThirdParty/rgbe/*.cpp",
         "libYwAppFramework/ThirdParty/zlib/*.h",
         "libYwAppFramework/ThirdParty/zlib/*.c",
         "libYwAppFramework/ThirdParty/zlib/*.cpp",
@@ -212,8 +220,10 @@ project "libYwAppFramework"
         ["IO"] = { "libYwAppFramework/IO/Yw*.h", "libYwAppFramework/IO/Yw*.inl", "libYwAppFramework/IO/Yw*.cpp" },
         ["Resource"] = { "libYwAppFramework/Resource/Yw*.h", "libYwAppFramework/Resource/Yw*.inl", "libYwAppFramework/Resource/Yw*.cpp" },
         ["ThirdParty"] = { "libYwAppFramework/ThirdParty/*.h", "libYwAppFramework/ThirdParty/*.inl", "libYwAppFramework/ThirdParty/*.c", "libYwAppFramework/ThirdParty/*.cpp" },
+        ["ThirdParty/bmp"] = {"libYwAppFramework/ThirdParty/bmp/*.h", "libYwAppFramework/ThirdParty/bmp/*.inl", "libYwAppFramework/ThirdParty/bmp/*.c", "libYwAppFramework/ThirdParty/bmp/*.cpp"},
         ["ThirdParty/libpng"] = {"libYwAppFramework/ThirdParty/libpng/*.h", "libYwAppFramework/ThirdParty/libpng/*.inl", "libYwAppFramework/ThirdParty/libpng/*.c", "libYwAppFramework/ThirdParty/libpng/*.cpp"},
         ["ThirdParty/libtarga"] = {"libYwAppFramework/ThirdParty/libtarga/*.h", "libYwAppFramework/ThirdParty/libtarga/*.inl", "libYwAppFramework/ThirdParty/libtarga/*.c", "libYwAppFramework/ThirdParty/libtarga/*.cpp"},
+        ["ThirdParty/rgbe"] = {"libYwAppFramework/ThirdParty/rgbe/*.h", "libYwAppFramework/ThirdParty/rgbe/*.inl", "libYwAppFramework/ThirdParty/rgbe/*.c", "libYwAppFramework/ThirdParty/rgbe/*.cpp"},
         ["ThirdParty/zlib"] = {"libYwAppFramework/ThirdParty/zlib/*.h", "libYwAppFramework/ThirdParty/zlib/*.inl", "libYwAppFramework/ThirdParty/zlib/*.c", "libYwAppFramework/ThirdParty/zlib/*.cpp"},
         ["Utility"] = {"libYwAppFramework/Utility/*.h", "libYwAppFramework/Utility/*.inl", "libYwAppFramework/Utility/*.c", "libYwAppFramework/Utility/*.cpp"}
     }
