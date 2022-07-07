@@ -616,6 +616,11 @@ namespace yw
         return true;
     }
 
+    bool DemoPBRIBL::RenderPreintegrateBRDFMap()
+    {
+
+    }
+
     void DemoPBRIBL::RenderSky(int32_t pass)
     {
         // Render sky.

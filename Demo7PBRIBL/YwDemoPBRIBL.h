@@ -45,6 +45,9 @@ namespace yw
         // Render prefilter hdr reflection map.
         bool RenderPrefilterReflectionMap();
 
+        // Render preintegrate brdf lut map.
+        bool RenderPreintegrateBRDFMap();
+
         // Render sky environment.
         void RenderSky(int32_t pass);
 
