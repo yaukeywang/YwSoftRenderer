@@ -24,6 +24,7 @@ namespace yw
         m_EnvCubeTexture(nullptr),
         m_IrrandianceCubeTexture(nullptr),
         m_PrefilterReflectionCubeTexture(nullptr),
+        m_PreintegrateBRDFTexture(nullptr),
         //m_ModelPBRTexture(nullptr),
         //m_ModelPBRNormalTexture(nullptr),
         //m_ModelPBRSpecularTexture(nullptr),
@@ -55,6 +56,8 @@ namespace yw
 
         YW_SAFE_RELEASE(m_EnvCubeTexture);
         YW_SAFE_RELEASE(m_IrrandianceCubeTexture);
+        YW_SAFE_RELEASE(m_PrefilterReflectionCubeTexture);
+        YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
 
         // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
@@ -618,7 +621,34 @@ namespace yw
 
     bool DemoPBRIBL::RenderPreintegrateBRDFMap()
     {
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        Yw3dDevice* device = graphics->GetYw3dDevice();
 
+        // Render constants.
+        const int32_t targetWidth = 32;
+        const int32_t targetHeight = 32;
+        const int32_t cubeLength = 32;
+        const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
+        const float fovy = YW_PI / 2.0f;
+        const float aspect = 1.0f;
+        const float ZNear = 0.1f;
+        const float zFar = 10.0f;
+
+        // Create a temp render target.
+        Yw3dRenderTarget* rtBRDFmap = nullptr;
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtBRDFmap, targetWidth, targetHeight, cubeFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        {
+            return false;
+        }
+
+        // Create brdf texture.
+        YW_SAFE_RELEASE(m_EnvCubeTexture);
+        if (YW3D_FAILED(device->CreateCubeTexture(&m_PreintegrateBRDFTexture, cubeLength, 0, cubeFormat)))
+        {
+            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
+            return false;
+        }
     }
 
     void DemoPBRIBL::RenderSky(int32_t pass)
