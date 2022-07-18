@@ -643,12 +643,18 @@ namespace yw
         }
 
         // Create brdf texture.
-        YW_SAFE_RELEASE(m_EnvCubeTexture);
+        YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
         if (YW3D_FAILED(device->CreateCubeTexture(&m_PreintegrateBRDFTexture, cubeLength, 0, cubeFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
             return false;
         }
+
+        // ---
+        YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
+        YW_SAFE_RELEASE(rtBRDFmap);
+
+        return true;
     }
 
     void DemoPBRIBL::RenderSky(int32_t pass)
