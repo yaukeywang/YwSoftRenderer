@@ -67,7 +67,7 @@ namespace yw
         Yw3dCubeTexture* m_EnvCubeTexture;
         Yw3dCubeTexture* m_IrrandianceCubeTexture;
         Yw3dCubeTexture* m_PrefilterReflectionCubeTexture;
-        Yw3dCubeTexture* m_PreintegrateBRDFTexture;
+		Yw3dTexture* m_PreintegrateBRDFTexture;
         //class Yw3dTexture* m_ModelPBRTexture;
         //class Yw3dTexture* m_ModelPBRNormalTexture;
         //class Yw3dTexture* m_ModelPBRSpecularTexture;

@@ -401,7 +401,7 @@ namespace yw
             return false;
         }
 
-        // Backup old viewport matrix.sss
+        // Backup old viewport matrix.
         const Matrix44* matViewportCurrentPointer;
         device->GetViewportMatrix(matViewportCurrentPointer);
         Matrix44 matViewportCurrent(*matViewportCurrentPointer);
@@ -626,33 +626,153 @@ namespace yw
         Yw3dDevice* device = graphics->GetYw3dDevice();
 
         // Render constants.
-        const int32_t targetWidth = 32;
-        const int32_t targetHeight = 32;
-        const int32_t cubeLength = 32;
+        const int32_t targetWidth = 512;
+        const int32_t targetHeight = 512;
         const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;
         const float ZNear = 0.1f;
         const float zFar = 10.0f;
+		const float numVertices = 4;
+		const float numPrimitives = 2;
+
+		// Create primitive data.
+
+		// Define vertex format.
+		struct VertexElement
+		{
+			Vector3 position;
+			Vector2 uv;
+		};
+
+		// Vertex element declaration.
+		Yw3dVertexElement VertexDeclaration[] =
+		{
+			YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 0),
+			YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 1)
+		};
+
+		// Create vertex format.
+		Yw3dVertexFormat* vertexFormat = nullptr;
+		if (YW3D_FAILED(device->CreateVertexFormat(&vertexFormat, VertexDeclaration, sizeof(VertexDeclaration))))
+		{
+			return false;
+		}
+
+		// Create vertex buffer.
+		Yw3dVertexBuffer* vertexBuffer = nullptr;
+		if (YW3D_FAILED(device->CreateVertexBuffer(&vertexBuffer, sizeof(VertexElement) * numVertices)))
+		{
+			return false;
+		}
+
+		// Create index buffer.
+		Yw3dIndexBuffer* indexBuffer = nullptr;
+		if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, sizeof(uint16_t) * numPrimitives * 3, Yw3d_FMT_INDEX16)))
+		{
+			return false;
+		}
+
+		// Get vertex buffer pointer.
+		VertexElement* vertexElement = nullptr;
+		if (YW3D_FAILED(vertexBuffer->GetPointer(0, (void**)&vertexElement)))
+		{
+			return false;
+		}
+
+		// Get index buffer pointer.
+		uint16_t* indices = nullptr;
+		if (YW3D_FAILED(indexBuffer->GetPointer(0, (void**)&indices)))
+		{
+			return false;
+		}
+
+		// Create render target and render texture.
 
         // Create a temp render target.
-        Yw3dRenderTarget* rtBRDFmap = nullptr;
-        if (YW3D_FAILED(device->CreateRenderTarget(&rtBRDFmap, targetWidth, targetHeight, cubeFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        Yw3dRenderTarget* rtBRDFMap = nullptr;
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtBRDFMap, targetWidth, targetHeight, cubeFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             return false;
         }
 
         // Create brdf texture.
         YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
-        if (YW3D_FAILED(device->CreateCubeTexture(&m_PreintegrateBRDFTexture, cubeLength, 0, cubeFormat)))
+        if (YW3D_FAILED(device->CreateTexture(&m_PreintegrateBRDFTexture, targetWidth, targetHeight, 0, cubeFormat)))
         {
-            LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
+            LOGE(_T("TextureLoaderCube.LoadFromData: Create brdf texture failed."));
             return false;
         }
 
+		// Create transforms.
+
+		// Backup old viewport matrix.sss
+		const Matrix44* matViewportCurrentPointer;
+		device->GetViewportMatrix(matViewportCurrentPointer);
+		Matrix44 matViewportCurrent(*matViewportCurrentPointer);
+
+		// Set device viewport.
+		Matrix44 matViewportCubeMap;
+		Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+		device->SetViewportMatrix(&matViewportCubeMap);
+
+		// Construct view matrices.
+		Matrix44 matViews;
+		Matrix44LookAtLH(matViews, Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+
+		// Construct projection matrix.
+		Matrix44 matProjection;
+		Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
+
+		// Create shader.
+		DemoPBRIBLPreintegrateBRDFMapVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLPreintegrateBRDFMapVertexShader();
+		DemoPBRIBLPreintegrateBRDFMapPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPreintegrateBRDFMapPixelShader();
+
+		// Set render target.
+		graphics->SetRenderTarget(rtBRDFMap);
+
+		// Set states.
+		graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+		graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
+		//// Set cube texture.
+		//graphics->SetTexture(0, m_EnvCubeTexture);
+		//graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+		//graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+		//graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+		//graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+		//graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+		// Set vertex and pixel shader.
+		graphics->SetVertexShader(preintegrateBRDFMapVertexShader);
+		graphics->SetPixelShader(preintegrateBRDFMapPixelShader);
+
+		// Render to target and copy to cube face.
+		device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
+
+		// This should be from device.
+		Matrix44 matWorld;
+		Matrix44 matWVP = matWorld * matViews * matProjection;
+		device->SetTransform(Yw3d_TS_World, &matWorld);
+		device->SetTransform(Yw3d_TS_View, &matViews[i]);
+		device->SetTransform(Yw3d_TS_Projection, &matProjection);
+		device->SetTransform(Yw3d_TS_WVP, &matWVP);
+
+		// Render Quad.
+		// xxx
+
+		 // Recovery viewport.
+		device->SetViewportMatrix(&matViewportCurrent);
+
         // ---
+		YW_SAFE_RELEASE(vertexFormat);
+		YW_SAFE_RELEASE(indexBuffer);
+
         YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
-        YW_SAFE_RELEASE(rtBRDFmap);
+        YW_SAFE_RELEASE(rtBRDFMap);
+
+		YW_SAFE_RELEASE(preintegrateBRDFMapVertexShader);
+		YW_SAFE_RELEASE(preintegrateBRDFMapPixelShader);
 
         return true;
     }
