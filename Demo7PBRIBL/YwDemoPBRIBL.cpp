@@ -687,6 +687,22 @@ namespace yw
 			return false;
 		}
 
+        vertexElement[0].position = Vector3(-1.0f, 1.0f, 0.0f);
+        vertexElement[0].uv = Vector2(0.0f, 1.0f);
+		vertexElement[1].position = Vector3(-1.0f, -1.0f, 0.0f);
+		vertexElement[1].uv = Vector2(0.0f, 0.0f);
+		vertexElement[2].position = Vector3(1.0f, 1.0f, 0.0f);
+		vertexElement[2].uv = Vector2(1.0f, 1.0f);
+		vertexElement[3].position = Vector3(1.0f, -1.0f, 0.0f);
+		vertexElement[3].uv = Vector2(1.0f, 0.0f);
+
+        indices[0] = 0;
+        indices[1] = 1;
+        indices[2] = 2;
+        indices[3] = 1;
+        indices[4] = 2;
+        indices[5] = 3;
+
 		// Create render target and render texture.
 
         // Create a temp render target.
@@ -754,12 +770,13 @@ namespace yw
 		Matrix44 matWorld;
 		Matrix44 matWVP = matWorld * matViews * matProjection;
 		device->SetTransform(Yw3d_TS_World, &matWorld);
-		device->SetTransform(Yw3d_TS_View, &matViews[i]);
+		device->SetTransform(Yw3d_TS_View, &matViews);
 		device->SetTransform(Yw3d_TS_Projection, &matProjection);
 		device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
 		// Render Quad.
 		// xxx
+        device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
 
 		 // Recovery viewport.
 		device->SetViewportMatrix(&matViewportCurrent);
