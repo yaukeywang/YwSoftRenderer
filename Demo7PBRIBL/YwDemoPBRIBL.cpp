@@ -219,37 +219,41 @@ namespace yw
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
 
-        if (!m_RenderedCubeMap)
-        {
-            m_RenderedCubeMap = true;
+        //if (!m_RenderedCubeMap)
+        //{
+        //    m_RenderedCubeMap = true;
 
-            // Generate hdr cube map from hdr equirectangular map.
-            graphics->PushStateBlock();
-            RenderEquirectangularMapToCubeMap();
-            graphics->PopStateBlock();
+        //    // Generate hdr cube map from hdr equirectangular map.
+        //    graphics->PushStateBlock();
+        //    RenderEquirectangularMapToCubeMap();
+        //    graphics->PopStateBlock();
 
-            // Generate diffuse irradiance map from hdr cube map.
-            graphics->PushStateBlock();
-            RenderCubeMapToIrradianceMap();
-            graphics->PopStateBlock();
+        //    // Generate diffuse irradiance map from hdr cube map.
+        //    graphics->PushStateBlock();
+        //    RenderCubeMapToIrradianceMap();
+        //    graphics->PopStateBlock();
 
-            // Generate specular pre-filter environment map.
-            graphics->PushStateBlock();
-            RenderPrefilterReflectionMap();
-            graphics->PopStateBlock();
+        //    // Generate specular pre-filter environment map.
+        //    graphics->PushStateBlock();
+        //    RenderPrefilterReflectionMap();
+        //    graphics->PopStateBlock();
 
-            // Generate specular specular integral BRDF map.
-        }
+        //    // Generate specular specular integral BRDF map.
+        //}
 
-        // Render sky pass.
-        graphics->PushStateBlock();
-        RenderSky(pass);
-        graphics->PopStateBlock();
+        //// Render sky pass.
+        //graphics->PushStateBlock();
+        //RenderSky(pass);
+        //graphics->PopStateBlock();
 
-        // Render model.
-        graphics->PushStateBlock();
-        RenderPbrModel(pass);
-        graphics->PopStateBlock();
+        //// Render model.
+        //graphics->PushStateBlock();
+        //RenderPbrModel(pass);
+        //graphics->PopStateBlock();
+
+		//graphics->PushStateBlock();
+		RenderPreintegrateBRDFMap();
+		//graphics->PopStateBlock();
     }
 
     bool DemoPBRIBL::RenderEquirectangularMapToCubeMap()
@@ -741,27 +745,27 @@ namespace yw
 		Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
 
 		// Create shader.
-		DemoPBRIBLPreintegrateBRDFMapVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLPreintegrateBRDFMapVertexShader();
-		DemoPBRIBLPreintegrateBRDFMapPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPreintegrateBRDFMapPixelShader();
+		//DemoPBRIBLPreintegrateBRDFMapVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLPreintegrateBRDFMapVertexShader();
+		//DemoPBRIBLPreintegrateBRDFMapPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPreintegrateBRDFMapPixelShader();
+		DemoPBRIBLVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLVertexShader();
+		DemoPBRIBLPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPixelShader();
 
 		// Set render target.
 		graphics->SetRenderTarget(rtBRDFMap);
 
 		// Set states.
-		graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CW);
+		graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW); // Yw3d_Cull_CW
 		graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
-		//// Set cube texture.
-		//graphics->SetTexture(0, m_EnvCubeTexture);
-		//graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-		//graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-		//graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-		//graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-		//graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+		// Set primitive data.
+		// 这种非持久化的数据不可以设置到 Graphics 里面，否则因为在这里函数栈释放后，Graphics 再次自动释放会因为访问无效内存。
+		device->SetVertexFormat(vertexFormat);
+		device->SetVertexStream(0, vertexBuffer, 0, sizeof(vertexElement));
+		device->SetIndexBuffer(indexBuffer);
 
 		// Set vertex and pixel shader.
-		graphics->SetVertexShader(preintegrateBRDFMapVertexShader);
-		graphics->SetPixelShader(preintegrateBRDFMapPixelShader);
+		device->SetVertexShader(preintegrateBRDFMapVertexShader);
+		device->SetPixelShader(preintegrateBRDFMapPixelShader);
 
 		// Render to target and copy to cube face.
 		device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
@@ -776,13 +780,15 @@ namespace yw
 
 		// Render Quad.
 		// xxx
-        device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
+        //device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
+		device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, numVertices, 0, numPrimitives);
 
 		 // Recovery viewport.
 		device->SetViewportMatrix(&matViewportCurrent);
 
         // ---
 		YW_SAFE_RELEASE(vertexFormat);
+		YW_SAFE_RELEASE(vertexBuffer);
 		YW_SAFE_RELEASE(indexBuffer);
 
         YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
