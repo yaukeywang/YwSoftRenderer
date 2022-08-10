@@ -637,8 +637,8 @@ namespace yw
         const float aspect = 1.0f;
         const float ZNear = 0.1f;
         const float zFar = 10.0f;
-		const float numVertices = 4;
-		const float numPrimitives = 2;
+		const uint32_t numVertices = 4;
+		const uint32_t numPrimitives = 2;
 
 		// Create primitive data.
 
@@ -691,21 +691,21 @@ namespace yw
 			return false;
 		}
 
-        vertexElement[0].position = Vector3(-1.0f, 1.0f, 0.0f);
+        vertexElement[0].position = Vector3(-1.0f, -1.0f, 0.0f);
         vertexElement[0].uv = Vector2(0.0f, 1.0f);
-		vertexElement[1].position = Vector3(-1.0f, -1.0f, 0.0f);
+		vertexElement[1].position = Vector3(-1.0f, 1.0f, 0.0f);
 		vertexElement[1].uv = Vector2(0.0f, 0.0f);
-		vertexElement[2].position = Vector3(1.0f, 1.0f, 0.0f);
+		vertexElement[2].position = Vector3(1.0f, -1.0f, 0.0f);
 		vertexElement[2].uv = Vector2(1.0f, 1.0f);
-		vertexElement[3].position = Vector3(1.0f, -1.0f, 0.0f);
+		vertexElement[3].position = Vector3(1.0f, 1.0f, 0.0f);
 		vertexElement[3].uv = Vector2(1.0f, 0.0f);
 
         indices[0] = 0;
         indices[1] = 1;
         indices[2] = 2;
         indices[3] = 1;
-        indices[4] = 2;
-        indices[5] = 3;
+        indices[4] = 3;
+        indices[5] = 2;
 
 		// Create render target and render texture.
 
@@ -726,19 +726,21 @@ namespace yw
 
 		// Create transforms.
 
-		// Backup old viewport matrix.sss
-		const Matrix44* matViewportCurrentPointer;
-		device->GetViewportMatrix(matViewportCurrentPointer);
-		Matrix44 matViewportCurrent(*matViewportCurrentPointer);
+		//// Backup old viewport matrix.sss
+		//const Matrix44* matViewportCurrentPointer;
+		//device->GetViewportMatrix(matViewportCurrentPointer);
+		//Matrix44 matViewportCurrent(*matViewportCurrentPointer);
 
-		// Set device viewport.
-		Matrix44 matViewportCubeMap;
-		Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
-		device->SetViewportMatrix(&matViewportCubeMap);
+		//// Set device viewport.
+		//Matrix44 matViewportCubeMap;
+		//Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+		//device->SetViewportMatrix(&matViewportCubeMap);
 
 		// Construct view matrices.
-		Matrix44 matViews;
-		Matrix44LookAtLH(matViews, Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+		Camera* camera = graphics->GetCurrentCamera();
+		Matrix44 matViews; // = graphics->GetCurrentCamera()->GetViewMatrix();
+		Matrix44LookAtLH(matViews, Vector3(0.0f, 0.0f, -2.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+
 
 		// Construct projection matrix.
 		Matrix44 matProjection;
@@ -751,7 +753,7 @@ namespace yw
 		DemoPBRIBLPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPixelShader();
 
 		// Set render target.
-		graphics->SetRenderTarget(rtBRDFMap);
+		//graphics->SetRenderTarget(rtBRDFMap);
 
 		// Set states.
 		graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW); // Yw3d_Cull_CW
@@ -760,7 +762,7 @@ namespace yw
 		// Set primitive data.
 		// 这种非持久化的数据不可以设置到 Graphics 里面，否则因为在这里函数栈释放后，Graphics 再次自动释放会因为访问无效内存。
 		device->SetVertexFormat(vertexFormat);
-		device->SetVertexStream(0, vertexBuffer, 0, sizeof(vertexElement));
+		device->SetVertexStream(0, vertexBuffer, 0, sizeof(VertexElement));
 		device->SetIndexBuffer(indexBuffer);
 
 		// Set vertex and pixel shader.
@@ -780,11 +782,11 @@ namespace yw
 
 		// Render Quad.
 		// xxx
-        //device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
-		device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, numVertices, 0, numPrimitives);
+        device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
+		//device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, numVertices, 0, numPrimitives);
 
 		 // Recovery viewport.
-		device->SetViewportMatrix(&matViewportCurrent);
+		//device->SetViewportMatrix(&matViewportCurrent);
 
         // ---
 		YW_SAFE_RELEASE(vertexFormat);
