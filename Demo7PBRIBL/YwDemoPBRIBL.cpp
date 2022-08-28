@@ -298,13 +298,13 @@ namespace yw
         device->SetViewportMatrix(&matViewportCubeMap);
 
         // Construct view matrices.
-        Matrix44 matViews[6];
-        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
-        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44 matViews[Yw3d_CF_NumCubeFaces];
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_X], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_X], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_Y], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_Y], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_Z], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_Z], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
 
         // Construct projection matrix.
         Matrix44 matProjection;
@@ -416,13 +416,13 @@ namespace yw
         device->SetViewportMatrix(&matViewportCubeMap);
 
         // Construct view matrices.
-        Matrix44 matViews[6];
-        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
-        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44 matViews[Yw3d_CF_NumCubeFaces];
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_X], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_X], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_Y], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_Y], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_Z], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_Z], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
 
         // Construct projection matrix.
         Matrix44 matProjection;
@@ -526,13 +526,13 @@ namespace yw
         Matrix44 matViewportCurrent(*matViewportCurrentPointer);
 
         // Construct view matrices.
-        Matrix44 matViews[6];
-        Matrix44LookAtLH(matViews[0], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[1], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[2], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
-        Matrix44LookAtLH(matViews[3], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-        Matrix44LookAtLH(matViews[4], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
-        Matrix44LookAtLH(matViews[5], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44 matViews[Yw3d_CF_NumCubeFaces];
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_X], Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_X], Vector3::Zero(), Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_Y], Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_Y], Vector3::Zero(), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Positive_Z], Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        Matrix44LookAtLH(matViews[Yw3d_CF_Negative_Z], Vector3::Zero(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f));
 
         // Construct projection matrix.
         Matrix44 matProjection;
@@ -638,7 +638,6 @@ namespace yw
         const float ZNear = 0.1f;
         const float zFar = 10.0f;
 		const uint32_t numVertices = 4;
-		const uint32_t numPrimitives = 2;
 
 		// Create primitive data.
 
@@ -670,23 +669,9 @@ namespace yw
 			return false;
 		}
 
-		// Create index buffer.
-		Yw3dIndexBuffer* indexBuffer = nullptr;
-		if (YW3D_FAILED(device->CreateIndexBuffer(&indexBuffer, sizeof(uint16_t) * numPrimitives * 3, Yw3d_FMT_INDEX16)))
-		{
-			return false;
-		}
-
 		// Get vertex buffer pointer.
 		VertexElement* vertexElement = nullptr;
 		if (YW3D_FAILED(vertexBuffer->GetPointer(0, (void**)&vertexElement)))
-		{
-			return false;
-		}
-
-		// Get index buffer pointer.
-		uint16_t* indices = nullptr;
-		if (YW3D_FAILED(indexBuffer->GetPointer(0, (void**)&indices)))
 		{
 			return false;
 		}
@@ -699,13 +684,6 @@ namespace yw
 		vertexElement[2].uv = Vector2(1.0f, 1.0f);
 		vertexElement[3].position = Vector3(1.0f, 1.0f, 0.0f);
 		vertexElement[3].uv = Vector2(1.0f, 0.0f);
-
-        indices[0] = 0;
-        indices[1] = 1;
-        indices[2] = 2;
-        indices[3] = 1;
-        indices[4] = 3;
-        indices[5] = 2;
 
 		// Create render target and render texture.
 
@@ -763,7 +741,6 @@ namespace yw
 		// 这种非持久化的数据不可以设置到 Graphics 里面，否则因为在这里函数栈释放后，Graphics 再次自动释放会因为访问无效内存。
 		device->SetVertexFormat(vertexFormat);
 		device->SetVertexStream(0, vertexBuffer, 0, sizeof(VertexElement));
-		device->SetIndexBuffer(indexBuffer);
 
 		// Set vertex and pixel shader.
 		device->SetVertexShader(preintegrateBRDFMapVertexShader);
@@ -781,9 +758,7 @@ namespace yw
 		device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
 		// Render Quad.
-		// xxx
         device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
-		//device->DrawIndexedPrimitive(Yw3d_PT_TriangleList, 0, 0, numVertices, 0, numPrimitives);
 
 		 // Recovery viewport.
 		//device->SetViewportMatrix(&matViewportCurrent);
@@ -791,7 +766,6 @@ namespace yw
         // ---
 		YW_SAFE_RELEASE(vertexFormat);
 		YW_SAFE_RELEASE(vertexBuffer);
-		YW_SAFE_RELEASE(indexBuffer);
 
         YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
         YW_SAFE_RELEASE(rtBRDFMap);
