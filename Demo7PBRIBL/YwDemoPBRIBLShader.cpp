@@ -281,8 +281,8 @@ namespace yw
 
     void DemoPBRIBLPreintegrateBRDFMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
     {
-        // The projection vertex position.
-        position = vsShaderInput[0] * (*GetWVPMatrix());
+        // The NDC vertex position.
+        position = Vector4(vsShaderInput[0], 1.0f);
 
         // Vertex texcoord.
         vsShaderOutput[0] = vsShaderInput[1];

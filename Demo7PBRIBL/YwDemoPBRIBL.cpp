@@ -9,6 +9,8 @@
 #include "YwScene.h"
 #include "YwBaseApplication.h"
 #include "YwModel.h"
+#include "YwTextureDataConverter.h"
+#include "YwFileIO.h"
 
 namespace yw
 {
@@ -219,8 +221,8 @@ namespace yw
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
 
-        //if (!m_RenderedCubeMap)
-        //{
+        if (!m_RenderedCubeMap)
+        {
         //    m_RenderedCubeMap = true;
 
         //    // Generate hdr cube map from hdr equirectangular map.
@@ -239,7 +241,11 @@ namespace yw
         //    graphics->PopStateBlock();
 
         //    // Generate specular specular integral BRDF map.
-        //}
+
+            //graphics->PushStateBlock();
+            RenderPreintegrateBRDFMap();
+            //graphics->PopStateBlock();
+        }
 
         //// Render sky pass.
         //graphics->PushStateBlock();
@@ -250,10 +256,6 @@ namespace yw
         //graphics->PushStateBlock();
         //RenderPbrModel(pass);
         //graphics->PopStateBlock();
-
-		//graphics->PushStateBlock();
-		RenderPreintegrateBRDFMap();
-		//graphics->PopStateBlock();
     }
 
     bool DemoPBRIBL::RenderEquirectangularMapToCubeMap()
@@ -339,13 +341,14 @@ namespace yw
             // Render to target and copy to cube face.
             device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
 
+            // NDC vertices, no need transforms.
             // This should be from device.
-            Matrix44 matWorld;
-            Matrix44 matWVP = matWorld * matViews[i] * matProjection;
-            device->SetTransform(Yw3d_TS_World, &matWorld);
-            device->SetTransform(Yw3d_TS_View, &matViews[i]);
-            device->SetTransform(Yw3d_TS_Projection, &matProjection);
-            device->SetTransform(Yw3d_TS_WVP, &matWVP);
+            //Matrix44 matWorld;
+            //Matrix44 matWVP = matWorld * matViews[i] * matProjection;
+            //device->SetTransform(Yw3d_TS_World, &matWorld);
+            //device->SetTransform(Yw3d_TS_View, &matViews[i]);
+            //device->SetTransform(Yw3d_TS_Projection, &matProjection);
+            //device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
             // Render this face.
             m_ModelSkySphere->Render(device);
@@ -632,7 +635,7 @@ namespace yw
         // Render constants.
         const int32_t targetWidth = 512;
         const int32_t targetHeight = 512;
-        const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
+        const Yw3dFormat targetFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;
         const float ZNear = 0.1f;
@@ -689,14 +692,14 @@ namespace yw
 
         // Create a temp render target.
         Yw3dRenderTarget* rtBRDFMap = nullptr;
-        if (YW3D_FAILED(device->CreateRenderTarget(&rtBRDFMap, targetWidth, targetHeight, cubeFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
+        if (YW3D_FAILED(device->CreateRenderTarget(&rtBRDFMap, targetWidth, targetHeight, targetFormat, Yw3d_FMT_R32F, Yw3d_FMT_R32F)))
         {
             return false;
         }
 
         // Create brdf texture.
         YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
-        if (YW3D_FAILED(device->CreateTexture(&m_PreintegrateBRDFTexture, targetWidth, targetHeight, 0, cubeFormat)))
+        if (YW3D_FAILED(device->CreateTexture(&m_PreintegrateBRDFTexture, targetWidth, targetHeight, 0, targetFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create brdf texture failed."));
             return false;
@@ -704,34 +707,31 @@ namespace yw
 
 		// Create transforms.
 
-		//// Backup old viewport matrix.sss
-		//const Matrix44* matViewportCurrentPointer;
-		//device->GetViewportMatrix(matViewportCurrentPointer);
-		//Matrix44 matViewportCurrent(*matViewportCurrentPointer);
+		// Backup old viewport matrix.sss
+		const Matrix44* matViewportCurrentPointer;
+		device->GetViewportMatrix(matViewportCurrentPointer);
+		Matrix44 matViewportCurrent(*matViewportCurrentPointer);
 
-		//// Set device viewport.
-		//Matrix44 matViewportCubeMap;
-		//Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
-		//device->SetViewportMatrix(&matViewportCubeMap);
+		// Set device viewport.
+		Matrix44 matViewportCubeMap;
+		Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+		device->SetViewportMatrix(&matViewportCubeMap);
 
 		// Construct view matrices.
 		Camera* camera = graphics->GetCurrentCamera();
 		Matrix44 matViews; // = graphics->GetCurrentCamera()->GetViewMatrix();
 		Matrix44LookAtLH(matViews, Vector3(0.0f, 0.0f, -2.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
 
-
 		// Construct projection matrix.
 		Matrix44 matProjection;
 		Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
 
 		// Create shader.
-		//DemoPBRIBLPreintegrateBRDFMapVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLPreintegrateBRDFMapVertexShader();
-		//DemoPBRIBLPreintegrateBRDFMapPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPreintegrateBRDFMapPixelShader();
-		DemoPBRIBLVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLVertexShader();
-		DemoPBRIBLPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPixelShader();
+        DemoPBRIBLPreintegrateBRDFMapVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLPreintegrateBRDFMapVertexShader();
+        DemoPBRIBLPreintegrateBRDFMapPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPreintegrateBRDFMapPixelShader();
 
 		// Set render target.
-		//graphics->SetRenderTarget(rtBRDFMap);
+		graphics->SetRenderTarget(rtBRDFMap);
 
 		// Set states.
 		graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW); // Yw3d_Cull_CW
@@ -760,18 +760,31 @@ namespace yw
 		// Render Quad.
         device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
 
+        // ---
+        // Copy pixels from render target to cube face.
+        Yw3dSurface* srcSurface = rtBRDFMap->AcquireColorBuffer();
+        Yw3dSurface* dstSurface = m_PreintegrateBRDFTexture->AcquireMipLevel(0);
+        srcSurface->CopyToSurface(nullptr, dstSurface, nullptr, Yw3d_TF_Linear);
+        YW_SAFE_RELEASE(dstSurface);
+        YW_SAFE_RELEASE(srcSurface);
+        // ---
+
 		 // Recovery viewport.
-		//device->SetViewportMatrix(&matViewportCurrent);
+		device->SetViewportMatrix(&matViewportCurrent);
 
         // ---
 		YW_SAFE_RELEASE(vertexFormat);
 		YW_SAFE_RELEASE(vertexBuffer);
-
-        YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
         YW_SAFE_RELEASE(rtBRDFMap);
-
 		YW_SAFE_RELEASE(preintegrateBRDFMapVertexShader);
 		YW_SAFE_RELEASE(preintegrateBRDFMapPixelShader);
+
+        // Save brdf texture.
+        uint8_t* textureData = nullptr;
+        uint32_t textureDataLength = 0;
+        YwTextureDataConverter::TextureDataToBMP(m_PreintegrateBRDFTexture, &textureData, &textureDataLength);
+        FileIO file;
+        file.WriteFile("./Resources/brdf.bmp", textureData, textureDataLength, false);
 
         return true;
     }
