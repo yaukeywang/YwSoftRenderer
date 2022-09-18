@@ -108,9 +108,6 @@ namespace yw
         uint32_t GetHeight(uint32_t mipLevel = 0) const;
 
     private:
-        // Number of mip-levels that actually surface pointer array created.
-        uint32_t m_SurfaceMipLevels;
-
         // Number of mip-levels.
         uint32_t m_MipLevels;
 

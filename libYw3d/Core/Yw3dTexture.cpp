@@ -9,7 +9,6 @@ namespace yw
 {
     Yw3dTexture::Yw3dTexture(Yw3dDevice* device) : 
         IYw3dBaseTexture(device),
-        m_SurfaceMipLevels(0),
         m_MipLevels(0),
         m_SquaredWidth(0),
         m_SquaredHeight(0),
@@ -48,10 +47,9 @@ namespace yw
         if (0 == mipLevels)
         {
             // Get max mipmap levels.
-            mipLevels = (uint32_t)floor(log2(max(width, height))) + 1;
+            mipLevels = (uint32_t)floor(log2(min(width, height))) + 1;
         }
 
-        m_SurfaceMipLevels = mipLevels;
         m_MipLevelsData = new Yw3dSurface*[mipLevels];
         if (nullptr == m_MipLevelsData)
         {
@@ -62,17 +60,29 @@ namespace yw
         // Zero surface memory.
         memset(m_MipLevelsData, 0, sizeof(Yw3dSurface*) * mipLevels);
 
-        // Create default mipmap surface.
-        Yw3dResult resMipLevel = m_Device->CreateSurface(m_MipLevelsData, width, height, format);
-        if (YW3D_FAILED(resMipLevel))
+        // Create surface for each mipmap level.
+        Yw3dSurface** curMipLevelData = m_MipLevelsData;
+        while ((0 != width) && (0 != height))
         {
-            // Destructor will perform cleanup.
-            LOGE(_T("Yw3dTexture::Create: creation of default mip-level failed.\n"));
-            return resMipLevel;
-        }
+            Yw3dResult resMipLevel = m_Device->CreateSurface(curMipLevelData, width, height, format);
+            if (YW3D_FAILED(resMipLevel))
+            {
+                // Destructor will perform cleanup.
+                LOGE(_T("Yw3dTexture::GenerateMipSubLevels: creation of sub mip-level failed.\n"));
+                return resMipLevel;
+            }
 
-        // Give default mipmap level of 1, the origin level.
-        m_MipLevels = 1;
+            ++m_MipLevels;
+            ++curMipLevelData;
+
+            if (0 == --mipLevels)
+            {
+                break;
+            }
+
+            width = (uint32_t)floor(width >> 1);
+            height = (uint32_t)floor(height >> 1);
+        }
 
         return Yw3d_S_OK;
     }
@@ -157,41 +167,6 @@ namespace yw
 
     Yw3dResult Yw3dTexture::GenerateMipSubLevels(uint32_t srcLevel)
     {
-        // Get source texture info.
-        uint32_t textureWidth = GetWidth(0);
-        uint32_t textureHeight = GetHeight(0);
-        Yw3dFormat textureFormat = GetFormat();
-
-        // Get first sub-level size of surface.
-        uint32_t surfaceWidth = (uint32_t)floor(textureWidth >> 1);
-        uint32_t surfaceHeight = (uint32_t)floor(textureHeight >> 1);
-
-        // Create surface for each mipmap level.
-        uint32_t mipLevels = m_SurfaceMipLevels;
-        Yw3dSurface** curMipLevelData = m_MipLevelsData + 1;
-        while ((0 != surfaceWidth) && (0 != surfaceHeight))
-        {
-            YW_SAFE_RELEASE(*curMipLevelData);
-            Yw3dResult resMipLevel = m_Device->CreateSurface(curMipLevelData, surfaceWidth, surfaceHeight, textureFormat);
-            if (YW3D_FAILED(resMipLevel))
-            {
-                // Destructor will perform cleanup.
-                LOGE(_T("Yw3dTexture::GenerateMipSubLevels: creation of sub mip-level failed.\n"));
-                return resMipLevel;
-            }
-
-            ++m_MipLevels;
-            ++curMipLevelData;
-
-            if (0 == --mipLevels)
-            {
-                break;
-            }
-
-            surfaceWidth = (uint32_t)floor(surfaceWidth >> 1);
-            surfaceHeight = (uint32_t)floor(surfaceHeight >> 1);
-        }
-
         if ((srcLevel + 1) > m_MipLevels)
         {
             LOGE(_T("Yw3dTexture::GenerateMipSubLevels: srcLevel refers either to last mip-level or is larger than the number of mip-levels.\n"));
