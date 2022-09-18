@@ -12,6 +12,11 @@ namespace yw
     {
     public:
         static bool TextureDataToBMP(class Yw3dTexture* texture, uint8_t** resultData, uint32_t* resultDataLength);
+        static bool TextureDataToYWT(class Yw3dTexture* texture, uint8_t** resultData, uint32_t* resultDataLength);
+
+    public:
+        static bool SaveTextureDataToBMPFile(class Yw3dTexture* texture, const StringA& fileName);
+        static bool SaveTextureDataToYWTFile(class Yw3dTexture* texture, const StringA& fileName);
     };
 }
 

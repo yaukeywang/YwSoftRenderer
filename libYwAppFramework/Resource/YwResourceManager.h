@@ -88,6 +88,10 @@ namespace yw
         static void* LoadTexture_Animated(ResourceManager* resourceManager, const StringA& fileName);
         static void UnloadTexture_Animated(ResourceManager* resourceManager, void* resource);
 
+        // Load and unload "ywt" texture file.
+        static void* LoadTexture_YWT(ResourceManager* resourceManager, const StringA& fileName);
+        static void UnloadTexture_YWT(ResourceManager* resourceManager, void* resource);
+
     public:
         // Get parent application.
         inline class IApplication* GetApplication()

@@ -11,6 +11,7 @@
 #include "YwTextureLoaderTGA.h"
 #include "YwTextureLoaderRGBE.h"
 #include "YwTextureLoaderCube.h"
+#include "YwTextureLoaderYWT.h"
 
 namespace yw
 {
@@ -43,6 +44,7 @@ namespace yw
         RegisterResourceExtension("xyze", LoadTexture_HDR, UnloadTexture_HDR);
         RegisterResourceExtension("cube", LoadTexture_Cube, UnloadTexture_Cube);
         RegisterResourceExtension("anim", LoadTexture_Animated, UnloadTexture_Animated);
+        RegisterResourceExtension("ywt", LoadTexture_YWT, UnloadTexture_YWT);
 
         return true;
     }
@@ -182,8 +184,8 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderBMP bmpLoader;
-        if (!bmpLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        TextureLoaderBMP texLoader;
+        if (!texLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -204,8 +206,8 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderPNG pngLoader;
-        if (!pngLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        TextureLoaderPNG texLoader;
+        if (!texLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -226,8 +228,8 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderTGA tgaLoader;
-        if (!tgaLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        TextureLoaderTGA texLoader;
+        if (!texLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -248,8 +250,8 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderRGBE rgbeLoader;
-        if (!rgbeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        TextureLoaderRGBE texLoader;
+        if (!texLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -270,8 +272,8 @@ namespace yw
         Yw3dTexture* texture = nullptr;
 
         // Load texture data by loader.
-        TextureLoaderCube cubeLoader;
-        if (!cubeLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        TextureLoaderCube texLoader;
+        if (!texLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
         {
             YW_SAFE_RELEASE(texture);
             return nullptr;
@@ -295,6 +297,28 @@ namespace yw
     void ResourceManager::UnloadTexture_Animated(ResourceManager* resourceManager, void* resource)
     {
         YW_SAFE_DELETE(resource);
+    }
+
+    void* ResourceManager::LoadTexture_YWT(ResourceManager* resourceManager, const StringA& fileName)
+    {
+        // Define a texture.
+        Yw3dTexture* texture = nullptr;
+
+        // Load texture data by loader.
+        TextureLoaderYWT texLoader;
+        if (!texLoader.Load(fileName, resourceManager->GetApplication()->GetGraphics()->GetYw3dDevice(), (IYw3dBaseTexture**)(&texture), true))
+        {
+            YW_SAFE_RELEASE(texture);
+            return nullptr;
+        }
+
+        return texture;
+    }
+
+    void ResourceManager::UnloadTexture_YWT(ResourceManager* resourceManager, void* resource)
+    {
+        Yw3dTexture* texture = (Yw3dTexture*)resource;
+        YW_SAFE_RELEASE(texture);
     }
 
     StringA ResourceManager::GetDiskFilePath(const StringA& fileName) const
