@@ -29,7 +29,8 @@ enum RGBEFormat
 };
 
 // RGBE header info.
-struct RGBEHeader {
+struct RGBEHeader
+{
     int32_t format;
     float exposure; /* a value of 1.0 in an image corresponds to <exposure> watts/steradian/m^2. defaults to 1.0 */
     float gamma; /* image has already been gamma corrected with given gamma.  defaults to 1.0 (no correction) */
