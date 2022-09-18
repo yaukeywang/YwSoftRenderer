@@ -223,7 +223,7 @@ namespace yw
 
         if (!m_RenderedCubeMap)
         {
-        //    m_RenderedCubeMap = true;
+            m_RenderedCubeMap = true;
 
         //    // Generate hdr cube map from hdr equirectangular map.
         //    graphics->PushStateBlock();
@@ -242,9 +242,9 @@ namespace yw
 
         //    // Generate specular specular integral BRDF map.
 
-            //graphics->PushStateBlock();
+            graphics->PushStateBlock();
             RenderPreintegrateBRDFMap();
-            //graphics->PopStateBlock();
+            graphics->PopStateBlock();
         }
 
         //// Render sky pass.
@@ -697,9 +697,9 @@ namespace yw
             return false;
         }
 
-        // Create brdf texture.
+        // Create brdf texture, no need mipmap.
         YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
-        if (YW3D_FAILED(device->CreateTexture(&m_PreintegrateBRDFTexture, targetWidth, targetHeight, 0, targetFormat)))
+        if (YW3D_FAILED(device->CreateTexture(&m_PreintegrateBRDFTexture, targetWidth, targetHeight, 1, targetFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create brdf texture failed."));
             return false;
@@ -780,11 +780,8 @@ namespace yw
 		YW_SAFE_RELEASE(preintegrateBRDFMapPixelShader);
 
         // Save brdf texture.
-        uint8_t* textureData = nullptr;
-        uint32_t textureDataLength = 0;
-        YwTextureDataConverter::TextureDataToBMP(m_PreintegrateBRDFTexture, &textureData, &textureDataLength);
-        FileIO file;
-        file.WriteFile("./Resources/brdf.bmp", textureData, textureDataLength, false);
+        YwTextureDataConverter::SaveTextureDataToBMPFile(m_PreintegrateBRDFTexture, "./Resources/brdf.bmp");
+        YwTextureDataConverter::SaveTextureDataToYWTFile(m_PreintegrateBRDFTexture, "./Resources/brdf.ywt");
 
         return true;
     }
