@@ -116,7 +116,7 @@ uint32_t GetYwTextureSaveDataSize(const YwTextureData& textureData)
     for (uint8_t i = 0; i < (uint8_t)textureData.mipsData.size(); i++)
     {
         dataSize += sizeof(YwTextureFileMipmapHeader);
-        dataSize += textureData.mipsData[i].mipData.size();
+        dataSize += (uint32_t)textureData.mipsData[i].mipData.size();
     }
 
     dataSize += sizeof(YwTextureFileMipmapHeader);
