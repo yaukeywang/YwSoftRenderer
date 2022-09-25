@@ -11,9 +11,17 @@ namespace yw
     class Paths
     {
     public:
-        static StringA GetFilePath(StringA inPath);
-        static StringA GetFileName(StringA inPath);
-        static StringA GetFileExtension(StringA inPath);
+        static String GetFilePath(String inPath);
+        static StringA GetFilePathA(StringA inPath);
+        static StringW GetFilePathW(StringW inPath);
+
+        static String GetFileName(String inPath);
+        static StringA GetFileNameA(StringA inPath);
+        static StringW GetFileNameW(StringW inPath);
+
+        static String GetFileExtension(String inPath);
+        static StringA GetFileExtensionA(StringA inPath);
+        static StringW GetFileExtensionW(StringW inPath);
     };
 }
 

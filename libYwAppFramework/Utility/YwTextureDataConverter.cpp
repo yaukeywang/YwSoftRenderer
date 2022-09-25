@@ -183,9 +183,9 @@ namespace yw
         }
 
         // Get file names.
-        StringA filePath = Paths::GetFilePath(fileName);
-        StringA filePureName = Paths::GetFileName(fileName);
-        StringA fileExt = Paths::GetFileExtension(fileName);
+        StringA filePath = Paths::GetFilePathA(fileName);
+        StringA filePureName = Paths::GetFileNameA(fileName);
+        StringA fileExt = Paths::GetFileExtensionA(fileName);
         if (fileExt.empty())
         {
             fileExt = "bmp";
@@ -253,9 +253,9 @@ namespace yw
         }
 
         // Get file names.
-        StringA filePath = Paths::GetFilePath(fileName);
-        StringA filePureName = Paths::GetFileName(fileName);
-        StringA fileExt = Paths::GetFileExtension(fileName);
+        StringA filePath = Paths::GetFilePathA(fileName);
+        StringA filePureName = Paths::GetFileNameA(fileName);
+        StringA fileExt = Paths::GetFileExtensionA(fileName);
         if (fileExt.empty())
         {
             fileExt = "cube";
@@ -338,9 +338,9 @@ namespace yw
         }
 
         // Get file names.
-        StringA filePath = Paths::GetFilePath(fileName);
-        StringA filePureName = Paths::GetFileName(fileName);
-        StringA fileExt = Paths::GetFileExtension(fileName);
+        StringA filePath = Paths::GetFilePathA(fileName);
+        StringA filePureName = Paths::GetFileNameA(fileName);
+        StringA fileExt = Paths::GetFileExtensionA(fileName);
         if (fileExt.empty())
         {
             fileExt = "cube";
