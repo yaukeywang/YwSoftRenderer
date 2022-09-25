@@ -7,6 +7,7 @@
 #include "bmp.h"
 #include "ywt.h"
 #include "YwFileIO.h"
+#include "YwPaths.h"
 
 namespace yw
 {
@@ -181,6 +182,15 @@ namespace yw
             return false;
         }
 
+        // Get file names.
+        StringA filePath = Paths::GetFilePath(fileName);
+        StringA filePureName = Paths::GetFileName(fileName);
+        StringA fileExt = Paths::GetFileExtension(fileName);
+        if (fileExt.empty())
+        {
+            fileExt = "bmp";
+        }
+
         for (int32_t i = 0; i < (int32_t)results.size(); i++)
         {
             // Get content.
@@ -188,7 +198,7 @@ namespace yw
 
             // Get proper file name.
             char finalFileName[256];
-            sprintf(finalFileName, "%s_mip%d.bmp", fileName.c_str(), i);
+            sprintf(finalFileName, "%s%s_mip%d.%s", filePath.c_str(), filePureName.c_str(), i, fileExt.c_str());
 
             // Save data to file.
             FileIO file;
@@ -242,6 +252,15 @@ namespace yw
             return false;
         }
 
+        // Get file names.
+        StringA filePath = Paths::GetFilePath(fileName);
+        StringA filePureName = Paths::GetFileName(fileName);
+        StringA fileExt = Paths::GetFileExtension(fileName);
+        if (fileExt.empty())
+        {
+            fileExt = "cube";
+        }
+
         // Cube face names.
         const char* cubeFaceNames[Yw3d_CF_NumCubeFaces] = { "px", "nx", "py", "ny", "pz", "nz" };
 
@@ -267,12 +286,12 @@ namespace yw
 
             // Get proper file name.
             char finalFileName[256];
-            sprintf(finalFileName, "%s_%s.bmp", fileName.c_str(), cubeFaceNames[i]);
+            sprintf(finalFileName, "%s_%s.bmp", filePureName.c_str(), cubeFaceNames[i]);
             cubeFaceTextureNames.push_back(finalFileName);
 
             // Save data to file.
             FileIO cubeFacefile;
-            if (0 == cubeFacefile.WriteFile(finalFileName, convertResult.resultData, convertResult.resultDataLength, false))
+            if (0 == cubeFacefile.WriteFile(filePath + finalFileName, convertResult.resultData, convertResult.resultDataLength, false))
             {
                 // Release texture data.
                 YW_SAFE_DELETE_ARRAY(convertResult.resultData);
@@ -302,7 +321,8 @@ namespace yw
 
         // Save cube texture.
         FileIO cubefile;
-        if (0 == cubefile.WriteFile(fileName + ".cube", (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
+        StringA fileSaveName = filePath + filePureName + "_bmp." + fileExt;
+        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
         {
             return false;
         }
@@ -315,6 +335,15 @@ namespace yw
         if (fileName.empty() || (nullptr == cubeTexture))
         {
             return false;
+        }
+
+        // Get file names.
+        StringA filePath = Paths::GetFilePath(fileName);
+        StringA filePureName = Paths::GetFileName(fileName);
+        StringA fileExt = Paths::GetFileExtension(fileName);
+        if (fileExt.empty())
+        {
+            fileExt = "cube";
         }
 
         // Cube face names.
@@ -335,12 +364,12 @@ namespace yw
 
             // Get proper file name.
             char finalFileName[256];
-            sprintf(finalFileName, "%s_%s.ywt", fileName.c_str(), cubeFaceNames[i]);
+            sprintf(finalFileName, "%s_%s.ywt", filePureName.c_str(), cubeFaceNames[i]);
             cubeFaceTextureNames.push_back(finalFileName);
 
             // Save data to file.
             FileIO cubeFacefile;
-            if (0 == cubeFacefile.WriteFile(finalFileName, textureData, textureDataLength, false))
+            if (0 == cubeFacefile.WriteFile(filePath + finalFileName, textureData, textureDataLength, false))
             {
                 YW_SAFE_DELETE_ARRAY(textureData);
                 return false;
@@ -366,7 +395,8 @@ namespace yw
 
         // Save cube texture.
         FileIO cubefile;
-        if (0 == cubefile.WriteFile(fileName + ".cube", (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
+        StringA fileSaveName = filePath + filePureName + "_ywt." + fileExt;
+        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
         {
             return false;
         }
