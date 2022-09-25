@@ -353,7 +353,7 @@ namespace yw
 
         if (nullptr == ext)
         {
-            return 0;
+            return StringA("");
         }
 
         // Get extension name.
