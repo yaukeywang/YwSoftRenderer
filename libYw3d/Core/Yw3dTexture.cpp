@@ -46,8 +46,9 @@ namespace yw
 
         if (0 == mipLevels)
         {
-            // Get max mipmap levels.
-            mipLevels = (uint32_t)floor(log2(min(width, height))) + 1;
+            // Get max mipmap levels. (Maybe greater than actual mipmap levels.)
+            // From: <<Non-Power-of-Two Mipmapping>> https://www.nvidia.com/en-us/drivers/np2-mipmapping/.
+            mipLevels = (uint32_t)floor(log2(max(width, height))) + 1;
         }
 
         m_MipLevelsData = new Yw3dSurface*[mipLevels];
@@ -165,6 +166,7 @@ namespace yw
         return Yw3d_S_OK;
     }
 
+    // From: <<Non-Power-of-Two Mipmapping>> https://www.nvidia.com/en-us/drivers/np2-mipmapping/.
     Yw3dResult Yw3dTexture::GenerateMipSubLevels(uint32_t srcLevel)
     {
         if ((srcLevel + 1) > m_MipLevels)
