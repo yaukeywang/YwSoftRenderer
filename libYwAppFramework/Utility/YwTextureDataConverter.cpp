@@ -186,7 +186,7 @@ namespace yw
         StringA filePath = Paths::GetFilePathA(fileName);
         StringA filePureName = Paths::GetFileNameA(fileName);
         StringA fileExt = Paths::GetFileExtensionA(fileName);
-        if (fileExt.empty())
+        if (fileExt.empty() || ("bmp" != fileExt))
         {
             fileExt = "bmp";
         }
@@ -233,8 +233,18 @@ namespace yw
             return false;
         }
 
+        // Get file names.
+        StringA filePath = Paths::GetFilePathA(fileName);
+        StringA filePureName = Paths::GetFileNameA(fileName);
+        StringA fileExt = Paths::GetFileExtensionA(fileName);
+        if (fileExt.empty() || ("ywt" != fileExt))
+        {
+            fileExt = "ywt";
+        }
+
         FileIO file;
-        if (0 == file.WriteFile(fileName, textureData, textureDataLength, false))
+        StringA fileSaveName = filePath + filePureName + "." + fileExt;
+        if (0 == file.WriteFile(fileSaveName, textureData, textureDataLength, false))
         {
             YW_SAFE_DELETE_ARRAY(textureData);
             return false;
@@ -256,7 +266,7 @@ namespace yw
         StringA filePath = Paths::GetFilePathA(fileName);
         StringA filePureName = Paths::GetFileNameA(fileName);
         StringA fileExt = Paths::GetFileExtensionA(fileName);
-        if (fileExt.empty())
+        if (fileExt.empty() || ("cube" != fileExt))
         {
             fileExt = "cube";
         }
@@ -321,7 +331,7 @@ namespace yw
 
         // Save cube texture.
         FileIO cubefile;
-        StringA fileSaveName = filePath + filePureName + "_bmp." + fileExt;
+        StringA fileSaveName = filePath + filePureName + "." + fileExt;
         if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
         {
             return false;
@@ -341,7 +351,7 @@ namespace yw
         StringA filePath = Paths::GetFilePathA(fileName);
         StringA filePureName = Paths::GetFileNameA(fileName);
         StringA fileExt = Paths::GetFileExtensionA(fileName);
-        if (fileExt.empty())
+        if (fileExt.empty() || ("cube" != fileExt))
         {
             fileExt = "cube";
         }
@@ -395,7 +405,7 @@ namespace yw
 
         // Save cube texture.
         FileIO cubefile;
-        StringA fileSaveName = filePath + filePureName + "_ywt." + fileExt;
+        StringA fileSaveName = filePath + filePureName + "." + fileExt;
         if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
         {
             return false;
