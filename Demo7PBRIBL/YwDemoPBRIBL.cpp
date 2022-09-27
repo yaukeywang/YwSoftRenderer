@@ -11,6 +11,7 @@
 #include "YwModel.h"
 #include "YwTextureDataConverter.h"
 #include "YwFileIO.h"
+#include "YwPaths.h"
 
 namespace yw
 {
@@ -225,10 +226,18 @@ namespace yw
         {
             m_RenderedCubeMap = true;
 
-        //    // Generate hdr cube map from hdr equirectangular map.
-        //    graphics->PushStateBlock();
-        //    RenderEquirectangularMapToCubeMap();
-        //    graphics->PopStateBlock();
+            FileIO fileChecker;
+
+            // Generate hdr cube map from hdr equirectangular map.
+            if (!fileChecker.FileExists("./Resources/IBL/newport_loft_ywt.cube"))
+            {
+                graphics->PushStateBlock();
+                RenderEquirectangularMapToCubeMap();
+                graphics->PopStateBlock();
+
+                YwTextureDataConverter::SaveCubeTextureDataToYWTFile("./Resources/IBL/newport_loft_ywt.cube", m_EnvCubeTexture);
+                YwTextureDataConverter::SaveCubeTextureDataToBMPFile("./Resources/IBL/newport_loft_bmp.cube", m_EnvCubeTexture);
+            }
 
         //    // Generate diffuse irradiance map from hdr cube map.
         //    graphics->PushStateBlock();
@@ -242,15 +251,15 @@ namespace yw
 
         //    // Generate specular specular integral BRDF map.
 
-            graphics->PushStateBlock();
-            RenderPreintegrateBRDFMap();
-            graphics->PopStateBlock();
+            //graphics->PushStateBlock();
+            //RenderPreintegrateBRDFMap();
+            //graphics->PopStateBlock();
         }
 
-        //// Render sky pass.
-        //graphics->PushStateBlock();
-        //RenderSky(pass);
-        //graphics->PopStateBlock();
+        // Render sky pass.
+        graphics->PushStateBlock();
+        RenderSky(pass);
+        graphics->PopStateBlock();
 
         //// Render model.
         //graphics->PushStateBlock();
@@ -341,14 +350,13 @@ namespace yw
             // Render to target and copy to cube face.
             device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
 
-            // NDC vertices, no need transforms.
             // This should be from device.
-            //Matrix44 matWorld;
-            //Matrix44 matWVP = matWorld * matViews[i] * matProjection;
-            //device->SetTransform(Yw3d_TS_World, &matWorld);
-            //device->SetTransform(Yw3d_TS_View, &matViews[i]);
-            //device->SetTransform(Yw3d_TS_Projection, &matProjection);
-            //device->SetTransform(Yw3d_TS_WVP, &matWVP);
+            Matrix44 matWorld;
+            Matrix44 matWVP = matWorld * matViews[i] * matProjection;
+            device->SetTransform(Yw3d_TS_World, &matWorld);
+            device->SetTransform(Yw3d_TS_View, &matViews[i]);
+            device->SetTransform(Yw3d_TS_Projection, &matProjection);
+            device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
             // Render this face.
             m_ModelSkySphere->Render(device);
@@ -679,6 +687,7 @@ namespace yw
 			return false;
 		}
 
+        // NDC vertex position and texture coordinates.
         vertexElement[0].position = Vector3(-1.0f, -1.0f, 0.0f);
         vertexElement[0].uv = Vector2(0.0f, 1.0f);
 		vertexElement[1].position = Vector3(-1.0f, 1.0f, 0.0f);
@@ -749,13 +758,14 @@ namespace yw
 		// Render to target and copy to cube face.
 		device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
 
-		// This should be from device.
-		Matrix44 matWorld;
-		Matrix44 matWVP = matWorld * matViews * matProjection;
-		device->SetTransform(Yw3d_TS_World, &matWorld);
-		device->SetTransform(Yw3d_TS_View, &matViews);
-		device->SetTransform(Yw3d_TS_Projection, &matProjection);
-		device->SetTransform(Yw3d_TS_WVP, &matWVP);
+        // NDC vertices, no need transforms.
+		//// This should be from device.
+		//Matrix44 matWorld;
+		//Matrix44 matWVP = matWorld * matViews * matProjection;
+		//device->SetTransform(Yw3d_TS_World, &matWorld);
+		//device->SetTransform(Yw3d_TS_View, &matViews);
+		//device->SetTransform(Yw3d_TS_Projection, &matProjection);
+		//device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
 		// Render Quad.
         device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
@@ -780,8 +790,8 @@ namespace yw
 		YW_SAFE_RELEASE(preintegrateBRDFMapPixelShader);
 
         // Save brdf texture.
-        YwTextureDataConverter::SaveTextureDataToBMPFile(m_PreintegrateBRDFTexture, "./Resources/brdf.bmp");
-        YwTextureDataConverter::SaveTextureDataToYWTFile(m_PreintegrateBRDFTexture, "./Resources/brdf.ywt");
+        YwTextureDataConverter::SaveTextureDataToBMPFile("./Resources/brdf", m_PreintegrateBRDFTexture, true);
+        //YwTextureDataConverter::SaveTextureDataToYWTFile("./Resources/brdf.ywt", m_PreintegrateBRDFTexture);
 
         return true;
     }
@@ -819,7 +829,7 @@ namespace yw
 
         // Set sky texture.
         //graphics->SetTexture(0, m_EnvCubeTexture);
-        graphics->SetTexture(0, m_PrefilterReflectionCubeTexture);
+        graphics->SetTexture(0, m_EnvCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
