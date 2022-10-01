@@ -4,22 +4,11 @@
 #ifndef __YW_RGBE_H__
 #define __YW_RGBE_H__
 
-// RGBE header file magic number.
-#define RGBE_HEADER_MAGIC "#?RADIANCE"
+#include <stdint.h>
 
-// RGBE format magic of rgbe.
-#define RGBE_FORMAT_RGBE_MAGIC "FORMAT=32-bit_rle_rgbe"
-
-// RGBE format magic of xyze.
-#define RGBE_FORMAT_XYZE_MAGIC "FORMAT=32-bit_rle_xyze"
-
-// Offsets to red, green, and blue components in a data (float) pixel.
-#define RGBE_DATA_RED 0
-#define RGBE_DATA_GREEN 1
-#define RGBE_DATA_BLUE 2
-
-/* RGBE data number of floats per pixel */
-#define RGBE_DATA_SIZE 3
+// ------------------------------------------------------------------
+// RGBE file parsing code from: https://www.graphics.cornell.edu/~bjw/rgbe.html.
+// Changing a little bit avoid using "FILE".
 
 // RGBE file format.
 enum RGBEFormat
@@ -40,5 +29,23 @@ struct RGBEHeader
 
     RGBEHeader() : format(RGBEFormat_RGBE), exposure(0.0f), gamma(0.0f), width(0), height(0) {}
 };
+
+/* flags indicating which fields in an rgbe_header_info are valid */
+#define RGBE_VALID_PROGRAMTYPE 0x01
+#define RGBE_VALID_GAMMA 0x02
+#define RGBE_VALID_EXPOSURE 0x04
+
+/* return codes for rgbe routines */
+#define RGBE_RETURN_SUCCESS 0
+#define RGBE_RETURN_FAILURE -1
+
+// Read rgbe file header, return data moved length from original data.
+int32_t RGBEReadHeaderFromData(const uint8_t* data, RGBEHeader* header);
+
+// Simple read routine. will not correctly handle run length encoding.
+bool RGBEReadPixelsFromData(const uint8_t* srcData, float* dstData, int pixels);
+
+// Reading pixels. Will correctly handle run length encoding.
+bool RGBEReadPixelsRLEFromData(const uint8_t* srcData, float* dstData, int32_t scanlineWidth, int32_t numScanlines);
 
 #endif // !__YW_RGBE_H__
