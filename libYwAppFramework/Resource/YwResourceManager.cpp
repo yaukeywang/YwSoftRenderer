@@ -284,8 +284,8 @@ namespace yw
 
     void ResourceManager::UnloadTexture_Cube(ResourceManager* resourceManager, void* resource)
     {
-        Yw3dTexture* texture = (Yw3dTexture*)resource;
-        YW_SAFE_DELETE(resource);
+        Yw3dCubeTexture* texture = (Yw3dCubeTexture*)resource;
+        YW_SAFE_RELEASE(texture);
     }
 
     void* ResourceManager::LoadTexture_Animated(ResourceManager* resourceManager, const StringA& fileName)

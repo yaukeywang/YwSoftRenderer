@@ -467,7 +467,7 @@ namespace yw
         // Save cube texture.
         FileIO cubefile;
         StringA fileSaveName = filePath + filePureName + "." + fileExt;
-        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
+        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), false))
         {
             return false;
         }
@@ -555,7 +555,7 @@ namespace yw
         // Save cube texture.
         FileIO cubefile;
         StringA fileSaveName = filePath + filePureName + "." + fileExt;
-        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
+        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), false))
         {
             return false;
         }
@@ -635,7 +635,7 @@ namespace yw
         // Save cube texture.
         FileIO cubefile;
         StringA fileSaveName = filePath + filePureName + "." + fileExt;
-        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), true))
+        if (0 == cubefile.WriteFile(fileSaveName, (uint8_t*)cubeTextureContent.c_str(), (uint32_t)cubeTextureContent.length(), false))
         {
             return false;
         }

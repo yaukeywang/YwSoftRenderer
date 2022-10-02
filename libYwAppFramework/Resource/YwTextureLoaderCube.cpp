@@ -29,7 +29,7 @@ namespace yw
         std::stringstream cubeData((const char*)data);
 
         // Alloc a temp buffer to read line.
-        char buff[512];
+        char buff[256];
         memset(buff, 0, sizeof(buff));
 
         // Cube map face textures.
@@ -43,8 +43,6 @@ namespace yw
                 break;
             }
 
-            cubeData.ignore(1000, '\n');
-
             // Exit if get a empty line, mean next line is image size, time to break.
             if (0 == strlen(buff))
             {
@@ -52,6 +50,10 @@ namespace yw
             }
 
             faceTextureNames.push_back(buff);
+            if (faceTextureNames.size() == Yw3d_CF_NumCubeFaces)
+            {
+                break;
+            }
         }
 
         uint32_t numTextures = (uint32_t)faceTextureNames.size();
