@@ -3,7 +3,6 @@
 
 #include "rgbe.h"
 #include <cmath>
-#include <string>
 
 // ------------------------------------------------------------------
 // RGBE file parsing code from: https://www.graphics.cornell.edu/~bjw/rgbe.html.
@@ -185,7 +184,7 @@ int32_t RGBEReadHeaderFromData(const uint8_t* data, RGBEHeader* header)
         }
         else if (sscanf(buff, "PRIMARIES=%g %g %g %g %g %g %g %g", &primaries[0], &primaries[1], &primaries[2], &primaries[3], &primaries[4], &primaries[5], &primaries[6], &primaries[7]) == 1)
         {
-            memcpy(header->primaries, primaries, sizeof(primaries) / sizeof(primaries[0]));
+            memcpy(header->primaries, primaries, sizeof(primaries));
         }
     }
 
@@ -340,4 +339,84 @@ bool RGBEReadPixelsRLEFromData(const uint8_t* srcData, float* dstData, int32_t s
 
     RGBE_SAFE_DELETE_ARRAY(scanline_buffer);
     return true;
+}
+
+uint32_t RGBEWriteHeaderToData(const RGBEHeader* header, std::vector<uint8_t>& rgbeData)
+{
+    if (nullptr == header)
+    {
+        return 0;
+    }
+
+    std::string result;
+    result.append(RGBE_HEADER_MAGIC).append("\n");
+    result.append("# Created by YwSoftRenderer. [https://github.com/yaukeywang/YwSoftRenderer]").append("\n");
+
+    if (RGBEFormat_XYZE == header->format)
+    {
+        result.append(RGBE_FORMAT_XYZE_MAGIC).append("\n");
+    }
+    else
+    {
+        result.append(RGBE_FORMAT_RGBE_MAGIC).append("\n");
+    }
+    
+    // Alloc a temp buffer to read line.
+    char buff[256];
+    memset(buff, 0, sizeof(buff));
+
+    sprintf(buff, "EXPOSURE=%g", header->exposure);
+    result.append(buff).append("\n");
+
+    sprintf(buff, "GAMMA=%g", header->gamma);
+    result.append(buff).append("\n");
+
+    // We do not write this currently.
+    //sprintf(buff, "PRIMARIES=%g %g %g %g %g %g %g %g", header->primaries[0], header->primaries[1], header->primaries[2], header->primaries[3], header->primaries[4], header->primaries[5], header->primaries[6], header->primaries[7]);
+    //result.append(buff).append("\n");
+
+    // Extra line before width and height.
+    result.append("\n");
+
+    sprintf(buff, "-Y %d +X %d", header->height, header->width);
+    result.append(buff).append("\n");
+
+    // Add to buffer.
+    for (int32_t i = 0; i < result.length(); i++)
+    {
+        rgbeData.push_back(result.at(i));
+    }
+
+    return (uint32_t)result.length();
+}
+
+uint32_t RGBEWritePixelsToData(float* pixelData, uint32_t pixelCount, bool hasAlpha, std::vector<uint8_t>& rgbeData)
+{
+    if ((nullptr == pixelData) || (0 == pixelCount))
+    {
+        return 0;
+    }
+
+    rgbeData.reserve(rgbeData.size() + (pixelCount * 4));
+
+    const int32_t stride = hasAlpha ? 4 : 3;
+    for (uint32_t i = 0; i < pixelCount; i++)
+    {
+        uint8_t rgbe[4];
+        _float2rgbe(rgbe, *pixelData, *(pixelData + 1), *(pixelData + 2));
+        pixelData += stride;
+
+        rgbeData.push_back(rgbe[0]);
+        rgbeData.push_back(rgbe[1]);
+        rgbeData.push_back(rgbe[2]);
+        rgbeData.push_back(rgbe[3]);
+    }
+    
+    return (uint32_t)rgbeData.size();
+}
+
+uint32_t RGBEWritePixelsRLEToData(float* pixelData, uint32_t pixelCount, bool hasAlpha, std::vector<uint8_t>& rgbeData)
+{
+    // Not implemented yet!
+    return 0;
 }

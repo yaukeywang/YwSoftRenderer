@@ -5,6 +5,8 @@
 #define __YW_RGBE_H__
 
 #include <stdint.h>
+#include <string>
+#include <vector>
 
 // ------------------------------------------------------------------
 // RGBE file parsing code from: https://www.graphics.cornell.edu/~bjw/rgbe.html.
@@ -27,7 +29,10 @@ struct RGBEHeader
     int32_t width;
     int32_t height;
 
-    RGBEHeader() : format(RGBEFormat_RGBE), exposure(0.0f), gamma(0.0f), width(0), height(0) {}
+    RGBEHeader() : format(RGBEFormat_RGBE), exposure(0.0f), gamma(1.0f), width(0), height(0)
+    {
+        memset(primaries, 0, sizeof(primaries));
+    }
 };
 
 /* flags indicating which fields in an rgbe_header_info are valid */
@@ -47,5 +52,15 @@ bool RGBEReadPixelsFromData(const uint8_t* srcData, float* dstData, int pixels);
 
 // Reading pixels. Will correctly handle run length encoding.
 bool RGBEReadPixelsRLEFromData(const uint8_t* srcData, float* dstData, int32_t scanlineWidth, int32_t numScanlines);
+
+// Default minimal header. modify if you want more information in header.
+uint32_t RGBEWriteHeaderToData(const RGBEHeader* header, std::vector<uint8_t>& rgbeData);
+
+// Write pixels to rgbe data.
+uint32_t RGBEWritePixelsToData(float* pixelData, uint32_t pixelCount, bool hasAlpha, std::vector<uint8_t>& rgbeData);
+
+// Write pixels to rgbe data.
+// pixelData - rgb(a) pixels.
+uint32_t RGBEWritePixelsRLEToData(float* pixelData, uint32_t pixelCount, bool hasAlpha, std::vector<uint8_t>& rgbeData);
 
 #endif // !__YW_RGBE_H__
