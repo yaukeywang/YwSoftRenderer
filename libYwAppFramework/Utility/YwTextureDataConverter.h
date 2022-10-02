@@ -46,7 +46,6 @@ namespace yw
         static bool TextureDataToRGBE(class Yw3dTexture* texture, TextureConvertResult& results, bool withMipmap);
         static bool TextureDataToYWT(class Yw3dTexture* texture, uint8_t** resultData, uint32_t* resultDataLength);
 
-    public:
         static bool SaveTextureDataToBMPFile(const StringA& fileName, class Yw3dTexture* texture, bool withMipmap);
         static bool SaveTextureDataToRGBEFile(const StringA& fileName, class Yw3dTexture* texture, bool withMipmap);
         static bool SaveTextureDataToYWTFile(const StringA& fileName, class Yw3dTexture* texture);
