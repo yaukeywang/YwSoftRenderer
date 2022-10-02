@@ -36,6 +36,9 @@ namespace yw
         void Render(int32_t pass);
 
     private:
+        // Render all pre-computing data we nee.
+        bool LoadAllPreComputingData();
+
         // Convert hdr equirectangular map to hdr cube map.
         bool RenderEquirectangularMapToCubeMap();
 
@@ -55,19 +58,19 @@ namespace yw
         void RenderPbrModel(int32_t pass);
 
     private:
-        // Has rendered cube map from equirectangular map or not, only need once.
-        bool m_RenderedCubeMap;
-
         // Model resources.
         class Model* m_ModelSkySphere;
         //class Model* m_ModelPBR;
 
-        // Texture resources.
+        // Pre-computing texture resources.
+        StringA m_EnvEquirectangularTextureName;
         Yw3dTexture* m_EnvEquirectangularTexture;
         Yw3dCubeTexture* m_EnvCubeTexture;
         Yw3dCubeTexture* m_IrrandianceCubeTexture;
         Yw3dCubeTexture* m_PrefilterReflectionCubeTexture;
 		Yw3dTexture* m_PreintegrateBRDFTexture;
+
+        // Normal texture resources.
         //class Yw3dTexture* m_ModelPBRTexture;
         //class Yw3dTexture* m_ModelPBRNormalTexture;
         //class Yw3dTexture* m_ModelPBRSpecularTexture;
@@ -81,6 +84,12 @@ namespace yw
         //HRESOURCE m_ModelPBRTextureHandle;
         //HRESOURCE m_ModelPBRNormalTextureHandle;
         //HRESOURCE m_ModelPBRSpecularTextureHandle;
+
+        // Pre-computing texture handle.
+        HRESOURCE m_EnvCubeTextureHandle;
+        HRESOURCE m_IrrandianceCubeTextureHandle;
+        HRESOURCE m_PrefilterReflectionCubeTextureHandle;
+        HRESOURCE m_PreintegrateBRDFTextureHandle;
 
         // Shader related.
         class DemoPBRIBLCubeMapVertexShader* m_SkyVertexShader;

@@ -13,6 +13,10 @@
 #include "YwFileIO.h"
 #include "YwPaths.h"
 
+#ifndef YW_SAFE_UNLOAD_RESOURCE
+#define YW_SAFE_UNLOAD_RESOURCE(m, r) {if ((r) > 0) {(m)->UnloadResource((r)); (r) = 0;}}
+#endif
+
 namespace yw
 {
     // ------------------------------------------------------------------
@@ -20,23 +24,31 @@ namespace yw
 
     DemoPBRIBL::DemoPBRIBL(Scene* scene) :
         IEntity(scene),
-        m_RenderedCubeMap(false),
         m_ModelSkySphere(nullptr),
         //m_ModelPBR(nullptr),
+
         m_EnvEquirectangularTexture(nullptr),
         m_EnvCubeTexture(nullptr),
         m_IrrandianceCubeTexture(nullptr),
         m_PrefilterReflectionCubeTexture(nullptr),
         m_PreintegrateBRDFTexture(nullptr),
+
         //m_ModelPBRTexture(nullptr),
         //m_ModelPBRNormalTexture(nullptr),
         //m_ModelPBRSpecularTexture(nullptr),
+
         m_ModelSkySphereHandle(0),
         //m_ModelPBRHandle(0),
         m_ModelSkySphereTextureHandle(0),
         //m_ModelPBRTextureHandle(0),
         //m_ModelPBRNormalTextureHandle(0),
         //m_ModelPBRSpecularTextureHandle(0),
+
+        m_EnvCubeTextureHandle(0),
+        m_IrrandianceCubeTextureHandle(0),
+        m_PrefilterReflectionCubeTextureHandle(0),
+        m_PreintegrateBRDFTextureHandle(0),
+
         m_SkyVertexShader(nullptr),
         m_SkyPixelShader(nullptr)
         //m_PbrVertexShader(nullptr),
@@ -45,6 +57,7 @@ namespace yw
         //m_Smoothness(0.0f),
         //m_SmoothnessScale(1.0f)
     {
+        m_EnvEquirectangularTextureName = "newport_loft";
     }
 
     DemoPBRIBL::~DemoPBRIBL()
@@ -65,35 +78,18 @@ namespace yw
         // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
-        if (m_ModelSkySphereHandle > 0)
-        {
-            resManager->UnloadResource(m_ModelSkySphereHandle);
-        }
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereHandle);
+        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRHandle);
 
-        //if (m_ModelPBRHandle > 0)
-        //{
-        //    resManager->UnloadResource(m_ModelPBRHandle);
-        //}
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereTextureHandle);
+        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRTextureHandle);
+        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRNormalTextureHandle);
+        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRSpecularTextureHandle);
 
-        if (m_ModelSkySphereTextureHandle > 0)
-        {
-            resManager->UnloadResource(m_ModelSkySphereTextureHandle);
-        }
-
-        //if (m_ModelPBRTextureHandle > 0)
-        //{
-        //    resManager->UnloadResource(m_ModelPBRTextureHandle);
-        //}
-
-        //if (m_ModelPBRNormalTextureHandle > 0)
-        //{
-        //    resManager->UnloadResource(m_ModelPBRNormalTextureHandle);
-        //}
-
-        //if (m_ModelPBRSpecularTextureHandle > 0)
-        //{
-        //    resManager->UnloadResource(m_ModelPBRSpecularTextureHandle);
-        //}
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_EnvCubeTextureHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_IrrandianceCubeTextureHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_PrefilterReflectionCubeTextureHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_PreintegrateBRDFTextureHandle);
 
         YW_SAFE_RELEASE(m_SkyVertexShader);
         YW_SAFE_RELEASE(m_SkyPixelShader);
@@ -123,7 +119,7 @@ namespace yw
         //    return false;
         //}
 
-        m_ModelSkySphereTextureHandle = resManager->LoadResource("newport_loft.hdr");
+        m_ModelSkySphereTextureHandle = resManager->LoadResource(m_EnvEquirectangularTextureName + ".hdr");
         if (m_ModelSkySphereTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"newport_loft.hdr\" failed."));
@@ -194,6 +190,9 @@ namespace yw
         //    return false;
         //}
 
+        // Render pre-computing data.
+        LoadAllPreComputingData();
+
         // Create vertex and pixel shader.
         m_SkyVertexShader = new DemoPBRIBLCubeMapVertexShader();
         m_SkyPixelShader = new DemoPBRIBLCubeMapPixelShader();
@@ -222,40 +221,6 @@ namespace yw
         // Get graphics and device.
         Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
 
-        if (!m_RenderedCubeMap)
-        {
-            m_RenderedCubeMap = true;
-
-            FileIO fileChecker;
-
-            // Generate hdr cube map from hdr equirectangular map.
-            if (!fileChecker.FileExists("./Resources/IBL/newport_loft_ywt.cube"))
-            {
-                graphics->PushStateBlock();
-                RenderEquirectangularMapToCubeMap();
-                graphics->PopStateBlock();
-
-                YwTextureDataConverter::SaveCubeTextureDataToYWTFile("./Resources/IBL/newport_loft_ywt.cube", m_EnvCubeTexture);
-                YwTextureDataConverter::SaveCubeTextureDataToBMPFile("./Resources/IBL/newport_loft_bmp.cube", m_EnvCubeTexture);
-            }
-
-        //    // Generate diffuse irradiance map from hdr cube map.
-        //    graphics->PushStateBlock();
-        //    RenderCubeMapToIrradianceMap();
-        //    graphics->PopStateBlock();
-
-        //    // Generate specular pre-filter environment map.
-        //    graphics->PushStateBlock();
-        //    RenderPrefilterReflectionMap();
-        //    graphics->PopStateBlock();
-
-        //    // Generate specular specular integral BRDF map.
-
-            //graphics->PushStateBlock();
-            //RenderPreintegrateBRDFMap();
-            //graphics->PopStateBlock();
-        }
-
         // Render sky pass.
         graphics->PushStateBlock();
         RenderSky(pass);
@@ -265,6 +230,158 @@ namespace yw
         //graphics->PushStateBlock();
         //RenderPbrModel(pass);
         //graphics->PopStateBlock();
+    }
+
+    bool DemoPBRIBL::LoadAllPreComputingData()
+    {
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
+
+        // The file checker.
+        FileIO fileChecker;
+
+        // Generate hdr cube map from hdr equirectangular map.
+        const StringA environmentMapName = "IBL/Environment/" + m_EnvEquirectangularTextureName + "_environment";
+        const StringA environmentMapPath = "./Resources/" + environmentMapName;
+        if (!fileChecker.FileExists(environmentMapPath + "_ywt.cube"))
+        {
+            graphics->PushStateBlock();
+            RenderEquirectangularMapToCubeMap();
+            graphics->PopStateBlock();
+
+            // Used in runtime.
+            YwTextureDataConverter::SaveCubeTextureDataToYWTFile(environmentMapPath + "_ywt.cube", m_EnvCubeTexture);
+
+            // Used to debug.
+            YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(environmentMapPath + "_hdr.cube", m_EnvCubeTexture, true);
+            YwTextureDataConverter::SaveCubeTextureDataToBMPFile(environmentMapPath + "_bmp.cube", m_EnvCubeTexture, true);
+        }
+        else
+        {
+            // Load environment map.
+            const StringA loadFileName = environmentMapName + "_ywt.cube";
+            m_EnvCubeTextureHandle = resManager->LoadResource(loadFileName);
+            if (m_EnvCubeTextureHandle <= 0)
+            {
+                LOGE(_T("Load resource pre-computing environment cube texture failed."));
+                return false;
+            }
+
+            m_EnvCubeTexture = (Yw3dCubeTexture*)resManager->GetResource(m_EnvCubeTextureHandle);
+            if (nullptr == m_EnvCubeTexture)
+            {
+                LOGE(_T("Get resource pre-computing environment cube texture failed."));
+                return false;
+            }
+        }
+
+        // Generate diffuse irradiance map from hdr cube map.
+        const StringA irradianceMapName = "IBL/Irradiance/" + m_EnvEquirectangularTextureName + "_irradiance";
+        const StringA irradianceMapPath = "./Resources/" + irradianceMapName;
+        if (!fileChecker.FileExists(irradianceMapPath + "_ywt.cube"))
+        {
+            graphics->PushStateBlock();
+            RenderCubeMapToIrradianceMap();
+            graphics->PopStateBlock();
+
+            // Used in runtime.
+            YwTextureDataConverter::SaveCubeTextureDataToYWTFile(irradianceMapPath + "_ywt.cube", m_IrrandianceCubeTexture);
+
+            // Used to debug.
+            YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(irradianceMapPath + "_hdr.cube", m_IrrandianceCubeTexture, false);
+            YwTextureDataConverter::SaveCubeTextureDataToBMPFile(irradianceMapPath + "_bmp.cube", m_IrrandianceCubeTexture, false);
+        }
+        else
+        {
+            // Load irradiance map.
+            const StringA loadFileName = irradianceMapName + "_ywt.cube";
+            m_IrrandianceCubeTextureHandle = resManager->LoadResource(loadFileName);
+            if (m_IrrandianceCubeTextureHandle <= 0)
+            {
+                LOGE(_T("Load resource pre-computing irrandiance cube texture failed."));
+                return false;
+            }
+
+            m_IrrandianceCubeTexture = (Yw3dCubeTexture*)resManager->GetResource(m_IrrandianceCubeTextureHandle);
+            if (nullptr == m_IrrandianceCubeTexture)
+            {
+                LOGE(_T("Get resource pre-computing irrandiance cube texture failed."));
+                return false;
+            }
+        }
+
+        // Generate specular pre-filter reflection environment map.
+        const StringA reflectionMapName = "IBL/Reflection/" + m_EnvEquirectangularTextureName + "_reflection";
+        const StringA reflectionMapPath = "./Resources/" + reflectionMapName;
+        if (!fileChecker.FileExists(reflectionMapPath + "_ywt.cube"))
+        {
+            graphics->PushStateBlock();
+            RenderPrefilterReflectionMap();
+            graphics->PopStateBlock();
+
+            // Used in runtime.
+            YwTextureDataConverter::SaveCubeTextureDataToYWTFile(reflectionMapPath + "_ywt.cube", m_PrefilterReflectionCubeTexture);
+
+            // Used to debug.
+            YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(reflectionMapPath + "_hdr.cube", m_PrefilterReflectionCubeTexture, true);
+            YwTextureDataConverter::SaveCubeTextureDataToBMPFile(reflectionMapPath + "_bmp.cube", m_PrefilterReflectionCubeTexture, true);
+        }
+        else
+        {
+            // Load pre-filter reflection map.
+            const StringA loadFileName = reflectionMapName + "_ywt.cube";
+            m_PrefilterReflectionCubeTextureHandle = resManager->LoadResource(loadFileName);
+            if (m_PrefilterReflectionCubeTextureHandle <= 0)
+            {
+                LOGE(_T("Load resource pre-filter reflection cube texture failed."));
+                return false;
+            }
+
+            m_PrefilterReflectionCubeTexture = (Yw3dCubeTexture*)resManager->GetResource(m_PrefilterReflectionCubeTextureHandle);
+            if (nullptr == m_PrefilterReflectionCubeTexture)
+            {
+                LOGE(_T("Get resource pre-filter reflection cube texture failed."));
+                return false;
+            }
+        }
+
+        // Generate specular specular pre-integral BRDF map.
+        const StringA brdfMapName = "IBL/BRDF/brdf";
+        const StringA brdfMapPath = "./Resources/" + brdfMapName;
+        if (!fileChecker.FileExists(brdfMapPath + ".ywt"))
+        {
+            graphics->PushStateBlock();
+            RenderPreintegrateBRDFMap();
+            graphics->PopStateBlock();
+
+            // Used in runtime.
+            YwTextureDataConverter::SaveTextureDataToYWTFile(brdfMapPath + ".ywt", m_PreintegrateBRDFTexture);
+
+            // Used to debug.
+            YwTextureDataConverter::SaveTextureDataToRGBEFile(brdfMapPath + ".hdr", m_PreintegrateBRDFTexture, false);
+            YwTextureDataConverter::SaveTextureDataToBMPFile(brdfMapPath + ".bmp", m_PreintegrateBRDFTexture, false);
+        }
+        else
+        {
+            // Load pre-integral BRDF map.
+            const StringA loadFileName = brdfMapName + ".ywt";
+            m_PreintegrateBRDFTextureHandle = resManager->LoadResource(loadFileName);
+            if (m_PreintegrateBRDFTextureHandle <= 0)
+            {
+                LOGE(_T("Load resource pre-integral brdf texture failed."));
+                return false;
+            }
+
+            m_PreintegrateBRDFTexture = (Yw3dTexture*)resManager->GetResource(m_PreintegrateBRDFTextureHandle);
+            if (nullptr == m_PreintegrateBRDFTexture)
+            {
+                LOGE(_T("Get resource pre-integral brdf texture failed."));
+                return false;
+            }
+        }
+
+        return true;
     }
 
     bool DemoPBRIBL::RenderEquirectangularMapToCubeMap()

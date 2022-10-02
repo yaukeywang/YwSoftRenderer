@@ -263,7 +263,14 @@ namespace yw
 
             // Get proper file name.
             char finalFileName[256];
-            sprintf(finalFileName, "%s%s_mip%d.%s", filePath.c_str(), filePureName.c_str(), i, fileExt.c_str());
+            if (0 == i)
+            {
+                sprintf(finalFileName, "%s%s.%s", filePath.c_str(), filePureName.c_str(), fileExt.c_str());
+            }
+            else
+            {
+                sprintf(finalFileName, "%s%s_mip%d.%s", filePath.c_str(), filePureName.c_str(), i, fileExt.c_str());
+            }
 
             // Save data to file.
             FileIO file;
@@ -312,7 +319,14 @@ namespace yw
 
             // Get proper file name.
             char finalFileName[256];
-            sprintf(finalFileName, "%s%s_mip%d.%s", filePath.c_str(), filePureName.c_str(), i, fileExt.c_str());
+            if (0 == i)
+            {
+                sprintf(finalFileName, "%s%s.%s", filePath.c_str(), filePureName.c_str(), fileExt.c_str());
+            }
+            else
+            {
+                sprintf(finalFileName, "%s%s_mip%d.%s", filePath.c_str(), filePureName.c_str(), i, fileExt.c_str());
+            }
 
             // Save data to file.
             FileIO file;
@@ -373,7 +387,7 @@ namespace yw
         return true;
     }
 
-    bool YwTextureDataConverter::SaveCubeTextureDataToBMPFile(const StringA& fileName, Yw3dCubeTexture* cubeTexture)
+    bool YwTextureDataConverter::SaveCubeTextureDataToBMPFile(const StringA& fileName, Yw3dCubeTexture* cubeTexture, bool withMipmap)
     {
         if (fileName.empty() || (nullptr == cubeTexture))
         {
@@ -399,37 +413,41 @@ namespace yw
             Yw3dTexture* cubeFaceTexture = cubeTexture->AcquireCubeFace((Yw3dCubeFaces)i);
 
             TextureConvertResult results;
-            if (!TextureDataToBMP(cubeFaceTexture, results, false))
-            {
-                results.Release();
-                return false;
-            }
-
-            if (1 != results.allResults.size())
+            if (!TextureDataToBMP(cubeFaceTexture, results, withMipmap))
             {
                 results.Release();
                 return false;
             }
 
             // Get content.
-            MipConvertResult& convertResult = results.allResults[0];
-
-            // Get proper file name.
-            char finalFileName[256];
-            sprintf(finalFileName, "%s_%s.bmp", filePureName.c_str(), cubeFaceNames[i]);
-            cubeFaceTextureNames.push_back(finalFileName);
-
-            // Save data to file.
-            FileIO cubeFacefile;
-            if (0 == cubeFacefile.WriteFile(filePath + finalFileName, convertResult.resultData, convertResult.resultDataLength, false))
+            for (int32_t mipLevel = 0; mipLevel < (int32_t)results.allResults.size(); mipLevel++)
             {
+                MipConvertResult& convertResult = results.allResults[mipLevel];
+
+                // Get proper file name.
+                char finalFileName[256];
+                if (0 == mipLevel)
+                {
+                    sprintf(finalFileName, "%s_%s.bmp", filePureName.c_str(), cubeFaceNames[i]);
+                    cubeFaceTextureNames.push_back(finalFileName);
+                }
+                else
+                {
+                    sprintf(finalFileName, "%s_%s_mip%d.bmp", filePureName.c_str(), cubeFaceNames[i], mipLevel);
+                }
+
+                // Save data to file.
+                FileIO cubeFacefile;
+                if (0 == cubeFacefile.WriteFile(filePath + finalFileName, convertResult.resultData, convertResult.resultDataLength, false))
+                {
+                    // Release texture data.
+                    convertResult.Release();
+                    return false;
+                }
+
                 // Release texture data.
                 convertResult.Release();
-                return false;
             }
-
-            // Release texture data.
-            convertResult.Release();
 
             // Release acquired cube face texture.
             YW_SAFE_RELEASE(cubeFaceTexture);
@@ -457,7 +475,7 @@ namespace yw
         return true;
     }
 
-    bool YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture)
+    bool YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture, bool withMipmap)
     {
         if (fileName.empty() || (nullptr == cubeTexture))
         {
@@ -483,37 +501,41 @@ namespace yw
             Yw3dTexture* cubeFaceTexture = cubeTexture->AcquireCubeFace((Yw3dCubeFaces)i);
 
             TextureConvertResult results;
-            if (!TextureDataToRGBE(cubeFaceTexture, results, false))
-            {
-                results.Release();
-                return false;
-            }
-
-            if (1 != results.allResults.size())
+            if (!TextureDataToRGBE(cubeFaceTexture, results, withMipmap))
             {
                 results.Release();
                 return false;
             }
 
             // Get content.
-            MipConvertResult& convertResult = results.allResults[0];
-
-            // Get proper file name.
-            char finalFileName[256];
-            sprintf(finalFileName, "%s_%s.hdr", filePureName.c_str(), cubeFaceNames[i]);
-            cubeFaceTextureNames.push_back(finalFileName);
-
-            // Save data to file.
-            FileIO cubeFacefile;
-            if (0 == cubeFacefile.WriteFile(filePath + finalFileName, convertResult.resultData, convertResult.resultDataLength, false))
+            for (int32_t mipLevel = 0; mipLevel < (int32_t)results.allResults.size(); mipLevel++)
             {
+                MipConvertResult& convertResult = results.allResults[mipLevel];
+
+                // Get proper file name.
+                char finalFileName[256];
+                if (0 == mipLevel)
+                {
+                    sprintf(finalFileName, "%s_%s.hdr", filePureName.c_str(), cubeFaceNames[i]);
+                    cubeFaceTextureNames.push_back(finalFileName);
+                }
+                else
+                {
+                    sprintf(finalFileName, "%s_%s_mip%d.hdr", filePureName.c_str(), cubeFaceNames[i], mipLevel);
+                }
+
+                // Save data to file.
+                FileIO cubeFacefile;
+                if (0 == cubeFacefile.WriteFile(filePath + finalFileName, convertResult.resultData, convertResult.resultDataLength, false))
+                {
+                    // Release texture data.
+                    convertResult.Release();
+                    return false;
+                }
+
                 // Release texture data.
                 convertResult.Release();
-                return false;
             }
-
-            // Release texture data.
-            convertResult.Release();
 
             // Release acquired cube face texture.
             YW_SAFE_RELEASE(cubeFaceTexture);

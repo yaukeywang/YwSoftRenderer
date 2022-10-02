@@ -32,6 +32,11 @@ bool LoadYwTextureFromData(const uint8_t* data, const uint32_t dataLength, YwTex
             break;
         }
 
+        if (mipHeader->mipLevel != i)
+        {
+            return false;
+        }
+
         YwTextureMipData mipData;
         mipData.mipLevel = mipHeader->mipLevel;
         mipData.mipWidth = mipHeader->mipWidth;
@@ -39,6 +44,8 @@ bool LoadYwTextureFromData(const uint8_t* data, const uint32_t dataLength, YwTex
         mipData.mipData.resize(mipHeader->mipDataSize);
         memcpy(&mipData.mipData[0], dataBegin, mipHeader->mipDataSize);
         result.mipsData.push_back(mipData);
+
+        dataBegin += mipHeader->mipDataSize;
     }
 
     if (fileHeader->mipsCount != result.mipsData.size())

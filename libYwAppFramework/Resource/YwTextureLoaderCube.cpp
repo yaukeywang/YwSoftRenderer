@@ -6,6 +6,7 @@
 #include "YwTextureLoaderPNG.h"
 #include "YwTextureLoaderTGA.h"
 #include "YwTextureLoaderRGBE.h"
+#include "YwTextureLoaderYWT.h"
 #include <sstream>
 #include "Yw3d.h"
 
@@ -28,7 +29,7 @@ namespace yw
         std::stringstream cubeData((const char*)data);
 
         // Alloc a temp buffer to read line.
-        char buff[256];
+        char buff[512];
         memset(buff, 0, sizeof(buff));
 
         // Cube map face textures.
@@ -41,6 +42,8 @@ namespace yw
             {
                 break;
             }
+
+            cubeData.ignore(1000, '\n');
 
             // Exit if get a empty line, mean next line is image size, time to break.
             if (0 == strlen(buff))
@@ -166,6 +169,10 @@ namespace yw
         else if (("hdr" == fileExt) || ("rgbe" == fileExt) || ("xyze" == fileExt))
         {
             textureLoader = new TextureLoaderRGBE();
+        }
+        else if ("ywt" == fileExt)
+        {
+            textureLoader = new TextureLoaderYWT();
         }
         else
         {

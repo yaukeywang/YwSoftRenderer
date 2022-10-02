@@ -50,8 +50,8 @@ namespace yw
         static bool SaveTextureDataToRGBEFile(const StringA& fileName, class Yw3dTexture* texture, bool withMipmap);
         static bool SaveTextureDataToYWTFile(const StringA& fileName, class Yw3dTexture* texture);
 
-        static bool SaveCubeTextureDataToBMPFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture);
-        static bool SaveCubeTextureDataToRGBEFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture);
+        static bool SaveCubeTextureDataToBMPFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture, bool withMipmap);
+        static bool SaveCubeTextureDataToRGBEFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture, bool withMipmap);
         static bool SaveCubeTextureDataToYWTFile(const StringA& fileName, class Yw3dCubeTexture* cubeTexture);
     };
 }
