@@ -33,16 +33,16 @@ namespace yw
         m_PrefilterReflectionCubeTexture(nullptr),
         m_PreintegrateBRDFTexture(nullptr),
 
-        //m_ModelPBRTexture(nullptr),
-        //m_ModelPBRNormalTexture(nullptr),
-        //m_ModelPBRSpecularTexture(nullptr),
+        m_ModelPBRTexture(nullptr),
+        m_ModelPBRNormalTexture(nullptr),
+        m_ModelPBRSpecularTexture(nullptr),
 
         m_ModelSkySphereHandle(0),
-        //m_ModelPBRHandle(0),
+        m_ModelPBRHandle(0),
         m_ModelSkySphereTextureHandle(0),
-        //m_ModelPBRTextureHandle(0),
-        //m_ModelPBRNormalTextureHandle(0),
-        //m_ModelPBRSpecularTextureHandle(0),
+        m_ModelPBRTextureHandle(0),
+        m_ModelPBRNormalTextureHandle(0),
+        m_ModelPBRSpecularTextureHandle(0),
 
         m_EnvCubeTextureHandle(0),
         m_IrrandianceCubeTextureHandle(0),
@@ -64,11 +64,11 @@ namespace yw
     {
         // Resource should released by resource manager.
         m_ModelSkySphere = nullptr;
-        //m_ModelPBR = nullptr;
+        m_ModelPBR = nullptr;
         m_EnvEquirectangularTexture = nullptr;
-        //m_ModelPBRTexture = nullptr;
-        //m_ModelPBRNormalTexture = nullptr;
-        //m_ModelPBRSpecularTexture = nullptr;
+        m_ModelPBRTexture = nullptr;
+        m_ModelPBRNormalTexture = nullptr;
+        m_ModelPBRSpecularTexture = nullptr;
 
         YW_SAFE_RELEASE(m_EnvCubeTexture);
         YW_SAFE_RELEASE(m_IrrandianceCubeTexture);
@@ -79,12 +79,12 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereHandle);
-        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRHandle);
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereTextureHandle);
-        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRTextureHandle);
-        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRNormalTextureHandle);
-        //YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRSpecularTextureHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRTextureHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRNormalTextureHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRSpecularTextureHandle);
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_EnvCubeTextureHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_IrrandianceCubeTextureHandle);
@@ -196,8 +196,8 @@ namespace yw
         // Create vertex and pixel shader.
         m_SkyVertexShader = new DemoPBRIBLCubeMapVertexShader();
         m_SkyPixelShader = new DemoPBRIBLCubeMapPixelShader();
-        //m_PbrVertexShader = new DemoPBRIBLVertexShader();
-        //m_PbrPixelShader = new DemoPBRIBLSpecularSetupPixelShader();
+        m_PbrVertexShader = new DemoPBRIBLVertexShader();
+        m_PbrPixelShader = new DemoPBRIBLPixelShader();
 
         //// Initialize environments.
         //m_LightDirection.Set(0.0f, -0.5f, 1.0f);
@@ -831,8 +831,6 @@ namespace yw
             return false;
         }
 
-		// Create transforms.
-
 		// Backup old viewport matrix.sss
 		const Matrix44* matViewportCurrentPointer;
 		device->GetViewportMatrix(matViewportCurrentPointer);
@@ -876,30 +874,20 @@ namespace yw
 		device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
 
         // NDC vertices, no need transforms.
-		//// This should be from device.
-		//Matrix44 matWorld;
-		//Matrix44 matWVP = matWorld * matViews * matProjection;
-		//device->SetTransform(Yw3d_TS_World, &matWorld);
-		//device->SetTransform(Yw3d_TS_View, &matViews);
-		//device->SetTransform(Yw3d_TS_Projection, &matProjection);
-		//device->SetTransform(Yw3d_TS_WVP, &matWVP);
 
 		// Render Quad.
         device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
 
-        // ---
         // Copy pixels from render target to cube face.
         Yw3dSurface* srcSurface = rtBRDFMap->AcquireColorBuffer();
         Yw3dSurface* dstSurface = m_PreintegrateBRDFTexture->AcquireMipLevel(0);
         srcSurface->CopyToSurface(nullptr, dstSurface, nullptr, Yw3d_TF_Linear);
         YW_SAFE_RELEASE(dstSurface);
         YW_SAFE_RELEASE(srcSurface);
-        // ---
 
 		 // Recovery viewport.
 		device->SetViewportMatrix(&matViewportCurrent);
 
-        // ---
 		YW_SAFE_RELEASE(vertexFormat);
 		YW_SAFE_RELEASE(vertexBuffer);
         YW_SAFE_RELEASE(rtBRDFMap);
@@ -908,7 +896,7 @@ namespace yw
 
         // Save brdf texture.
         YwTextureDataConverter::SaveTextureDataToBMPFile("./Resources/brdf", m_PreintegrateBRDFTexture, true);
-        //YwTextureDataConverter::SaveTextureDataToYWTFile("./Resources/brdf.ywt", m_PreintegrateBRDFTexture);
+        YwTextureDataConverter::SaveTextureDataToYWTFile("./Resources/brdf", m_PreintegrateBRDFTexture);
 
         return true;
     }
@@ -927,8 +915,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        //Matrix44Transformation(matWorld, Vector3::One(), camera->GetWorldRotation(), camera->GetPosition());
-        Matrix44Transformation(matWorld, Vector3::One(), camera->GetWorldRotation(), Vector3::Zero());
+        Matrix44Transformation(matWorld, Vector3(100.0f, 100.0f, 100.0f), camera->GetWorldRotation(), Vector3::Zero());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -945,7 +932,6 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
         // Set sky texture.
-        //graphics->SetTexture(0, m_EnvCubeTexture);
         graphics->SetTexture(0, m_EnvCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
@@ -963,24 +949,18 @@ namespace yw
 
     void DemoPBRIBL::RenderPbrModel(int32_t pass)
     {
-        // Render pbr model.
+        //// Render pbr model.
 
-        // Get graphics and device.
-        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
-        Yw3dDevice* device = graphics->GetYw3dDevice();
-        DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
-        DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
+        //// Get graphics and device.
+        //Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        //Yw3dDevice* device = graphics->GetYw3dDevice();
+        //DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
+        //DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
 
         //// Update light direction.
         ////Matrix44 lightRotate;
         ////Matrix44RotationY(lightRotate, ((DemoPBRIBLApp*)(GetScene()->GetApplication()))->GetLightRotationAngle());
         ////Vector3 lightDir = Vector4(m_LightDirection) * lightRotate;
-        //Vector3 lightDir = m_LightDirection;
-
-        //// Get material parameters.
-        //m_Metallic = 0.0f; //((DemoPBRIBLApp*)(GetScene()->GetApplication()))->GetMetallic();
-        //m_Smoothness = 0.321f; //((DemoPBRIBLApp*)(GetScene()->GetApplication()))->GetSmoothness();
-        //m_SmoothnessScale = 1.0f;
 
         //Matrix44 matWorld;
         //Matrix44Identity(matWorld);

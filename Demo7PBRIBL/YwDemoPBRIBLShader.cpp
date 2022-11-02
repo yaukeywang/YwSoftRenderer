@@ -68,7 +68,7 @@ namespace yw
     // Cube map to irrandiance map shader.
 
     // Cube map to irrandiance map vertex shader.
-   
+
     // Shader main entry.
     void DemoPBRIBLCubeMap2IrrandianceMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
     {
@@ -455,8 +455,8 @@ namespace yw
         // Sample main texture.
         float3 texCoord = input[0];
         float4 texColor = texCUBElod(0, 0, Vector4(texCoord, 1));
-        //SampleTexture(texColor, 0, texCoord.x, texCoord.y, texCoord.z);
 
+        // We can bake into cube texture.
         // linear to srgb.
         texColor = Vector4((float)pow(texColor.x, 1.0f / 2.2f), (float)pow(texColor.y, 1.0f / 2.2f), (float)pow(texColor.z, 1.0f / 2.2f), texColor.a);
 

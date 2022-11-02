@@ -60,7 +60,7 @@ namespace yw
     private:
         // Model resources.
         class Model* m_ModelSkySphere;
-        //class Model* m_ModelPBR;
+        class Model* m_ModelPBR;
 
         // Pre-computing texture resources.
         StringA m_EnvEquirectangularTextureName;
@@ -71,19 +71,19 @@ namespace yw
 		Yw3dTexture* m_PreintegrateBRDFTexture;
 
         // Normal texture resources.
-        //class Yw3dTexture* m_ModelPBRTexture;
-        //class Yw3dTexture* m_ModelPBRNormalTexture;
-        //class Yw3dTexture* m_ModelPBRSpecularTexture;
+        class Yw3dTexture* m_ModelPBRTexture;
+        class Yw3dTexture* m_ModelPBRNormalTexture;
+        class Yw3dTexture* m_ModelPBRSpecularTexture;
 
         // Model Resource handle.
         HRESOURCE m_ModelSkySphereHandle;
-        //HRESOURCE m_ModelPBRHandle;
+        HRESOURCE m_ModelPBRHandle;
 
         // Texture Resource handle.
         HRESOURCE m_ModelSkySphereTextureHandle;
-        //HRESOURCE m_ModelPBRTextureHandle;
-        //HRESOURCE m_ModelPBRNormalTextureHandle;
-        //HRESOURCE m_ModelPBRSpecularTextureHandle;
+        HRESOURCE m_ModelPBRTextureHandle;
+        HRESOURCE m_ModelPBRNormalTextureHandle;
+        HRESOURCE m_ModelPBRSpecularTextureHandle;
 
         // Pre-computing texture handle.
         HRESOURCE m_EnvCubeTextureHandle;
@@ -94,8 +94,8 @@ namespace yw
         // Shader related.
         class DemoPBRIBLCubeMapVertexShader* m_SkyVertexShader;
         class DemoPBRIBLCubeMapPixelShader* m_SkyPixelShader;
-        //class DemoPBRIBLVertexShader* m_PbrVertexShader;
-        //class DemoPBRIBLPixelShader* m_PbrPixelShader;
+        class DemoPBRIBLVertexShader* m_PbrVertexShader;
+        class DemoPBRIBLPixelShader* m_PbrPixelShader;
 
         //// Lighting params.
         //Vector3 m_LightDirection;
