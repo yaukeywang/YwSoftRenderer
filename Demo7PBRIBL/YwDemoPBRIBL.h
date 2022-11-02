@@ -97,20 +97,10 @@ namespace yw
         class DemoPBRIBLVertexShader* m_PbrVertexShader;
         class DemoPBRIBLPixelShader* m_PbrPixelShader;
 
-        //// Lighting params.
-        //Vector3 m_LightDirection;
-        //Vector4 m_LightColor;
-        //Vector4 m_AlbedoColor;
-        //Vector4 m_SpecularColor;
-
-        //// _Metallic/"Metallic".
-        //float m_Metallic;
-
-        //// _Glossiness/"Smoothness".
-        //float m_Smoothness;
-
-        //// _GlossMapScale/"Smoothness Scale".
-        //float m_SmoothnessScale;
+        // roughness
+        float m_Metallic;
+        float m_Smoothness;
+        float m_SmoothnessScale;
     };
 }
 

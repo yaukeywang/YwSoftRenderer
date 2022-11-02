@@ -50,12 +50,12 @@ namespace yw
         m_PreintegrateBRDFTextureHandle(0),
 
         m_SkyVertexShader(nullptr),
-        m_SkyPixelShader(nullptr)
-        //m_PbrVertexShader(nullptr),
-        //m_PbrPixelShader(nullptr),
-        //m_Metallic(0.0f),
-        //m_Smoothness(0.0f),
-        //m_SmoothnessScale(1.0f)
+        m_SkyPixelShader(nullptr),
+        m_PbrVertexShader(nullptr),
+        m_PbrPixelShader(nullptr),
+        m_Metallic(0.0f),
+        m_Smoothness(0.0f),
+        m_SmoothnessScale(1.0f)
     {
         m_EnvEquirectangularTextureName = "newport_loft";
     }
@@ -93,8 +93,8 @@ namespace yw
 
         YW_SAFE_RELEASE(m_SkyVertexShader);
         YW_SAFE_RELEASE(m_SkyPixelShader);
-        //YW_SAFE_RELEASE(m_PbrVertexShader);
-        //YW_SAFE_RELEASE(m_PbrPixelShader);
+        YW_SAFE_RELEASE(m_PbrVertexShader);
+        YW_SAFE_RELEASE(m_PbrPixelShader);
     }
 
     bool DemoPBRIBL::Initialize()
@@ -112,12 +112,12 @@ namespace yw
             return false;
         }
 
-        //m_ModelPBRHandle = resManager->LoadResource("Lu_Head.obj");
-        //if (m_ModelPBRHandle <= 0)
-        //{
-        //    LOGE(_T("Load resource \"Lu_Head.obj\" failed."));
-        //    return false;
-        //}
+        m_ModelPBRHandle = resManager->LoadResource("sphere.obj"); // Lu_Head.obj
+        if (m_ModelPBRHandle <= 0)
+        {
+            LOGE(_T("Load resource \"Lu_Head.obj\" failed."));
+            return false;
+        }
 
         m_ModelSkySphereTextureHandle = resManager->LoadResource(m_EnvEquirectangularTextureName + ".hdr");
         if (m_ModelSkySphereTextureHandle <= 0)
@@ -155,12 +155,12 @@ namespace yw
             return false;
         }
 
-        //m_ModelPBR = (Model*)resManager->GetResource(m_ModelPBRHandle);
-        //if (nullptr == m_ModelPBR)
-        //{
-        //    LOGE(_T("Get resource \"Lu_Head.obj\" failed."));
-        //    return false;
-        //}
+        m_ModelPBR = (Model*)resManager->GetResource(m_ModelPBRHandle);
+        if (nullptr == m_ModelPBR)
+        {
+            LOGE(_T("Get resource \"Lu_Head.obj\" failed."));
+            return false;
+        }
 
         m_EnvEquirectangularTexture = (Yw3dTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
         if (nullptr == m_EnvEquirectangularTexture)
@@ -199,14 +199,10 @@ namespace yw
         m_PbrVertexShader = new DemoPBRIBLVertexShader();
         m_PbrPixelShader = new DemoPBRIBLPixelShader();
 
-        //// Initialize environments.
-        //m_LightDirection.Set(0.0f, -0.5f, 1.0f);
-        //m_LightColor.Set(1.0f, 0.93f, 0.79f, 1.0f);
-        //m_AlbedoColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
-        //m_SpecularColor.Set(0.2f, 0.2f, 0.2f, 1.0f);
-        //m_Metallic = 0.5f;
-        //m_Smoothness = 0.5f;
-        //m_SmoothnessScale = 1.0f;
+        // Initialize environments.
+        m_Metallic = 0.5f;
+        m_Smoothness = 0.5f;
+        m_SmoothnessScale = 1.0f;
 
         return true;
     }
@@ -226,10 +222,10 @@ namespace yw
         RenderSky(pass);
         graphics->PopStateBlock();
 
-        //// Render model.
-        //graphics->PushStateBlock();
-        //RenderPbrModel(pass);
-        //graphics->PopStateBlock();
+        // Render model.
+        graphics->PushStateBlock();
+        RenderPbrModel(pass);
+        graphics->PopStateBlock();
     }
 
     bool DemoPBRIBL::LoadAllPreComputingData()
@@ -949,76 +945,66 @@ namespace yw
 
     void DemoPBRIBL::RenderPbrModel(int32_t pass)
     {
-        //// Render pbr model.
+        // Render pbr model.
 
-        //// Get graphics and device.
-        //Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
-        //Yw3dDevice* device = graphics->GetYw3dDevice();
-        //DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
-        //DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
+        // Get graphics and device.
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        Yw3dDevice* device = graphics->GetYw3dDevice();
+        DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
+        DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
 
-        //// Update light direction.
-        ////Matrix44 lightRotate;
-        ////Matrix44RotationY(lightRotate, ((DemoPBRIBLApp*)(GetScene()->GetApplication()))->GetLightRotationAngle());
-        ////Vector3 lightDir = Vector4(m_LightDirection) * lightRotate;
+        Matrix44 matWorld;
+        Matrix44Identity(matWorld);
 
-        //Matrix44 matWorld;
-        //Matrix44Identity(matWorld);
+        // Apply model rotation.
+        Matrix44Transformation(matWorld, Vector3(0.6f, 0.6f, 0.6f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
 
-        //// Apply model rotation.
-        //Matrix44Transformation(matWorld, Vector3(0.025f, 0.025f, 0.025f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
+        // Set world transform to camera.
+        camera->SetWorldMatrix(matWorld);
 
-        //// Set world transform to camera.
-        //camera->SetWorldMatrix(matWorld);
+        // This should be from device.
+        Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
+        device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
+        device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
+        device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
+        device->SetTransform(Yw3d_TS_WVP, &matProjection);
 
-        //// This should be from device.
-        //Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
-        //device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
-        //device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
-        //device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
-        //device->SetTransform(Yw3d_TS_WVP, &matProjection);
+        // Set states.
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
-        //// Set states.
-        //graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
-        //graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+        // Set texture.
+        graphics->SetTexture(0, m_ModelPBRTexture);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        //// Set texture.
-        //graphics->SetTexture(0, m_ModelPBRTexture);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+        graphics->SetTexture(1, m_ModelPBRNormalTexture);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        //graphics->SetTexture(1, m_ModelPBRNormalTexture);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+        graphics->SetTexture(2, m_ModelPBRSpecularTexture);
+        graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        //graphics->SetTexture(2, m_ModelPBRSpecularTexture);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+        // Update shader parameters.
+        m_PbrPixelShader->SetFloat(0, m_Metallic);
+        m_PbrPixelShader->SetFloat(1, m_Smoothness);
+        m_PbrPixelShader->SetFloat(2, m_SmoothnessScale);
 
-        //// Update shader parameters.
-        //m_PbrPixelShader->SetVector(0, lightDir);
-        //m_PbrPixelShader->SetVector(1, m_LightColor * 1.5f);
-        //m_PbrPixelShader->SetVector(2, m_AlbedoColor);
-        //m_PbrPixelShader->SetVector(3, m_SpecularColor);
-        //m_PbrPixelShader->SetVector(4, camera->GetForward());
-        //m_PbrPixelShader->SetFloat(0, m_Metallic);
-        //m_PbrPixelShader->SetFloat(1, m_Smoothness);
-        //m_PbrPixelShader->SetFloat(2, m_SmoothnessScale);
+        // Set pbr vertex and pixel shader.
+        graphics->SetVertexShader(m_PbrVertexShader);
+        graphics->SetPixelShader(m_PbrPixelShader);
 
-        //// Set pbr vertex and pixel shader.
-        //graphics->SetVertexShader(m_PbrVertexShader);
-        //graphics->SetPixelShader(m_PbrPixelShader);
-
-        //// Render model.
-        //m_ModelPBR->Render(device);
+        // Render model.
+        m_ModelPBR->Render(device);
     }
 }
