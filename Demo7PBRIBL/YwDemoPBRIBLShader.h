@@ -190,6 +190,9 @@ namespace yw
 
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+
+    private:
+        Vector3 fresnelSchlickRoughness(float cosTheta, const Vector3& F0, float roughness);
     };
 }
 

@@ -477,14 +477,19 @@ namespace yw
         // The projection vertex position.
         position = vsShaderInput[0] * (*GetWVPMatrix());
 
+        // Texcoord.
         vsShaderOutput[0] = vsShaderInput[4];
 
-        //const float3 normal = vsShaderInput[1];
-        //const float4 tangent = vsShaderInput[2];
-        //const float3 binormal = cross(normal, float3(tangent)) * tangent.w;
-        //vsShaderOutput[1] = float3(tangent);
-        //vsShaderOutput[2] = binormal;
-        //vsShaderOutput[3] = normal;
+        // TBN.
+        const float3 normal = vsShaderInput[1];
+        const float4 tangent = vsShaderInput[2];
+        const float3 binormal = cross(normal, float3(tangent)) * tangent.w;
+        vsShaderOutput[1] = float3(tangent);
+        vsShaderOutput[2] = binormal;
+        vsShaderOutput[3] = normal;
+
+        // Vertex world position.
+        vsShaderOutput[4] = vsShaderInput[0] * (*GetWorldMatrix());
     }
 
     Yw3dShaderRegisterType DemoPBRIBLVertexShader::GetOutputRegisters(uint32_t shaderRegister)
@@ -493,6 +498,12 @@ namespace yw
         {
         case 0:
             return Yw3d_SRT_Vector2; // Texcoord.
+        case 1:
+            return Yw3d_SRT_Vector3; // Tangent of TBN.
+        case 2:
+            return Yw3d_SRT_Vector3; // Bi-Normal of TBN.
+        case 3:
+            return Yw3d_SRT_Vector3; // Normal of TBN.
         default:
             return Yw3d_SRT_Unused;
         }
@@ -508,8 +519,19 @@ namespace yw
     // Shader main entry.
     bool DemoPBRIBLPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
+        // Form TBN matrix from tangent space to model space.
+        const float3 tangent = normalize(float3(input[1]));
+        const float3 binormal = normalize(float3(input[2]));
+        const float3 normal = normalize(float3(input[3]));
+
         color = float4(0.0f, 1.0f, 0.0f, 1.0f);
 
         return true;
+    }
+
+    Vector3 DemoPBRIBLPixelShader::fresnelSchlickRoughness(float cosTheta, const Vector3& F0, float roughness)
+    {
+        const float smoothness = 1.0f - roughness;
+        return F0 + (Vector3(max(smoothness, F0.x), max(smoothness, F0.y), max(smoothness, F0.z)) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
     }
 }
