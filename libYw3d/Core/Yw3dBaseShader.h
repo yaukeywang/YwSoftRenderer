@@ -363,6 +363,39 @@ namespace yw
             return Vector4Normalize(result, v);
         }
 
+        /**
+         * This function calculates the reflection vector using the following formula: v = i - 2 * n * dot(i n) .
+         * @param[in] i incident vector.
+         * @param[in] n normal vector.
+         * @return Returns a reflection vector using an incident ray and a surface normal..
+         */
+        static inline Vector2 reflect(const Vector2& i, const Vector2& n)
+        {
+            return i - 2.0f * n * dot(i, n);
+        }
+
+        /**
+         * This function calculates the reflection vector using the following formula: v = i - 2 * n * dot(i n) .
+         * @param[in] i incident vector.
+         * @param[in] n normal vector.
+         * @return Returns a reflection vector using an incident ray and a surface normal..
+         */
+        static inline Vector3 reflect(const Vector2& i, const Vector3& n)
+        {
+            return i - 2.0f * n * dot(i, n);
+        }
+
+        /**
+         * This function calculates the reflection vector using the following formula: v = i - 2 * n * dot(i n) .
+         * @param[in] i incident vector.
+         * @param[in] n normal vector.
+         * @return Returns a reflection vector using an incident ray and a surface normal..
+         */
+        static inline Vector4 reflect(const Vector4& i, const Vector4& n)
+        {
+            return i - 2.0f * n * dot(i, n);
+        }
+
     private:
         // Single float-constants.
         float m_FloatConstants[YW3D_NUM_SHADER_CONSTANTS];
