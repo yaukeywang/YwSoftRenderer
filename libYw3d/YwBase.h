@@ -13,6 +13,11 @@
 #if defined(_WIN32) || defined(WIN32)
     #include <tchar.h>
     #include <wtypes.h>
+
+    #if (_MSC_VER >= 1920)
+        // Disable warning C4244 about double to float overflow.
+        #pragma warning(disable:4244)
+    #endif
 #endif
 
 #ifndef __amigaos4__

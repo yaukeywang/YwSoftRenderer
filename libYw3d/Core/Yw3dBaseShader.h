@@ -382,6 +382,50 @@ namespace yw
         }
 
         /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
+        static inline float pow(const float v, const float p)
+        {
+            return (float)::pow(v, p);
+        }
+
+        /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
+        static inline Vector2 pow(const Vector2& v, const Vector2& p)
+        {
+            return Vector2((float)::pow(v.x, p.x), (float)::pow(v.y, p.y));
+        }
+
+        /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
+        static inline Vector3 pow(const Vector3& v, const Vector3& p)
+        {
+            return Vector3((float)::pow(v.x, p.x), (float)::pow(v.y, p.y), (float)::pow(v.z, p.z));
+        }
+
+        /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
+        static inline Vector4 pow(const Vector4& v, const Vector4& p)
+        {
+            return Vector4((float)::pow(v.x, p.x), (float)::pow(v.y, p.y), (float)::pow(v.z, p.z), (float)::pow(v.w, p.w));
+        }
+
+        /**
          * This function calculates the reflection vector using the following formula: v = i - 2 * n * dot(i n) .
          * @param[in] i incident vector.
          * @param[in] n normal vector.

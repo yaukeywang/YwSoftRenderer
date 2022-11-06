@@ -48,11 +48,13 @@ namespace yw
         Vector2 operator *(const Vector2& v) const;
         Vector2 operator *(const float n) const;
         Vector2 operator /(const float n) const;
+        Vector2 operator /(const Vector2& v) const;
         Vector2& operator +=(const Vector2& v);
         Vector2& operator -=(const Vector2& v);
         Vector2& operator *=(const Vector2& v);
         Vector2& operator *=(const float n);
         Vector2& operator /=(const float n);
+        Vector2& operator /=(const Vector2& v);
         operator Vector3();
         operator Vector4();
 
@@ -132,12 +134,14 @@ namespace yw
         Vector3 operator *(const float n) const;
         Vector3 operator *(const Matrix33& m) const;
         Vector3 operator /(const float n) const;
+        Vector3 operator /(const Vector3& v) const;
         Vector3& operator +=(const Vector3& v);
         Vector3& operator -=(const Vector3& v);
         Vector3& operator *=(const Vector3& v);
         Vector3& operator *=(const float n);
         Vector3& operator *=(const Matrix33& m);
         Vector3& operator /=(const float n);
+        Vector3 operator /=(const Vector3& v);
         operator Vector2();
         operator Vector4();
 
@@ -243,12 +247,14 @@ namespace yw
         Vector4 operator *(const float n) const;
         Vector4 operator *(const Matrix44& m) const;
         Vector4 operator /(const float n) const;
+        Vector4 operator /(const Vector4& v) const;
         Vector4& operator +=(const Vector4& v);
         Vector4& operator -=(const Vector4& v);
         Vector4& operator *=(const Vector4& v);
         Vector4& operator *=(const float n);
         Vector4& operator *=(const Matrix44& m);
         Vector4& operator /=(const float n);
+        Vector4& operator /=(const Vector4& v);
         operator Vector2();
         operator Vector3();
 

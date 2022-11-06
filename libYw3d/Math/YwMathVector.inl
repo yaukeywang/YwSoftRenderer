@@ -147,6 +147,12 @@ namespace yw
         return value;
     }
 
+    inline Vector2 Vector2::operator /(const Vector2& v) const
+    {
+        Vector2 value(x / v.x, y / v.y);
+        return value;
+    }
+
     inline Vector2& Vector2::operator +=(const Vector2& v)
     {
         x += v.x;
@@ -184,6 +190,14 @@ namespace yw
         float oneOverO = 1.0f / n;
         x *= oneOverO;
         y *= oneOverO;
+
+        return *this;
+    }
+
+    inline Vector2& Vector2::operator /=(const Vector2& v)
+    {
+        x /= v.x;
+        y /= v.y;
 
         return *this;
     }
@@ -497,6 +511,12 @@ namespace yw
         return value;
     }
 
+    inline Vector3 Vector3::operator /(const Vector3& v) const
+    {
+        Vector3 value(x / v.x, y / v.y, z / v.z);
+        return value;
+    }
+
     inline Vector3& Vector3::operator +=(const Vector3& v)
     {
         x += v.x;
@@ -552,6 +572,15 @@ namespace yw
         x *= oneOverO;
         y *= oneOverO;
         z *= oneOverO;
+
+        return *this;
+    }
+
+    inline Vector3 Vector3::operator /=(const Vector3& v)
+    {
+        x /= v.x;
+        y /= v.y;
+        z /= v.z;
 
         return *this;
     }
@@ -799,7 +828,7 @@ namespace yw
     }
 
     //
-    // For Vector2 class.
+    // For Vector4 class.
 
     // Member functions.
 
@@ -984,6 +1013,12 @@ namespace yw
         return value;
     }
 
+    inline Vector4 Vector4::operator /(const Vector4& v) const
+    {
+        Vector4 value(x / v.x, y / v.y, z / v.z, w / v.w);
+        return value;
+    }
+
     inline Vector4& Vector4::operator +=(const Vector4& v)
     {
         x += v.x;
@@ -1031,6 +1066,16 @@ namespace yw
         y *= oneOverO;
         z *= oneOverO;
         w *= oneOverO;
+
+        return *this;
+    }
+
+    inline Vector4& Vector4::operator /=(const Vector4& v)
+    {
+        x /= v.x;
+        y /= v.y;
+        z /= v.z;
+        w /= v.w;
 
         return *this;
     }
