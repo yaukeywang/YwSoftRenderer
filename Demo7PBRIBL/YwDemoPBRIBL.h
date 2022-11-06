@@ -97,10 +97,10 @@ namespace yw
         class DemoPBRIBLVertexShader* m_PbrVertexShader;
         class DemoPBRIBLPixelShader* m_PbrPixelShader;
 
-        // roughness
+        // Shader uniform params.
+        Vector3 m_Albedo;
         float m_Metallic;
-        float m_Smoothness;
-        float m_SmoothnessScale;
+        float m_Roughness;
     };
 }
 

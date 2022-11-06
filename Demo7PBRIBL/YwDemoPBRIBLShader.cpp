@@ -504,6 +504,8 @@ namespace yw
             return Yw3d_SRT_Vector3; // Bi-Normal of TBN.
         case 3:
             return Yw3d_SRT_Vector3; // Normal of TBN.
+        case 4:
+            return Yw3d_SRT_Vector3; // Vertex world position.
         default:
             return Yw3d_SRT_Unused;
         }
@@ -519,12 +521,57 @@ namespace yw
     // Shader main entry.
     bool DemoPBRIBLPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
+        const float2 texCoord = float2(input[0]);
+
         // Form TBN matrix from tangent space to model space.
         const float3 tangent = normalize(float3(input[1]));
         const float3 binormal = normalize(float3(input[2]));
         const float3 normal = normalize(float3(input[3]));
+        const float3 worldPos = float3(input[4]);
 
-        color = float4(0.0f, 1.0f, 0.0f, 1.0f);
+        const float metallic = GetFloat(0);
+        const float roughness = GetFloat(1);
+        const float3 albedo = GetVector(0);
+        const float3 cameraPos = GetVector(1);
+
+        Vector3 N = normal;
+        Vector3 V = normalize(cameraPos - worldPos);
+        Vector3 R = reflect(-V, N);
+
+        // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
+        // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
+        Vector3 F0 = Vector3(0.04f);
+        F0 = lerp(F0, albedo, metallic);
+
+        // ambient lighting (we now use IBL as the ambient term)
+        Vector3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0f), F0, roughness);
+
+        Vector3 kS = F;
+        Vector3 kD = Vector3::One() - kS;
+        kD *= 1.0f - metallic;
+
+        Vector3 irradiance = texCUBE(0, 0, N);
+        Vector3 diffuse = irradiance * albedo;
+
+        // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+        const float MAX_REFLECTION_LOD = 4.0f;
+        Vector3 prefilteredColor = texCUBElod(0, 1, Vector4(R, roughness * MAX_REFLECTION_LOD));
+        Vector2 brdf = tex2D(0, 2, Vector2(max(dot(N, V), 0.0f), roughness));
+        Vector3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+
+        //Vector3 ambient = (kD * diffuse + specular) * ao;
+        Vector3 ambient = (kD * diffuse + specular);
+
+        //Vector3 finalColor = ambient + Lo;
+        Vector3 finalColor = ambient;
+
+        // HDR tonemapping
+        finalColor = finalColor / (finalColor + Vector3(1.0f));
+
+        // gamma correct
+        finalColor = pow(finalColor, Vector3(1.0f / 2.2f));
+
+        color = finalColor;
 
         return true;
     }
@@ -532,6 +579,6 @@ namespace yw
     Vector3 DemoPBRIBLPixelShader::fresnelSchlickRoughness(float cosTheta, const Vector3& F0, float roughness)
     {
         const float smoothness = 1.0f - roughness;
-        return F0 + (Vector3(max(smoothness, F0.x), max(smoothness, F0.y), max(smoothness, F0.z)) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+        return F0 + (maximum(Vector3(smoothness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
     }
 }

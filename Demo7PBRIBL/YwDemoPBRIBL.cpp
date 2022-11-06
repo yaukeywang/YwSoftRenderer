@@ -54,8 +54,7 @@ namespace yw
         m_PbrVertexShader(nullptr),
         m_PbrPixelShader(nullptr),
         m_Metallic(0.0f),
-        m_Smoothness(0.0f),
-        m_SmoothnessScale(1.0f)
+        m_Roughness(0.0f)
     {
         m_EnvEquirectangularTextureName = "newport_loft";
     }
@@ -200,9 +199,9 @@ namespace yw
         m_PbrPixelShader = new DemoPBRIBLPixelShader();
 
         // Initialize environments.
-        m_Metallic = 0.5f;
-        m_Smoothness = 0.5f;
-        m_SmoothnessScale = 1.0f;
+        m_Albedo.Set(0.8f, 0.2f, 0.2f);
+        m_Metallic = 0.9f;
+        m_Roughness = 0.2f;
 
         return true;
     }
@@ -973,32 +972,55 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
         graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
-        // Set texture.
-        graphics->SetTexture(0, m_ModelPBRTexture);
+        //// Set texture.
+
+        graphics->SetTexture(0, m_IrrandianceCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        graphics->SetTexture(1, m_ModelPBRNormalTexture);
+        graphics->SetTexture(1, m_PrefilterReflectionCubeTexture);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        graphics->SetTexture(2, m_ModelPBRSpecularTexture);
+        graphics->SetTexture(2, m_PreintegrateBRDFTexture);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
+        //graphics->SetTexture(0, m_ModelPBRTexture);
+        //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+        //graphics->SetTexture(1, m_ModelPBRNormalTexture);
+        //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+        //graphics->SetTexture(2, m_ModelPBRSpecularTexture);
+        //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
+        //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
+        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
         // Update shader parameters.
         m_PbrPixelShader->SetFloat(0, m_Metallic);
-        m_PbrPixelShader->SetFloat(1, m_Smoothness);
-        m_PbrPixelShader->SetFloat(2, m_SmoothnessScale);
+        m_PbrPixelShader->SetFloat(1, m_Roughness);
+        m_PbrPixelShader->SetVector(0, m_Albedo);
+        m_PbrPixelShader->SetVector(1, camera->GetPosition());
 
         // Set pbr vertex and pixel shader.
         graphics->SetVertexShader(m_PbrVertexShader);
