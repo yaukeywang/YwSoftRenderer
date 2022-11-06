@@ -317,6 +317,15 @@ namespace yw
             return v.Length();
         }
 
+        // The result of two vector2 dot product.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the dot product value.
+        static inline float dot(const Vector2& a, const Vector2& b)
+        {
+            return Vector2Dot(a, b);
+        }
+
         // The result of two vector3 dot product.
         // @param[in] a first value.
         // @param[in] b second value.
@@ -324,6 +333,15 @@ namespace yw
         static inline float dot(const Vector3& a, const Vector3& b)
         {
             return Vector3Dot(a, b);
+        }
+
+        // The result of two vector4 dot product.
+        // @param[in] a first value.
+        // @param[in] b second value.
+        // @return the dot product value.
+        static inline float dot(const Vector4& a, const Vector4& b)
+        {
+            return Vector4Dot(a, b);
         }
 
         // The result of two vector3 cross product.
@@ -380,7 +398,7 @@ namespace yw
          * @param[in] n normal vector.
          * @return Returns a reflection vector using an incident ray and a surface normal..
          */
-        static inline Vector3 reflect(const Vector2& i, const Vector3& n)
+        static inline Vector3 reflect(const Vector3& i, const Vector3& n)
         {
             return i - 2.0f * n * dot(i, n);
         }

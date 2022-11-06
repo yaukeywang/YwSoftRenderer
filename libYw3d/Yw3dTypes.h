@@ -424,6 +424,12 @@ namespace yw
 
 namespace yw
 {
+    // Lower case format of vector.
+    typedef Vector2 vector2;
+    typedef Vector3 vector3;
+    typedef Vector4 vector4;
+    typedef Vector4 vector;
+
     // float point format of vector.
     typedef Vector2 float2;
     typedef Vector3 float3;
