@@ -972,7 +972,7 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
         graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
-        //// Set texture.
+        // Set textures.
 
         graphics->SetTexture(0, m_IrrandianceCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
