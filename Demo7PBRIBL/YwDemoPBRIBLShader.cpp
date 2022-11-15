@@ -490,6 +490,9 @@ namespace yw
 
         // Vertex world position.
         vsShaderOutput[4] = vsShaderInput[0] * (*GetWorldMatrix());
+
+        // Vertex world normal.
+        vsShaderOutput[5] = float3(float4(normal, 0.0f) * (*GetWorldMatrix()));
     }
 
     Yw3dShaderRegisterType DemoPBRIBLVertexShader::GetOutputRegisters(uint32_t shaderRegister)
@@ -506,6 +509,8 @@ namespace yw
             return Yw3d_SRT_Vector3; // Normal of TBN.
         case 4:
             return Yw3d_SRT_Vector3; // Vertex world position.
+        case 5:
+            return Yw3d_SRT_Vector3; // Vertex world normal.
         default:
             return Yw3d_SRT_Unused;
         }
@@ -528,13 +533,14 @@ namespace yw
         const float3 binormal = normalize(float3(input[2]));
         const float3 normal = normalize(float3(input[3]));
         const float3 worldPos = float3(input[4]);
+        const float3 worldNormal = normalize(float3(input[5]));
 
         const float metallic = GetFloat(0);
         const float roughness = GetFloat(1);
         const float3 albedo = GetVector(0);
         const float3 cameraPos = GetVector(1);
 
-        Vector3 N = normal;
+        Vector3 N = worldNormal;
         Vector3 V = normalize(cameraPos - worldPos);
         Vector3 R = reflect(-V, N);
 
