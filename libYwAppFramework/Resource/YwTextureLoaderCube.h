@@ -42,6 +42,10 @@ namespace yw
 
         // Release all loaded textures.
         void ReleaseAllLoadedTextures(class Yw3dTexture** textures, int32_t length);
+
+    private:
+        // Should generate mipmap by default or not.
+        bool m_GenerateMipmapByDefault;
     };
 }
 

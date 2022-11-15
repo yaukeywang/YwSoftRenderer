@@ -13,7 +13,8 @@
 namespace yw
 {
     TextureLoaderCube::TextureLoaderCube():
-        ITextureLoader()
+        ITextureLoader(),
+        m_GenerateMipmapByDefault(true)
     {
 
     }
@@ -101,19 +102,51 @@ namespace yw
         }
 
         // Fill loaded textures into cube faces.
-        uint32_t copyBytes = cubeEdgeLength * cubeEdgeLength * cubeFormatBytes;
-        for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+        if (m_GenerateMipmapByDefault)
         {
-            uint8_t* dst = nullptr;
-            (*inputTexture)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
+            // Because we generate mipmap by "GenerateMipmap" method later, so we just copy first mipmap level here.
+            uint32_t copyBytes = cubeEdgeLength * cubeEdgeLength * cubeFormatBytes;
+            for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+            {
+                uint8_t* dst = nullptr;
+                (*inputTexture)->LockRect((Yw3dCubeFaces)i, 0, (void**)&dst, nullptr);
 
-            uint8_t* src = nullptr;
-            faceTextures[i]->LockRect(0, (void**)&src, nullptr);
-            memcpy(dst, src, copyBytes);
-            faceTextures[i]->UnlockRect(0);
-            YW_SAFE_RELEASE(faceTextures[i]);
+                uint8_t* src = nullptr;
+                faceTextures[i]->LockRect(0, (void**)&src, nullptr);
+                memcpy(dst, src, copyBytes);
+                faceTextures[i]->UnlockRect(0);
+                YW_SAFE_RELEASE(faceTextures[i]);
 
-            (*inputTexture)->UnlockRect((Yw3dCubeFaces)i, 0);
+                (*inputTexture)->UnlockRect((Yw3dCubeFaces)i, 0);
+            }
+        }
+        else
+        {
+            // Generate mipmap data to get memory space.
+            GenerateCubeTextureMipmap(*inputTexture);
+
+            // We copy full mipmap data here when input texture memory space prepared, not by "GenerateMipmap" method later.
+            
+            for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+            {
+                const uint32_t maxMipLevels = (*inputTexture)->GetMipLevels();
+                for (uint32_t mipLevel = 0; mipLevel < maxMipLevels; mipLevel++)
+                {
+                    uint32_t copyBytes = faceTextures[i]->GetWidth(mipLevel) * faceTextures[i]->GetHeight(mipLevel) * cubeFormatBytes;
+
+                    uint8_t* dst = nullptr;
+                    (*inputTexture)->LockRect((Yw3dCubeFaces)i, mipLevel, (void**)&dst, nullptr);
+
+                    uint8_t* src = nullptr;
+                    faceTextures[i]->LockRect(mipLevel, (void**)&src, nullptr);
+                    memcpy(dst, src, copyBytes);
+                    faceTextures[i]->UnlockRect(mipLevel);
+
+                    (*inputTexture)->UnlockRect((Yw3dCubeFaces)i, mipLevel);
+                }
+
+                YW_SAFE_RELEASE(faceTextures[i]);
+            }
         }
 
         ReleaseAllLoadedTextures(faceTextures, Yw3d_CF_NumCubeFaces);
@@ -123,7 +156,14 @@ namespace yw
 
     bool TextureLoaderCube::GenerateMipmap(IYw3dBaseTexture* texture)
     {
-        return GenerateCubeTextureMipmap(texture);
+        if (m_GenerateMipmapByDefault)
+        {
+            return GenerateCubeTextureMipmap(texture);
+        }
+        else
+        {
+            return true;
+        }
     }
 
     StringA TextureLoaderCube::GetFileExtension(const StringA& fileName)
@@ -156,6 +196,7 @@ namespace yw
     {
         StringA fileExt = GetFileExtension(fileName);
         ITextureLoader* textureLoader = nullptr;
+        m_GenerateMipmapByDefault = true;
         if ("bmp" == fileExt)
         {
             textureLoader = new TextureLoaderBMP();
@@ -174,7 +215,9 @@ namespace yw
         }
         else if ("ywt" == fileExt)
         {
+            // YWT map contains mipmap data by default.
             textureLoader = new TextureLoaderYWT();
+            m_GenerateMipmapByDefault = false;
         }
         else
         {
@@ -182,8 +225,9 @@ namespace yw
             return false;
         }
 
+        // Generating mipmap later by cube map, not here.
         IYw3dBaseTexture** baseTexture = (IYw3dBaseTexture**)texture;
-        if (!textureLoader->Load(fileName, device, baseTexture, true))
+        if (!textureLoader->Load(fileName, device, baseTexture, false))
         {
             YW_SAFE_DELETE(textureLoader);
             LOGE(_T("TextureLoaderCube.LoadTextureByFileName: Load texture failed."));
