@@ -77,7 +77,7 @@ namespace yw
             }
 
             // Copy mip texture data.
-            memcpy(textureData, &textureMipData.mipData[0], textureMipData.mipData.size());
+            memcpy(textureData, textureMipData.mipData.data(), textureMipData.mipData.size());
 
             // Unlock texture.
             rawTexture->UnlockRect(i);

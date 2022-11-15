@@ -42,7 +42,7 @@ bool LoadYwTextureFromData(const uint8_t* data, const uint32_t dataLength, YwTex
         mipData.mipWidth = mipHeader->mipWidth;
         mipData.mipHeight = mipHeader->mipHeight;
         mipData.mipData.resize(mipHeader->mipDataSize);
-        memcpy(&mipData.mipData[0], dataBegin, mipHeader->mipDataSize);
+        memcpy(mipData.mipData.data(), dataBegin, mipHeader->mipDataSize);
         result.mipsData.push_back(mipData);
 
         dataBegin += mipHeader->mipDataSize;
@@ -96,7 +96,7 @@ bool SaveYwTextureToData(const YwTextureData& textureData, uint8_t* data, uint32
         mipHeader->mipDataSize = (uint32_t)textureMipData.mipData.size();
 
         // Save mip data content.
-        memcpy(dataPointer, &textureMipData.mipData[0], mipHeader->mipDataSize);
+        memcpy(dataPointer, textureMipData.mipData.data(), mipHeader->mipDataSize);
         dataPointer += mipHeader->mipDataSize;
     }
 
