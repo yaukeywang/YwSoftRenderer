@@ -602,8 +602,7 @@ namespace yw
         }
 
         // Generate mip-map levels.
-        // (这里没必要生成 mip-map。)
-        //m_IrrandianceCubeTexture->GenerateMipSubLevels(0);
+        m_IrrandianceCubeTexture->GenerateMipSubLevels(0);
 
         // Recovery viewport.
         device->SetViewportMatrix(&matViewportCurrent);
@@ -760,56 +759,56 @@ namespace yw
         const float aspect = 1.0f;
         const float ZNear = 0.1f;
         const float zFar = 10.0f;
-		const uint32_t numVertices = 4;
+        const uint32_t numVertices = 4;
 
-		// Create primitive data.
+        // Create primitive data.
 
-		// Define vertex format.
-		struct VertexElement
-		{
-			Vector3 position;
-			Vector2 uv;
-		};
+        // Define vertex format.
+        struct VertexElement
+        {
+            Vector3 position;
+            Vector2 uv;
+        };
 
-		// Vertex element declaration.
-		Yw3dVertexElement VertexDeclaration[] =
-		{
-			YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 0),
-			YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 1)
-		};
+        // Vertex element declaration.
+        Yw3dVertexElement VertexDeclaration[] =
+        {
+            YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector3, 0),
+            YW3D_VERTEX_FORMAT_DECL(0, Yw3d_VET_Vector2, 1)
+        };
 
-		// Create vertex format.
-		Yw3dVertexFormat* vertexFormat = nullptr;
-		if (YW3D_FAILED(device->CreateVertexFormat(&vertexFormat, VertexDeclaration, sizeof(VertexDeclaration))))
-		{
-			return false;
-		}
+        // Create vertex format.
+        Yw3dVertexFormat* vertexFormat = nullptr;
+        if (YW3D_FAILED(device->CreateVertexFormat(&vertexFormat, VertexDeclaration, sizeof(VertexDeclaration))))
+        {
+            return false;
+        }
 
-		// Create vertex buffer.
-		Yw3dVertexBuffer* vertexBuffer = nullptr;
-		if (YW3D_FAILED(device->CreateVertexBuffer(&vertexBuffer, sizeof(VertexElement) * numVertices)))
-		{
-			return false;
-		}
+        // Create vertex buffer.
+        Yw3dVertexBuffer* vertexBuffer = nullptr;
+        if (YW3D_FAILED(device->CreateVertexBuffer(&vertexBuffer, sizeof(VertexElement) * numVertices)))
+        {
+            return false;
+        }
 
-		// Get vertex buffer pointer.
-		VertexElement* vertexElement = nullptr;
-		if (YW3D_FAILED(vertexBuffer->GetPointer(0, (void**)&vertexElement)))
-		{
-			return false;
-		}
+        // Get vertex buffer pointer.
+        VertexElement* vertexElement = nullptr;
+        if (YW3D_FAILED(vertexBuffer->GetPointer(0, (void**)&vertexElement)))
+        {
+            return false;
+        }
 
         // NDC vertex position and texture coordinates.
         vertexElement[0].position = Vector3(-1.0f, -1.0f, 0.0f);
         vertexElement[0].uv = Vector2(0.0f, 1.0f);
-		vertexElement[1].position = Vector3(-1.0f, 1.0f, 0.0f);
-		vertexElement[1].uv = Vector2(0.0f, 0.0f);
-		vertexElement[2].position = Vector3(1.0f, -1.0f, 0.0f);
-		vertexElement[2].uv = Vector2(1.0f, 1.0f);
-		vertexElement[3].position = Vector3(1.0f, 1.0f, 0.0f);
-		vertexElement[3].uv = Vector2(1.0f, 0.0f);
+        vertexElement[1].position = Vector3(-1.0f, 1.0f, 0.0f);
+        vertexElement[1].uv = Vector2(0.0f, 0.0f);
+        vertexElement[2].position = Vector3(1.0f, -1.0f, 0.0f);
+        vertexElement[2].uv = Vector2(1.0f, 1.0f);
+        vertexElement[3].position = Vector3(1.0f, 1.0f, 0.0f);
+        vertexElement[3].uv = Vector2(1.0f, 0.0f);
 
-		// Create render target and render texture.
+        // Create render target and render texture.
 
         // Create a temp render target.
         Yw3dRenderTarget* rtBRDFMap = nullptr;
@@ -826,51 +825,51 @@ namespace yw
             return false;
         }
 
-		// Backup old viewport matrix.sss
-		const Matrix44* matViewportCurrentPointer;
-		device->GetViewportMatrix(matViewportCurrentPointer);
-		Matrix44 matViewportCurrent(*matViewportCurrentPointer);
+        // Backup old viewport matrix.sss
+        const Matrix44* matViewportCurrentPointer;
+        device->GetViewportMatrix(matViewportCurrentPointer);
+        Matrix44 matViewportCurrent(*matViewportCurrentPointer);
 
-		// Set device viewport.
-		Matrix44 matViewportCubeMap;
-		Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
-		device->SetViewportMatrix(&matViewportCubeMap);
+        // Set device viewport.
+        Matrix44 matViewportCubeMap;
+        Matrix44Viewport(matViewportCubeMap, 0, 0, targetWidth, targetHeight, 0.0f, 1.0f);
+        device->SetViewportMatrix(&matViewportCubeMap);
 
-		// Construct view matrices.
-		Camera* camera = graphics->GetCurrentCamera();
-		Matrix44 matViews; // = graphics->GetCurrentCamera()->GetViewMatrix();
-		Matrix44LookAtLH(matViews, Vector3(0.0f, 0.0f, -2.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
+        // Construct view matrices.
+        Camera* camera = graphics->GetCurrentCamera();
+        Matrix44 matViews; // = graphics->GetCurrentCamera()->GetViewMatrix();
+        Matrix44LookAtLH(matViews, Vector3(0.0f, 0.0f, -2.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f));
 
-		// Construct projection matrix.
-		Matrix44 matProjection;
-		Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
+        // Construct projection matrix.
+        Matrix44 matProjection;
+        Matrix44PerspectiveFovLH(matProjection, fovy, aspect, ZNear, zFar);
 
-		// Create shader.
+        // Create shader.
         DemoPBRIBLPreintegrateBRDFMapVertexShader* preintegrateBRDFMapVertexShader = new DemoPBRIBLPreintegrateBRDFMapVertexShader();
         DemoPBRIBLPreintegrateBRDFMapPixelShader* preintegrateBRDFMapPixelShader = new DemoPBRIBLPreintegrateBRDFMapPixelShader();
 
-		// Set render target.
-		graphics->SetRenderTarget(rtBRDFMap);
+        // Set render target.
+        graphics->SetRenderTarget(rtBRDFMap);
 
-		// Set states.
-		graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW); // Yw3d_Cull_CW
-		graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+        // Set states.
+        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW); // Yw3d_Cull_CW
+        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
-		// Set primitive data.
-		// 这种非持久化的数据不可以设置到 Graphics 里面，否则因为在这里函数栈释放后，Graphics 再次自动释放会因为访问无效内存。
-		device->SetVertexFormat(vertexFormat);
-		device->SetVertexStream(0, vertexBuffer, 0, sizeof(VertexElement));
+        // Set primitive data.
+        // 这种非持久化的数据不可以设置到 Graphics 里面，否则因为在这里函数栈释放后，Graphics 再次自动释放会因为访问无效内存。
+        device->SetVertexFormat(vertexFormat);
+        device->SetVertexStream(0, vertexBuffer, 0, sizeof(VertexElement));
 
-		// Set vertex and pixel shader.
-		device->SetVertexShader(preintegrateBRDFMapVertexShader);
-		device->SetPixelShader(preintegrateBRDFMapPixelShader);
+        // Set vertex and pixel shader.
+        device->SetVertexShader(preintegrateBRDFMapVertexShader);
+        device->SetPixelShader(preintegrateBRDFMapPixelShader);
 
-		// Render to target and copy to cube face.
-		device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
+        // Render to target and copy to cube face.
+        device->Clear(nullptr, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0);
 
         // NDC vertices, no need transforms.
 
-		// Render Quad.
+        // Render Quad.
         device->DrawPrimitive(Yw3d_PT_TriangleStrip, 0, 2);
 
         // Copy pixels from render target to cube face.
@@ -880,14 +879,14 @@ namespace yw
         YW_SAFE_RELEASE(dstSurface);
         YW_SAFE_RELEASE(srcSurface);
 
-		 // Recovery viewport.
-		device->SetViewportMatrix(&matViewportCurrent);
+        // Recovery viewport.
+        device->SetViewportMatrix(&matViewportCurrent);
 
-		YW_SAFE_RELEASE(vertexFormat);
-		YW_SAFE_RELEASE(vertexBuffer);
+        YW_SAFE_RELEASE(vertexFormat);
+        YW_SAFE_RELEASE(vertexBuffer);
         YW_SAFE_RELEASE(rtBRDFMap);
-		YW_SAFE_RELEASE(preintegrateBRDFMapVertexShader);
-		YW_SAFE_RELEASE(preintegrateBRDFMapPixelShader);
+        YW_SAFE_RELEASE(preintegrateBRDFMapVertexShader);
+        YW_SAFE_RELEASE(preintegrateBRDFMapPixelShader);
 
         // Save brdf texture.
         YwTextureDataConverter::SaveTextureDataToBMPFile("./Resources/brdf", m_PreintegrateBRDFTexture, true);

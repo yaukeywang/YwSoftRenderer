@@ -400,7 +400,7 @@ namespace yw
             float NdotH = max(H.z, 0.0f);
             float VdotH = max(dot(V, H), 0.0f);
 
-            if (NdotL > 0.0)
+            if (NdotL > 0.0f)
             {
                 float G = GeometrySmith(N, V, L, roughness);
                 float G_Vis = (G * VdotH) / (NdotH * NdotV);
