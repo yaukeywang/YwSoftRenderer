@@ -814,9 +814,9 @@ namespace yw
 
         // NDC vertex position and texture coordinates.
         vertexElement[0].position = Vector3(-1.0f, -1.0f, 0.0f);
-        vertexElement[0].uv = Vector2(1.0f / 512.0f, 1.0f);
+        vertexElement[0].uv = Vector2(1.0f / (float)targetWidth, 1.0f);
         vertexElement[1].position = Vector3(-1.0f, 1.0f, 0.0f);
-        vertexElement[1].uv = Vector2(1.0f / 512.0f, 0.0f);
+        vertexElement[1].uv = Vector2(1.0f / (float)targetWidth, 0.0f);
         vertexElement[2].position = Vector3(1.0f, -1.0f, 0.0f);
         vertexElement[2].uv = Vector2(1.0f, 1.0f);
         vertexElement[3].position = Vector3(1.0f, 1.0f, 0.0f);
