@@ -199,8 +199,8 @@ namespace yw
         m_PbrPixelShader = new DemoPBRIBLPixelShader();
 
         // Initialize environments.
-        m_Albedo.Set(0.8f, 0.2f, 0.2f);
-        m_Metallic = 0.9f;
+        m_Albedo.Set(0.5f, 0.5f, 0.5f);
+        m_Metallic = 0.4f;
         m_Roughness = 0.2f;
 
         return true;
@@ -800,9 +800,9 @@ namespace yw
 
         // NDC vertex position and texture coordinates.
         vertexElement[0].position = Vector3(-1.0f, -1.0f, 0.0f);
-        vertexElement[0].uv = Vector2(0.0f, 1.0f);
+        vertexElement[0].uv = Vector2(1.0f / 512.0f, 1.0f);
         vertexElement[1].position = Vector3(-1.0f, 1.0f, 0.0f);
-        vertexElement[1].uv = Vector2(0.0f, 0.0f);
+        vertexElement[1].uv = Vector2(1.0f / 512.0f, 0.0f);
         vertexElement[2].position = Vector3(1.0f, -1.0f, 0.0f);
         vertexElement[2].uv = Vector2(1.0f, 1.0f);
         vertexElement[3].position = Vector3(1.0f, 1.0f, 0.0f);
@@ -941,6 +941,94 @@ namespace yw
         m_ModelSkySphere->Render(device);
     }
 
+    //void DemoPBRIBL::RenderPbrModel(int32_t pass)
+    //{
+    //    // Render pbr model.
+
+    //    // Get graphics and device.
+    //    Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+    //    Yw3dDevice* device = graphics->GetYw3dDevice();
+    //    DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
+    //    DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
+
+    //    Matrix44 matWorld;
+    //    Matrix44Identity(matWorld);
+
+    //    // Apply model rotation.
+    //    Matrix44Transformation(matWorld, Vector3(0.6f, 0.6f, 0.6f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
+
+    //    // Set world transform to camera.
+    //    camera->SetWorldMatrix(matWorld);
+
+    //    // This should be from device.
+    //    Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
+    //    device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
+    //    device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
+    //    device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
+    //    device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+    //    // Set states.
+    //    graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
+    //    graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
+
+    //    // Set textures.
+
+    //    graphics->SetTexture(0, m_IrrandianceCubeTexture);
+    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+    //    graphics->SetTexture(1, m_PrefilterReflectionCubeTexture);
+    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+    //    graphics->SetTexture(2, m_PreintegrateBRDFTexture);
+    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+    //    //graphics->SetTexture(0, m_ModelPBRTexture);
+    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+    //    //graphics->SetTexture(1, m_ModelPBRNormalTexture);
+    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+    //    //graphics->SetTexture(2, m_ModelPBRSpecularTexture);
+    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
+    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
+    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
+    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
+    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+
+    //    // Update shader parameters.
+    //    m_PbrPixelShader->SetFloat(0, m_Metallic);
+    //    m_PbrPixelShader->SetFloat(1, m_Roughness);
+    //    m_PbrPixelShader->SetVector(0, m_Albedo);
+    //    m_PbrPixelShader->SetVector(1, camera->GetPosition());
+
+    //    // Set pbr vertex and pixel shader.
+    //    graphics->SetVertexShader(m_PbrVertexShader);
+    //    graphics->SetPixelShader(m_PbrPixelShader);
+
+    //    // Render model.
+    //    m_ModelPBR->Render(device);
+    //}
+
     void DemoPBRIBL::RenderPbrModel(int32_t pass)
     {
         // Render pbr model.
@@ -950,22 +1038,6 @@ namespace yw
         Yw3dDevice* device = graphics->GetYw3dDevice();
         DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
         DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
-
-        Matrix44 matWorld;
-        Matrix44Identity(matWorld);
-
-        // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(0.6f, 0.6f, 0.6f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
-
-        // Set world transform to camera.
-        camera->SetWorldMatrix(matWorld);
-
-        // This should be from device.
-        Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
-        device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
-        device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
-        device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
-        device->SetTransform(Yw3d_TS_WVP, &matProjection);
 
         // Set states.
         graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
@@ -994,38 +1066,45 @@ namespace yw
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
         graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
 
-        //graphics->SetTexture(0, m_ModelPBRTexture);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        //graphics->SetTexture(1, m_ModelPBRNormalTexture);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        //graphics->SetTexture(2, m_ModelPBRSpecularTexture);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        //graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        // Update shader parameters.
-        m_PbrPixelShader->SetFloat(0, m_Metallic);
-        m_PbrPixelShader->SetFloat(1, m_Roughness);
-        m_PbrPixelShader->SetVector(0, m_Albedo);
-        m_PbrPixelShader->SetVector(1, camera->GetPosition());
-
         // Set pbr vertex and pixel shader.
         graphics->SetVertexShader(m_PbrVertexShader);
         graphics->SetPixelShader(m_PbrPixelShader);
 
-        // Render model.
-        m_ModelPBR->Render(device);
+        const float startX = -1.3f;
+        const float startY = 1.0f;
+        const float stepX = 0.45f;
+        const float stepY = -0.5f;
+        const int32_t maxRows = 5;
+        const int32_t maxColumns = 7;
+        for (int32_t i = 0; i < maxColumns; i++)
+        {
+            for (int32_t j = 0; j < maxRows; j++)
+            {
+                Matrix44 matWorld;
+                Matrix44Identity(matWorld);
+
+                // Apply model rotation.
+                Matrix44Transformation(matWorld, Vector3(0.4f, 0.4f, 0.4f), camera->GetWorldRotation(), Vector3(startX + stepX * i, startY + stepY * j, 0.8f));
+
+                // Set world transform to camera.
+                camera->SetWorldMatrix(matWorld);
+
+                // This should be from device.
+                Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
+                device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
+                device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
+                device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
+                device->SetTransform(Yw3d_TS_WVP, &matProjection);
+
+                // Update shader parameters.
+                m_PbrPixelShader->SetFloat(0, 1.0f - (float)j / (float)maxRows);
+                m_PbrPixelShader->SetFloat(1, Clamp((float)i / (float)maxColumns, 0.05f, 1.0f));
+                m_PbrPixelShader->SetVector(0, m_Albedo);
+                m_PbrPixelShader->SetVector(1, camera->GetPosition());
+
+                // Render model.
+                m_ModelPBR->Render(device);
+            }
+        }
     }
 }
