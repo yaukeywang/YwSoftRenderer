@@ -4,9 +4,6 @@ Implementing a Soft Renderer for Learning CG.
 ### About
 Mostly coming from [Muli3D](http://muli3d.sourceforge.net/), improved by my understanding. It is still a long and hard trip, but worthwhile.
 
-### Note
-Code in `DeprecatedCode` folder is obsolete, only used for reference and will be removed later.
-
 ### Build
 [Premake5](https://premake.github.io/) is used to build the project, so you need to download a [Premake5](https://premake.github.io/) execuatable file and put it into the project root directory. 
 
@@ -24,7 +21,7 @@ premake5 vs2015
 
 (Currently only support `Windows` platform, other platforms like `OSX` and `Linux` is still on the schedule.)
 
-After executing the command `"premake5 vs2017"`, you can find the `Visual Studio` solution files at `"$(ProjectRoot)/Workspace/vs2017/YwSoftRenderer.sln"`, open it with `Visual Studio` and build the solution, all demo executable files are located at `"$(ProjectRoot)/Build/YwSoftRenderer/"`.
+After executing the command `"premake5 vs2017"`, you can find the `Visual Studio` solution files at `"$(ProjectRoot)/Workspace/vs2017/YwSoftRenderer.sln"`, open it with `Visual Studio` and build the solution, all demo executable files are located at `"$(ProjectRoot)/Binaries/"`.
 
 ### Progress
 - [x] Math support.
