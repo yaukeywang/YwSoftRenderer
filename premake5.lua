@@ -6,9 +6,10 @@
 local action = _ACTION or ""
 local todir = "Workspace/" .. action
 local builddir = "Build"
-local appbuilddir = builddir .. "/YwSoftRenderer"
-local appresdir = appbuilddir .. "/Resources"
-local abssrcdatadir = "%{wks.location}../../Resources"
+local binariesdir = "Binaries"
+local appbuilddir = binariesdir
+local appresdir = "Assets"
+local abssrcdatadir = "%{wks.location}../../Assets"
 local absdstdatadir = "%{wks.location}../../" .. appresdir
 
 solution "YwSoftRenderer"
@@ -367,30 +368,6 @@ project "Demo2Model"
     filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
 
-    filter { "system:windows" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:linux" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:macosx" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Wood.png"' .. ' "' .. absdstdatadir .. '"'
-        }
-
 project "Demo3BlinnPhong"
     language "C++"
     kind "WindowedApp"
@@ -442,27 +419,6 @@ project "Demo3BlinnPhong"
     filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
 
-    filter { "system:windows" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:linux" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:macosx" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
-        }
-
 project "Demo4NormalMapping"
     language "C++"
     kind "WindowedApp"
@@ -513,33 +469,6 @@ project "Demo4NormalMapping"
 
     filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
-
-    filter { "system:windows" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:linux" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:macosx" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Cylinder.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_color.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/bricks_nmap.bmp"' .. ' "' .. absdstdatadir .. '"'
-        }
 
 project "Demo5TriangleShaderWireframe"
     language "C++"
@@ -594,27 +523,6 @@ project "Demo5TriangleShaderWireframe"
     filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
 
-    filter { "system:windows" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:linux" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
-        }
-
-    filter { "system:macosx" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/teapot.obj"' .. ' "' .. absdstdatadir .. '"'
-        }
-
 project "Demo6PBR"
     language "C++"
     kind "WindowedApp"
@@ -667,87 +575,6 @@ project "Demo6PBR"
 
     filter { "configurations:Debug*", "architecture:x86_64" }
         targetsuffix "D"
-
-    filter { "system:windows" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_D.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{MKDIR} "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/room.cube"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
-        }
-
-    filter { "system:linux" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_D.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{MKDIR} "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/room.cube"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
-        }
-
-    filter { "system:macosx" }
-        postbuildcommands
-        {
-            '{MKDIR} "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_D.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/SM_Chair_N.bmp"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lu_Head.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_diffuse.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_normal.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/Lieutenant_head_specular.tga"' .. ' "' .. absdstdatadir .. '"',
-            '{MKDIR} "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/room.cube"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nx.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_ny.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_nz.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_px.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_py.png"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.hdr"' .. ' "' .. absdstdatadir .. '/Room"',
-            '{COPY} "' .. abssrcdatadir .. '/Room/m0_pz.png"' .. ' "' .. absdstdatadir .. '/Room"'
-        }
 
 project "Demo7PBRIBL"
     language "C++"
@@ -805,41 +632,41 @@ project "Demo7PBRIBL"
     filter { "system:windows" }
         postbuildcommands
         {
-            '{MKDIR} "' .. absdstdatadir .. '"',
+            -- '{MKDIR} "' .. abssrcdatadir .. '"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Environment"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Irradiance"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Reflection"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"',
-            '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
-            '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
+            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"'
+            -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
+            -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
+            -- '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
         }
 
     filter { "system:linux" }
         postbuildcommands
         {
-            '{MKDIR} "' .. absdstdatadir .. '"',
+            -- '{MKDIR} "' .. abssrcdatadir .. '"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Environment"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Irradiance"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Reflection"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"',
-            '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
-            '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
+            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"'
+            -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
+            -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
+            -- '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
         }
 
     filter { "system:macosx" }
         postbuildcommands
         {
-            '{MKDIR} "' .. absdstdatadir .. '"',
+            -- '{MKDIR} "' .. abssrcdatadir .. '"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Environment"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Irradiance"',
             '{MKDIR} "' .. abssrcdatadir .. '/IBL/Reflection"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"',
-            '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
-            '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
-            '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
+            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"'
+            -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
+            -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
+            -- '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
         }

@@ -238,8 +238,9 @@ namespace yw
         FileIO fileChecker;
 
         // Generate hdr cube map from hdr equirectangular map.
+        const StringA& assetPath = resManager->GetDataPath();
         const StringA environmentMapName = "IBL/Environment/" + m_EnvEquirectangularTextureName + "_environment";
-        const StringA environmentMapPath = "./Resources/" + environmentMapName;
+        const StringA environmentMapPath = assetPath + "/" + environmentMapName;
         if (!fileChecker.FileExists(environmentMapPath + "_ywt.cube"))
         {
             graphics->PushStateBlock();
@@ -277,7 +278,7 @@ namespace yw
 
         // Generate diffuse irradiance map from hdr cube map.
         const StringA irradianceMapName = "IBL/Irradiance/" + m_EnvEquirectangularTextureName + "_irradiance";
-        const StringA irradianceMapPath = "./Resources/" + irradianceMapName;
+        const StringA irradianceMapPath = assetPath + "/" + irradianceMapName;
         if (!fileChecker.FileExists(irradianceMapPath + "_ywt.cube"))
         {
             graphics->PushStateBlock();
@@ -315,7 +316,7 @@ namespace yw
 
         // Generate specular pre-filter reflection environment map.
         const StringA reflectionMapName = "IBL/Reflection/" + m_EnvEquirectangularTextureName + "_reflection";
-        const StringA reflectionMapPath = "./Resources/" + reflectionMapName;
+        const StringA reflectionMapPath = assetPath + "/" + reflectionMapName;
         if (!fileChecker.FileExists(reflectionMapPath + "_ywt.cube"))
         {
             graphics->PushStateBlock();
@@ -353,7 +354,7 @@ namespace yw
 
         // Generate specular specular pre-integral BRDF map.
         const StringA brdfMapName = "IBL/BRDF/brdf";
-        const StringA brdfMapPath = "./Resources/" + brdfMapName;
+        const StringA brdfMapPath = assetPath + "/" + brdfMapName;
         if (!fileChecker.FileExists(brdfMapPath + ".ywt"))
         {
             graphics->PushStateBlock();
