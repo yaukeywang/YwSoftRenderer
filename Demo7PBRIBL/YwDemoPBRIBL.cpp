@@ -54,7 +54,8 @@ namespace yw
         m_PbrVertexShader(nullptr),
         m_PbrPixelShader(nullptr),
         m_Metallic(0.0f),
-        m_Roughness(0.0f)
+        m_Roughness(0.0f),
+        m_DebugInfoEnabled(false)
     {
         m_EnvEquirectangularTextureName = "newport_loft";
     }
@@ -249,8 +250,11 @@ namespace yw
             YwTextureDataConverter::SaveCubeTextureDataToYWTFile(environmentMapPath + "_ywt.cube", m_EnvCubeTexture);
 
             // Used to debug.
-            YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(environmentMapPath + "_hdr.cube", m_EnvCubeTexture, true);
-            YwTextureDataConverter::SaveCubeTextureDataToBMPFile(environmentMapPath + "_bmp.cube", m_EnvCubeTexture, true);
+            if (m_DebugInfoEnabled)
+            {
+                YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(environmentMapPath + "_hdr.cube", m_EnvCubeTexture, true);
+                YwTextureDataConverter::SaveCubeTextureDataToBMPFile(environmentMapPath + "_bmp.cube", m_EnvCubeTexture, true);
+            }
         }
         else
         {
@@ -284,8 +288,11 @@ namespace yw
             YwTextureDataConverter::SaveCubeTextureDataToYWTFile(irradianceMapPath + "_ywt.cube", m_IrrandianceCubeTexture);
 
             // Used to debug.
-            YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(irradianceMapPath + "_hdr.cube", m_IrrandianceCubeTexture, false);
-            YwTextureDataConverter::SaveCubeTextureDataToBMPFile(irradianceMapPath + "_bmp.cube", m_IrrandianceCubeTexture, false);
+            if (m_DebugInfoEnabled)
+            {
+                YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(irradianceMapPath + "_hdr.cube", m_IrrandianceCubeTexture, false);
+                YwTextureDataConverter::SaveCubeTextureDataToBMPFile(irradianceMapPath + "_bmp.cube", m_IrrandianceCubeTexture, false);
+            }
         }
         else
         {
@@ -319,8 +326,11 @@ namespace yw
             YwTextureDataConverter::SaveCubeTextureDataToYWTFile(reflectionMapPath + "_ywt.cube", m_PrefilterReflectionCubeTexture);
 
             // Used to debug.
-            YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(reflectionMapPath + "_hdr.cube", m_PrefilterReflectionCubeTexture, true);
-            YwTextureDataConverter::SaveCubeTextureDataToBMPFile(reflectionMapPath + "_bmp.cube", m_PrefilterReflectionCubeTexture, true);
+            if (m_DebugInfoEnabled)
+            {
+                YwTextureDataConverter::SaveCubeTextureDataToRGBEFile(reflectionMapPath + "_hdr.cube", m_PrefilterReflectionCubeTexture, true);
+                YwTextureDataConverter::SaveCubeTextureDataToBMPFile(reflectionMapPath + "_bmp.cube", m_PrefilterReflectionCubeTexture, true);
+            }
         }
         else
         {
@@ -354,8 +364,11 @@ namespace yw
             YwTextureDataConverter::SaveTextureDataToYWTFile(brdfMapPath + ".ywt", m_PreintegrateBRDFTexture);
 
             // Used to debug.
-            YwTextureDataConverter::SaveTextureDataToRGBEFile(brdfMapPath + ".hdr", m_PreintegrateBRDFTexture, false);
-            YwTextureDataConverter::SaveTextureDataToBMPFile(brdfMapPath + ".bmp", m_PreintegrateBRDFTexture, false);
+            if (m_DebugInfoEnabled)
+            {
+                YwTextureDataConverter::SaveTextureDataToRGBEFile(brdfMapPath + ".hdr", m_PreintegrateBRDFTexture, false);
+                YwTextureDataConverter::SaveTextureDataToBMPFile(brdfMapPath + ".bmp", m_PreintegrateBRDFTexture, false);
+            }
         }
         else
         {
@@ -940,94 +953,6 @@ namespace yw
         // Render sky model.
         m_ModelSkySphere->Render(device);
     }
-
-    //void DemoPBRIBL::RenderPbrModel(int32_t pass)
-    //{
-    //    // Render pbr model.
-
-    //    // Get graphics and device.
-    //    Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
-    //    Yw3dDevice* device = graphics->GetYw3dDevice();
-    //    DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
-    //    DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
-
-    //    Matrix44 matWorld;
-    //    Matrix44Identity(matWorld);
-
-    //    // Apply model rotation.
-    //    Matrix44Transformation(matWorld, Vector3(0.6f, 0.6f, 0.6f), camera->GetWorldRotation(), Vector3(0.0f, 0.0f, 0.0f));
-
-    //    // Set world transform to camera.
-    //    camera->SetWorldMatrix(matWorld);
-
-    //    // This should be from device.
-    //    Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
-    //    device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
-    //    device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
-    //    device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
-    //    device->SetTransform(Yw3d_TS_WVP, &matProjection);
-
-    //    // Set states.
-    //    graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
-    //    graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
-
-    //    // Set textures.
-
-    //    graphics->SetTexture(0, m_IrrandianceCubeTexture);
-    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-    //    graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-    //    graphics->SetTexture(1, m_PrefilterReflectionCubeTexture);
-    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-    //    graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-    //    graphics->SetTexture(2, m_PreintegrateBRDFTexture);
-    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-    //    graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-    //    //graphics->SetTexture(0, m_ModelPBRTexture);
-    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-    //    //graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-    //    //graphics->SetTexture(1, m_ModelPBRNormalTexture);
-    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-    //    //graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-    //    //graphics->SetTexture(2, m_ModelPBRSpecularTexture);
-    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-    //    //graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-    //    // Update shader parameters.
-    //    m_PbrPixelShader->SetFloat(0, m_Metallic);
-    //    m_PbrPixelShader->SetFloat(1, m_Roughness);
-    //    m_PbrPixelShader->SetVector(0, m_Albedo);
-    //    m_PbrPixelShader->SetVector(1, camera->GetPosition());
-
-    //    // Set pbr vertex and pixel shader.
-    //    graphics->SetVertexShader(m_PbrVertexShader);
-    //    graphics->SetPixelShader(m_PbrPixelShader);
-
-    //    // Render model.
-    //    m_ModelPBR->Render(device);
-    //}
 
     void DemoPBRIBL::RenderPbrModel(int32_t pass)
     {

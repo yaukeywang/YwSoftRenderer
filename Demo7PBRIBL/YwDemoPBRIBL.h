@@ -101,6 +101,9 @@ namespace yw
         Vector3 m_Albedo;
         float m_Metallic;
         float m_Roughness;
+
+        // Enable debug info enabled.
+        bool m_DebugInfoEnabled;
     };
 }
 
