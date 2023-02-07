@@ -44,7 +44,8 @@ After executing the command `"premake5 vs2017"`, you can find the `Visual Studio
 - [x] `Alpha Test` support.
 - [ ] `Triangle Shader with Dynamic Vertex Generating` support.
 - [ ] `Material File` support.
-- [ ] `IBL` support. **[Working on...]**
+- [x] `IBL` support.
+- [x] New `PBR` demo. **[Working on...]**
 - [ ] `Linear Color Space` support.
 - [ ] `MSAA` support.
 - [ ] `Skeletal Animation` support.
@@ -80,3 +81,6 @@ After executing the command `"premake5 vs2017"`, you can find the `Visual Studio
 
 #### Demo 6: PBR (Unity BRDF 1: Desney Diffuse + Torrance-Sparrow Specular (D=GGX,F=Schlick,V=Smith), IBL is wroking on.)
 ![Demo 6 PBR Chair](Demo6PBR/Demo6PBR.png) ![Demo 6 PBR Unity Adam Lu Head](Demo6PBR/Demo6PBR-Unity-Lu.png)
+
+#### Demo 7: IBL (With full steps of dynamic generating precomputed data.)
+![Demo 7 Image Based Lighting](Demo7PBRIBL/Demo7PBRIBL.png)
