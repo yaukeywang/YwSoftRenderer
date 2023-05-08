@@ -25,6 +25,7 @@ namespace yw
     DemoPBRIBL::DemoPBRIBL(Scene* scene) :
         IEntity(scene),
         m_ModelSkySphere(nullptr),
+        m_ModelSkyCube(nullptr),
         //m_ModelPBR(nullptr),
 
         m_EnvEquirectangularTexture(nullptr),
@@ -38,6 +39,7 @@ namespace yw
         m_ModelPBRSpecularTexture(nullptr),
 
         m_ModelSkySphereHandle(0),
+        m_ModelSkyCubeHandle(0),
         m_ModelPBRHandle(0),
         m_ModelSkySphereTextureHandle(0),
         m_ModelPBRTextureHandle(0),
@@ -64,6 +66,7 @@ namespace yw
     {
         // Resource should released by resource manager.
         m_ModelSkySphere = nullptr;
+        m_ModelSkyCube = nullptr;
         m_ModelPBR = nullptr;
         m_EnvEquirectangularTexture = nullptr;
         m_ModelPBRTexture = nullptr;
@@ -79,6 +82,7 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkyCubeHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRHandle);
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereTextureHandle);
@@ -109,6 +113,13 @@ namespace yw
         if (m_ModelSkySphereHandle <= 0)
         {
             LOGE(_T("Load resource \"sphere.obj\" failed."));
+            return false;
+        }
+
+        m_ModelSkyCubeHandle = resManager->LoadResource("cube.obj");
+        if (m_ModelSkyCubeHandle <= 0)
+        {
+            LOGE(_T("Load resource \"cube.obj\" failed."));
             return false;
         }
 
@@ -152,6 +163,13 @@ namespace yw
         if (nullptr == m_ModelSkySphere)
         {
             LOGE(_T("Get resource \"sphere.obj\" failed."));
+            return false;
+        }
+
+        m_ModelSkyCube = (Model*)resManager->GetResource(m_ModelSkyCubeHandle);
+        if (nullptr == m_ModelSkySphere)
+        {
+            LOGE(_T("Get resource \"cube.obj\" failed."));
             return false;
         }
 
@@ -923,7 +941,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(100.0f, 100.0f, 100.0f), camera->GetWorldRotation(), Vector3::Zero());
+        Matrix44Transformation(matWorld, Vector3(1.0f, 1.0f, 1.0f), camera->GetWorldRotation(), camera->GetPosition());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -943,16 +961,16 @@ namespace yw
         graphics->SetTexture(0, m_EnvCubeTexture);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
         graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear); // Yw3d_TF_Point
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear); // Yw3d_TF_Point
+        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear); // Yw3d_TF_Point
 
         // Set vertex and pixel shader.
         graphics->SetVertexShader(m_SkyVertexShader);
         graphics->SetPixelShader(m_SkyPixelShader);
 
         // Render sky model.
-        m_ModelSkySphere->Render(device);
+        m_ModelSkyCube->Render(device);
     }
 
     void DemoPBRIBL::RenderPbrModel(int32_t pass)

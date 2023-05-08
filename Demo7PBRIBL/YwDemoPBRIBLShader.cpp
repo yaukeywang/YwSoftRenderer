@@ -454,7 +454,8 @@ namespace yw
     {
         // Sample main texture.
         float3 texCoord = input[0];
-        float4 texColor = texCUBElod(0, 0, Vector4(texCoord, 1));
+        //float4 texColor = texCUBE(0, 0, texCoord);
+        float4 texColor = texCUBElod(0, 0, float4(texCoord, 2.0f));
 
         // We can bake into cube texture.
         // linear to srgb.

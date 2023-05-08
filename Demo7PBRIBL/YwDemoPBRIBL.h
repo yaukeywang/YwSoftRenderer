@@ -60,6 +60,7 @@ namespace yw
     private:
         // Model resources.
         class Model* m_ModelSkySphere;
+        class Model* m_ModelSkyCube;
         class Model* m_ModelPBR;
 
         // Pre-computing texture resources.
@@ -77,6 +78,7 @@ namespace yw
 
         // Model Resource handle.
         HRESOURCE m_ModelSkySphereHandle;
+        HRESOURCE m_ModelSkyCubeHandle;
         HRESOURCE m_ModelPBRHandle;
 
         // Texture Resource handle.
