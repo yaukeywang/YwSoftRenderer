@@ -25,6 +25,7 @@ namespace yw
     DemoPBRIBL::DemoPBRIBL(Scene* scene) :
         IEntity(scene),
         m_ModelSkySphere(nullptr),
+        m_ModelSkyCube(nullptr),
         //m_ModelPBR(nullptr),
 
         m_EnvEquirectangularTexture(nullptr),
@@ -38,6 +39,7 @@ namespace yw
         m_ModelPBRSpecularTexture(nullptr),
 
         m_ModelSkySphereHandle(0),
+        m_ModelSkyCubeHandle(0),
         m_ModelPBRHandle(0),
         m_ModelSkySphereTextureHandle(0),
         m_ModelPBRTextureHandle(0),
@@ -79,6 +81,7 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkyCubeHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRHandle);
 
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSkySphereTextureHandle);
@@ -109,6 +112,13 @@ namespace yw
         if (m_ModelSkySphereHandle <= 0)
         {
             LOGE(_T("Load resource \"sphere.obj\" failed."));
+            return false;
+        }
+
+        m_ModelSkyCubeHandle = resManager->LoadResource("cube.obj");
+        if (m_ModelSkyCubeHandle <= 0)
+        {
+            LOGE(_T("Load resource \"cube.obj\" failed."));
             return false;
         }
 
@@ -152,6 +162,13 @@ namespace yw
         if (nullptr == m_ModelSkySphere)
         {
             LOGE(_T("Get resource \"sphere.obj\" failed."));
+            return false;
+        }
+
+        m_ModelSkyCube = (Model*)resManager->GetResource(m_ModelSkyCubeHandle);
+        if (nullptr == m_ModelSkyCube)
+        {
+            LOGE(_T("Get resource \"cube.obj\" failed."));
             return false;
         }
 
@@ -870,7 +887,7 @@ namespace yw
         graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
 
         // Set primitive data.
-        // 这种非持久化的数据不可以设置到 Graphics 里面，否则因为在这里函数栈释放后，Graphics 再次自动释放会因为访问无效内存。
+        // This non-persistent data should not be saved in "Graphics", because the data address will be invalid when leaving the stack of this function.
         device->SetVertexFormat(vertexFormat);
         device->SetVertexStream(0, vertexBuffer, 0, sizeof(VertexElement));
 
@@ -923,7 +940,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(100.0f, 100.0f, 100.0f), camera->GetWorldRotation(), Vector3::Zero());
+        Matrix44Transformation(matWorld, Vector3(5.0f, 5.0f, 5.0f), camera->GetWorldRotation(), camera->GetPosition());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
@@ -952,7 +969,7 @@ namespace yw
         graphics->SetPixelShader(m_SkyPixelShader);
 
         // Render sky model.
-        m_ModelSkySphere->Render(device);
+        m_ModelSkyCube->Render(device);
     }
 
     void DemoPBRIBL::RenderPbrModel(int32_t pass)
