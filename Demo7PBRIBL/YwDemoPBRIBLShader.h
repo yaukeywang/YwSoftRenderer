@@ -4,7 +4,7 @@
 #ifndef __YW_DEMO_PBR_IBL_SHADER_H__
 #define __YW_DEMO_PBR_IBL_SHADER_H__
 
-#include "YwGraphics.h"
+#include "YwDemoPBRIBLShaderCommon.h"
 
 namespace yw
 {
@@ -77,7 +77,7 @@ namespace yw
     };
 
     // Pre-filter reflection map pixel shader.
-    class DemoPBRIBLPrefilterReflectionMapPixelShader : public IYw3dPixelShader
+    class DemoPBRIBLPrefilterReflectionMapPixelShader : public IYw3dPixelShader, public DemoPBRIBLShaderCommon
     {
     protected:
         // Whether kill pixel or not.
@@ -85,18 +85,6 @@ namespace yw
 
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
-
-    private:
-        float DistributionGGX(const Vector3& N, const Vector3& H, const float roughness);
-
-        // ----------------------------------------------------------------------------
-        // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-        // efficient VanDerCorpus calculation.
-        float RadicalInverse_VdC(uint32_t bits);
-
-        Vector2 Hammersley(const uint32_t i, const uint32_t N);
-
-        Vector3 ImportanceSampleGGX(const Vector2& Xi, const Vector3& N, const float roughness);
     };
 
     // ------------------------------------------------------------------
@@ -114,7 +102,7 @@ namespace yw
     };
 
     // Pre-integrate brdf map pixel shader.
-    class DemoPBRIBLPreintegrateBRDFMapPixelShader : public IYw3dPixelShader
+    class DemoPBRIBLPreintegrateBRDFMapPixelShader : public IYw3dPixelShader, public DemoPBRIBLShaderCommon
     {
     protected:
         // Whether kill pixel or not.
@@ -122,21 +110,9 @@ namespace yw
 
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
-
+        
     private:
-        // ----------------------------------------------------------------------------
-        // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-        // efficient VanDerCorpus calculation.
-        float RadicalInverse_VdC(uint32_t bits);
-
-        Vector2 Hammersley(const uint32_t i, const uint32_t N);
-
-        Vector3 ImportanceSampleGGX(const Vector2& Xi, const Vector3& N, const float roughness);
-
-        float GeometrySchlickGGX(float NdotV, float roughness);
-
-        float GeometrySmith(const Vector3& N, const Vector3& V, const Vector3& L, float roughness);
-
+        // Calculating BRDF integration value for a given roughness and NdotV (one-pixel).
         Vector2 IntegrateBRDF(float NdotV, float roughness);
     };
 
@@ -182,7 +158,7 @@ namespace yw
     };
 
     // PBR pixel shader.
-    class DemoPBRIBLPixelShader : public IYw3dPixelShader
+    class DemoPBRIBLPixelShader : public IYw3dPixelShader, public DemoPBRIBLShaderCommon
     {
     protected:
         // Whether kill pixel or not.
@@ -190,9 +166,6 @@ namespace yw
 
         // Shader main entry.
         bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
-
-    private:
-        Vector3 fresnelSchlickRoughness(float cosTheta, const Vector3& F0, float roughness);
     };
 }
 

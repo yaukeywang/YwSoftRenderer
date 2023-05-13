@@ -603,7 +603,9 @@ project "Demo7PBRIBL"
         "Demo7PBRIBL/YwDemoPBRIBLCamera.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLMain.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLShader.h",
-        "Demo7PBRIBL/YwDemoPBRIBLShader.cpp"
+        "Demo7PBRIBL/YwDemoPBRIBLShader.cpp",
+        "Demo7PBRIBL/YwDemoPBRIBLShaderCommon.h",
+        "Demo7PBRIBL/YwDemoPBRIBLShaderCommon.cpp"
     }
 
     vpaths 
