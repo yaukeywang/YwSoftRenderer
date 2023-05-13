@@ -1,18 +1,18 @@
 // Add by Yaukey at 2020-04-18.
 // YW Soft Renderer demo with PBR-IBL shader class.
 
-#ifndef __YW_DEMO_PBR_IBL_SHADER_H__
-#define __YW_DEMO_PBR_IBL_SHADER_H__
+#ifndef __YW_DEMO_PBR_IBL_SHADER_SKY_H__
+#define __YW_DEMO_PBR_IBL_SHADER_SKY_H__
 
 #include "YwDemoPBRIBLShaderCommon.h"
 
 namespace yw
 {
     // ------------------------------------------------------------------
-    // PBR shader.
-    
-    // PBR vertex shader.
-    class DemoPBRIBLVertexShader : public IYw3dVertexShader
+    // Cube map rendering shader.
+
+    // Cube map vertex shader.
+    class DemoPBRIBLCubeMapVertexShader : public IYw3dVertexShader
     {
     protected:
         // Shader main entry.
@@ -22,8 +22,8 @@ namespace yw
         Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister);
     };
 
-    // PBR pixel shader.
-    class DemoPBRIBLPixelShader : public IYw3dPixelShader, public DemoPBRIBLShaderCommon
+    // Cube map pixel shader.
+    class DemoPBRIBLCubeMapPixelShader : public IYw3dPixelShader
     {
     protected:
         // Whether kill pixel or not.
@@ -34,4 +34,4 @@ namespace yw
     };
 }
 
-#endif //!__YW_DEMO_PBR_IBL_SHADER_H__
+#endif //!__YW_DEMO_PBR_IBL_SHADER_SKY_H__

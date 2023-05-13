@@ -5,6 +5,7 @@
 #include "YwDemoPBRIBLApp.h"
 #include "YwDemoPBRIBLCamera.h"
 #include "YwDemoPBRIBLShaderPrecompute.h"
+#include "YwDemoPBRIBLShaderSky.h"
 #include "YwDemoPBRIBLShader.h"
 #include "YwGraphics.h"
 #include "YwScene.h"
