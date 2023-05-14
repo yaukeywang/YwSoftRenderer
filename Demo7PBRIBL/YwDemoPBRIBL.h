@@ -48,6 +48,9 @@ namespace yw
         // Render pbr model.
         void RenderPbrModel(int32_t pass);
 
+        // @Todo: Render textured pbr model.
+        void RenderTexturedPbrModel(int32_t pass);
+
     private:
         // Model resources.
         class Model* m_ModelSkySphere;
@@ -94,6 +97,23 @@ namespace yw
         Vector3 m_Albedo;
         float m_Metallic;
         float m_Roughness;
+
+        // @Todo: Textureed-PBR-IBL begin.
+        HRESOURCE m_IronAlbedoMapHandle;
+        HRESOURCE m_IronNormalMapHandle;
+        HRESOURCE m_IronMetallicMapHandle;
+        HRESOURCE m_IronRoughnessMapHandle;
+        HRESOURCE m_IronAOMapHandle;
+
+        Yw3dTexture* m_IronAlbedoMap;
+        Yw3dTexture* m_IronNormalMap;
+        Yw3dTexture* m_IronMetallicMap;
+        Yw3dTexture* m_IronRoughnessMap;
+        Yw3dTexture* m_IronAOMap;
+
+        class DemoPBRIBLTexturedVertexShader* m_PBRIBLTexturedVertexShader;
+        class DemoPBRIBLTexturedPixelShader* m_PBRIBLTexturedPixelShader;
+        // Textureed-PBR-IBL end.
 
         // Enable debug info enabled.
         bool m_DebugInfoEnabled;

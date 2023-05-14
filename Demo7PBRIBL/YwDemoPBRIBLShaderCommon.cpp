@@ -127,6 +127,11 @@ namespace yw
         return ggx1 * ggx2;
     }
 
+    Vector3 DemoPBRIBLShaderCommon::FresnelSchlick(float cosTheta, Vector3 F0)
+    {
+        return F0 + (Vector3(1.0f) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+    }
+
     Vector3 DemoPBRIBLShaderCommon::FresnelSchlickRoughness(float cosTheta, const Vector3& F0, float roughness)
     {
         const float smoothness = 1.0f - roughness;

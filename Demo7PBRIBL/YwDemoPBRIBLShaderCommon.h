@@ -16,6 +16,24 @@ namespace yw
         ~DemoPBRIBLShaderCommon() {}
      
     public:
+        // Unpack a normal from normal map pixel.
+        inline float3 UnpackNormal(const float4& packedNormal)
+        {
+            return packedNormal * 2.0f - float4(1.0f);
+        }
+     
+        /*
+         * Unpack a scaled normal from normal map pixel.
+         */
+        inline float3 UnpackScaleNormal(const float4& packedNormal, float bumpScale)
+        {
+            float3 normal = UnpackNormal(packedNormal);
+            normal.x *= bumpScale;
+            normal.y *= bumpScale;
+
+            return normal;
+        }
+     
         /**
          * http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
          * Efficient VanDerCorpus calculation.
@@ -47,6 +65,11 @@ namespace yw
          */
         float GeometrySmith(const Vector3& N, const Vector3& V, const Vector3& L, float roughness);
 
+        /**
+         * Calculating Fresnel Schlick value.
+         */
+        Vector3 FresnelSchlick(float cosTheta, Vector3 F0);
+     
         /**
          * Calculating Fresnel Schlick value by roughness.
          */
