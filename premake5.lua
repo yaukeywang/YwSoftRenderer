@@ -602,6 +602,8 @@ project "Demo7PBRIBL"
         "Demo7PBRIBL/YwDemoPBRIBLCamera.h",
         "Demo7PBRIBL/YwDemoPBRIBLCamera.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLMain.cpp",
+        "Demo7PBRIBL/YwDemoPBRIBLPrecompute.h",
+        "Demo7PBRIBL/YwDemoPBRIBLPrecompute.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLShader.h",
         "Demo7PBRIBL/YwDemoPBRIBLShader.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLShaderCommon.h",

@@ -39,15 +39,6 @@ namespace yw
         // Render all pre-computing data we nee.
         bool LoadAllPreComputingData();
 
-        // Convert hdr equirectangular map to hdr cube map.
-        bool RenderEquirectangularMapToCubeMap();
-
-        // Convert hdr cube map to hdr irrandiance map.
-        bool RenderCubeMapToIrradianceMap();
-
-        // Render prefilter hdr reflection map.
-        bool RenderPrefilterReflectionMap();
-
         // Render preintegrate brdf lut map.
         bool RenderPreintegrateBRDFMap();
 
