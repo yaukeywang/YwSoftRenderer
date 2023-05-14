@@ -274,6 +274,7 @@ namespace yw
         const int32_t targetWidth = 128;
         const int32_t targetHeight = 128;
         const int32_t cubeLength = 128;
+        const int32_t cubeMaxMipLevels = 4; // Max texture lod level is 4.
         const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;
@@ -282,7 +283,7 @@ namespace yw
 
         // Create cube map.
         YW_SAFE_RELEASE(*prefilterReflectionCubeTexture);
-        if (YW3D_FAILED(device->CreateCubeTexture(prefilterReflectionCubeTexture, cubeLength, 0, cubeFormat)))
+        if (YW3D_FAILED(device->CreateCubeTexture(prefilterReflectionCubeTexture, cubeLength, cubeMaxMipLevels, cubeFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
             return false;
