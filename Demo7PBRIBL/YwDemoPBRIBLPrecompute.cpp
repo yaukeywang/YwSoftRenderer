@@ -23,7 +23,7 @@ namespace yw
         // Render constants.
         const int32_t targetWidth = 512;
         const int32_t targetHeight = 512;
-        const int32_t cubeLength = 512;
+        const uint32_t cubeLength = 512;
         const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;
@@ -148,7 +148,7 @@ namespace yw
         // Render constants.
         const int32_t targetWidth = 32;
         const int32_t targetHeight = 32;
-        const int32_t cubeLength = 32;
+        const uint32_t cubeLength = 32;
         const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;
@@ -273,8 +273,8 @@ namespace yw
         // Render constants.
         const int32_t targetWidth = 128;
         const int32_t targetHeight = 128;
-        const int32_t cubeLength = 128;
-        const int32_t cubeMaxMipLevels = 4; // Max texture lod level is 4.
+        const uint32_t cubeLength = 128;
+        const uint32_t cubeMaxMipLevels = 4; // Max texture lod level is 4.
         const Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32A32F;
         const float fovy = YW_PI / 2.0f;
         const float aspect = 1.0f;

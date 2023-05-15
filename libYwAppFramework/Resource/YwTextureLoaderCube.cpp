@@ -69,6 +69,7 @@ namespace yw
 
         StringA fileDataDir = GetFileDirectory(fileName);
         uint32_t cubeEdgeLength = 0;
+        uint32_t cubeMaxMipLeves = 0;
         Yw3dFormat cubeFormat = Yw3d_FMT_R32G32B32F;
         uint32_t cubeFormatBytes = 0;
         for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
@@ -86,6 +87,7 @@ namespace yw
             {
                 cubeEdgeLength = faceTextures[i]->GetWidth();
                 cubeFormat = faceTextures[i]->GetFormat();
+                cubeMaxMipLeves = faceTextures[i]->GetMipLevels();
                 cubeFormatBytes = faceTextures[i]->GetFormatFloats() * sizeof(float);
             }
         }
@@ -95,7 +97,7 @@ namespace yw
 
         // Create cube texture.
         YW_SAFE_RELEASE(*inputTexture);
-        if (YW3D_FAILED(device->CreateCubeTexture(inputTexture, cubeEdgeLength, 0, cubeFormat)))
+        if (YW3D_FAILED(device->CreateCubeTexture(inputTexture, cubeEdgeLength, cubeMaxMipLeves, cubeFormat)))
         {
             LOGE(_T("TextureLoaderCube.LoadFromData: Create cube texture failed."));
             return false;
