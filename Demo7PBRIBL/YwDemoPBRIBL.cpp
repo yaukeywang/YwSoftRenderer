@@ -233,43 +233,43 @@ namespace yw
         //}
 
         // @Todo: Textureed-PBR-IBL begin.
-        m_IronAlbedoMapHandle = resManager->LoadResource("RustedIron/albedo.png");
+        m_IronAlbedoMapHandle = resManager->LoadResource("PBR/RustedIron/albedo.png");
         m_IronAlbedoMap = (Yw3dTexture*)resManager->GetResource(m_IronAlbedoMapHandle);
         if (nullptr == m_IronAlbedoMap)
         {
-            LOGE(_T("Load resource \"RustedIron/albedo.png\" failed."));
+            LOGE(_T("Load resource \"PBR/RustedIron/albedo.png\" failed."));
             return false;
         }
 
-        m_IronNormalMapHandle = resManager->LoadResource("RustedIron/normal.png");
+        m_IronNormalMapHandle = resManager->LoadResource("PBR/RustedIron/normal.png");
         m_IronNormalMap = (Yw3dTexture*)resManager->GetResource(m_IronNormalMapHandle);
         if (nullptr == m_IronNormalMap)
         {
-            LOGE(_T("Load resource \"RustedIron/normal.png\" failed."));
+            LOGE(_T("Load resource \"PBR/RustedIron/normal.png\" failed."));
             return false;
         }
 
-        m_IronMetallicMapHandle = resManager->LoadResource("RustedIron/metallic.png");
+        m_IronMetallicMapHandle = resManager->LoadResource("PBR/RustedIron/metallic.png");
         m_IronMetallicMap = (Yw3dTexture*)resManager->GetResource(m_IronMetallicMapHandle);
         if (nullptr == m_IronMetallicMap)
         {
-            LOGE(_T("Load resource \"RustedIron/metallic.png\" failed."));
+            LOGE(_T("Load resource \"PBR/RustedIron/metallic.png\" failed."));
             return false;
         }
 
-        m_IronRoughnessMapHandle = resManager->LoadResource("RustedIron/roughness.png");
+        m_IronRoughnessMapHandle = resManager->LoadResource("PBR/RustedIron/roughness.png");
         m_IronRoughnessMap = (Yw3dTexture*)resManager->GetResource(m_IronRoughnessMapHandle);
         if (nullptr == m_IronRoughnessMap)
         {
-            LOGE(_T("Load resource \"RustedIron/roughness.png\" failed."));
+            LOGE(_T("Load resource \"PBR/RustedIron/roughness.png\" failed."));
             return false;
         }
 
-        m_IronAOMapHandle = resManager->LoadResource("RustedIron/ao.png");
+        m_IronAOMapHandle = resManager->LoadResource("PBR/RustedIron/ao.png");
         m_IronAOMap = (Yw3dTexture*)resManager->GetResource(m_IronAOMapHandle);
         if (nullptr == m_IronAOMap)
         {
-            LOGE(_T("Load resource \"RustedIron/ao.png\" failed."));
+            LOGE(_T("Load resource \"PBR/RustedIron/ao.png\" failed."));
             return false;
         }
 
@@ -327,7 +327,7 @@ namespace yw
 
         // Generate hdr cube map from hdr equirectangular map.
         const StringA& assetPath = resManager->GetDataPath();
-        const StringA environmentMapName = "IBL/Environment/" + m_EnvEquirectangularTextureName + "_environment";
+        const StringA environmentMapName = "PBR/IBL/Environment/" + m_EnvEquirectangularTextureName + "_environment";
         const StringA environmentMapPath = assetPath + "/" + environmentMapName;
         if (!fileChecker.FileExists(environmentMapPath + "_ywt.cube"))
         {
@@ -365,7 +365,7 @@ namespace yw
         }
 
         // Generate diffuse irradiance map from hdr cube map.
-        const StringA irradianceMapName = "IBL/Irradiance/" + m_EnvEquirectangularTextureName + "_irradiance";
+        const StringA irradianceMapName = "PBR/IBL/Irradiance/" + m_EnvEquirectangularTextureName + "_irradiance";
         const StringA irradianceMapPath = assetPath + "/" + irradianceMapName;
         if (!fileChecker.FileExists(irradianceMapPath + "_ywt.cube"))
         {
@@ -403,7 +403,7 @@ namespace yw
         }
 
         // Generate specular pre-filter reflection environment map.
-        const StringA reflectionMapName = "IBL/Reflection/" + m_EnvEquirectangularTextureName + "_reflection";
+        const StringA reflectionMapName = "PBR/IBL/Reflection/" + m_EnvEquirectangularTextureName + "_reflection";
         const StringA reflectionMapPath = assetPath + "/" + reflectionMapName;
         if (!fileChecker.FileExists(reflectionMapPath + "_ywt.cube"))
         {
@@ -441,7 +441,7 @@ namespace yw
         }
 
         // Generate specular specular pre-integral BRDF map.
-        const StringA brdfMapName = "IBL/BRDF/brdf";
+        const StringA brdfMapName = "PBR/IBL/BRDF/brdf";
         const StringA brdfMapPath = assetPath + "/" + brdfMapName;
         if (!fileChecker.FileExists(brdfMapPath + ".ywt"))
         {
