@@ -1094,6 +1094,7 @@ namespace yw
                 LOGE(_T("Yw3dDevice::SampleTexture: sampling vector [u,v,w] = [0,0,0].\n"));
                 return Yw3d_E_InvalidParameters;
             }
+
             break;
         case Yw3d_TSI_3Coords:
             switch (textureSampler.textureSamplerStates[Yw3d_TSS_AddressW])
