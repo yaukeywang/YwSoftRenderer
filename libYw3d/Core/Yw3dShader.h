@@ -95,7 +95,7 @@ namespace yw
 
             // Sample the texture.
             Vector4 texColor;
-            SampleTexture(texColor, samplerNumber, s.x, s.y, 0.0f, 0.0f, &vDdx, &vDdy);
+            SampleTexture(texColor, samplerNumber, s.x, s.y, 0.0f, -1.0f, &vDdx, &vDdy);
 
             // Return sampled texture color.
             return texColor;
@@ -111,13 +111,22 @@ namespace yw
         // @return sampled texture color, return Pure-Black(0,0,0,0) if no texture found.
         inline Vector4 tex2Dlod(uint32_t shaderRegister, uint32_t samplerNumber, const Vector4& s, int32_t texelOff = 0)
         {
-            // Get ddx and ddy for mipmap.
+            // Get ddx and ddy for mipmap only when lod is greater than 0.
+            Vector4* pDdx = nullptr;
+            Vector4* pDdy = nullptr;
+
+            // Prepare to get ddx and ddy.
             Vector4 vDdx, vDdy;
-            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+            if (s.w < 0.0f)
+            {
+                GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+                pDdx = &vDdx;
+                pDdy = &vDdy;
+            }
 
             // Sample the texture.
             Vector4 texColor;
-            SampleTexture(texColor, samplerNumber, s.x, s.y, 0.0f, s.w, &vDdx, &vDdy);
+            SampleTexture(texColor, samplerNumber, s.x, s.y, 0.0f, s.w, pDdx, pDdy);
 
             // Return sampled texture color.
             return texColor;
@@ -136,7 +145,7 @@ namespace yw
 
             // Sample the texture.
             Vector4 texColor;
-            SampleTexture(texColor, samplerNumber, s.x, s.y, s.z, 0.0f, &vDdx, &vDdy);
+            SampleTexture(texColor, samplerNumber, s.x, s.y, s.z, -1.0f, &vDdx, &vDdy);
 
             // Return sampled texture color.
             return texColor;
@@ -176,7 +185,7 @@ namespace yw
             GetPartialDerivatives(shaderRegister, vDdx, vDdy);
 
             // Sample the texture.
-            Yw3dResult result = SampleTexture(color, samplerNumber, uv.x, uv.y, 0.0f, 0.0f, &vDdx, &vDdy);
+            Yw3dResult result = SampleTexture(color, samplerNumber, uv.x, uv.y, 0.0f, -1.0f, &vDdx, &vDdy);
 
             // Return sample state, success or not.
             return YW3D_SUCCESSFUL(result);

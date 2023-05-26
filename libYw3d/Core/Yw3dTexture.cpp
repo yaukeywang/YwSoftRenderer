@@ -99,7 +99,7 @@ namespace yw
         float texMipLevel = lod;
 
         // Choose proper mip level and filter.
-        if ((nullptr != xGradient) && (nullptr != yGradient) && (texMipLevel <= 0.0f))
+        if ((nullptr != xGradient) && (nullptr != yGradient) && (texMipLevel < 0.0f))
         {
             // Compute the mip-level and determine the texture filter type.
             const float lenXGrad = xGradient->x * xGradient->x * m_SquaredWidth + xGradient->y * xGradient->y * m_SquaredHeight;
