@@ -37,7 +37,7 @@ namespace yw
             GetWindowWidth(), GetWindowHeight(), 
             YW_PI / 4.0f, 4.0f / 3.0f, 0.1f, 100.0f, 
             Vector3(0.0f, 0.0f, -2.5f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), 
-            0.5f, 2.5f, 
+            0.5f, 5.5f, 
             false, 1.0f, ABCRA_All, initRotation,
             true, 1.0f, ABCRA_All, initRotation
         ))
