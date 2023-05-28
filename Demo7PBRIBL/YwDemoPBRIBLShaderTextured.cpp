@@ -20,9 +20,12 @@ namespace yw
         // Texcoord.
         vsShaderOutput[0] = vsShaderInput[4];
 
+        // Inverse of transpose of world matrix.
+        const float44 matInvTrs = GetMatrix(0);
+
         // TBN.
-        const float3 normal = vsShaderInput[1];
-        const float4 tangent = vsShaderInput[2];
+        const float3 normal = vsShaderInput[1] * matInvTrs;
+        const float4 tangent = vsShaderInput[2] * matInvTrs;
         const float3 binormal = cross(normal, float3(tangent)) * tangent.w;
         vsShaderOutput[1] = float3(tangent);
         vsShaderOutput[2] = binormal;
@@ -30,9 +33,6 @@ namespace yw
 
         // Vertex world position.
         vsShaderOutput[4] = vsShaderInput[0] * (*GetWorldMatrix());
-
-        // Vertex world normal.
-        vsShaderOutput[5] = float3(float4(normal, 0.0f) * (*GetWorldMatrix()));
     }
 
     Yw3dShaderRegisterType DemoPBRIBLTexturedVertexShader::GetOutputRegisters(uint32_t shaderRegister)
@@ -49,8 +49,6 @@ namespace yw
             return Yw3d_SRT_Vector3; // Normal of TBN.
         case 4:
             return Yw3d_SRT_Vector3; // Vertex world position.
-        case 5:
-            return Yw3d_SRT_Vector3; // Vertex world normal.
         default:
             return Yw3d_SRT_Unused;
         }
@@ -73,7 +71,6 @@ namespace yw
         const float3 binormal = normalize(float3(input[2]));
         const float3 normal = normalize(float3(input[3]));
         const float3 worldPos = float3(input[4]);
-        const float3 worldNormal = normalize(float3(input[5]));
 
         float33 TBN = float33(
             tangent.x, tangent.y, tangent.z,
@@ -83,7 +80,7 @@ namespace yw
 
         // Material properties.
         const float3 albedo = pow(float3(tex2D(0, 3, texCoord)), 2.2f);
-        const float3 modelNormal = normalize(UnpackScaleNormal(tex2D(0, 4, texCoord), 1.0f) * TBN);
+        const float3 worldNormal = normalize(UnpackScaleNormal(tex2D(0, 4, texCoord), 1.0f) * TBN);
         const float metallic = tex2D(0, 5, texCoord).r;
         const float roughness = tex2D(0, 6, texCoord).r;
         const float ao = tex2D(0, 7, texCoord).r;
@@ -92,7 +89,7 @@ namespace yw
         const float3 lightColor = GetVector(1);
         const float3 cameraPos = GetVector(2);
 
-        Vector3 N = modelNormal;
+        Vector3 N = worldNormal;
         Vector3 V = normalize(cameraPos - worldPos);
         Vector3 R = reflect(-V, N);
 

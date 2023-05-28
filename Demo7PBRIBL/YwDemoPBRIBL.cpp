@@ -686,11 +686,16 @@ namespace yw
         Matrix44Identity(matWorld);
 
         Quaternion quatRotation;
-        // QuaternionFromEuler(quatRotation, 90.0f, 0.0f, 0.0f);
+        QuaternionFromEuler(quatRotation, 90.0f, 0.0f, 0.0f);
 
         // Apply model rotation.
         Matrix44Transformation(matWorld, Vector3(1.8f, 1.8f, 1.8f), quatRotation, Vector3(0.0f, 0.0f, 0.0f));
 
+        // Calculating transpose of inverse of world matrix, to transform normal and tangent of model to world space.
+        Matrix44 matInvTrs;
+        Matrix44Inverse(matInvTrs, matWorld);
+        Matrix44Transpose(matInvTrs, matInvTrs);
+        
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
 
@@ -702,8 +707,9 @@ namespace yw
         device->SetTransform(Yw3d_TS_WVP, &matProjection);
 
         // Update shader parameters.
+        m_PBRIBLTexturedVertexShader->SetMatrix(0, matInvTrs); // Inverse transpose of world matrix.
         m_PBRIBLTexturedPixelShader->SetVector(0, Vector3(1.0f, 1.0f, -1.0f)); // Light position.
-        m_PBRIBLTexturedPixelShader->SetVector(1, Vector3(0.9f, 0.9f, 0.9f)); // Light color.
+        m_PBRIBLTexturedPixelShader->SetVector(1, Vector3(1.0f, 1.0f, 1.0f)); // Light color.
         m_PBRIBLTexturedPixelShader->SetVector(2, camera->GetPosition());
 
         // Render model.
