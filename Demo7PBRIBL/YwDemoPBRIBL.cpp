@@ -494,8 +494,11 @@ namespace yw
         Matrix44 matWorld;
         Matrix44Identity(matWorld);
 
+        Quaternion quatWorld;
+        QuaternionIdentity(quatWorld);
+
         // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(5.0f, 5.0f, 5.0f), camera->GetWorldRotation(), camera->GetPosition());
+        Matrix44Transformation(matWorld, Vector3(5.0f, 5.0f, 5.0f), quatWorld, camera->GetPosition());
 
         // Set world transform to camera.
         camera->SetWorldMatrix(matWorld);
