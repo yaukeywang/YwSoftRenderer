@@ -643,40 +643,40 @@ project "Demo7PBRIBL"
         postbuildcommands
         {
             -- '{MKDIR} "' .. abssrcdatadir .. '"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Environment"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Irradiance"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Reflection"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"'
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Environment"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Irradiance"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Reflection"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/BRDF"'
             -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
             -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
-            -- '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
+            -- '{COPYDIR} "' .. abssrcdatadir .. '/PBR/IBL"' .. ' "' .. absdstdatadir .. '/PBR/IBL"'
         }
 
     filter { "system:linux" }
         postbuildcommands
         {
             -- '{MKDIR} "' .. abssrcdatadir .. '"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Environment"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Irradiance"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Reflection"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"'
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Environment"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Irradiance"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Reflection"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/BRDF"'
             -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
             -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
-            -- '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
+            -- '{COPYDIR} "' .. abssrcdatadir .. '/PBR/IBL"' .. ' "' .. absdstdatadir .. '/PBR/IBL"'
         }
 
     filter { "system:macosx" }
         postbuildcommands
         {
             -- '{MKDIR} "' .. abssrcdatadir .. '"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Environment"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Irradiance"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/Reflection"',
-            '{MKDIR} "' .. abssrcdatadir .. '/IBL/BRDF"'
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Environment"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Irradiance"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Reflection"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/BRDF"'
             -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
             -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
-            -- '{COPYDIR} "' .. abssrcdatadir .. '/IBL"' .. ' "' .. absdstdatadir .. '/IBL"'
+            -- '{COPYDIR} "' .. abssrcdatadir .. '/PBR/IBL"' .. ' "' .. absdstdatadir .. '/PBR/IBL"'
         }
