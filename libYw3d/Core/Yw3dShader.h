@@ -75,6 +75,13 @@ namespace yw
         void SetInfo(const Yw3dShaderRegisterType* vsOutputs, const struct Yw3dTriangleInfo* triangleInfo);
 
         // This functions computes the partial derivatives of a shader register with respect to the screen space coordinates.
+        //
+        // References:
+        // Partial derivative equations taken from
+        // "MIP-Map Level Selection for Texture Mapping",
+        // Jon P. Ewins, Member, IEEE, Marcus D. Waller,
+        // Martin White, and Paul F. Lister, Member, IEEE
+        // 
         // @param[in] register index of the source shader register.
         // @param[out] ddx partial derivative with respect to the x-screen space coordinate.
         // @param[out] ddy partial derivative with respect to the y-screen space coordinate.

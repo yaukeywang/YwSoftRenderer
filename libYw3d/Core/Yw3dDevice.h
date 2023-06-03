@@ -498,6 +498,12 @@ namespace yw
         void ProjectVertex(Yw3dVSOutput* vsOutput);
 
         // Calculates gradients for shader registers.
+        // 
+        // References:
+        // Physically Based Rendering, Third Edition : Page 158 - 3.6.2 Triangle Intersection - Compute triangle partial derivatives.
+        // Partial derivatives, Directional derivatives, Gradient.
+        // pi = p0 + (∂p/∂u)*ui + (∂p/∂v)*vi.
+        // 
         // @param[in] vsOutput0 vertex A.
         // @param[in] vsOutput1 vertex B.
         // @param[in] vsOutput2 vertex C.
