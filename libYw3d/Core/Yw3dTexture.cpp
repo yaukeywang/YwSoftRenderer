@@ -93,6 +93,26 @@ namespace yw
         return Yw3d_TSI_2Coords;
     }
 
+    /*
+     * How to calculate LOD of Mipmap Selection.
+     *
+     * DirectX Reference: https://microsoft.github.io/DirectX-Specs/d3d/archive/D3D11_3_FunctionalSpec.htm#7.18.10%20Mipmap%20Selection
+     * Given a texture coordinate vector (1D, 2D or 3D), let it be referred to here as:
+     *     float3 TC.uvw
+     * If the Shader is a Pixel Shader, compute the partial derivative vectors in the RenderTarget x and y directions for TC.uvw. Let the derivatives be referred to here as:
+     *     float3 dX.uvw
+     *     float3 dY.uvw
+     * Scale the derivatives by the texture size at largest mipmap:
+     *     dX.uvw = dX.uvw * [NumTexelsInUDimension,NumTexelsInVDimension,NumTexelsInWDimension];
+     *     dY.uvw = dY.uvw * [NumTexelsInUDimension,NumTexelsInVDimension,NumTexelsInWDimension];
+     * if(ComputeIsotropicLOD), the LOD calculation is:
+     *      float lengthX = sqrt(dX.u*dX.u + dX.v*dX.v + dX.w*dX.w)
+     *      float lengthY = sqrt(dY.u*dY.u + dY.v*dY.v + dY.w*dY.w)
+     *      output.LOD = log2(max(lengthX,lengthY))
+     *
+     * OpenGL Reference: https://registry.khronos.org/OpenGL/specs/gl/glspec43.core.pdf#subsection.8.14.1
+     * Scale Factor and Level of Detail
+     */
     Yw3dResult Yw3dTexture::SampleTexture(Vector4& color, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
     {
         uint32_t texFilter = samplerStates[Yw3d_TSS_MinFilter];
@@ -104,7 +124,7 @@ namespace yw
             // Compute the mip-level and determine the texture filter type.
             const float lenXGrad = xGradient->x * xGradient->x * m_SquaredWidth + xGradient->y * xGradient->y * m_SquaredHeight;
             const float lenYGrad = yGradient->x * yGradient->x * m_SquaredWidth + yGradient->y * yGradient->y * m_SquaredHeight;
-            const float texelsPerScreenPixel = sqrtf(lenXGrad > lenYGrad ? lenXGrad : lenYGrad);
+            const float texelsPerScreenPixel = max(lenXGrad, lenYGrad); // Old: sqrtf(lenXGrad > lenYGrad ? lenXGrad : lenYGrad);
 
             if (texelsPerScreenPixel <= 1.0f)
             {
@@ -116,7 +136,7 @@ namespace yw
             {
                 // Minification, need mipmapping.
                 static const float invLog2 = 1.0f / logf(2.0f); // Calculate log2.
-                texMipLevel = logf(texelsPerScreenPixel) * invLog2;
+                texMipLevel = 0.5f * logf(texelsPerScreenPixel) * invLog2; // Old: logf(texelsPerScreenPixel) * invLog2; because: "logf(sprtf(texelsPerScreenPixel)) = 0.5 * logf(texelsPerScreenPixel)", so we get better performance.
                 texFilter = samplerStates[Yw3d_TSS_MinFilter];
             }
         }

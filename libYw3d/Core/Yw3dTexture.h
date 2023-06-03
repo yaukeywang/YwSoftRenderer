@@ -45,7 +45,7 @@ namespace yw
         // @param[in] u u-component of the lookup-vector.
         // @param[in] v v-component of the lookup-vector.
         // @param[in] w w-component of the lookup-vector.
-        // @param[in] lod level of detail.
+        // @param[in] lod level of detail, automatic select lod level when less than 0.
         // @param[in] xGradient partial derivatives of the texture coordinates with respect to the screen-space x coordinate. If 0 the base mip-level will be chosen and the minification filter will be used for texture sampling.
         // @param[in] yGradient partial derivatives of the texture coordinates with respect to the screen-space y coordinate. If 0 the base mip-level will be chosen and the minification filter will be used for texture sampling.
         // @param[in] samplerStates texture sampler states.
@@ -54,7 +54,9 @@ namespace yw
 
     public:
         // Generates mip-sublevels through downsampling (using a box-filter) a given source mip-level with POT or NPOT.
-        // For more information, please visit: https://www.nvidia.com/en-us/drivers/np2-mipmapping/ <<Non-Power-of-Two Mipmapping>> or https://download.nvidia.com/developer/Papers/2005/NP2_Mipmapping/NP2_Mipmap_Creation.pdf <<Non-Power-of-Two Mipmap Creation>>.
+        // For more information, please visit:
+        //     https://www.nvidia.com/en-us/drivers/np2-mipmapping/ <<Non-Power-of-Two Mipmapping>> or
+        //     https://download.nvidia.com/developer/Papers/2005/NP2_Mipmapping/NP2_Mipmap_Creation.pdf <<Non-Power-of-Two Mipmap Creation>>.
         // @param[in] srcLevel the mip-level which will be taken as the starting point.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
