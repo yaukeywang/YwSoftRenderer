@@ -96,7 +96,8 @@ namespace yw
     /*
      * How to calculate LOD of Mipmap Selection.
      *
-     * DirectX Reference: https://microsoft.github.io/DirectX-Specs/d3d/archive/D3D11_3_FunctionalSpec.htm#7.18.10%20Mipmap%20Selection
+     * # DirectX Reference: https://microsoft.github.io/DirectX-Specs/d3d/archive/D3D11_3_FunctionalSpec.htm#7.18.10%20Mipmap%20Selection
+     * ## IsotropicLOD
      * Given a texture coordinate vector (1D, 2D or 3D), let it be referred to here as:
      *     float3 TC.uvw
      * If the Shader is a Pixel Shader, compute the partial derivative vectors in the RenderTarget x and y directions for TC.uvw. Let the derivatives be referred to here as:
@@ -110,7 +111,15 @@ namespace yw
      *      float lengthY = sqrt(dY.u*dY.u + dY.v*dY.v + dY.w*dY.w)
      *      output.LOD = log2(max(lengthX,lengthY))
      *
-     * OpenGL Reference: https://registry.khronos.org/OpenGL/specs/gl/glspec43.core.pdf#subsection.8.14.1
+     * Given an LOD specified either from the shader or calculated from derivatives, MipLODBias, srcLODBias (sample_b(22.4.16) only), and MinLOD and MaxLOD clamps are applied to it:
+     *     biasedLOD = output.LOD + MipLODBias;
+     *     biasedLOD = biasedLOD + srcLODBias;  // for sample_b only; must be per done pixel
+     *     clampedLOD = max(MinLOD,(min(MaxLOD, biasedLOD)));
+     *
+     * ## IsotropicLOD
+     * Current not supported.
+     *
+     * # OpenGL Reference: https://registry.khronos.org/OpenGL/specs/gl/glspec43.core.pdf#subsection.8.14.1
      * Scale Factor and Level of Detail
      */
     Yw3dResult Yw3dTexture::SampleTexture(Vector4& color, float u, float v, float w, float lod, const Vector4* xGradient, const Vector4* yGradient, const uint32_t* samplerStates)
