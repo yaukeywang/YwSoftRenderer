@@ -42,14 +42,24 @@ namespace yw
         void Render(int32_t pass);
 
     private:
+        // Load resources for rusted iron.
+        bool LoadRustedIronResources();
+
+        // Load resources for aluminium insulator.
+        bool LoadAluminiumInsulatorResources();
+
+        // Render rusted iron.
+        void RenderRustedIron(int32_t pass);
+
+        // Render demo AluminiumInsulator in SubstancePainter
+        void RenderAluminiumInsulator(int32_t pass);
+
+    private:
         // Render all pre-computing data we nee.
         bool LoadAllPreComputingData();
 
         // Render sky environment.
         void RenderSky(int32_t pass);
-
-        // Render rusted iron.
-        void RenderRustedIron(int32_t pass);
 
         // Render textured pbr model.
         void RenderTexturedPbrModel(
@@ -75,7 +85,16 @@ namespace yw
             float aoMipLodBias = 0.0f
         );
 
+        // Load a resource.
+        HRESOURCE LoadResource(ResourceManager* resManager, const StringA& resourcePath);
+
+        // Get a resource by handle.
+        void* GetResource(ResourceManager* resManager, HRESOURCE resourceHandle);
+
     private:
+        // Enable debug info enabled.
+        bool m_DebugInfoEnabled;
+
         // Model resources.
         HRESOURCE m_ModelSphereHandle;
         HRESOURCE m_ModelCubeHandle;
@@ -84,22 +103,26 @@ namespace yw
         Model* m_ModelCube;
         Model* m_ModelPBR;
 
-        // Pre-computing texture handle.
+        // Pre-computing resources.
         HRESOURCE m_EnvEquirectangularTextureHandle;
         HRESOURCE m_EnvCubeTextureHandle;
         HRESOURCE m_IrrandianceCubeTextureHandle;
         HRESOURCE m_PrefilterReflectionCubeTextureHandle;
         HRESOURCE m_PreintegrateBRDFTextureHandle;
-
-        // Pre-computing texture resources.
-        StringA m_EnvEquirectangularTextureName;
         Yw3dTexture* m_EnvEquirectangularTexture;
         Yw3dCubeTexture* m_EnvCubeTexture;
         Yw3dCubeTexture* m_IrrandianceCubeTexture;
         Yw3dCubeTexture* m_PrefilterReflectionCubeTexture;
         Yw3dTexture* m_PreintegrateBRDFTexture;
+        StringA m_EnvEquirectangularTextureName;
 
-        // Rusted Iron textured.
+        // Shader related.
+        DemoPBRIBLCubeMapVertexShader* m_SkyVertexShader;
+        DemoPBRIBLCubeMapPixelShader* m_SkyPixelShader;
+        DemoPBRIBLTexturedVertexShader* m_PBRIBLTexturedVertexShader;
+        DemoPBRIBLTexturedPixelShader* m_PBRIBLTexturedPixelShader;
+
+        // Rusted iron assets.
         HRESOURCE m_IronAlbedoMapHandle;
         HRESOURCE m_IronNormalMapHandle;
         HRESOURCE m_IronMetallicMapHandle;
@@ -111,14 +134,17 @@ namespace yw
         Yw3dTexture* m_IronRoughnessMap;
         Yw3dTexture* m_IronAOMap;
 
-        // Shader related.
-        DemoPBRIBLCubeMapVertexShader* m_SkyVertexShader;
-        DemoPBRIBLCubeMapPixelShader* m_SkyPixelShader;
-        DemoPBRIBLTexturedVertexShader* m_PBRIBLTexturedVertexShader;
-        DemoPBRIBLTexturedPixelShader* m_PBRIBLTexturedPixelShader;
-
-        // Enable debug info enabled.
-        bool m_DebugInfoEnabled;
+        // Aluminium insulator assets.
+        HRESOURCE m_AluminiumInsulatorAlbedoMapHandle;
+        HRESOURCE m_AluminiumInsulatorNormalMapHandle;
+        HRESOURCE m_AluminiumInsulatorMetallicMapHandle;
+        HRESOURCE m_AluminiumInsulatorRoughnessMapHandle;
+        HRESOURCE m_AluminiumInsulatorAOMapHandle;
+        Yw3dTexture* m_AluminiumInsulatorAlbedoMap;
+        Yw3dTexture* m_AluminiumInsulatorNormalMap;
+        Yw3dTexture* m_AluminiumInsulatorMetallicMap;
+        Yw3dTexture* m_AluminiumInsulatorRoughnessMap;
+        Yw3dTexture* m_AluminiumInsulatorAOMap;
     };
 }
 

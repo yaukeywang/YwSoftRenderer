@@ -28,23 +28,27 @@ namespace yw
         m_ModelSphere(nullptr),
         m_ModelCube(nullptr),
         m_ModelPBR(nullptr),
+        m_ModelSphereHandle(0),
+        m_ModelCubeHandle(0),
+        m_ModelPBRHandle(0),
 
+        m_EnvEquirectangularTextureHandle(0),
+        m_EnvCubeTextureHandle(0),
+        m_IrrandianceCubeTextureHandle(0),
+        m_PrefilterReflectionCubeTextureHandle(0),
+        m_PreintegrateBRDFTextureHandle(0),
         m_EnvEquirectangularTexture(nullptr),
         m_EnvCubeTexture(nullptr),
         m_IrrandianceCubeTexture(nullptr),
         m_PrefilterReflectionCubeTexture(nullptr),
         m_PreintegrateBRDFTexture(nullptr),
 
-        m_ModelSphereHandle(0),
-        m_ModelCubeHandle(0),
-        m_ModelPBRHandle(0),
-        m_EnvEquirectangularTextureHandle(0),
+        m_SkyVertexShader(nullptr),
+        m_SkyPixelShader(nullptr),
+        m_PBRIBLTexturedVertexShader(nullptr),
+        m_PBRIBLTexturedPixelShader(nullptr),
 
-        m_EnvCubeTextureHandle(0),
-        m_IrrandianceCubeTextureHandle(0),
-        m_PrefilterReflectionCubeTextureHandle(0),
-        m_PreintegrateBRDFTextureHandle(0),
-
+        // Rusted iron.
         m_IronAlbedoMapHandle(0),
         m_IronNormalMapHandle(0),
         m_IronMetallicMapHandle(0),
@@ -56,37 +60,41 @@ namespace yw
         m_IronRoughnessMap(nullptr),
         m_IronAOMap(nullptr),
 
-        m_SkyVertexShader(nullptr),
-        m_SkyPixelShader(nullptr),
-        m_PBRIBLTexturedVertexShader(nullptr),
-        m_PBRIBLTexturedPixelShader(nullptr),
-    
-        m_DebugInfoEnabled(false)
+        // Aluminium insulator.
+        m_AluminiumInsulatorAlbedoMapHandle(0),
+        m_AluminiumInsulatorNormalMapHandle(0),
+        m_AluminiumInsulatorMetallicMapHandle(0),
+        m_AluminiumInsulatorRoughnessMapHandle(0),
+        m_AluminiumInsulatorAOMapHandle(0),
+        m_AluminiumInsulatorAlbedoMap(nullptr),
+        m_AluminiumInsulatorNormalMap(nullptr),
+        m_AluminiumInsulatorMetallicMap(nullptr),
+        m_AluminiumInsulatorRoughnessMap(nullptr),
+        m_AluminiumInsulatorAOMap(nullptr)
     {
+        m_DebugInfoEnabled = false;
         m_EnvEquirectangularTextureName = "newport_loft";
     }
 
     DemoPBRIBLTextured::~DemoPBRIBLTextured()
     {
-        // Resource should released by resource manager.
-        m_ModelSphere = nullptr;
-        m_ModelPBR = nullptr;
-        m_EnvEquirectangularTexture = nullptr;
-
-        YW_SAFE_RELEASE(m_EnvCubeTexture);
-        YW_SAFE_RELEASE(m_IrrandianceCubeTexture);
-        YW_SAFE_RELEASE(m_PrefilterReflectionCubeTexture);
-        YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
-
         // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
+        // Resource should released by resource manager.
+        m_ModelSphere = nullptr;
+        m_ModelCube = nullptr;
+        m_ModelPBR = nullptr;
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelSphereHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelCubeHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_ModelPBRHandle);
 
+        YW_SAFE_RELEASE(m_EnvEquirectangularTexture);
+        YW_SAFE_RELEASE(m_EnvCubeTexture);
+        YW_SAFE_RELEASE(m_IrrandianceCubeTexture);
+        YW_SAFE_RELEASE(m_PrefilterReflectionCubeTexture);
+        YW_SAFE_RELEASE(m_PreintegrateBRDFTexture);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_EnvEquirectangularTextureHandle);
-
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_EnvCubeTextureHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_IrrandianceCubeTextureHandle);
         YW_SAFE_UNLOAD_RESOURCE(resManager, m_PrefilterReflectionCubeTextureHandle);
@@ -94,11 +102,32 @@ namespace yw
 
         YW_SAFE_RELEASE(m_SkyVertexShader);
         YW_SAFE_RELEASE(m_SkyPixelShader);
-
-        // @Todo: Textureed-PBR-IBL begin.
         YW_SAFE_RELEASE(m_PBRIBLTexturedVertexShader);
         YW_SAFE_RELEASE(m_PBRIBLTexturedPixelShader);
-        // Textureed-PBR-IBL end.
+
+        // Rusted iron.
+        YW_SAFE_RELEASE(m_IronAlbedoMap);
+        YW_SAFE_RELEASE(m_IronNormalMap);
+        YW_SAFE_RELEASE(m_IronMetallicMap);
+        YW_SAFE_RELEASE(m_IronRoughnessMap);
+        YW_SAFE_RELEASE(m_IronAOMap);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_IronAlbedoMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_IronNormalMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_IronMetallicMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_IronRoughnessMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_IronAOMapHandle);
+
+        // Aluminium insulator.
+        YW_SAFE_RELEASE(m_AluminiumInsulatorAlbedoMap);
+        YW_SAFE_RELEASE(m_AluminiumInsulatorNormalMap);
+        YW_SAFE_RELEASE(m_AluminiumInsulatorMetallicMap);
+        YW_SAFE_RELEASE(m_AluminiumInsulatorRoughnessMap);
+        YW_SAFE_RELEASE(m_AluminiumInsulatorAOMap);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_AluminiumInsulatorAlbedoMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_AluminiumInsulatorNormalMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_AluminiumInsulatorMetallicMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_AluminiumInsulatorRoughnessMapHandle);
+        YW_SAFE_UNLOAD_RESOURCE(resManager, m_AluminiumInsulatorAOMapHandle);
     }
 
     bool DemoPBRIBLTextured::Initialize()
@@ -108,115 +137,51 @@ namespace yw
         Yw3dDevice* device = graphics->GetYw3dDevice();
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
-        // Load model and texture.
-        m_ModelSphereHandle = resManager->LoadResource("sphere.obj");
-        if (m_ModelSphereHandle <= 0)
-        {
-            LOGE(_T("Load resource \"sphere.obj\" failed."));
-            return false;
-        }
-
-        m_ModelCubeHandle = resManager->LoadResource("cube.obj");
-        if (m_ModelCubeHandle <= 0)
-        {
-            LOGE(_T("Load resource \"cube.obj\" failed."));
-            return false;
-        }
-
-        m_ModelPBRHandle = resManager->LoadResource("sphere.obj"); // Lu_Head.obj
-        if (m_ModelPBRHandle <= 0)
-        {
-            LOGE(_T("Load resource \"Lu_Head.obj\" failed."));
-            return false;
-        }
-
-        m_EnvEquirectangularTextureHandle = resManager->LoadResource(m_EnvEquirectangularTextureName + ".hdr");
-        if (m_EnvEquirectangularTextureHandle <= 0)
-        {
-            LOGE(_T("Load resource \"newport_loft.hdr\" failed."));
-            return false;
-        }
-
-        // Get model and texture.
-        m_ModelSphere = (Model*)resManager->GetResource(m_ModelSphereHandle);
+        // Load basic model and texture.
+        m_ModelSphereHandle = LoadResource(resManager, "sphere.obj");
+        m_ModelSphere = (Model*)GetResource(resManager, m_ModelSphereHandle);
         if (nullptr == m_ModelSphere)
         {
-            LOGE(_T("Get resource \"sphere.obj\" failed."));
             return false;
         }
 
-        m_ModelCube = (Model*)resManager->GetResource(m_ModelCubeHandle);
+        m_ModelCubeHandle = LoadResource(resManager, "cube.obj");
+        m_ModelCube = (Model*)GetResource(resManager, m_ModelCubeHandle);
         if (nullptr == m_ModelCube)
         {
-            LOGE(_T("Get resource \"cube.obj\" failed."));
             return false;
         }
 
-        m_ModelPBR = (Model*)resManager->GetResource(m_ModelPBRHandle);
+        m_ModelPBRHandle = LoadResource(resManager, "sphere.obj");
+        m_ModelPBR = (Model*)GetResource(resManager, m_ModelPBRHandle);
         if (nullptr == m_ModelPBR)
         {
-            LOGE(_T("Get resource \"Lu_Head.obj\" failed."));
             return false;
         }
 
-        m_EnvEquirectangularTexture = (Yw3dTexture*)resManager->GetResource(m_EnvEquirectangularTextureHandle);
-        if (nullptr == m_EnvEquirectangularTexture)
+        // Load or create pre-computing data.
+        if (!LoadAllPreComputingData())
         {
-            LOGE(_T("Get resource \"room.cube\" failed."));
             return false;
         }
-
-        // @Todo: Textureed-PBR-IBL begin.
-        m_IronAlbedoMapHandle = resManager->LoadResource("PBR/RustedIron/albedo.png");
-        m_IronAlbedoMap = (Yw3dTexture*)resManager->GetResource(m_IronAlbedoMapHandle);
-        if (nullptr == m_IronAlbedoMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/albedo.png\" failed."));
-            return false;
-        }
-
-        m_IronNormalMapHandle = resManager->LoadResource("PBR/RustedIron/normal.png");
-        m_IronNormalMap = (Yw3dTexture*)resManager->GetResource(m_IronNormalMapHandle);
-        if (nullptr == m_IronNormalMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/normal.png\" failed."));
-            return false;
-        }
-
-        m_IronMetallicMapHandle = resManager->LoadResource("PBR/RustedIron/metallic.png");
-        m_IronMetallicMap = (Yw3dTexture*)resManager->GetResource(m_IronMetallicMapHandle);
-        if (nullptr == m_IronMetallicMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/metallic.png\" failed."));
-            return false;
-        }
-
-        m_IronRoughnessMapHandle = resManager->LoadResource("PBR/RustedIron/roughness.png");
-        m_IronRoughnessMap = (Yw3dTexture*)resManager->GetResource(m_IronRoughnessMapHandle);
-        if (nullptr == m_IronRoughnessMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/roughness.png\" failed."));
-            return false;
-        }
-
-        m_IronAOMapHandle = resManager->LoadResource("PBR/RustedIron/ao.png");
-        m_IronAOMap = (Yw3dTexture*)resManager->GetResource(m_IronAOMapHandle);
-        if (nullptr == m_IronAOMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/ao.png\" failed."));
-            return false;
-        }
-
-        m_PBRIBLTexturedVertexShader = new DemoPBRIBLTexturedVertexShader();
-        m_PBRIBLTexturedPixelShader = new DemoPBRIBLTexturedPixelShader();
-        // Textureed-PBR-IBL end.
-
-        // Render pre-computing data.
-        LoadAllPreComputingData();
 
         // Create vertex and pixel shader.
         m_SkyVertexShader = new DemoPBRIBLCubeMapVertexShader();
         m_SkyPixelShader = new DemoPBRIBLCubeMapPixelShader();
+        m_PBRIBLTexturedVertexShader = new DemoPBRIBLTexturedVertexShader();
+        m_PBRIBLTexturedPixelShader = new DemoPBRIBLTexturedPixelShader();
+
+        // Load rusted iron assets.
+        if (!LoadRustedIronResources())
+        {
+            return false;
+        }
+
+        // Load aluminium insulator assets.
+        if (!LoadAluminiumInsulatorResources())
+        {
+            return false;
+        }
 
         return true;
     }
@@ -237,7 +202,148 @@ namespace yw
         graphics->PopStateBlock();
 
         // Render rusted iron.
-        RenderRustedIron(pass);
+        //RenderRustedIron(pass);
+
+        // Render aluminium insulator.
+        RenderAluminiumInsulator(pass);
+    }
+
+    bool DemoPBRIBLTextured::LoadRustedIronResources()
+    {
+        ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
+
+        // Load and get rusted iron.
+        m_IronAlbedoMapHandle = LoadResource(resManager, "PBR/RustedIron/albedo.png");
+        m_IronAlbedoMap = (Yw3dTexture*)GetResource(resManager, m_IronAlbedoMapHandle);
+        if (nullptr == m_IronAlbedoMap)
+        {
+            return false;
+        }
+
+        m_IronNormalMapHandle = LoadResource(resManager, "PBR/RustedIron/normal.png");
+        m_IronNormalMap = (Yw3dTexture*)GetResource(resManager, m_IronNormalMapHandle);
+        if (nullptr == m_IronNormalMap)
+        {
+            return false;
+        }
+
+        m_IronMetallicMapHandle = LoadResource(resManager, "PBR/RustedIron/metallic.png");
+        m_IronMetallicMap = (Yw3dTexture*)GetResource(resManager, m_IronMetallicMapHandle);
+        if (nullptr == m_IronMetallicMap)
+        {
+            return false;
+        }
+
+        m_IronRoughnessMapHandle = LoadResource(resManager, "PBR/RustedIron/roughness.png");
+        m_IronRoughnessMap = (Yw3dTexture*)GetResource(resManager, m_IronRoughnessMapHandle);
+        if (nullptr == m_IronRoughnessMap)
+        {
+            return false;
+        }
+
+        m_IronAOMapHandle = LoadResource(resManager, "PBR/RustedIron/ao.png");
+        m_IronAOMap = (Yw3dTexture*)GetResource(resManager, m_IronAOMapHandle);
+        if (nullptr == m_IronAOMap)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool DemoPBRIBLTextured::LoadAluminiumInsulatorResources()
+    {
+        ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
+
+        // Load and get rusted iron.
+        m_AluminiumInsulatorAlbedoMapHandle = LoadResource(resManager, "PBR/SubstancePainter/AluminiumInsulator/AI_BaseColor.png");
+        m_AluminiumInsulatorAlbedoMap = (Yw3dTexture*)GetResource(resManager, m_AluminiumInsulatorAlbedoMapHandle);
+        if (nullptr == m_AluminiumInsulatorAlbedoMap)
+        {
+            return false;
+        }
+
+        m_AluminiumInsulatorNormalMapHandle = LoadResource(resManager, "PBR/SubstancePainter/AluminiumInsulator/AI_Normal.png");
+        m_AluminiumInsulatorNormalMap = (Yw3dTexture*)GetResource(resManager, m_AluminiumInsulatorNormalMapHandle);
+        if (nullptr == m_AluminiumInsulatorNormalMap)
+        {
+            return false;
+        }
+
+        m_AluminiumInsulatorMetallicMapHandle = LoadResource(resManager, "PBR/SubstancePainter/AluminiumInsulator/AI_Metallic.png");
+        m_AluminiumInsulatorMetallicMap = (Yw3dTexture*)GetResource(resManager, m_AluminiumInsulatorMetallicMapHandle);
+        if (nullptr == m_AluminiumInsulatorMetallicMap)
+        {
+            return false;
+        }
+
+        m_AluminiumInsulatorRoughnessMapHandle = LoadResource(resManager, "PBR/SubstancePainter/AluminiumInsulator/AI_Roughness.png");
+        m_AluminiumInsulatorRoughnessMap = (Yw3dTexture*)GetResource(resManager, m_AluminiumInsulatorRoughnessMapHandle);
+        if (nullptr == m_AluminiumInsulatorRoughnessMap)
+        {
+            return false;
+        }
+
+        m_AluminiumInsulatorAOMapHandle = LoadResource(resManager, "PBR/SubstancePainter/AluminiumInsulator/AI_AO.png");
+        m_AluminiumInsulatorAOMap = (Yw3dTexture*)GetResource(resManager, m_AluminiumInsulatorAOMapHandle);
+        if (nullptr == m_AluminiumInsulatorAOMap)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    void DemoPBRIBLTextured::RenderRustedIron(int32_t pass)
+    {
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        graphics->PushStateBlock();
+
+        RenderTexturedPbrModel(
+            pass,
+            m_ModelPBR,
+            Vector3::Zero(),
+            QuaternionFromEuler(Quaternion(), 90.0f, 0.0f, 0.0f),
+            Vector3(1.8f, 1.8f, 1.8f),
+            m_IronAlbedoMap,
+            m_IronNormalMap,
+            m_IronMetallicMap,
+            m_IronRoughnessMap,
+            m_IronAOMap
+        );
+
+        graphics->PopStateBlock();
+    }
+
+    void DemoPBRIBLTextured::RenderAluminiumInsulator(int32_t pass)
+    {
+        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
+        graphics->PushStateBlock();
+
+        RenderTexturedPbrModel(
+            pass,
+            m_ModelPBR,
+            Vector3::Zero(),
+            QuaternionFromEuler(Quaternion(), 90.0f, 0.0f, 0.0f),
+            Vector3(1.8f, 1.8f, 1.8f),
+            m_AluminiumInsulatorAlbedoMap,
+            m_AluminiumInsulatorNormalMap,
+            m_AluminiumInsulatorMetallicMap,
+            m_AluminiumInsulatorRoughnessMap,
+            m_AluminiumInsulatorAOMap,
+            Yw3d_TF_Linear,
+            Yw3d_TF_Linear,
+            Yw3d_TF_Point,
+            Yw3d_TF_Linear,
+            Yw3d_TF_Linear,
+            -1.0f,
+            -1.0f,
+            -1.0f,
+            -1.0f,
+            -1.0f
+        );
+
+        graphics->PopStateBlock();
     }
 
     bool DemoPBRIBLTextured::LoadAllPreComputingData()
@@ -255,6 +361,15 @@ namespace yw
         const StringA environmentMapPath = assetPath + "/" + environmentMapName;
         if (!fileChecker.FileExists(environmentMapPath + "_ywt.cube"))
         {
+            m_EnvEquirectangularTextureHandle = LoadResource(resManager, m_EnvEquirectangularTextureName + ".hdr");
+            if (m_EnvEquirectangularTextureHandle <= 0)
+            {
+                return false;
+            }
+
+            m_EnvEquirectangularTexture = (Yw3dTexture*)GetResource(resManager, m_EnvEquirectangularTextureHandle);
+            assert(nullptr != m_EnvEquirectangularTexture);
+
             graphics->PushStateBlock();
             DemoPBRIBLPrecompute::RenderEquirectangularMapToCubeMap(graphics, m_EnvEquirectangularTexture, &m_EnvCubeTexture, m_ModelSphere);
             graphics->PopStateBlock();
@@ -273,19 +388,14 @@ namespace yw
         {
             // Load environment map.
             const StringA loadFileName = environmentMapName + "_ywt.cube";
-            m_EnvCubeTextureHandle = resManager->LoadResource(loadFileName);
+            m_EnvCubeTextureHandle = LoadResource(resManager, loadFileName);
             if (m_EnvCubeTextureHandle <= 0)
             {
-                LOGE(_T("Load resource pre-computing environment cube texture failed."));
                 return false;
             }
 
-            m_EnvCubeTexture = (Yw3dCubeTexture*)resManager->GetResource(m_EnvCubeTextureHandle);
-            if (nullptr == m_EnvCubeTexture)
-            {
-                LOGE(_T("Get resource pre-computing environment cube texture failed."));
-                return false;
-            }
+            m_EnvCubeTexture = (Yw3dCubeTexture*)GetResource(resManager, m_EnvCubeTextureHandle);
+            assert(nullptr != m_EnvCubeTexture);
         }
 
         // Generate diffuse irradiance map from hdr cube map.
@@ -311,14 +421,14 @@ namespace yw
         {
             // Load irradiance map.
             const StringA loadFileName = irradianceMapName + "_ywt.cube";
-            m_IrrandianceCubeTextureHandle = resManager->LoadResource(loadFileName);
+            m_IrrandianceCubeTextureHandle = LoadResource(resManager, loadFileName);
             if (m_IrrandianceCubeTextureHandle <= 0)
             {
                 LOGE(_T("Load resource pre-computing irrandiance cube texture failed."));
                 return false;
             }
 
-            m_IrrandianceCubeTexture = (Yw3dCubeTexture*)resManager->GetResource(m_IrrandianceCubeTextureHandle);
+            m_IrrandianceCubeTexture = (Yw3dCubeTexture*)GetResource(resManager, m_IrrandianceCubeTextureHandle);
             if (nullptr == m_IrrandianceCubeTexture)
             {
                 LOGE(_T("Get resource pre-computing irrandiance cube texture failed."));
@@ -349,14 +459,14 @@ namespace yw
         {
             // Load pre-filter reflection map.
             const StringA loadFileName = reflectionMapName + "_ywt.cube";
-            m_PrefilterReflectionCubeTextureHandle = resManager->LoadResource(loadFileName);
+            m_PrefilterReflectionCubeTextureHandle = LoadResource(resManager, loadFileName);
             if (m_PrefilterReflectionCubeTextureHandle <= 0)
             {
                 LOGE(_T("Load resource pre-filter reflection cube texture failed."));
                 return false;
             }
 
-            m_PrefilterReflectionCubeTexture = (Yw3dCubeTexture*)resManager->GetResource(m_PrefilterReflectionCubeTextureHandle);
+            m_PrefilterReflectionCubeTexture = (Yw3dCubeTexture*)GetResource(resManager, m_PrefilterReflectionCubeTextureHandle);
             if (nullptr == m_PrefilterReflectionCubeTexture)
             {
                 LOGE(_T("Get resource pre-filter reflection cube texture failed."));
@@ -387,14 +497,14 @@ namespace yw
         {
             // Load pre-integral BRDF map.
             const StringA loadFileName = brdfMapName + ".ywt";
-            m_PreintegrateBRDFTextureHandle = resManager->LoadResource(loadFileName);
+            m_PreintegrateBRDFTextureHandle = LoadResource(resManager, loadFileName);
             if (m_PreintegrateBRDFTextureHandle <= 0)
             {
                 LOGE(_T("Load resource pre-integral brdf texture failed."));
                 return false;
             }
 
-            m_PreintegrateBRDFTexture = (Yw3dTexture*)resManager->GetResource(m_PreintegrateBRDFTextureHandle);
+            m_PreintegrateBRDFTexture = (Yw3dTexture*)GetResource(resManager, m_PreintegrateBRDFTextureHandle);
             if (nullptr == m_PreintegrateBRDFTexture)
             {
                 LOGE(_T("Get resource pre-integral brdf texture failed."));
@@ -452,27 +562,6 @@ namespace yw
 
         // Render sky model.
         m_ModelCube->Render(device);
-    }
-
-    void DemoPBRIBLTextured::RenderRustedIron(int32_t pass)
-    {
-        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
-        graphics->PushStateBlock();
-
-        RenderTexturedPbrModel(
-            pass,
-            m_ModelPBR,
-            Vector3::Zero(),
-            QuaternionFromEuler(Quaternion(), 90.0f, 0.0f, 0.0f),
-            Vector3(1.8f, 1.8f, 1.8f),
-            m_IronAlbedoMap,
-            m_IronNormalMap,
-            m_IronMetallicMap,
-            m_IronRoughnessMap,
-            m_IronAOMap
-        );
-
-        graphics->PopStateBlock();
     }
 
     void DemoPBRIBLTextured::RenderTexturedPbrModel(
@@ -607,5 +696,37 @@ namespace yw
 
         // Render model.
         pbrModel->Render(device);
+    }
+
+    HRESOURCE DemoPBRIBLTextured::LoadResource(ResourceManager* resManager, const StringA& resourcePath)
+    {
+        if (nullptr == resManager)
+        {
+            return 0;
+        }
+
+        HRESOURCE resourceHandle = resManager->LoadResource(resourcePath);
+        if (resourceHandle <= 0)
+        {
+            StringA errorMsg = "Load resource \"";
+            errorMsg += resourcePath;
+            errorMsg += "\" failed.";
+            LOGE_A(errorMsg);
+
+            return 0;
+        }
+
+        return resourceHandle;
+    }
+
+    void* DemoPBRIBLTextured::GetResource(ResourceManager* resManager, HRESOURCE resourceHandle)
+    {
+        if ((nullptr == resManager) || (resourceHandle <= 0))
+        {
+            return 0;
+        }
+
+        void* resourcePtr = resManager->GetResource(resourceHandle);
+        return resourcePtr;
     }
 }
