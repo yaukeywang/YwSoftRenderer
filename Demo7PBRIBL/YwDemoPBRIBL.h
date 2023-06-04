@@ -39,9 +39,6 @@ namespace yw
         // Render all pre-computing data we nee.
         bool LoadAllPreComputingData();
 
-        // Render preintegrate brdf lut map.
-        bool RenderPreintegrateBRDFMap();
-
         // Render sky environment.
         void RenderSky(int32_t pass);
 
@@ -53,8 +50,8 @@ namespace yw
 
     private:
         // Model resources.
-        class Model* m_ModelSkySphere;
-        class Model* m_ModelSkyCube;
+        class Model* m_ModelSphere;
+        class Model* m_ModelCube;
         class Model* m_ModelPBR;
 
         // Pre-computing texture resources.
@@ -71,12 +68,12 @@ namespace yw
         class Yw3dTexture* m_ModelPBRSpecularTexture;
 
         // Model Resource handle.
-        HRESOURCE m_ModelSkySphereHandle;
-        HRESOURCE m_ModelSkyCubeHandle;
+        HRESOURCE m_ModelSphereHandle;
+        HRESOURCE m_ModelCubeHandle;
         HRESOURCE m_ModelPBRHandle;
 
         // Texture Resource handle.
-        HRESOURCE m_ModelSkySphereTextureHandle;
+        HRESOURCE m_EnvEquirectangularTextureHandle;
         HRESOURCE m_ModelPBRTextureHandle;
         HRESOURCE m_ModelPBRNormalTextureHandle;
         HRESOURCE m_ModelPBRSpecularTextureHandle;

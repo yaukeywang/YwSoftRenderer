@@ -17,15 +17,15 @@ namespace yw
 
     DemoPBR::DemoPBR(Scene* scene) :
         IEntity(scene),
-        m_ModelSkySphere(nullptr),
+        m_ModelSphere(nullptr),
         m_ModelPBR(nullptr),
         m_EnvEquirectangularTexture(nullptr),
         m_ModelPBRTexture(nullptr),
         m_ModelPBRNormalTexture(nullptr),
         m_ModelPBRSpecularTexture(nullptr),
-        m_ModelSkySphereHandle(0),
+        m_ModelSphereHandle(0),
         m_ModelPBRHandle(0),
-        m_ModelSkySphereTextureHandle(0),
+        m_EnvEquirectangularTextureHandle(0),
         m_ModelPBRTextureHandle(0),
         m_ModelPBRNormalTextureHandle(0),
         m_ModelPBRSpecularTextureHandle(0),
@@ -42,7 +42,7 @@ namespace yw
     DemoPBR::~DemoPBR()
     {
         // Resource should released by resource manager.
-        m_ModelSkySphere = nullptr;
+        m_ModelSphere = nullptr;
         m_ModelPBR = nullptr;
         m_EnvEquirectangularTexture = nullptr;
         m_ModelPBRTexture = nullptr;
@@ -52,9 +52,9 @@ namespace yw
         // Get resource manager and release all resources.
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
-        if (m_ModelSkySphereHandle > 0)
+        if (m_ModelSphereHandle > 0)
         {
-            resManager->UnloadResource(m_ModelSkySphereHandle);
+            resManager->UnloadResource(m_ModelSphereHandle);
         }
 
         if (m_ModelPBRHandle > 0)
@@ -62,9 +62,9 @@ namespace yw
             resManager->UnloadResource(m_ModelPBRHandle);
         }
 
-        if (m_ModelSkySphereTextureHandle > 0)
+        if (m_EnvEquirectangularTextureHandle > 0)
         {
-            resManager->UnloadResource(m_ModelSkySphereTextureHandle);
+            resManager->UnloadResource(m_EnvEquirectangularTextureHandle);
         }
 
         if (m_ModelPBRTextureHandle > 0)
@@ -96,8 +96,8 @@ namespace yw
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
         // Load model and texture.
-        m_ModelSkySphereHandle = resManager->LoadResource("sphere.obj");
-        if (m_ModelSkySphereHandle <= 0)
+        m_ModelSphereHandle = resManager->LoadResource("sphere.obj");
+        if (m_ModelSphereHandle <= 0)
         {
             LOGE(_T("Load resource \"sphere.obj\" failed."));
             return false;
@@ -110,8 +110,8 @@ namespace yw
             return false;
         }
 
-        m_ModelSkySphereTextureHandle = resManager->LoadResource("Room/room.cube");
-        if (m_ModelSkySphereTextureHandle <= 0)
+        m_EnvEquirectangularTextureHandle = resManager->LoadResource("Room/room.cube");
+        if (m_EnvEquirectangularTextureHandle <= 0)
         {
             LOGE(_T("Load resource \"Room/room.cube\" failed."));
             return false;
@@ -139,8 +139,8 @@ namespace yw
         }
 
         // Get model and texture.
-        m_ModelSkySphere = (Model*)resManager->GetResource(m_ModelSkySphereHandle);
-        if (nullptr == m_ModelSkySphere)
+        m_ModelSphere = (Model*)resManager->GetResource(m_ModelSphereHandle);
+        if (nullptr == m_ModelSphere)
         {
             LOGE(_T("Get resource \"sphere.obj\" failed."));
             return false;
@@ -153,7 +153,7 @@ namespace yw
             return false;
         }
 
-        m_EnvEquirectangularTexture = (Yw3dCubeTexture*)resManager->GetResource(m_ModelSkySphereTextureHandle);
+        m_EnvEquirectangularTexture = (Yw3dCubeTexture*)resManager->GetResource(m_EnvEquirectangularTextureHandle);
         if (nullptr == m_EnvEquirectangularTexture)
         {
             LOGE(_T("Get resource \"room.cube\" failed."));
@@ -254,7 +254,7 @@ namespace yw
         graphics->SetPixelShader(m_SkyPixelShader);
 
         // Render sky model.
-        m_ModelSkySphere->Render(device);
+        m_ModelSphere->Render(device);
     }
 
     void DemoPBR::RenderPbrModel(int32_t pass)

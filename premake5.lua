@@ -111,9 +111,9 @@ project "libYw3d"
 
     vpaths 
     {
-        ["*"] = { "libYw3d/Yw*.h", "libYw3d/Yw*.inl", "libYw3d/Yw*.cpp" },
         ["Core"] = { "libYw3d/Core/Yw3d*.h", "libYw3d/Core/Yw3d*.inl", "libYw3d/Core/Yw3d*.cpp" },
-        ["Math"] = { "libYw3d/Math/YwMath*.h", "libYw3d/Math/YwMath*.inl", "libYw3d/Math/YwMath*.cpp" }
+        ["Math"] = { "libYw3d/Math/YwMath*.h", "libYw3d/Math/YwMath*.inl", "libYw3d/Math/YwMath*.cpp" },
+        ["*"] = { "libYw3d/Yw*.h", "libYw3d/Yw*.inl", "libYw3d/Yw*.cpp" } -- ["*"] group should be keeping as last.
     }
 
     filter { "architecture:x86" }
@@ -231,7 +231,6 @@ project "libYwAppFramework"
 
     vpaths 
     {
-        ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.inl", "libYwAppFramework/Yw*.c", "libYwAppFramework/Yw*.cpp" },
         ["Core"] = { "libYwAppFramework/Core/Yw*.h", "libYwAppFramework/Core/Yw*.inl", "libYwAppFramework/Core/Yw*.c", "libYwAppFramework/Core/Yw*.cpp" },
         ["IO"] = { "libYwAppFramework/IO/Yw*.h", "libYwAppFramework/IO/Yw*.inl", "libYwAppFramework/IO/Yw*.c", "libYwAppFramework/IO/Yw*.cpp" },
         ["Resource"] = { "libYwAppFramework/Resource/Yw*.h", "libYwAppFramework/Resource/Yw*.inl", "libYwAppFramework/Resource/Yw*.c", "libYwAppFramework/Resource/Yw*.cpp" },
@@ -242,7 +241,8 @@ project "libYwAppFramework"
         ["ThirdParty/rgbe"] = {"libYwAppFramework/ThirdParty/rgbe/*.h", "libYwAppFramework/ThirdParty/rgbe/*.inl", "libYwAppFramework/ThirdParty/rgbe/*.c", "libYwAppFramework/ThirdParty/rgbe/*.cpp"},
         ["ThirdParty/ywt"] = {"libYwAppFramework/ThirdParty/ywt/*.h", "libYwAppFramework/ThirdParty/ywt/*.inl", "libYwAppFramework/ThirdParty/ywt/*.c", "libYwAppFramework/ThirdParty/ywt/*.cpp"},
         ["ThirdParty/zlib"] = {"libYwAppFramework/ThirdParty/zlib/*.h", "libYwAppFramework/ThirdParty/zlib/*.inl", "libYwAppFramework/ThirdParty/zlib/*.c", "libYwAppFramework/ThirdParty/zlib/*.cpp"},
-        ["Utility"] = {"libYwAppFramework/Utility/*.h", "libYwAppFramework/Utility/*.inl", "libYwAppFramework/Utility/*.c", "libYwAppFramework/Utility/*.cpp"}
+        ["Utility"] = {"libYwAppFramework/Utility/*.h", "libYwAppFramework/Utility/*.inl", "libYwAppFramework/Utility/*.c", "libYwAppFramework/Utility/*.cpp"},
+        ["*"] = { "libYwAppFramework/Yw*.h", "libYwAppFramework/Yw*.inl", "libYwAppFramework/Yw*.c", "libYwAppFramework/Yw*.cpp" } -- ["*"] group should be keeping as last.
     }
 
     links
@@ -590,11 +590,21 @@ project "Demo7PBRIBL"
         "libYwAppFramework/Core",
         "libYwAppFramework/IO",
         "libYwAppFramework/Resource",
-        "libYwAppFramework/Utility"
+        "libYwAppFramework/Utility",
+        "Demo7PBRIBL/Common"
     }
 
     files
     { 
+        "Demo7PBRIBL/Common/YwDemoPBRIBLPrecompute.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLPrecompute.cpp",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderCommon.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderCommon.cpp",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderPrecompute.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderPrecompute.cpp",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderSky.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderSky.cpp",
+
         "Demo7PBRIBL/YwDemoPBRIBL.h",
         "Demo7PBRIBL/YwDemoPBRIBL.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLApp.h",
@@ -602,22 +612,15 @@ project "Demo7PBRIBL"
         "Demo7PBRIBL/YwDemoPBRIBLCamera.h",
         "Demo7PBRIBL/YwDemoPBRIBLCamera.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLMain.cpp",
-        "Demo7PBRIBL/YwDemoPBRIBLPrecompute.h",
-        "Demo7PBRIBL/YwDemoPBRIBLPrecompute.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLShader.h",
         "Demo7PBRIBL/YwDemoPBRIBLShader.cpp",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderCommon.h",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderCommon.cpp",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderPrecompute.h",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderPrecompute.cpp",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderSky.h",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderSky.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLShaderTextured.h",
         "Demo7PBRIBL/YwDemoPBRIBLShaderTextured.cpp"
     }
 
     vpaths 
     {
+        ["Common"] = { "Demo7PBRIBL/Common/Yw*.h", "Demo7PBRIBL/Common/Yw*.inl", "Demo7PBRIBL/Common/Yw*.cpp" };
         ["*"] = { "Demo7PBRIBL/Yw*.h", "Demo7PBRIBL/Yw*.inl", "Demo7PBRIBL/Yw*.cpp" }
     }
 
@@ -679,4 +682,98 @@ project "Demo7PBRIBL"
             -- '{COPY} "' .. abssrcdatadir .. '/sphere.obj"' .. ' "' .. absdstdatadir .. '"',
             -- '{COPY} "' .. abssrcdatadir .. '/newport_loft.hdr"' .. ' "' .. absdstdatadir .. '"',
             -- '{COPYDIR} "' .. abssrcdatadir .. '/PBR/IBL"' .. ' "' .. absdstdatadir .. '/PBR/IBL"'
+        }
+
+project "Demo8PBRIBLTextured"
+    language "C++"
+    kind "WindowedApp"
+    objdir (builddir .. "/Immediate")
+
+    includedirs
+    {
+        "libYw3d",
+        "libYw3d/Core",
+        "libYw3d/Math",
+        "libYwAppFramework",
+        "libYwAppFramework/Core",
+        "libYwAppFramework/IO",
+        "libYwAppFramework/Resource",
+        "libYwAppFramework/Utility",
+        "Demo7PBRIBL/Common"
+    }
+
+    files
+    { 
+        "Demo7PBRIBL/Common/YwDemoPBRIBLPrecompute.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLPrecompute.cpp",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderCommon.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderCommon.cpp",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderPrecompute.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderPrecompute.cpp",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderSky.h",
+        "Demo7PBRIBL/Common/YwDemoPBRIBLShaderSky.cpp",
+
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTextured.h",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTextured.cpp",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedApp.h",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedApp.cpp",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedCamera.h",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedCamera.cpp",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedMain.cpp",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedShader.h",
+        "Demo8PBRIBLTextured/YwDemoPBRIBLTexturedShader.cpp"
+    }
+
+    vpaths 
+    {
+        ["Common"] = { "Demo7PBRIBL/Common/Yw*.h", "Demo7PBRIBL/Common/Yw*.inl", "Demo7PBRIBL/Common/Yw*.cpp" },
+        ["*"] = { "Demo8PBRIBLTextured/Yw*.h", "Demo8PBRIBLTextured/Yw*.inl", "Demo8PBRIBLTextured/Yw*.cpp" }
+    }
+
+    links
+    {
+        "libYw3d",
+        "libYwAppFramework"
+    }
+
+    targetdir (appbuilddir)
+    debugdir (appbuilddir)
+
+    filter { "configurations:Debug*", "architecture:x86" }
+        targetsuffix "x86D"
+
+    filter { "configurations:Release*", "architecture:x86" }
+        targetsuffix "x86"
+
+    filter { "configurations:Debug*", "architecture:x86_64" }
+        targetsuffix "D"
+
+    filter { "system:windows" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Environment"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Irradiance"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Reflection"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/BRDF"'
+        }
+
+    filter { "system:linux" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Environment"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Irradiance"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Reflection"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/BRDF"'
+        }
+
+    filter { "system:macosx" }
+        postbuildcommands
+        {
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Environment"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Irradiance"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/Reflection"',
+            '{MKDIR} "' .. abssrcdatadir .. '/PBR/IBL/BRDF"'
         }

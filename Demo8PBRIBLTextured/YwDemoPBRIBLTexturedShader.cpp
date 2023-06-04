@@ -1,7 +1,7 @@
 // Add by Yaukey at 2023-05-14.
 // YW Soft Renderer demo with PBR-IBL-Textured shader class.
 
-#include "YwDemoPBRIBLShaderTextured.h"
+#include "YwDemoPBRIBLTexturedShader.h"
 
 namespace yw
 {

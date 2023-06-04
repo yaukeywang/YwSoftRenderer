@@ -44,7 +44,7 @@ namespace yw
 
     private:
         // Model resources.
-        class Model* m_ModelSkySphere;
+        class Model* m_ModelSphere;
         class Model* m_ModelPBR;
 
         // Texture resources.
@@ -54,11 +54,11 @@ namespace yw
         class Yw3dTexture* m_ModelPBRSpecularTexture;
 
         // Model Resource handle.
-        HRESOURCE m_ModelSkySphereHandle;
+        HRESOURCE m_ModelSphereHandle;
         HRESOURCE m_ModelPBRHandle;
 
         // Texture Resource handle.
-        HRESOURCE m_ModelSkySphereTextureHandle;
+        HRESOURCE m_EnvEquirectangularTextureHandle;
         HRESOURCE m_ModelPBRTextureHandle;
         HRESOURCE m_ModelPBRNormalTextureHandle;
         HRESOURCE m_ModelPBRSpecularTextureHandle;
