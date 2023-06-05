@@ -688,7 +688,7 @@ namespace yw
         Matrix44Identity(matWorld);
 
         Quaternion quatRotation;
-        QuaternionFromEuler(quatRotation, 90.0f, 0.0f, 0.0f);
+        QuaternionFromEuler(quatRotation, 90.0f * DEG_TO_RAD, 0.0f, 0.0f);
 
         // Apply model rotation.
         Matrix44Transformation(matWorld, Vector3(1.8f, 1.8f, 1.8f), quatRotation, Vector3(0.0f, 0.0f, 0.0f));
