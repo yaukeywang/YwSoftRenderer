@@ -43,11 +43,12 @@ namespace yw
     {
         // Sample main texture.
         float3 texCoord = input[0];
-        float4 texColor = texCUBElod(0, 0, Vector4(texCoord, 0));
+        //float4 texColor = texCUBE(0, 0, texCoord);
+        float4 texColor = texCUBElod(0, 0, Vector4(texCoord, 0)); // Highest mipmap level.
 
-        // We can bake into cube texture.
         // linear to srgb.
-        texColor = Vector4((float)pow(texColor.x, 1.0f / 2.2f), (float)pow(texColor.y, 1.0f / 2.2f), (float)pow(texColor.z, 1.0f / 2.2f), texColor.a);
+        float gammaFactor = 1.0f / 2.2f;
+        texColor = Vector4((float)pow(texColor.x, gammaFactor), (float)pow(texColor.y, gammaFactor), (float)pow(texColor.z, gammaFactor), texColor.a);
 
         color = texColor;
 
