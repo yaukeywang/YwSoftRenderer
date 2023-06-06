@@ -102,6 +102,13 @@ namespace yw
         Yw3dDevice* device = graphics->GetYw3dDevice();
         ResourceManager* resManager = GetScene()->GetApplication()->GetResourceManager();
 
+        // Update light info.
+        m_LightColor.Set(1.0f, 1.0f, 1.0f, 1.0f);
+        m_LightDirectionA.Set(1.0f, 1.0f, -1.0f);
+        m_LightDirectionB.Set(1.0f, -1.0f, -1.0f);
+        m_LightDirectionC.Set(-1.0f, 1.0f, -1.0f);
+        m_LightDirectionD.Set(-1.0f, -1.0f, -1.0f);
+
         // Load basic model and texture.
         m_ModelSphereResource = ResourceHelper::LoadResource(resManager, "sphere.obj");
         if (nullptr == m_ModelSphereResource)
@@ -636,9 +643,12 @@ namespace yw
 
         // Update shader parameters.
         m_PBRIBLTexturedVertexShader->SetMatrix(0, matInvTrs); // Inverse transpose of world matrix.
-        m_PBRIBLTexturedPixelShader->SetVector(0, Vector3(1.0f, 1.0f, -1.0f)); // Light position.
-        m_PBRIBLTexturedPixelShader->SetVector(1, Vector3(1.0f, 1.0f, 1.0f)); // Light color.
-        m_PBRIBLTexturedPixelShader->SetVector(2, camera->GetPosition());
+        m_PBRIBLTexturedPixelShader->SetVector(0, camera->GetPosition());
+        m_PBRIBLTexturedPixelShader->SetVector(1, m_LightColor); // Light color.
+        m_PBRIBLTexturedPixelShader->SetVector(2, m_LightDirectionA);
+        m_PBRIBLTexturedPixelShader->SetVector(3, m_LightDirectionB);
+        m_PBRIBLTexturedPixelShader->SetVector(4, m_LightDirectionC);
+        m_PBRIBLTexturedPixelShader->SetVector(5, m_LightDirectionD);
 
         // Render model.
         pbrModel->Render(device);

@@ -89,6 +89,13 @@ namespace yw
         // Enable debug info enabled.
         bool m_DebugInfoEnabled;
 
+        // Light information.
+        Vector4 m_LightColor;
+        Vector3 m_LightDirectionA;
+        Vector3 m_LightDirectionB;
+        Vector3 m_LightDirectionC;
+        Vector3 m_LightDirectionD;
+
         // Model resources.
         ResourceWrapper* m_ModelSphereResource;
         ResourceWrapper* m_ModelCubeResource;

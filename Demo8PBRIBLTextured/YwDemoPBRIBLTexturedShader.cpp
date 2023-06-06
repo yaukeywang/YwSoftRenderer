@@ -24,10 +24,10 @@ namespace yw
         const float44 matInvTrs = GetMatrix(0);
 
         // TBN.
-        const float3 normal = vsShaderInput[1] * matInvTrs;
+        const Vector3 normal = vsShaderInput[1] * matInvTrs;
         const float4 tangent = vsShaderInput[2] * matInvTrs;
-        const float3 binormal = cross(normal, float3(tangent)) * tangent.w;
-        vsShaderOutput[1] = float3(tangent);
+        const Vector3 binormal = cross(normal, Vector3(tangent)) * tangent.w;
+        vsShaderOutput[1] = Vector3(tangent);
         vsShaderOutput[2] = binormal;
         vsShaderOutput[3] = normal;
 
@@ -67,10 +67,10 @@ namespace yw
         const float2 texCoord = float2(input[0]);
 
         // Form TBN matrix from tangent space to model space.
-        const float3 tangent = normalize(float3(input[1]));
-        const float3 binormal = normalize(float3(input[2]));
-        const float3 normal = normalize(float3(input[3]));
-        const float3 worldPos = float3(input[4]);
+        const Vector3 tangent = normalize(Vector3(input[1]));
+        const Vector3 binormal = normalize(Vector3(input[2]));
+        const Vector3 normal = normalize(Vector3(input[3]));
+        const Vector3 worldPos = Vector3(input[4]);
 
         float33 TBN = float33(
             tangent.x, tangent.y, tangent.z,
@@ -79,16 +79,16 @@ namespace yw
         );
 
         // Material properties.
-        const float3 albedo = pow(float3(tex2D(0, 3, texCoord)), 2.2f);
-        const float3 worldNormal = normalize(UnpackScaleNormal(tex2D(0, 4, texCoord), 1.0f) * TBN);
+        const Vector3 albedo = pow(Vector3(tex2D(0, 3, texCoord)), 2.2f);
+        const Vector3 worldNormal = normalize(UnpackScaleNormal(tex2D(0, 4, texCoord), 1.0f) * TBN);
         const float metallic = tex2D(0, 5, texCoord).r;
         const float roughness = tex2D(0, 6, texCoord).r;
         const float ao = tex2D(0, 7, texCoord).r;
 
-        const float3 lightPos = GetVector(0);
-        const float3 lightColor = GetVector(1);
-        const float3 cameraPos = GetVector(2);
-
+        const Vector3 cameraPos = GetVector(0);
+        const Vector3 lightColor = GetVector(1);
+        const Vector3 lightPositions[] = { GetVector(2), GetVector(3), GetVector(4), GetVector(5) };
+ 
         Vector3 N = worldNormal;
         Vector3 V = normalize(cameraPos - worldPos);
         Vector3 R = reflect(-V, N);
@@ -99,30 +99,34 @@ namespace yw
         F0 = lerp(F0, albedo, metallic);
 
         // Reflectance equation.
-        float3 Lo = float3(0.0f);
+        Vector3 Lo = Vector3(0.0f);
+        int32_t lightCount = sizeof(lightPositions) / sizeof(lightPositions[0]);
+        for (int32_t i = 0; i < lightCount; i++)
         {
+            Vector3 lightPos = lightPositions[i];
+
             // calculate per-light radiance
-            float3 L = normalize(lightPos - worldPos);
-            float3 H = normalize(V + L);
+            Vector3 L = normalize(lightPos - worldPos);
+            Vector3 H = normalize(V + L);
             float distance = length(lightPos - worldPos);
             float attenuation = 1.0f / (distance * distance);
-            float3 radiance = lightColor * attenuation;
+            Vector3 radiance = lightColor * attenuation;
 
             // Cook-Torrance BRDF
             float NDF = DistributionGGX(N, H, roughness);   
             float G = GeometrySmith(N, V, L, roughness);    
-            float3 F = FresnelSchlick(max(dot(H, V), 0.0f), F0);        
+            Vector3 F = FresnelSchlick(max(dot(H, V), 0.0f), F0);        
             
-            float3 numerator = NDF * G * F;
+            Vector3 numerator = NDF * G * F;
             float denominator = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f) + 0.0001f; // + 0.0001 to prevent divide by zero
-            float3 specular = numerator / denominator;
+            Vector3 specular = numerator / denominator;
             
              // kS is equal to Fresnel
-            float3 kS = F;
+            Vector3 kS = F;
             // for energy conservation, the diffuse and specular light can't
             // be above 1.0 (unless the surface emits light); to preserve this
             // relationship the diffuse component (kD) should equal 1.0 - kS.
-            float3 kD = float3(1.0f) - kS;
+            Vector3 kD = Vector3(1.0f) - kS;
             // multiply kD by the inverse metalness such that only non-metals 
             // have diffuse lighting, or a linear blend if partly metal (pure metals
             // have no diffuse light).

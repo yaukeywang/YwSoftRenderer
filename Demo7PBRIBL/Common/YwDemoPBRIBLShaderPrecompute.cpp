@@ -42,10 +42,10 @@ namespace yw
     bool DemoPBRIBLEquirectangularMap2CubeMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
         // Sample main texture.
-        float3 texCoord = normalize(input[0]);
+        Vector3 texCoord = normalize(input[0]);
         texCoord = SampleSphericalMap(texCoord);
 
-        float4 texColor;
+        Vector4 texColor;
         SampleTexture(texColor, 0, texCoord.x, texCoord.y); // SampleTexture -> texCube
 
         // Equirectangular map is hdr, keep the render target is also hdr.

@@ -42,9 +42,9 @@ namespace yw
     bool DemoPBRIBLCubeMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
     {
         // Sample main texture.
-        float3 texCoord = input[0];
+        Vector3 texCoord = input[0];
         //float4 texColor = texCUBE(0, 0, texCoord);
-        float4 texColor = texCUBElod(0, 0, Vector4(texCoord, 0)); // Highest mipmap level.
+        Vector4 texColor = texCUBElod(0, 0, Vector4(texCoord, 0)); // Highest mipmap level.
 
         // linear to srgb.
         float gammaFactor = 1.0f / 2.2f;
