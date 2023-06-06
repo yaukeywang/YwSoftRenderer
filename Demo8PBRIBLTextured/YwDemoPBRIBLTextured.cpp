@@ -164,7 +164,7 @@ namespace yw
         graphics->PopStateBlock();
 
         // Render rusted iron.
-        //RenderRustedIron(pass);
+        RenderRustedIron(pass);
 
         // Render aluminium insulator.
         RenderAluminiumInsulator(pass);
@@ -254,9 +254,9 @@ namespace yw
         RenderTexturedPbrModel(
             pass,
             m_ModelPBRResource->GetResource<Model>(),
-            Vector3::Zero(),
+            Vector3(-0.5f, 0.0f, 0.0f),
             QuaternionFromEuler(Quaternion(), 90.0f * DEG_TO_RAD, 0.0f, 0.0f),
-            Vector3(1.8f, 1.8f, 1.8f),
+            Vector3(0.8f, 0.8f, 0.8f),
             m_RustedIronAlbedoMapResource->GetResource<Yw3dTexture>(),
             m_RustedIronNormalMapResource->GetResource<Yw3dTexture>(),
             m_RustedIronMetallicMapResource->GetResource<Yw3dTexture>(),
@@ -275,9 +275,9 @@ namespace yw
         RenderTexturedPbrModel(
             pass,
             m_ModelPBRResource->GetResource<Model>(),
-            Vector3::Zero(),
+            Vector3(0.5f, 0.0f, 0.0f),
             QuaternionFromEuler(Quaternion(), 90.0f * DEG_TO_RAD, 0.0f, 0.0f),
-            Vector3(1.8f, 1.8f, 1.8f),
+            Vector3(0.8f, 0.8f, 0.8f),
             m_AluminiumInsulatorAlbedoMapResource->GetResource<Yw3dTexture>(),
             m_AluminiumInsulatorNormalMapResource->GetResource<Yw3dTexture>(),
             m_AluminiumInsulatorMetallicMapResource->GetResource<Yw3dTexture>(),
@@ -642,37 +642,5 @@ namespace yw
 
         // Render model.
         pbrModel->Render(device);
-    }
-
-    HRESOURCE DemoPBRIBLTextured::LoadResource(ResourceManager* resManager, const StringA& resourcePath)
-    {
-        if (nullptr == resManager)
-        {
-            return 0;
-        }
-
-        HRESOURCE resourceHandle = resManager->LoadResource(resourcePath);
-        if (resourceHandle <= 0)
-        {
-            StringA errorMsg = "Load resource \"";
-            errorMsg += resourcePath;
-            errorMsg += "\" failed.";
-            LOGE_A(errorMsg);
-
-            return 0;
-        }
-
-        return resourceHandle;
-    }
-
-    void* DemoPBRIBLTextured::GetResource(ResourceManager* resManager, HRESOURCE resourceHandle)
-    {
-        if ((nullptr == resManager) || (resourceHandle <= 0))
-        {
-            return 0;
-        }
-
-        void* resourcePtr = resManager->GetResource(resourceHandle);
-        return resourcePtr;
     }
 }

@@ -85,12 +85,6 @@ namespace yw
             float aoMipLodBias = 0.0f
         );
 
-        // Load a resource.
-        HRESOURCE LoadResource(ResourceManager* resManager, const StringA& resourcePath);
-
-        // Get a resource by handle.
-        void* GetResource(ResourceManager* resManager, HRESOURCE resourceHandle);
-
     private:
         // Enable debug info enabled.
         bool m_DebugInfoEnabled;
