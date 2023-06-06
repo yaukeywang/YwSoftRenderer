@@ -12,7 +12,7 @@ namespace yw
     class ResourceWrapper
     {
     public:
-        ResourceWrapper(ResourceManager* ResourceManager, HRESOURCE ResourceHandle, void* ResourcePointer);
+        ResourceWrapper(ResourceManager* resourceManager, StringA resourceFile, HRESOURCE resourceHandle, void* resourcePointer);
         ~ResourceWrapper();
 
     public:
@@ -26,6 +26,7 @@ namespace yw
 
     private:
         ResourceManager* m_ResourceManager;
+        StringA m_ResourceFile;
         HRESOURCE m_ResourceHandle;
         void* m_ResourcePointer;
     };

@@ -157,6 +157,18 @@ namespace yw
         return loadFunc;
     }
 
+    RESOURCEUNLOADFUNCTION ResourceManager::GetResourceUnloaderByFileExtension(const StringA& extension)
+    {
+        // Get unloader function.
+        RESOURCEUNLOADFUNCTION unloadFunc = m_RegisteredEntityExtensionsUnload[extension];
+        if (nullptr == unloadFunc)
+        {
+            return nullptr;
+        }
+
+        return unloadFunc;
+    }
+
     void* ResourceManager::LoadModel(ResourceManager* resourceManager, const StringA& fileName)
     {
         // Define a model.

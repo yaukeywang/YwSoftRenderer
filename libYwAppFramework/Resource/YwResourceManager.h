@@ -47,6 +47,9 @@ namespace yw
         // Get resource load function by file extension.
         RESOURCELOADFUNCTION GetResourceLoaderByFileExtension(const StringA& extension);
 
+        // Get resource unload function by file extension.
+        RESOURCEUNLOADFUNCTION GetResourceUnloaderByFileExtension(const StringA& extension);
+
         // Get disk file path.
         StringA GetDiskFilePath(const StringA& fileName) const;
 

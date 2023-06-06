@@ -3,14 +3,17 @@
 
 #include "YwResourceHelper.h"
 
+#include "YwModel.h"
+
 namespace yw
 {
     // Resource wrapper class for a single resource node.
     
-    ResourceWrapper::ResourceWrapper(ResourceManager* ResourceManager, HRESOURCE ResourceHandle, void* ResourcePointer) :
-        m_ResourceManager(ResourceManager),
-        m_ResourceHandle(ResourceHandle),
-        m_ResourcePointer(ResourcePointer)
+    ResourceWrapper::ResourceWrapper(ResourceManager* resourceManager, StringA resourceFile, HRESOURCE resourceHandle, void* resourcePointer) :
+        m_ResourceManager(resourceManager),
+        m_ResourceFile(resourceFile),
+        m_ResourceHandle(resourceHandle),
+        m_ResourcePointer(resourcePointer)
     {
     }
 
@@ -21,6 +24,16 @@ namespace yw
 
     void ResourceWrapper::ReleaseResource()
     {
+        if ((0 == m_ResourceHandle) && (nullptr != m_ResourcePointer))
+        {
+            const StringA& fileExt = m_ResourceManager->GetFileExtension(m_ResourceFile);
+            RESOURCEUNLOADFUNCTION unloadFunc = m_ResourceManager->GetResourceUnloaderByFileExtension(fileExt);
+            if (nullptr != unloadFunc)
+            {
+                unloadFunc(m_ResourceManager, m_ResourcePointer);
+            }
+        }
+
         m_ResourcePointer = nullptr;
 
         if ((nullptr != m_ResourceManager) && (m_ResourceHandle > 0))
@@ -42,7 +55,7 @@ namespace yw
         }
         
         HRESOURCE hResourceHandle = resourceManager->LoadResource(resourcePath);
-        if (hResourceHandle <= 0)
+        if (0 == hResourceHandle)
         {
             StringA errorMsg = "ResourceHelper.LoadResource: Load resource \"";
             errorMsg += resourcePath;
@@ -63,7 +76,7 @@ namespace yw
             return nullptr;
         }
 
-        ResourceWrapper* resourceWrapper = new ResourceWrapper(resourceManager, hResourceHandle, resource);
+        ResourceWrapper* resourceWrapper = new ResourceWrapper(resourceManager, resourcePath, hResourceHandle, resource);
         return resourceWrapper;
     }
 }

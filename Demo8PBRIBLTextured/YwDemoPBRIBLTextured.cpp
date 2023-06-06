@@ -319,12 +319,15 @@ namespace yw
                 return false;
             }
 
-            m_EnvCubeTextureResource = new ResourceWrapper(resManager, 0, nullptr);
-            Yw3dCubeTexture* envCubeTexture = m_EnvCubeTextureResource->GetResource<Yw3dCubeTexture>();
+            // Create temp cube texture.
+            Yw3dCubeTexture* envCubeTexture = nullptr;
 
             graphics->PushStateBlock();
             DemoPBRIBLPrecompute::RenderEquirectangularMapToCubeMap(graphics, m_EnvEquirectangularTextureResource->GetResource<Yw3dTexture>(), &envCubeTexture, m_ModelSphereResource->GetResource<Model>());
             graphics->PopStateBlock();
+
+            // Save cube texture to resource wrapper.
+            m_EnvCubeTextureResource = new ResourceWrapper(resManager, ".cube", 0, envCubeTexture);
 
             // Used in runtime.
             YwTextureDataConverter::SaveCubeTextureDataToYWTFile(environmentMapPath + "_ywt.cube", envCubeTexture);
@@ -352,12 +355,15 @@ namespace yw
         const StringA irradianceMapPath = assetPath + "/" + irradianceMapName;
         if (!fileChecker.FileExists(irradianceMapPath + "_ywt.cube"))
         {
-            m_IrrandianceCubeTextureResource = new ResourceWrapper(resManager, 0, nullptr);
-            Yw3dCubeTexture* irrandianceCubeTexture = m_IrrandianceCubeTextureResource->GetResource<Yw3dCubeTexture>();
+            // Create temp cube texture.
+            Yw3dCubeTexture* irrandianceCubeTexture = nullptr;
             
             graphics->PushStateBlock();
             DemoPBRIBLPrecompute::RenderCubeMapToIrradianceMap(graphics, m_EnvCubeTextureResource->GetResource<Yw3dCubeTexture>(), &irrandianceCubeTexture, m_ModelSphereResource->GetResource<Model>());
             graphics->PopStateBlock();
+
+            // Save cube texture to resource wrapper.
+            m_IrrandianceCubeTextureResource = new ResourceWrapper(resManager, ".cube", 0, irrandianceCubeTexture);
 
             // Used in runtime.
             YwTextureDataConverter::SaveCubeTextureDataToYWTFile(irradianceMapPath + "_ywt.cube", irrandianceCubeTexture);
@@ -385,12 +391,15 @@ namespace yw
         const StringA reflectionMapPath = assetPath + "/" + reflectionMapName;
         if (!fileChecker.FileExists(reflectionMapPath + "_ywt.cube"))
         {
-            m_PrefilterReflectionCubeTextureResource = new ResourceWrapper(resManager, 0, nullptr);
-            Yw3dCubeTexture* prefilterReflectionCubeTexture = m_PrefilterReflectionCubeTextureResource->GetResource<Yw3dCubeTexture>();
+            // Create temp cube texture.
+            Yw3dCubeTexture* prefilterReflectionCubeTexture = nullptr;
             
             graphics->PushStateBlock();
             DemoPBRIBLPrecompute::RenderPrefilterReflectionMap(graphics, m_EnvCubeTextureResource->GetResource<Yw3dCubeTexture>(), &prefilterReflectionCubeTexture, m_ModelSphereResource->GetResource<Model>());
             graphics->PopStateBlock();
+
+            // Save cube texture to resource wrapper.
+            m_PrefilterReflectionCubeTextureResource = new ResourceWrapper(resManager, ".cube", 0, prefilterReflectionCubeTexture);
 
             // Used in runtime.
             YwTextureDataConverter::SaveCubeTextureDataToYWTFile(reflectionMapPath + "_ywt.cube", prefilterReflectionCubeTexture);
@@ -418,12 +427,15 @@ namespace yw
         const StringA brdfMapPath = assetPath + "/" + brdfMapName;
         if (!fileChecker.FileExists(brdfMapPath + ".ywt"))
         {
-            m_PreintegrateBRDFTextureResource = new ResourceWrapper(resManager, 0, nullptr);
-            Yw3dTexture* preintegrateBRDFTexture = m_PreintegrateBRDFTextureResource->GetResource<Yw3dTexture>();
+            // Create temp texture.
+            Yw3dTexture* preintegrateBRDFTexture = nullptr;
             
             graphics->PushStateBlock();
             DemoPBRIBLPrecompute::RenderPreintegrateBRDFMap(graphics, &preintegrateBRDFTexture);
             graphics->PopStateBlock();
+
+            // Save texture to resource wrapper.
+            m_PreintegrateBRDFTextureResource = new ResourceWrapper(resManager, ".ywt", 0, preintegrateBRDFTexture);
 
             // Used in runtime.
             YwTextureDataConverter::SaveTextureDataToYWTFile(brdfMapPath + ".ywt", preintegrateBRDFTexture);
