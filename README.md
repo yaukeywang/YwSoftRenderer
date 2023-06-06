@@ -81,3 +81,6 @@ After executing the command `"premake5 vs2017"`, you can find the `Visual Studio
 
 #### Demo 7: IBL (With full steps of dynamic generating precomputed data.)
 ![Demo 7 Image Based Lighting](Demo7PBRIBL/Demo7PBRIBL.png)
+
+#### Demo 8: PBR-IBL-Textured (With full steps of dynamic generating precomputed data.)
+![Demo 7 PBR-IBL-Textured](Demo8PBRIBLTextured/Demo8PBRIBLTextured.png)
