@@ -6,7 +6,7 @@
 
 #include "Yw3d.h"
 #include "YwEntity.h"
-#include "YwResourceManager.h"
+#include "YwResourceHelper.h"
 
 namespace yw
 {
@@ -96,24 +96,16 @@ namespace yw
         bool m_DebugInfoEnabled;
 
         // Model resources.
-        HRESOURCE m_ModelSphereHandle;
-        HRESOURCE m_ModelCubeHandle;
-        HRESOURCE m_ModelPBRHandle;
-        Model* m_ModelSphere;
-        Model* m_ModelCube;
-        Model* m_ModelPBR;
+        ResourceWrapper* m_ModelSphereResource;
+        ResourceWrapper* m_ModelCubeResource;
+        ResourceWrapper* m_ModelPBRResource;
 
         // Pre-computing resources.
-        HRESOURCE m_EnvEquirectangularTextureHandle;
-        HRESOURCE m_EnvCubeTextureHandle;
-        HRESOURCE m_IrrandianceCubeTextureHandle;
-        HRESOURCE m_PrefilterReflectionCubeTextureHandle;
-        HRESOURCE m_PreintegrateBRDFTextureHandle;
-        Yw3dTexture* m_EnvEquirectangularTexture;
-        Yw3dCubeTexture* m_EnvCubeTexture;
-        Yw3dCubeTexture* m_IrrandianceCubeTexture;
-        Yw3dCubeTexture* m_PrefilterReflectionCubeTexture;
-        Yw3dTexture* m_PreintegrateBRDFTexture;
+        ResourceWrapper* m_EnvEquirectangularTextureResource;
+        ResourceWrapper* m_EnvCubeTextureResource;
+        ResourceWrapper* m_IrrandianceCubeTextureResource;
+        ResourceWrapper* m_PrefilterReflectionCubeTextureResource;
+        ResourceWrapper* m_PreintegrateBRDFTextureResource;
         StringA m_EnvEquirectangularTextureName;
 
         // Shader related.
@@ -123,28 +115,18 @@ namespace yw
         DemoPBRIBLTexturedPixelShader* m_PBRIBLTexturedPixelShader;
 
         // Rusted iron assets.
-        HRESOURCE m_IronAlbedoMapHandle;
-        HRESOURCE m_IronNormalMapHandle;
-        HRESOURCE m_IronMetallicMapHandle;
-        HRESOURCE m_IronRoughnessMapHandle;
-        HRESOURCE m_IronAOMapHandle;
-        Yw3dTexture* m_IronAlbedoMap;
-        Yw3dTexture* m_IronNormalMap;
-        Yw3dTexture* m_IronMetallicMap;
-        Yw3dTexture* m_IronRoughnessMap;
-        Yw3dTexture* m_IronAOMap;
+        ResourceWrapper* m_RustedIronAlbedoMapResource;
+        ResourceWrapper* m_RustedIronNormalMapResource;
+        ResourceWrapper* m_RustedIronMetallicMapResource;
+        ResourceWrapper* m_RustedIronRoughnessMapResource;
+        ResourceWrapper* m_RustedIronAOMapResource;
 
         // Aluminium insulator assets.
-        HRESOURCE m_AluminiumInsulatorAlbedoMapHandle;
-        HRESOURCE m_AluminiumInsulatorNormalMapHandle;
-        HRESOURCE m_AluminiumInsulatorMetallicMapHandle;
-        HRESOURCE m_AluminiumInsulatorRoughnessMapHandle;
-        HRESOURCE m_AluminiumInsulatorAOMapHandle;
-        Yw3dTexture* m_AluminiumInsulatorAlbedoMap;
-        Yw3dTexture* m_AluminiumInsulatorNormalMap;
-        Yw3dTexture* m_AluminiumInsulatorMetallicMap;
-        Yw3dTexture* m_AluminiumInsulatorRoughnessMap;
-        Yw3dTexture* m_AluminiumInsulatorAOMap;
+        ResourceWrapper* m_AluminiumInsulatorAlbedoMapResource;
+        ResourceWrapper* m_AluminiumInsulatorNormalMapResource;
+        ResourceWrapper* m_AluminiumInsulatorMetallicMapResource;
+        ResourceWrapper* m_AluminiumInsulatorRoughnessMapResource;
+        ResourceWrapper* m_AluminiumInsulatorAOMapResource;
     };
 }
 

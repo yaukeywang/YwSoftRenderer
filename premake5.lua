@@ -178,8 +178,11 @@ project "libYwAppFramework"
         "libYwAppFramework/IO/YwPaths.h",
         "libYwAppFramework/IO/YwPaths.cpp",
 
+        "libYwAppFramework/Resource/YwResourceHelper.h",
+        "libYwAppFramework/Resource/YwResourceHelper.cpp",
         "libYwAppFramework/Resource/YwResourceManager.h",
         "libYwAppFramework/Resource/YwResourceManager.cpp",
+
         "libYwAppFramework/Resource/YwModelLoader.h",
         "libYwAppFramework/Resource/YwModelLoader.cpp",
         "libYwAppFramework/Resource/YwModelLoaderWavefrontObj.h",

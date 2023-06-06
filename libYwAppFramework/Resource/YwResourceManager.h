@@ -6,7 +6,6 @@
 
 #include "YwBase.h"
 #include <map>
-#include <vector>
 
 namespace yw
 {
