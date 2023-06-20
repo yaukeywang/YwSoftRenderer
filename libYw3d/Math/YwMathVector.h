@@ -4,7 +4,7 @@
 #ifndef __YW_MATH_VECTOR_H__
 #define __YW_MATH_VECTOR_H__
 
-#include "YwMathUtility.h"
+#include "YwMathBaseDefine.h"
 
 namespace yw
 {

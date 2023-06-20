@@ -98,15 +98,16 @@ project "libYw3d"
         "libYw3d/Core/Yw3dVolumeTexture.cpp",
 
         "libYw3d/Math/YwMath.h",
+        "libYw3d/Math/YwMathBaseDefine.h",
         "libYw3d/Math/YwMathMatrix.h",
         "libYw3d/Math/YwMathMatrix.inl",
         "libYw3d/Math/YwMathPlane.h",
         "libYw3d/Math/YwMathPlane.inl",
         "libYw3d/Math/YwMathQuaternion.h",
         "libYw3d/Math/YwMathQuaternion.inl",
-        "libYw3d/Math/YwMathUtility.h",
         "libYw3d/Math/YwMathVector.h",
-        "libYw3d/Math/YwMathVector.inl"
+        "libYw3d/Math/YwMathVector.inl",
+        "libYw3d/Math/YwMathUtility.h"
     }
 
     vpaths 

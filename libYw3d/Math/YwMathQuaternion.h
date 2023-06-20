@@ -4,8 +4,7 @@
 #ifndef __YW_MATH_QUATERNION_H__
 #define __YW_MATH_QUATERNION_H__
 
-#include "YwMathUtility.h"
-#include "YwMathVector.h"
+#include "YwMathBaseDefine.h"
 
 namespace yw
 {

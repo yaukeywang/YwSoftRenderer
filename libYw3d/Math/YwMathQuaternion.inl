@@ -4,7 +4,7 @@
 #ifndef __YW_MATH_QUATERNION_INL__
 #define __YW_MATH_QUATERNION_INL__
 
-#include "YwMathUtility.h"
+#include "YwMathBaseDefine.h"
 #include "YwMathQuaternion.h"
 #include "YwMathMatrix.h"
 

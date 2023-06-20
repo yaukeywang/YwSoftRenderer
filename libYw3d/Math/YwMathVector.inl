@@ -4,7 +4,7 @@
 #ifndef __YW_MATH_VECTOR_INL__
 #define __YW_MATH_VECTOR_INL__
 
-#include "YwMathUtility.h"
+#include "YwMathBaseDefine.h"
 #include "YwMathVector.h"
 #include "YwMathMatrix.h"
 
