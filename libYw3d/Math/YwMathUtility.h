@@ -367,6 +367,17 @@ namespace yw
      * @param[in] p The specified power.
      * @return The v parameter raised to the power of the p parameter.
      */
+    inline Vector2 Pow(const Vector2& v, const float p)
+    {
+        return Vector2((float)::pow(v.x, p), (float)::pow(v.y, p));
+    }
+
+    /**
+     * Returns the specified value raised to the specified power.
+     * @param[in] v The specified value.
+     * @param[in] p The specified power.
+     * @return The v parameter raised to the power of the p parameter.
+     */
     inline Vector3 Pow(const Vector3& v, const Vector3& p)
     {
         return Vector3((float)::pow(v.x, p.x), (float)::pow(v.y, p.y), (float)::pow(v.z, p.z));
@@ -378,9 +389,31 @@ namespace yw
      * @param[in] p The specified power.
      * @return The v parameter raised to the power of the p parameter.
      */
+    inline Vector3 Pow(const Vector3& v, const float p)
+    {
+        return Vector3((float)::pow(v.x, p), (float)::pow(v.y, p), (float)::pow(v.z, p));
+    }
+
+    /**
+     * Returns the specified value raised to the specified power.
+     * @param[in] v The specified value.
+     * @param[in] p The specified power.
+     * @return The v parameter raised to the power of the p parameter.
+     */
     inline Vector4 Pow(const Vector4& v, const Vector4& p)
     {
         return Vector4((float)::pow(v.x, p.x), (float)::pow(v.y, p.y), (float)::pow(v.z, p.z), (float)::pow(v.w, p.w));
+    }
+
+    /**
+     * Returns the specified value raised to the specified power.
+     * @param[in] v The specified value.
+     * @param[in] p The specified power.
+     * @return The v parameter raised to the power of the p parameter.
+     */
+    inline Vector4 Pow(const Vector4& v, const float p)
+    {
+        return Vector4((float)::pow(v.x, p), (float)::pow(v.y, p), (float)::pow(v.z, p), (float)::pow(v.w, p));
     }
 
     /**

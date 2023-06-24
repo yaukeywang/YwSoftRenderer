@@ -474,6 +474,17 @@ namespace yw
          * @param[in] p The specified power.
          * @return The v parameter raised to the power of the p parameter.
          */
+        static inline Vector2 pow(const Vector2& v, const float p)
+        {
+            return Pow(v, p);
+        }
+
+        /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
         static inline Vector3 pow(const Vector3& v, const Vector3& p)
         {
             return Pow(v, p);
@@ -485,7 +496,29 @@ namespace yw
          * @param[in] p The specified power.
          * @return The v parameter raised to the power of the p parameter.
          */
+        static inline Vector3 pow(const Vector3& v, const float p)
+        {
+            return Pow(v, p);
+        }
+
+        /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
         static inline Vector4 pow(const Vector4& v, const Vector4& p)
+        {
+            return Pow(v, p);
+        }
+
+        /**
+         * Returns the specified value raised to the specified power.
+         * @param[in] v The specified value.
+         * @param[in] p The specified power.
+         * @return The v parameter raised to the power of the p parameter.
+         */
+        static inline Vector4 pow(const Vector4& v, const float p)
         {
             return Pow(v, p);
         }
