@@ -80,7 +80,9 @@ After executing the command `"premake5 vs2017"`, you can find the `Visual Studio
 ![Demo 6 PBR Chair](Demo6PBR/Demo6PBR.png) ![Demo 6 PBR Unity Adam Lu Head](Demo6PBR/Demo6PBR-Unity-Lu.png)
 
 #### Demo 7: IBL (With full steps of dynamic generating precomputed data.)
-![Demo 7 Image Based Lighting](Demo7PBRIBL/Demo7PBRIBL.png)
+<!-- ![Demo 7 Image Based Lighting](Demo7PBRIBL/Demo7PBRIBL.png) -->
+<img src="Demo7PBRIBL/Demo7PBRIBL.png" alt="Demo 7 Image Based Lighting" width="421" height="348">
 
 #### Demo 8: PBR-IBL-Textured (With full steps of dynamic generating precomputed data.)
-![Demo 7 PBR-IBL-Textured](Demo8PBRIBLTextured/Demo8PBRIBLTextured.png)
+<!-- ![Demo 7 PBR-IBL-Textured](Demo8PBRIBLTextured/Demo8PBRIBLTextured.png) -->
+<img src="Demo8PBRIBLTextured/Demo8PBRIBLTextured.png" alt="Demo 7 PBR-IBL-Textured" width="421" height="348">
