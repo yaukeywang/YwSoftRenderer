@@ -465,6 +465,13 @@ namespace yw
             }
         }
 
+        // Convert environment cube texture to srgb instead of doing it in pixel shader to get better performance.
+        // @Todo: The converting result has some pixel noises, need to find bug first.
+        //if (!YwTextureDataConverter::CubeTextureDataLinearToGamma(m_EnvCubeTextureResource->GetResource<Yw3dCubeTexture>()))
+        //{
+        //    return false;
+        //}
+
         return true;
     }
 

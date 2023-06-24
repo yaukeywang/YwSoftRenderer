@@ -12,6 +12,102 @@
 
 namespace yw
 {
+    bool YwTextureDataConverter::TextureDataLinearToGamma(Yw3dTexture* texture)
+    {
+        return TextureDataGammaCollect(texture, 1.0f / 2.2f);
+    }
+
+    bool YwTextureDataConverter::CubeTextureDataLinearToGamma(Yw3dCubeTexture* texture)
+    {
+        return CubeTextureDataGammaCollect(texture, 1.0f / 2.2f);
+    }
+
+    bool YwTextureDataConverter::TextureDataGammaToLinear(Yw3dTexture* texture)
+    {
+        return TextureDataGammaCollect(texture, 2.2f);
+    }
+
+    bool YwTextureDataConverter::CubeTextureDataGammaToLinear(Yw3dCubeTexture* texture)
+    {
+        return CubeTextureDataGammaCollect(texture, 2.2f);
+    }
+
+    bool YwTextureDataConverter::TextureDataGammaCollect(Yw3dTexture* texture, const float gammaPower)
+    {
+        if (nullptr == texture)
+        {
+            return false;
+        }
+
+        const int32_t mipmapLevels = texture->GetMipLevels();
+        for (int32_t i = 0; i < mipmapLevels; i++)
+        {
+            const int32_t textureWidth = (int32_t)texture->GetWidth(i);
+            const int32_t textureHeight = (int32_t)texture->GetHeight(i);
+            const Yw3dFormat textureFormat = texture->GetFormat();
+            const int32_t texturebbp = (int32_t)texture->GetFormatFloats();
+
+            // Lock and read texture data.
+            float* textureData = nullptr;
+            Yw3dResult resLock = texture->LockRect(i, (void**)&textureData, nullptr);
+            if (YW3D_FAILED(resLock))
+            {
+                return false;
+            }
+
+            // Convert data.
+            for (int32_t yIdx = 0; yIdx < textureHeight; yIdx++)
+            {
+                for (int32_t xIdx = 0; xIdx < textureWidth; xIdx++)
+                {
+                    int32_t texIndex = (textureHeight - 1 - yIdx) * textureWidth + xIdx;
+                    if (Yw3d_FMT_R32G32B32A32F == textureFormat)
+                    {
+                        Vector4* texData = (Vector4*)textureData + texIndex;
+                        *texData = Clamp(Pow(*texData, gammaPower), 0.0f, 1.0f);
+                    }
+                    else
+                    {
+                        Vector3* texData = (Vector3*)textureData + texIndex;
+                        *texData = Clamp(Pow(*texData, gammaPower), 0.0f, 1.0f);
+                    }
+                }
+            }
+
+            // Unlock texture.
+            texture->UnlockRect(i);
+        }
+
+        return true;
+    }
+
+    bool YwTextureDataConverter::CubeTextureDataGammaCollect(Yw3dCubeTexture* texture, const float gammaPower)
+    {
+        if (nullptr == texture)
+        {
+            return false;
+        }
+
+        for (int32_t i = 0; i < (int32_t)Yw3d_CF_NumCubeFaces; i++)
+        {
+            Yw3dTexture* cubeFaceTexture = texture->AcquireCubeFace((Yw3dCubeFaces)i);
+            if (nullptr == cubeFaceTexture)
+            {
+                return false;
+            }
+
+            if (!TextureDataGammaCollect(cubeFaceTexture, gammaPower))
+            {
+                YW_SAFE_RELEASE(cubeFaceTexture);
+                return false;
+            }
+
+            YW_SAFE_RELEASE(cubeFaceTexture);
+        }
+
+        return true;
+    }
+
     bool YwTextureDataConverter::TextureDataToBMP(Yw3dTexture* texture, TextureConvertResult& results, bool withMipmap)
     {
         if (nullptr == texture)

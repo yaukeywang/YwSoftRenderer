@@ -42,6 +42,14 @@ namespace yw
         };
 
     public:
+        static bool TextureDataLinearToGamma(class Yw3dTexture* texture);
+        static bool CubeTextureDataLinearToGamma(class Yw3dCubeTexture* texture);
+        static bool TextureDataGammaToLinear(class Yw3dTexture* texture);
+        static bool CubeTextureDataGammaToLinear(class Yw3dCubeTexture* texture);
+
+        static bool TextureDataGammaCollect(class Yw3dTexture* texture, const float gammaPower);
+        static bool CubeTextureDataGammaCollect(class Yw3dCubeTexture* texture, const float gammaPower);
+
         static bool TextureDataToBMP(class Yw3dTexture* texture, TextureConvertResult& results, bool withMipmap);
         static bool TextureDataToRGBE(class Yw3dTexture* texture, TextureConvertResult& results, bool withMipmap);
         static bool TextureDataToYWT(class Yw3dTexture* texture, uint8_t** resultData, uint32_t* resultDataLength);
