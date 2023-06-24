@@ -161,21 +161,35 @@ namespace yw
             mipLevelA = (mipLevelA >= m_MipLevels) ? (m_MipLevels - 1) : mipLevelA;
             mipLevelB = (mipLevelB >= m_MipLevels) ? (m_MipLevels - 1) : mipLevelB;
 
-            Vector4 colorA;
-            Vector4 colorB;
-            if (Yw3d_TF_Linear == texFilter)
+            if (mipLevelA != mipLevelB)
             {
-                m_MipLevelsData[mipLevelA]->SampleLinear(colorA, u, v);
-                m_MipLevelsData[mipLevelB]->SampleLinear(colorB, u, v);
+                Vector4 colorA;
+                Vector4 colorB;
+                if (Yw3d_TF_Linear == texFilter)
+                {
+                    m_MipLevelsData[mipLevelA]->SampleLinear(colorA, u, v);
+                    m_MipLevelsData[mipLevelB]->SampleLinear(colorB, u, v);
+                }
+                else
+                {
+                    m_MipLevelsData[mipLevelA]->SamplePoint(colorA, u, v);
+                    m_MipLevelsData[mipLevelB]->SamplePoint(colorB, u, v);
+                }
+
+                const float interpolation = texMipLevel - (float)mipLevelA;
+                Vector4Lerp(color, colorA, colorB, interpolation);
             }
             else
             {
-                m_MipLevelsData[mipLevelA]->SamplePoint(colorA, u, v);
-                m_MipLevelsData[mipLevelB]->SamplePoint(colorB, u, v);
+                if (Yw3d_TF_Linear == texFilter)
+                {
+                    m_MipLevelsData[mipLevelA]->SampleLinear(color, u, v);
+                }
+                else
+                {
+                    m_MipLevelsData[mipLevelA]->SamplePoint(color, u, v);
+                }
             }
-
-            const float interpolation = texMipLevel - (float)mipLevelA; // TODO: Not accurate.
-            Vector4Lerp(color, colorA, colorB, interpolation);
         }
         else
         {
