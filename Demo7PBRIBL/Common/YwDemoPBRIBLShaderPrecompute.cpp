@@ -45,8 +45,7 @@ namespace yw
         Vector3 texCoord = normalize(input[0]);
         texCoord = SampleSphericalMap(texCoord);
 
-        Vector4 texColor;
-        SampleTexture(texColor, 0, texCoord.x, texCoord.y); // SampleTexture -> texCube
+        Vector4 texColor = texCUBElod(0, 0, Vector4(texCoord, 0.0f));
 
         // Equirectangular map is hdr, keep the render target is also hdr.
         color = texColor;
@@ -125,8 +124,8 @@ namespace yw
                 // Tangent space to world.
                 Vector3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
 
-                float4 envMapColor;
-                SampleTexture(envMapColor, 0, sampleVec.x, sampleVec.y, sampleVec.z); // SampleTexture -> texCube
+                // Sample and increase irradiance.
+                float4 envMapColor = texCUBElod(0, 0, Vector4(sampleVec, 0.0f));
 
                 irradiance += Vector3(envMapColor) * cos(theta) * sin(theta);
                 nrSamples++;

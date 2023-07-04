@@ -167,13 +167,22 @@ namespace yw
         // @return sampled texture color, return Pure-Black(0,0,0,0) if no texture found.
         inline Vector4 texCUBElod(uint32_t shaderRegister, uint32_t samplerNumber, const Vector4& s)
         {
-            // Get ddx and ddy for mipmap.
+            // Get ddx and ddy for mipmap only when lod is greater than 0.
+            Vector4* pDdx = nullptr;
+            Vector4* pDdy = nullptr;
+
+            // Prepare to get ddx and ddy.
             Vector4 vDdx, vDdy;
-            GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+            if (s.w < 0.0f)
+            {
+                GetPartialDerivatives(shaderRegister, vDdx, vDdy);
+                pDdx = &vDdx;
+                pDdy = &vDdy;
+            }
 
             // Sample the texture.
             Vector4 texColor;
-            SampleTexture(texColor, samplerNumber, s.x, s.y, s.z, s.w, &vDdx, &vDdy);
+            SampleTexture(texColor, samplerNumber, s.x, s.y, s.z, s.w, pDdx, pDdy);
 
             // Return sampled texture color.
             return texColor;
