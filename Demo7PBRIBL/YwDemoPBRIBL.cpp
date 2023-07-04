@@ -57,25 +57,6 @@ namespace yw
         m_SkyPixelShader(nullptr),
         m_PbrVertexShader(nullptr),
         m_PbrPixelShader(nullptr),
-        m_Metallic(0.0f),
-        m_Roughness(0.0f),
-
-        // @Todo: Textureed-PBR-IBL begin.
-        m_IronAlbedoMapHandle(0),
-        m_IronNormalMapHandle(0),
-        m_IronMetallicMapHandle(0),
-        m_IronRoughnessMapHandle(0),
-        m_IronAOMapHandle(0),
-
-        m_IronAlbedoMap(nullptr),
-        m_IronNormalMap(nullptr),
-        m_IronMetallicMap(nullptr),
-        m_IronRoughnessMap(nullptr),
-        m_IronAOMap(nullptr),
-
-        m_PBRIBLTexturedVertexShader(nullptr),
-        m_PBRIBLTexturedPixelShader(nullptr),
-        // Textureed-PBR-IBL end.
     
         m_DebugInfoEnabled(false)
     {
@@ -118,11 +99,6 @@ namespace yw
         YW_SAFE_RELEASE(m_SkyPixelShader);
         YW_SAFE_RELEASE(m_PbrVertexShader);
         YW_SAFE_RELEASE(m_PbrPixelShader);
-
-        // @Todo: Textureed-PBR-IBL begin.
-        YW_SAFE_RELEASE(m_PBRIBLTexturedVertexShader);
-        YW_SAFE_RELEASE(m_PBRIBLTexturedPixelShader);
-        // Textureed-PBR-IBL end.
     }
 
     bool DemoPBRIBL::Initialize()
@@ -161,27 +137,6 @@ namespace yw
             return false;
         }
 
-        //m_ModelPBRTextureHandle = resManager->LoadResource("Lieutenant_head_diffuse.tga");
-        //if (m_ModelPBRTextureHandle <= 0)
-        //{
-        //    LOGE(_T("Load resource \"Lieutenant_head_diffuse.tga\" failed."));
-        //    return false;
-        //}
-
-        //m_ModelPBRNormalTextureHandle = resManager->LoadResource("Lieutenant_head_normal.tga");
-        //if (m_ModelPBRNormalTextureHandle <= 0)
-        //{
-        //    LOGE(_T("Load resource \"Lieutenant_head_normal.tga\" failed."));
-        //    return false;
-        //}
-
-        //m_ModelPBRSpecularTextureHandle = resManager->LoadResource("Lieutenant_head_specular.tga");
-        //if (m_ModelPBRSpecularTextureHandle <= 0)
-        //{
-        //    LOGE(_T("Load resource \"Lieutenant_head_specular.tga\" failed."));
-        //    return false;
-        //}
-
         // Get model and texture.
         m_ModelSphere = (Model*)resManager->GetResource(m_ModelSphereHandle);
         if (nullptr == m_ModelSphere)
@@ -211,72 +166,6 @@ namespace yw
             return false;
         }
 
-        //m_ModelPBRTexture = (Yw3dTexture*)resManager->GetResource(m_ModelPBRTextureHandle);
-        //if (nullptr == m_ModelPBRTexture)
-        //{
-        //    LOGE(_T("Get resource \"Lieutenant_head_diffuse.tga\" failed."));
-        //    return false;
-        //}
-
-        //m_ModelPBRNormalTexture = (Yw3dTexture*)resManager->GetResource(m_ModelPBRNormalTextureHandle);
-        //if (nullptr == m_ModelPBRNormalTexture)
-        //{
-        //    LOGE(_T("Get resource \"Lieutenant_head_normal.tga\" failed."));
-        //    return false;
-        //}
-
-        //m_ModelPBRSpecularTexture = (Yw3dTexture*)resManager->GetResource(m_ModelPBRSpecularTextureHandle);
-        //if (nullptr == m_ModelPBRSpecularTexture)
-        //{
-        //    LOGE(_T("Get resource \"Lieutenant_head_specular.tga\" failed."));
-        //    return false;
-        //}
-
-        // @Todo: Textureed-PBR-IBL begin.
-        m_IronAlbedoMapHandle = resManager->LoadResource("PBR/RustedIron/albedo.png");
-        m_IronAlbedoMap = (Yw3dTexture*)resManager->GetResource(m_IronAlbedoMapHandle);
-        if (nullptr == m_IronAlbedoMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/albedo.png\" failed."));
-            return false;
-        }
-
-        m_IronNormalMapHandle = resManager->LoadResource("PBR/RustedIron/normal.png");
-        m_IronNormalMap = (Yw3dTexture*)resManager->GetResource(m_IronNormalMapHandle);
-        if (nullptr == m_IronNormalMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/normal.png\" failed."));
-            return false;
-        }
-
-        m_IronMetallicMapHandle = resManager->LoadResource("PBR/RustedIron/metallic.png");
-        m_IronMetallicMap = (Yw3dTexture*)resManager->GetResource(m_IronMetallicMapHandle);
-        if (nullptr == m_IronMetallicMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/metallic.png\" failed."));
-            return false;
-        }
-
-        m_IronRoughnessMapHandle = resManager->LoadResource("PBR/RustedIron/roughness.png");
-        m_IronRoughnessMap = (Yw3dTexture*)resManager->GetResource(m_IronRoughnessMapHandle);
-        if (nullptr == m_IronRoughnessMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/roughness.png\" failed."));
-            return false;
-        }
-
-        m_IronAOMapHandle = resManager->LoadResource("PBR/RustedIron/ao.png");
-        m_IronAOMap = (Yw3dTexture*)resManager->GetResource(m_IronAOMapHandle);
-        if (nullptr == m_IronAOMap)
-        {
-            LOGE(_T("Load resource \"PBR/RustedIron/ao.png\" failed."));
-            return false;
-        }
-
-        m_PBRIBLTexturedVertexShader = new DemoPBRIBLTexturedVertexShader();
-        m_PBRIBLTexturedPixelShader = new DemoPBRIBLTexturedPixelShader();
-        // Textureed-PBR-IBL end.
-
         // Render pre-computing data.
         LoadAllPreComputingData();
 
@@ -288,8 +177,6 @@ namespace yw
 
         // Initialize environments.
         m_Albedo.Set(0.5f, 0.5f, 0.5f);
-        m_Metallic = 0.4f;
-        m_Roughness = 0.2f;
 
         return true;
     }
@@ -606,115 +493,5 @@ namespace yw
                 m_ModelPBR->Render(device);
             }
         }
-    }
-
-    void DemoPBRIBL::RenderTexturedPbrModel(int32_t pass)
-    {
-        // Get graphics and device.
-        Graphics* graphics = GetScene()->GetApplication()->GetGraphics();
-        Yw3dDevice* device = graphics->GetYw3dDevice();
-        DemoPBRIBLCamera* camera = (DemoPBRIBLCamera*)(graphics->GetCurrentCamera());
-        DemoPBRIBLApp* app = (DemoPBRIBLApp*)(GetScene()->GetApplication());
-
-        // Set states.
-        graphics->SetRenderState(Yw3d_RS_CullMode, Yw3d_Cull_CCW);
-        graphics->SetRenderState(Yw3d_RS_FillMode, Yw3d_Fill_Solid);
-
-        // Set precompute textures.
-
-        graphics->SetTexture(0, m_IrrandianceCubeTexture);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(0, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        graphics->SetTexture(1, m_PrefilterReflectionCubeTexture);
-        graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(1, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(1, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(1, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(1, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        graphics->SetTexture(2, m_PreintegrateBRDFTexture);
-        graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressU, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(2, Yw3d_TSS_AddressV, Yw3d_TA_Clamp);
-        graphics->SetTextureSamplerState(2, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(2, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(2, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        // Set model textures
-
-        graphics->SetTexture(3, m_IronAlbedoMap);
-        graphics->SetTextureSamplerState(3, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(3, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(3, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(3, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(3, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        graphics->SetTexture(4, m_IronNormalMap);
-        graphics->SetTextureSamplerState(4, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(4, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(4, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(4, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(4, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        graphics->SetTexture(5, m_IronMetallicMap);
-        graphics->SetTextureSamplerState(5, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(5, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(5, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(5, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(5, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        graphics->SetTexture(6, m_IronRoughnessMap);
-        graphics->SetTextureSamplerState(6, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(6, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(6, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(6, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(6, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        graphics->SetTexture(7, m_IronAOMap);
-        graphics->SetTextureSamplerState(7, Yw3d_TSS_AddressU, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(7, Yw3d_TSS_AddressV, Yw3d_TA_Wrap);
-        graphics->SetTextureSamplerState(7, Yw3d_TSS_MinFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(7, Yw3d_TSS_MagFilter, Yw3d_TF_Linear);
-        graphics->SetTextureSamplerState(7, Yw3d_TSS_MipFilter, Yw3d_TF_Linear);
-
-        // Set pbr vertex and pixel shader.
-        graphics->SetVertexShader(m_PBRIBLTexturedVertexShader);
-        graphics->SetPixelShader(m_PBRIBLTexturedPixelShader);
-
-        Matrix44 matWorld;
-        Matrix44Identity(matWorld);
-
-        Quaternion quatRotation;
-        QuaternionFromEuler(quatRotation, 90.0f * DEG_TO_RAD, 0.0f, 0.0f);
-
-        // Apply model rotation.
-        Matrix44Transformation(matWorld, Vector3(1.8f, 1.8f, 1.8f), quatRotation, Vector3(0.0f, 0.0f, 0.0f));
-
-        // Calculating transpose of inverse of world matrix, to transform normal and tangent of model to world space.
-        Matrix44 matInvTrs;
-        Matrix44Inverse(matInvTrs, matWorld);
-        Matrix44Transpose(matInvTrs, matInvTrs);
-        
-        // Set world transform to camera.
-        camera->SetWorldMatrix(matWorld);
-
-        // This should be from device.
-        Matrix44 matProjection = camera->GetWorldMatrix() * camera->GetViewMatrix() * camera->GetProjectionMatrix();
-        device->SetTransform(Yw3d_TS_World, &camera->GetWorldMatrix());
-        device->SetTransform(Yw3d_TS_View, &camera->GetViewMatrix());
-        device->SetTransform(Yw3d_TS_Projection, &camera->GetProjectionMatrix());
-        device->SetTransform(Yw3d_TS_WVP, &matProjection);
-
-        // Update shader parameters.
-        m_PBRIBLTexturedVertexShader->SetMatrix(0, matInvTrs); // Inverse transpose of world matrix.
-        m_PBRIBLTexturedPixelShader->SetVector(0, Vector3(1.0f, 1.0f, -1.0f)); // Light position.
-        m_PBRIBLTexturedPixelShader->SetVector(1, Vector3(1.0f, 1.0f, 1.0f)); // Light color.
-        m_PBRIBLTexturedPixelShader->SetVector(2, camera->GetPosition());
-
-        // Render model.
-        m_ModelPBR->Render(device);
     }
 }

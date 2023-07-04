@@ -599,7 +599,7 @@ project "Demo7PBRIBL"
     }
 
     files
-    { 
+    {
         "Demo7PBRIBL/Common/YwDemoPBRIBLPrecompute.h",
         "Demo7PBRIBL/Common/YwDemoPBRIBLPrecompute.cpp",
         "Demo7PBRIBL/Common/YwDemoPBRIBLShaderCommon.h",
@@ -617,9 +617,7 @@ project "Demo7PBRIBL"
         "Demo7PBRIBL/YwDemoPBRIBLCamera.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLMain.cpp",
         "Demo7PBRIBL/YwDemoPBRIBLShader.h",
-        "Demo7PBRIBL/YwDemoPBRIBLShader.cpp",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderTextured.h",
-        "Demo7PBRIBL/YwDemoPBRIBLShaderTextured.cpp"
+        "Demo7PBRIBL/YwDemoPBRIBLShader.cpp"
     }
 
     vpaths 
