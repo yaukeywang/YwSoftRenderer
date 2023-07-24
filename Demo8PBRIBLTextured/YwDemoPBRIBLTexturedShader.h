@@ -16,7 +16,7 @@ namespace yw
     {
     protected:
         // Shader main entry.
-        void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput);
+        void Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput);
 
         // Shader stream channel.
         Yw3dShaderRegisterType GetOutputRegisters(uint32_t shaderRegister);
@@ -30,7 +30,7 @@ namespace yw
         bool MightKillPixels();
 
         // Shader main entry.
-        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth);
+        bool Execute(const Yw3dShaderRegister* input, float4& color, float& depth);
     };
 }
 
