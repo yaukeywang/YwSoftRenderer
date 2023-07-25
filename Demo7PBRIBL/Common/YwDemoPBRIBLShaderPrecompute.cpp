@@ -11,8 +11,8 @@ namespace yw
     // Equirectangular map to cubemap vertex shader.
 
     // Vertex input format:
-    // 0 - Vector3 position;
-    void DemoPBRIBLEquirectangularMap2CubeMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+    // 0 - float3 position;
+    void DemoPBRIBLEquirectangularMap2CubeMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput)
     {
         // The projection vertex position.
         position = vsShaderInput[0] * (*GetWVPMatrix());
@@ -39,13 +39,13 @@ namespace yw
         return false;
     }
 
-    bool DemoPBRIBLEquirectangularMap2CubeMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    bool DemoPBRIBLEquirectangularMap2CubeMapPixelShader::Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
     {
         // Sample main texture.
-        Vector3 texCoord = normalize(input[0]);
+        float3 texCoord = normalize(input[0]);
         texCoord = SampleSphericalMap(texCoord);
 
-        Vector4 texColor = texCUBElod(0, 0, Vector4(texCoord, 0.0f));
+        float4 texColor = texCUBElod(0, 0, float4(texCoord, 0.0f));
 
         // Equirectangular map is hdr, keep the render target is also hdr.
         color = texColor;
@@ -55,11 +55,11 @@ namespace yw
 
     // Convert HDR equirectangular environment map to cubemap equivalent.
     // v must be normalized.
-    Vector2 DemoPBRIBLEquirectangularMap2CubeMapPixelShader::SampleSphericalMap(const Vector3& v)
+    float2 DemoPBRIBLEquirectangularMap2CubeMapPixelShader::SampleSphericalMap(const float3& v)
     {
-        Vector2 uv = Vector2(atan2(v.z, v.x), acos(v.y)); // tan(theta) = z / x; cos(phi) = y / r;
-        uv *= Vector2(-0.1591f, 0.3183f); // (1/2pi, 1/pi)
-        uv += Vector2(0.5f, 0.0f);
+        float2 uv = float2(atan2(v.z, v.x), acos(v.y)); // tan(theta) = z / x; cos(phi) = y / r;
+        uv *= float2(-0.1591f, 0.3183f); // (1/2pi, 1/pi)
+        uv += float2(0.5f, 0.0f);
         return uv;
     }
 
@@ -69,7 +69,7 @@ namespace yw
     // Cube map to irrandiance map vertex shader.
 
     // Shader main entry.
-    void DemoPBRIBLCubeMap2IrrandianceMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+    void DemoPBRIBLCubeMap2IrrandianceMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput)
     {
         // The projection vertex position.
         position = vsShaderInput[0] * (*GetWVPMatrix());
@@ -99,17 +99,17 @@ namespace yw
     }
 
     // Shader main entry.
-    bool DemoPBRIBLCubeMap2IrrandianceMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    bool DemoPBRIBLCubeMap2IrrandianceMapPixelShader::Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
     {
         // Get world position.
-        Vector3 worldPos = input[0];
+        float3 worldPos = input[0];
 
-        Vector3 N = normalize(worldPos);
-        Vector3 irradiance = Vector3::Zero();
+        float3 N = normalize(worldPos);
+        float3 irradiance = float3::Zero();
 
         // tangent space calculation from origin point
-        Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
-        Vector3 right = normalize(cross(up, N));
+        float3 up = float3(0.0f, 1.0f, 0.0f);
+        float3 right = normalize(cross(up, N));
         up = normalize(cross(N, right));
 
         float sampleDelta = 0.025f;
@@ -119,15 +119,15 @@ namespace yw
             for (float theta = 0.0f; theta < 0.5f * PI; theta += sampleDelta)
             {
                 // Spherical to cartesian (in tangent space).
-                Vector3 tangentSample = Vector3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
+                float3 tangentSample = float3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
 
                 // Tangent space to world.
-                Vector3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
+                float3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
 
                 // Sample and increase irradiance.
-                float4 envMapColor = texCUBElod(0, 0, Vector4(sampleVec, 0.0f));
+                float4 envMapColor = texCUBElod(0, 0, float4(sampleVec, 0.0f));
 
-                irradiance += Vector3(envMapColor) * cos(theta) * sin(theta);
+                irradiance += float3(envMapColor) * cos(theta) * sin(theta);
                 nrSamples++;
             }
         }
@@ -135,7 +135,7 @@ namespace yw
         irradiance = PI * irradiance * (1.0f / float(nrSamples));
 
         // Final output.
-        color = Vector4(irradiance, 1.0f);
+        color = float4(irradiance, 1.0f);
 
         return true;
     }
@@ -145,7 +145,7 @@ namespace yw
 
     // Pre-filter reflection map vertex shader.
 
-    void DemoPBRIBLPrefilterReflectionMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+    void DemoPBRIBLPrefilterReflectionMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput)
     {
         // The projection vertex position.
         position = vsShaderInput[0] * (*GetWVPMatrix());
@@ -172,28 +172,28 @@ namespace yw
         return false;
     }
 
-    bool DemoPBRIBLPrefilterReflectionMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    bool DemoPBRIBLPrefilterReflectionMapPixelShader::Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
     {
         // Get world position.
-        const Vector3& worldPos = input[0];
+        const float3& worldPos = input[0];
         const float roughness = GetFloat(0);
 
-        Vector3 N = normalize(worldPos);
+        float3 N = normalize(worldPos);
 
         // make the simplyfying assumption that V equals R equals the normal 
-        Vector3 R = N;
-        Vector3 V = R;
+        float3 R = N;
+        float3 V = R;
 
         const uint32_t SAMPLE_COUNT = 1024u;
-        Vector3 prefilteredColor = Vector3(0.0f);
+        float3 prefilteredColor = float3(0.0f);
         float totalWeight = 0.0f;
 
         for (uint32_t i = 0u; i < SAMPLE_COUNT; ++i)
         {
             // generates a sample vector that's biased towards the preferred alignment direction (importance sampling).
-            Vector2 Xi = Hammersley(i, SAMPLE_COUNT);
-            Vector3 H = ImportanceSampleGGX(Xi, N, roughness);
-            Vector3 L = normalize(2.0f * dot(V, H) * H - V);
+            float2 Xi = Hammersley(i, SAMPLE_COUNT);
+            float3 H = ImportanceSampleGGX(Xi, N, roughness);
+            float3 L = normalize(2.0f * dot(V, H) * H - V);
 
             float NdotL = max(dot(N, L), 0.0f);
             if (NdotL > 0.0f)
@@ -210,13 +210,13 @@ namespace yw
 
                 float mipLevel = (roughness == 0.0f) ? 0.0f : (0.5f * log2(saSample / saTexel));
 
-                prefilteredColor += texCUBElod(0, 0, Vector4(L, mipLevel)) * NdotL;
+                prefilteredColor += texCUBElod(0, 0, float4(L, mipLevel)) * NdotL;
                 totalWeight += NdotL;
             }
         }
 
         prefilteredColor = prefilteredColor / totalWeight;
-        color = Vector4(prefilteredColor, 1.0f);
+        color = float4(prefilteredColor, 1.0f);
 
         return true;
     }
@@ -226,10 +226,10 @@ namespace yw
 
     // Pre-integrate brdf map vertex shader.
 
-    void DemoPBRIBLPreintegrateBRDFMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+    void DemoPBRIBLPreintegrateBRDFMapVertexShader::Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput)
     {
         // The NDC vertex position.
-        position = Vector4(vsShaderInput[0], 1.0f);
+        position = float4(vsShaderInput[0], 1.0f);
 
         // Vertex texcoord.
         vsShaderOutput[0] = vsShaderInput[1];
@@ -253,18 +253,18 @@ namespace yw
         return false;
     }
 
-    bool DemoPBRIBLPreintegrateBRDFMapPixelShader::Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+    bool DemoPBRIBLPreintegrateBRDFMapPixelShader::Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
     {
-        Vector2 texCoords = input[0];
-        Vector2 integratedBRDF = IntegrateBRDF(texCoords.x, texCoords.y);
+        float2 texCoords = input[0];
+        float2 integratedBRDF = IntegrateBRDF(texCoords.x, texCoords.y);
         color = integratedBRDF;
 
         return true;
     }
 
-    Vector2 DemoPBRIBLPreintegrateBRDFMapPixelShader::IntegrateBRDF(float NdotV, float roughness)
+    float2 DemoPBRIBLPreintegrateBRDFMapPixelShader::IntegrateBRDF(float NdotV, float roughness)
     {
-        Vector3 V;
+        float3 V;
         V.x = sqrt(1.0f - NdotV * NdotV);
         V.y = 0.0f;
         V.z = NdotV;
@@ -272,16 +272,16 @@ namespace yw
         float A = 0.0f;
         float B = 0.0f;
 
-        Vector3 N = Vector3(0.0f, 0.0f, 1.0f);
+        float3 N = float3(0.0f, 0.0f, 1.0f);
 
         const uint32_t SAMPLE_COUNT = 1024u;
         for (uint32_t i = 0u; i < SAMPLE_COUNT; ++i)
         {
             // generates a sample vector that's biased towards the
             // preferred alignment direction (importance sampling).
-            Vector2 Xi = Hammersley(i, SAMPLE_COUNT);
-            Vector3 H = ImportanceSampleGGX(Xi, N, roughness);
-            Vector3 L = normalize(2.0f * dot(V, H) * H - V);
+            float2 Xi = Hammersley(i, SAMPLE_COUNT);
+            float3 H = ImportanceSampleGGX(Xi, N, roughness);
+            float3 L = normalize(2.0f * dot(V, H) * H - V);
 
             float NdotL = max(L.z, 0.0f);
             float NdotH = max(H.z, 0.0f);
@@ -300,6 +300,6 @@ namespace yw
 
         A /= float(SAMPLE_COUNT);
         B /= float(SAMPLE_COUNT);
-        return Vector2(A, B);
+        return float2(A, B);
     }
 }
