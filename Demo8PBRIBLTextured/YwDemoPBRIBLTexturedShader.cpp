@@ -113,14 +113,14 @@ namespace yw
             float3 radiance = lightColor * attenuation;
 
             // Cook-Torrance BRDF
-            float NDF = DistributionGGX(N, H, roughness);   
-            float G = GeometrySmith(N, V, L, roughness);    
+            float NDF = DistributionGGX(N, H, roughness);
+            float G = GeometrySmith(N, V, L, roughness);
             float3 F = FresnelSchlick(max(dot(H, V), 0.0f), F0);        
             
             float3 numerator = NDF * G * F;
             float denominator = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f) + 0.0001f; // + 0.0001 to prevent divide by zero
             float3 specular = numerator / denominator;
-            
+
              // kS is equal to Fresnel
             float3 kS = F;
             // for energy conservation, the diffuse and specular light can't
@@ -130,10 +130,10 @@ namespace yw
             // multiply kD by the inverse metalness such that only non-metals 
             // have diffuse lighting, or a linear blend if partly metal (pure metals
             // have no diffuse light).
-            kD *= 1.0f - metallic;	                
+            kD *= 1.0f - metallic;
                 
             // scale light by NdotL
-            float NdotL = max(dot(N, L), 0.0f);        
+            float NdotL = max(dot(N, L), 0.0f);
 
             // add to outgoing radiance Lo
             Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
