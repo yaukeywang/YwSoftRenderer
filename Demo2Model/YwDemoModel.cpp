@@ -15,18 +15,18 @@ namespace yw
     // Model shader.
 
     // Vertex input format:
-    // 0 - Vector3 position;
-    // 1 - Vector3 normal;
-    // 2 - Vector4 tangent;
-    // 3 - Vector4 color;
-    // 4 - Vector2 texcoord;
-    // 5 - Vector2 texcoord2;
+    // 0 - float3 position;
+    // 1 - float3 normal;
+    // 2 - float4 tangent;
+    // 3 - float4 color;
+    // 4 - float2 texcoord;
+    // 5 - float2 texcoord2;
 
     // Model vertex shader.
     class DemoModelVertexShader : public IYw3dVertexShader
     {
     protected:
-        void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+        void Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput)
         {
             // The projection vertex position.
             position = vsShaderInput[0] * (*GetWVPMatrix());
@@ -68,10 +68,10 @@ namespace yw
             return false;
         }
 
-        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+        bool Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
         {
             //color = input[0];
-            color = color = Vector4(0.0f, 0.33f, 0.76f, 1.0f);;
+            color = color = float4(0.0f, 0.33f, 0.76f, 1.0f);;
             return true;
         }
     };
@@ -85,16 +85,11 @@ namespace yw
             return false;
         }
 
-        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+        bool Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
         {
-            Vector4 vDdx, vDdy;
-            GetPartialDerivatives(3, vDdx, vDdy);
+            float2 texCoord = input[3];
+            color = tex2D(3, 0, texCoord);
 
-            Vector2 texCoord = input[3];
-            Vector4 texColor;
-            SampleTexture(texColor, 0, texCoord.x, texCoord.y, 0.0f, 0.0f, &vDdx, &vDdy);
-
-            color = texColor;
             return true;
         }
     };

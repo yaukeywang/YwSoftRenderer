@@ -17,7 +17,7 @@ namespace yw
     class DemoTriangleVertexShader : public IYw3dVertexShader
     {
     protected:
-        void Execute(const Yw3dShaderRegister* vsShaderInput, Vector4& position, Yw3dShaderRegister* vsShaderOutput)
+        void Execute(const Yw3dShaderRegister* vsShaderInput, float4& position, Yw3dShaderRegister* vsShaderOutput)
         {
             // The projection vertex position.
             position = vsShaderInput[0] * (*GetWVPMatrix());
@@ -48,7 +48,7 @@ namespace yw
             return false;
         }
 
-        bool Execute(const Yw3dShaderRegister* input, Vector4& color, float& depth)
+        bool Execute(const Yw3dShaderRegister* input, float4& color, float& depth)
         {
             color = input[0];
             return true;
