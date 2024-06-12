@@ -11,8 +11,8 @@
 // YW model loader for obj file class.
 
 #include <sstream>
-#include "YwModel.h"
 #include "YwModelLoaderWavefrontObj.h"
+#include "YwModel.h"
 
 // warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
 //#pragma warning(disable:4996)
@@ -23,7 +23,7 @@ namespace yw
     // Model data parser helper.
 
     // Helper to read triangle in model.
-    #define TRIANGLE(x) (model->m_Triangles[(x)])
+    #define TRIANGLE(x) (mesh->m_Triangles[(x)])
 
     /* Node: general purpose node. */
     struct TriangleVertexNode
@@ -36,7 +36,7 @@ namespace yw
     };
 
     // Find vertex index in vertex format element cache.
-    static uint32_t _AddModelVertexIntoCache(std::vector<ModelVertex>& vertices, std::vector<ModelVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const ModelVertex& newVertex)
+    static uint32_t _AddModelVertexIntoCache(std::vector<MeshVertex>& vertices, std::vector<MeshVertexIndex*>& indexCache, const uint32_t newVertexPositionIndex, const MeshVertex& newVertex)
     {
         // If this vertex doesn't already exist in the Vertices list, create a new entry.
         // Add the index of the vertex to the Indices list.
@@ -47,14 +47,14 @@ namespace yw
         // vertex indices according to the vertex position's index as reported by the OBJ file.
         if ((uint32_t)indexCache.size() > newVertexPositionIndex)
         {
-            ModelVertexIndex* vertexIndexNode = indexCache[newVertexPositionIndex];
+            MeshVertexIndex* vertexIndexNode = indexCache[newVertexPositionIndex];
             while (nullptr != vertexIndexNode)
             {
-                const ModelVertex* vertexFormat = vertices.data() + vertexIndexNode->index;
+                const MeshVertex* vertexFormat = vertices.data() + vertexIndexNode->index;
 
                 // If this vertex is identical to the vertex already in the list, simply
                 // point the index buffer to the existing vertex.
-                if (0 == memcmp(&newVertex, vertexFormat, sizeof(ModelVertex)))
+                if (0 == memcmp(&newVertex, vertexFormat, sizeof(MeshVertex)))
                 {
                     foundVertex = true;
                     vertexIndex = vertexIndexNode->index;
@@ -75,7 +75,7 @@ namespace yw
             vertices.push_back(newVertex);
 
             // Add this to the hashtable.
-            ModelVertexIndex* newVertexIndexNode = new ModelVertexIndex(vertexIndex, nullptr);
+            MeshVertexIndex* newVertexIndexNode = new MeshVertexIndex(vertexIndex, nullptr);
             if (nullptr == newVertexIndexNode)
             {
                 return 0;
@@ -88,7 +88,7 @@ namespace yw
             }
 
             // Add to the end of the linked list.
-            ModelVertexIndex* curVertexIndexNode = indexCache[newVertexPositionIndex];
+            MeshVertexIndex* curVertexIndexNode = indexCache[newVertexPositionIndex];
             if (nullptr == curVertexIndexNode)
             {
                 // This is the head element.
@@ -125,7 +125,9 @@ namespace yw
 
     bool ModelLoaderWavefrontObj::LoadFormData(const StringA& fileName, const uint8_t* data, bool calculateNormals, float calculateNormalAngle, Model* model)
     {
+        // Load data from Wavefront obj file.
         LoadWavefrontObjFromData(model, data, calculateNormals, calculateNormalAngle);
+        
         return true;
     }
 
@@ -135,7 +137,7 @@ namespace yw
         LoadBasicData(objModel, (const char*)objData);
 
         // Calculate normal if this obj file does not contains any normal.
-        if (calculateNormals || (objModel->m_Normals.size() <= 0))
+        if (calculateNormals || (objModel->GetMesh()->m_Normals.size() <= 0))
         {
             // Calculate facet normals is necessary.
             CalculateFacetNormals(objModel);
@@ -154,6 +156,13 @@ namespace yw
 
     void ModelLoaderWavefrontObj::LoadBasicData(class Model* model, const char* objData)
     {
+        // Check model.
+        assert(nullptr != model);
+
+        // Check mesh in model.
+        Mesh* mesh = model->GetMesh();
+        assert(nullptr != mesh);
+
         // Use string streaam to parse data.
         std::stringstream modelData(objData);
 
@@ -171,13 +180,13 @@ namespace yw
         uint32_t numVertices = 0;       /* number of vertices in model */
 
         /* set the pointer shortcuts */
-        std::vector<Vector3>& vertices = model->m_Positions;    /* array of vertices  */
-        std::vector<Vector3>& normals = model->m_Normals;       /* array of normals */
-        std::vector<Vector2>& texcoords = model->m_Texcoords;   /* array of texture coordinates */
-        std::vector<ModelGroup*>& groups = model->m_Groups;     /* current group pointer */
+        std::vector<Vector3>& vertices = mesh->m_Positions;    /* array of vertices  */
+        std::vector<Vector3>& normals = mesh->m_Normals;       /* array of normals */
+        std::vector<Vector2>& texcoords = mesh->m_Texcoords;   /* array of texture coordinates */
+        std::vector<SubMesh*>& groups = mesh->m_AllSubMeshes;     /* current group pointer */
 
         /* make a default group */
-        ModelGroup* group = new ModelGroup("default"); /* current group pointer */
+        SubMesh* group = new SubMesh("default"); /* current group pointer */
         groups.push_back(group);
 
         /* current material (Need to implement) */
@@ -199,7 +208,7 @@ namespace yw
             else if (0 == strcmp(command, "mtllib"))
             {
                 modelData >> commandName;
-                model->m_MaterialName = commandName;
+                mesh->m_MaterialName = commandName;
                 ReadMTL(model, commandName);
             }
             else if (0 == strcmp(command, "usemtl"))
@@ -216,7 +225,7 @@ namespace yw
             else if (0 == strcmp(command, "g"))
             {
                 modelData >> commandName;
-                group = model->AddGroup(commandName);
+                group = model->AddSubMesh(commandName);
                 group->material = material; // Need to implement material.
                 //group = glmFindGroup(model, buf);
                 //group->material = material;
@@ -262,11 +271,11 @@ namespace yw
                 int32_t t = 0;
 
                 // Vertex format node and vertex index in vertex index buffer.
-                ModelVertex modelVertex;
+                MeshVertex modelVertex;
                 uint32_t modelVertexIndex = 0;
 
                 // Add a triangle.
-                model->m_Triangles.push_back(new ModelTriangle());
+                mesh->m_Triangles.push_back(new MeshTriangle());
 
                 // Base 3 vertex of first face.
                 for (int32_t faceIdx = 0; faceIdx < 3; faceIdx++)
@@ -308,7 +317,7 @@ namespace yw
                     }
 
                     // Add this vertex into cache.
-                    modelVertexIndex = _AddModelVertexIntoCache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
+                    modelVertexIndex = _AddModelVertexIntoCache(mesh->m_Vertices, mesh->m_VertexIndexCache, v, modelVertex);
                     TRIANGLE(numTriangles)->vertexIndices[faceIdx] = modelVertexIndex;
                     group->triangleIndices.push_back(modelVertexIndex);
                 }
@@ -327,7 +336,7 @@ namespace yw
                     }
 
                     // Add a triangle.
-                    model->m_Triangles.push_back(new ModelTriangle());
+                    mesh->m_Triangles.push_back(new MeshTriangle());
 
                     // Reset vertex data.
                     modelVertex.Reset();
@@ -366,7 +375,7 @@ namespace yw
                     }
 
                     // Add this vertex into cache.
-                    modelVertexIndex = _AddModelVertexIntoCache(model->m_Vertices, model->m_VertexIndexCache, v, modelVertex);
+                    modelVertexIndex = _AddModelVertexIntoCache(mesh->m_Vertices, mesh->m_VertexIndexCache, v, modelVertex);
 
                     // Vertex 0.
                     TRIANGLE(numTriangles)->positionIndices[0] = TRIANGLE(numTriangles - 1)->positionIndices[0];
@@ -403,22 +412,27 @@ namespace yw
 
     void ModelLoaderWavefrontObj::CalculateFacetNormals(Model* model)
     {
+        // Check model.
         assert(nullptr != model);
-        assert(model->m_Positions.size() > 0);
+
+        // Check mesh in model.
+        Mesh* mesh = model->GetMesh();
+        assert(nullptr != mesh);
+        assert(mesh->m_Positions.size() > 0);
 
         /* clobber any old facet normals */
-        model->m_FacetNormals.clear();
+        mesh->m_FacetNormals.clear();
 
         /* allocate memory for the new facet normals */
-        model->m_FacetNormals.resize(model->m_Triangles.size());
-        for (uint32_t i = 0; i < (uint32_t)model->m_Triangles.size(); i++)
+        mesh->m_FacetNormals.resize(mesh->m_Triangles.size());
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Triangles.size(); i++)
         {
-            model->m_Triangles[i]->facetNormalIndex = i;
+            mesh->m_Triangles[i]->facetNormalIndex = i;
 
-            Vector3 u = model->m_Positions[TRIANGLE(i)->positionIndices[1]] - model->m_Positions[TRIANGLE(i)->positionIndices[0]];
-            Vector3 v = model->m_Positions[TRIANGLE(i)->positionIndices[2]] - model->m_Positions[TRIANGLE(i)->positionIndices[0]];
+            Vector3 u = mesh->m_Positions[TRIANGLE(i)->positionIndices[1]] - mesh->m_Positions[TRIANGLE(i)->positionIndices[0]];
+            Vector3 v = mesh->m_Positions[TRIANGLE(i)->positionIndices[2]] - mesh->m_Positions[TRIANGLE(i)->positionIndices[0]];
 
-            Vector3& facetNormal = model->m_FacetNormals[i];
+            Vector3& facetNormal = mesh->m_FacetNormals[i];
             Vector3Cross(facetNormal, u, v);
             Vector3Normalize(facetNormal, facetNormal);
         }
@@ -426,23 +440,28 @@ namespace yw
 
     void ModelLoaderWavefrontObj::CalculateVertexNormals(Model* model, float angle)
     {
+        // Check model.
         assert(nullptr != model);
-        assert(model->m_FacetNormals.size() > 0);
+
+        // Check mesh in model.
+        Mesh* mesh = model->GetMesh();
+        assert(nullptr != mesh);
+        assert(mesh->m_FacetNormals.size() > 0);
 
         /* calculate the cosine of the angle (in degrees) */
         float cos_angle = (float)cos(angle * YW_PI / 180.0);
 
         /* nuke any previous normals */
-        model->m_Normals.clear();
+        mesh->m_Normals.clear();
 
         /* allocate space for new normals */
-        std::vector<Vector3> normals(model->m_Triangles.size() * 3);
+        std::vector<Vector3> normals(mesh->m_Triangles.size() * 3);
 
         /* allocate a structure that will hold a linked list of triangle indices for each vertex */
-        std::vector<TriangleVertexNode*> members(model->m_Positions.size(), nullptr);
+        std::vector<TriangleVertexNode*> members(mesh->m_Positions.size(), nullptr);
 
         /* for every triangle, create a node for each vertex in it */
-        for (uint32_t i = 0; i < (uint32_t)model->m_Triangles.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Triangles.size(); i++)
         {
             TriangleVertexNode* node = new TriangleVertexNode();
             node->m_Index = i;
@@ -462,7 +481,7 @@ namespace yw
 
         /* calculate the average normal for each vertex */
         uint32_t numNormals = 0;
-        for (uint32_t i = 0; i < (uint32_t)model->m_Positions.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Positions.size(); i++)
         {
             /* calculate an average normal for this vertex by averaging the
                 facet normal of every triangle this vertex is in */
@@ -483,12 +502,11 @@ namespace yw
                 facet normals is greater than the cosine of the threshold
                 angle -- or, said another way, the angle between the two
                     facet normals is less than (or equal to) the threshold angle */
-                float dot = Vector3Dot(model->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex],
-                    model->m_FacetNormals[TRIANGLE(members[i]->m_Index)->facetNormalIndex]);
+                float dot = Vector3Dot(mesh->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex], mesh->m_FacetNormals[TRIANGLE(members[i]->m_Index)->facetNormalIndex]);
                 if (dot > cos_angle)
                 {
                     node->m_Averaged = true;
-                    average += model->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex];
+                    average += mesh->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex];
                     avg = 1;            /* we averaged at least one normal! */
                 }
                 else 
@@ -533,7 +551,7 @@ namespace yw
                 else
                 {
                     /* if this node wasn't averaged, use the facet normal */
-                    normals[numNormals] = model->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex];
+                    normals[numNormals] = mesh->m_FacetNormals[TRIANGLE(node->m_Index)->facetNormalIndex];
                     if (TRIANGLE(node->m_Index)->positionIndices[0] == i)
                     {
                         TRIANGLE(node->m_Index)->normalIndices[0] = numNormals;
@@ -557,7 +575,7 @@ namespace yw
         //model->numNormals = numNormals - 1;
 
         /* free the member information */
-        for (uint32_t i = 0; i < (uint32_t)model->m_Positions.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Positions.size(); i++)
         {
             TriangleVertexNode* node = members[i];
             while (nullptr != node)
@@ -574,68 +592,75 @@ namespace yw
         number of normals that could possibly be created (numtriangles *
         3), so get rid of some of them (usually alot unless none of the
         facet normals were averaged)) */
-        model->m_Normals.resize(numNormals);
+        mesh->m_Normals.resize(numNormals);
         for (uint32_t i = 0; i < numNormals; i++)
         {
-            model->m_Normals[i] = normals[i];
+            mesh->m_Normals[i] = normals[i];
         }
 
         normals.clear();
 
         // Update vertex normal in vertex element buffer.
-        for (uint32_t i = 0; i < (uint32_t)model->m_Triangles.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)mesh->m_Triangles.size(); i++)
         {
-            ModelTriangle* triangle = TRIANGLE(i);
+            MeshTriangle* triangle = TRIANGLE(i);
             for (uint32_t j = 0; j < 3; j++)
             {
-                ModelVertex* modelVertex = &(model->m_Vertices[triangle->vertexIndices[j]]);
-                modelVertex->normal = model->m_Normals[triangle->normalIndices[j]];
+                MeshVertex* modelVertex = &(mesh->m_Vertices[triangle->vertexIndices[j]]);
+                modelVertex->normal = mesh->m_Normals[triangle->normalIndices[j]];
             }
         }
     }
 
     void ModelLoaderWavefrontObj::CalculateVertexTangent(class Model* model)
     {
+        // Check model.
+        assert(nullptr != model);
+
+        // Check mesh in model.
+        Mesh* mesh = model->GetMesh();
+        assert(nullptr != mesh);
+
         // Skip if no texture coordinates data.
-        if (model->m_Texcoords.size() <= 0)
+        if (mesh->m_Texcoords.size() <= 0)
         {
             return;
         }
 
         // Alloc model tangents space.
-        model->m_Tangents.resize(model->m_Positions.size());
+        mesh->m_Tangents.resize(mesh->m_Positions.size());
 
         // Calculate triangle tangent vector.
         // TODO: average tangents of shared vertices.
-        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        for (int32_t i = 0; i < (int32_t)mesh->m_Triangles.size(); i++)
         {
-            const ModelTriangle* triangle = TRIANGLE(i);
+            const MeshTriangle* triangle = TRIANGLE(i);
 
-            const Vector3& v0 = model->m_Positions[triangle->positionIndices[0]];
-            const Vector3& v1 = model->m_Positions[triangle->positionIndices[1]];
-            const Vector3& v2 = model->m_Positions[triangle->positionIndices[2]];
+            const Vector3& v0 = mesh->m_Positions[triangle->positionIndices[0]];
+            const Vector3& v1 = mesh->m_Positions[triangle->positionIndices[1]];
+            const Vector3& v2 = mesh->m_Positions[triangle->positionIndices[2]];
 
-            const float texCoordY0 = model->m_Texcoords[triangle->texcoordsIndices[0]].y;
-            const float texCoordY1 = model->m_Texcoords[triangle->texcoordsIndices[1]].y;
-            const float texCoordY2 = model->m_Texcoords[triangle->texcoordsIndices[2]].y;
+            const float texCoordY0 = mesh->m_Texcoords[triangle->texcoordsIndices[0]].y;
+            const float texCoordY1 = mesh->m_Texcoords[triangle->texcoordsIndices[1]].y;
+            const float texCoordY2 = mesh->m_Texcoords[triangle->texcoordsIndices[2]].y;
 
             const Vector3 deltaVertex[2] = { v1 - v0, v2 - v0 };
             const float deltaTexCoordY[2] = { texCoordY1 - texCoordY0, texCoordY2 - texCoordY0 };
             const Vector3 tangent = (deltaVertex[0] * deltaTexCoordY[1] - deltaVertex[1] * deltaTexCoordY[0]).Normalize();
             
-            model->m_Tangents[triangle->positionIndices[0]] = Vector4(tangent, 1.0f);
-            model->m_Tangents[triangle->positionIndices[1]] = Vector4(tangent, 1.0f);
-            model->m_Tangents[triangle->positionIndices[2]] = Vector4(tangent, 1.0f);
+            mesh->m_Tangents[triangle->positionIndices[0]] = Vector4(tangent, 1.0f);
+            mesh->m_Tangents[triangle->positionIndices[1]] = Vector4(tangent, 1.0f);
+            mesh->m_Tangents[triangle->positionIndices[2]] = Vector4(tangent, 1.0f);
         }
 
         // Update all tangets in final vertex format cache.
-        for (int32_t i = 0; i < (int32_t)model->m_VertexIndexCache.size(); i++)
+        for (int32_t i = 0; i < (int32_t)mesh->m_VertexIndexCache.size(); i++)
         {
-            ModelVertexIndex* vertexIndexNode = model->m_VertexIndexCache[i];
+            MeshVertexIndex* vertexIndexNode = mesh->m_VertexIndexCache[i];
             while (nullptr != vertexIndexNode)
             {
-                ModelVertex* vertexFormat = &(model->m_Vertices[vertexIndexNode->index]);
-                vertexFormat->tangent = model->m_Tangents[i];
+                MeshVertex* vertexFormat = &(mesh->m_Vertices[vertexIndexNode->index]);
+                vertexFormat->tangent = mesh->m_Tangents[i];
                 vertexIndexNode = vertexIndexNode->next;
             }
         }
@@ -643,17 +668,24 @@ namespace yw
 
     void ModelLoaderWavefrontObj::CalculateVertexTangentTBN(class Model* model)
     {
+        // Check model.
+        assert(nullptr != model);
+
+        // Check mesh in model.
+        Mesh* mesh = model->GetMesh();
+        assert(nullptr != mesh);
+
         // Skip if no texture coordinates data.
-        if (model->m_Texcoords.size() <= 0)
+        if (mesh->m_Texcoords.size() <= 0)
         {
             return;
         }
 
         // Get vertex count. (Positions count.)
-        int32_t vertexCount = (int32_t)model->m_Positions.size();
+        int32_t vertexCount = (int32_t)mesh->m_Positions.size();
 
         // Alloc model tangents space.
-        model->m_Tangents.resize(vertexCount);
+        mesh->m_Tangents.resize(vertexCount);
 
         // Allocate temporary storage for tangents and bitangents and initialize to zeros.
         std::vector<Vector3> tangent(vertexCount);
@@ -661,21 +693,21 @@ namespace yw
         std::vector<Vector3> normals(vertexCount);
 
         // Calculate tangent and bitangent for each triangle and add to all three vertices.
-        for (int32_t i = 0; i < (int32_t)model->m_Triangles.size(); i++)
+        for (int32_t i = 0; i < (int32_t)mesh->m_Triangles.size(); i++)
         {
-            const ModelTriangle* triangle = TRIANGLE(i);
+            const MeshTriangle* triangle = TRIANGLE(i);
 
             const uint32_t i0 = triangle->positionIndices[0];
             const uint32_t i1 = triangle->positionIndices[1];
             const uint32_t i2 = triangle->positionIndices[2];
 
-            const Vector3& p0 = model->m_Positions[i0];
-            const Vector3& p1 = model->m_Positions[i1];
-            const Vector3& p2 = model->m_Positions[i2];
+            const Vector3& p0 = mesh->m_Positions[i0];
+            const Vector3& p1 = mesh->m_Positions[i1];
+            const Vector3& p2 = mesh->m_Positions[i2];
 
-            const Vector2& w0 = model->m_Texcoords[triangle->texcoordsIndices[0]];
-            const Vector2& w1 = model->m_Texcoords[triangle->texcoordsIndices[1]];
-            const Vector2& w2 = model->m_Texcoords[triangle->texcoordsIndices[2]];
+            const Vector2& w0 = mesh->m_Texcoords[triangle->texcoordsIndices[0]];
+            const Vector2& w1 = mesh->m_Texcoords[triangle->texcoordsIndices[1]];
+            const Vector2& w2 = mesh->m_Texcoords[triangle->texcoordsIndices[2]];
 
             Vector3 e1 = p1 - p0;
             Vector3 e2 = p2 - p0;
@@ -695,9 +727,9 @@ namespace yw
             bitangent[i1] += b;
             bitangent[i2] += b;
 
-            normals[i0] = model->m_Normals[triangle->normalIndices[0]];
-            normals[i1] = model->m_Normals[triangle->normalIndices[1]];
-            normals[i2] = model->m_Normals[triangle->normalIndices[2]];
+            normals[i0] = mesh->m_Normals[triangle->normalIndices[0]];
+            normals[i1] = mesh->m_Normals[triangle->normalIndices[1]];
+            normals[i2] = mesh->m_Normals[triangle->normalIndices[2]];
         }
 
         // Orthonormalize each tangent and calculate the handedness.
@@ -706,7 +738,7 @@ namespace yw
             const Vector3& t = tangent[i];
             const Vector3& b = bitangent[i];
             const Vector3& n = normals[i];
-            Vector4& vertexTangent = model->m_Tangents[i];
+            Vector4& vertexTangent = mesh->m_Tangents[i];
             
             // We use left-handed.
             Vector3 tangentXYZ = Vector3Reject(Vector3(), t, n).Normalize();
@@ -715,13 +747,13 @@ namespace yw
         }
 
         // Update all tangets in final vertex format cache.
-        for (int32_t i = 0; i < (int32_t)model->m_VertexIndexCache.size(); i++)
+        for (int32_t i = 0; i < (int32_t)mesh->m_VertexIndexCache.size(); i++)
         {
-            ModelVertexIndex* vertexIndexNode = model->m_VertexIndexCache[i];
+            MeshVertexIndex* vertexIndexNode = mesh->m_VertexIndexCache[i];
             while (nullptr != vertexIndexNode)
             {
-                ModelVertex* vertexFormat = &(model->m_Vertices[vertexIndexNode->index]);
-                vertexFormat->tangent = model->m_Tangents[i];
+                MeshVertex* vertexFormat = &(mesh->m_Vertices[vertexIndexNode->index]);
+                vertexFormat->tangent = mesh->m_Tangents[i];
                 vertexIndexNode = vertexIndexNode->next;
             }
         }

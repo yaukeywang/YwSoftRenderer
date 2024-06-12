@@ -40,13 +40,18 @@ namespace yw
 
         // Try to load obj model from data.
         Model* objModel = *model;
-        LoadFormData(fileName, objData, calculateNormals, calculateNormalAngle, objModel);
+        bool res = LoadFormData(fileName, objData, calculateNormals, calculateNormalAngle, objModel);
+        if (!res)
+        {
+            YW_SAFE_DELETE_ARRAY(modelData);
+            return false;
+        }
 
         // Release file data.
         YW_SAFE_DELETE_ARRAY(modelData);
 
-        // Create vertex data.
-        if (!objModel->CreateVertexData(device))
+        // Create mesh VBO data.
+        if (!objModel->GetMesh()->CreateVBOData(device))
         {
             YW_SAFE_DELETE(model);
             return nullptr;

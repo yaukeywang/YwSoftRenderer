@@ -167,6 +167,8 @@ project "libYwAppFramework"
         "libYwAppFramework/Core/YwGraphics.cpp",
         "libYwAppFramework/Core/YwInput.h",
         "libYwAppFramework/Core/YwInput.cpp",
+        "libYwAppFramework/Core/YwMesh.h",
+        "libYwAppFramework/Core/YwMesh.cpp",
         "libYwAppFramework/Core/YwModel.h",
         "libYwAppFramework/Core/YwModel.cpp",
         "libYwAppFramework/Core/YwScene.h",
