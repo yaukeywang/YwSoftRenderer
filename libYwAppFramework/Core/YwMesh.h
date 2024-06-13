@@ -13,6 +13,23 @@ namespace yw
     // ------------------------------------------------------------------
     // Base mesh element info.
 
+    // The maximum number of bones per vertex stored in this mesh data.
+    // 2 or 4 is perferred, 4 is used in most case. Generally we can expand this to Range: 1-255, inclusive.
+    // Note that higher bone counts may have a performance cost, especially above 4 bones per vertex.
+    const int32_t MAX_BONES_PER_VERTEX = 4;
+
+    // Bone weight of vertex.
+    struct MeshVertexBoneWeight
+    {
+        // Index of bone.
+        int32_t boneIndex;
+
+        // Skinning weight for bone.
+        float weight;
+
+        MeshVertexBoneWeight() : boneIndex(0), weight(0.0f) {}
+    };
+
     // Define vertex format.
     struct MeshVertex
     {
