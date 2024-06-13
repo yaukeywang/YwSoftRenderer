@@ -27,7 +27,7 @@ namespace yw
         void Reset() { memset(this, 0, sizeof(MeshVertex)); }
     };
 
-    // Index info of model vertex in cache.
+    // Index info of mesh vertex in cache.
     struct MeshVertexIndex
     {
         uint32_t index;
@@ -37,7 +37,7 @@ namespace yw
         MeshVertexIndex(uint32_t vertexIndex, MeshVertexIndex* nextNode) : index(vertexIndex), next(nextNode) {}
     };
 
-    // Model index buffer element.
+    // Mesh index buffer element.
     struct MeshIndexBufferElement
     {
         Yw3dIndexBuffer* indexBuffer;
@@ -168,7 +168,7 @@ namespace yw
     {
     public:
         // Constructor.
-        Mesh(const StringA& modelName);
+        Mesh(const StringA& meshName);
 
         // Destructor.
         ~Mesh();

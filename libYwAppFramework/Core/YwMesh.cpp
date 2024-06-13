@@ -189,8 +189,8 @@ namespace yw
     // ------------------------------------------------------------------
     // Mesh class implementation.
 
-    Mesh::Mesh(const StringA& modelName) :
-        m_Name(modelName),
+    Mesh::Mesh(const StringA& meshName) :
+        m_Name(meshName),
         m_VBO(nullptr)
     {
     }
@@ -298,8 +298,8 @@ namespace yw
         // Clear all group.
         for (size_t i = 0; i < m_AllSubMeshes.size(); i++)
         {
-            SubMesh* modelGroup = m_AllSubMeshes[i];
-            YW_SAFE_DELETE(modelGroup);
+            SubMesh* subMesh = m_AllSubMeshes[i];
+            YW_SAFE_DELETE(subMesh);
         }
 
         m_AllSubMeshes.clear();
@@ -307,8 +307,8 @@ namespace yw
         // Clear all triangles.
         for (size_t i = 0; i < m_Triangles.size(); i++)
         {
-            MeshTriangle* modelTriangle = m_Triangles[i];
-            YW_SAFE_DELETE(modelTriangle);
+            MeshTriangle* meshTriangle = m_Triangles[i];
+            YW_SAFE_DELETE(meshTriangle);
         }
 
         m_Triangles.clear();
