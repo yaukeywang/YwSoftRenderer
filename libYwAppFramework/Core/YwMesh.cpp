@@ -8,6 +8,25 @@
 namespace yw
 {
     // ------------------------------------------------------------------
+    // MeshVertex class implementation.
+    MeshVertex::MeshVertex()
+    { 
+        Reset();
+    }
+
+    void MeshVertex::Reset()
+    { 
+        memset(this, 0, sizeof(MeshVertex));
+    }
+
+    // ------------------------------------------------------------------
+    // MeshVertexBoneWeight class implementation.
+    MeshVertexBoneWeight::MeshVertexBoneWeight()
+    {
+        memset(this, 0, sizeof(MeshVertexBoneWeight));
+    }
+
+    // ------------------------------------------------------------------
     // Mesh VBO class implementation.
 
     Yw3dVertexElement MeshVBO::s_VertexDeclaration[6] =
@@ -280,6 +299,7 @@ namespace yw
         m_Tangents.clear();
         m_Colors.clear();
         m_Vertices.clear();
+        m_BoneWeights.clear();
 
         // Clear all vertex cache index info.
         for (int32_t i = 0; i < (int32_t)m_VertexIndexCache.size(); i++)
@@ -295,15 +315,6 @@ namespace yw
 
         m_VertexIndexCache.clear();
 
-        // Clear all group.
-        for (size_t i = 0; i < m_AllSubMeshes.size(); i++)
-        {
-            SubMesh* subMesh = m_AllSubMeshes[i];
-            YW_SAFE_DELETE(subMesh);
-        }
-
-        m_AllSubMeshes.clear();
-
         // Clear all triangles.
         for (size_t i = 0; i < m_Triangles.size(); i++)
         {
@@ -312,6 +323,15 @@ namespace yw
         }
 
         m_Triangles.clear();
+
+        // Clear all group.
+        for (size_t i = 0; i < m_AllSubMeshes.size(); i++)
+        {
+            SubMesh* subMesh = m_AllSubMeshes[i];
+            YW_SAFE_DELETE(subMesh);
+        }
+
+        m_AllSubMeshes.clear();
     }
 
     void Mesh::ClearVBOData()

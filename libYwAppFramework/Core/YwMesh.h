@@ -13,6 +13,31 @@ namespace yw
     // ------------------------------------------------------------------
     // Base mesh element info.
 
+    // Define vertex format.
+    struct MeshVertex
+    {
+        // Position of vertex.
+        Vector3 position;
+
+        // Normal of vertex.
+        Vector3 normal;
+
+        // Tangent of vertex.
+        Vector4 tangent;
+
+        // Color of vertex.
+        Vector4 color;
+
+        // Texture coordinate in the first channel of vertex.
+        Vector2 texcoord;
+
+        // Texture coordinate in the second channel of vertex.
+        Vector2 texcoord2;
+
+        MeshVertex();
+        void Reset();
+    };
+
     // The maximum number of bones per vertex stored in this mesh data.
     // 2 or 4 is perferred, 4 is used in most case. Generally we can expand this to Range: 1-255, inclusive.
     // Note that higher bone counts may have a performance cost, especially above 4 bones per vertex.
@@ -21,27 +46,13 @@ namespace yw
     // Bone weight of vertex.
     struct MeshVertexBoneWeight
     {
-        // Index of bone.
-        int32_t boneIndex;
+        // Indices of bones.
+        int32_t boneIndices[MAX_BONES_PER_VERTEX];
 
-        // Skinning weight for bone.
-        float weight;
+        // Skinning weights for bones.
+        float weights[MAX_BONES_PER_VERTEX];
 
-        MeshVertexBoneWeight() : boneIndex(0), weight(0.0f) {}
-    };
-
-    // Define vertex format.
-    struct MeshVertex
-    {
-        Vector3 position;
-        Vector3 normal;
-        Vector4 tangent;
-        Vector4 color;
-        Vector2 texcoord;
-        Vector2 texcoord2;
-
-        MeshVertex() { Reset(); }
-        void Reset() { memset(this, 0, sizeof(MeshVertex)); }
+        MeshVertexBoneWeight();
     };
 
     // Index info of mesh vertex in cache.
@@ -237,7 +248,7 @@ namespace yw
         StringA m_MaterialName;
 
         // The root position of the mesh.
-        //Vector3 m_RootPosition;
+        Vector3 m_RootPosition;
 
         // All mesh vertex raw positions.
         std::vector<Vector3> m_Positions;
@@ -265,6 +276,9 @@ namespace yw
 
         // All mesh vertices used for creating gfx buffer.
         std::vector<MeshVertex> m_Vertices;
+
+        // All mesh vertex bone weights.
+        std::vector<MeshVertexBoneWeight> m_BoneWeights;
 
         // $TODO: Remove this.
         // All mesh vertex indices cache.(Used for accelerating data parsing only.)
