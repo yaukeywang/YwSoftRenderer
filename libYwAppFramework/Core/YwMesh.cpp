@@ -27,6 +27,43 @@ namespace yw
     }
 
     // ------------------------------------------------------------------
+    // Mesh MeshIndexBufferElement class implementation.
+
+    MeshIndexBufferElement::MeshIndexBufferElement() : 
+        indexBuffer(nullptr), 
+        primitiveCount(0)
+    {
+    }
+
+    MeshIndexBufferElement::MeshIndexBufferElement(Yw3dIndexBuffer* buffer, int32_t count) : 
+        indexBuffer(buffer), 
+        primitiveCount(count)
+    {
+    }
+
+    // ------------------------------------------------------------------
+    // Mesh MeshTriangle class implementation.
+
+    // Constructor.
+    MeshTriangle::MeshTriangle()
+    {
+        for (int32_t i = 0; i < 3; i++)
+        {
+            positionIndices[i] = 0;
+            normalIndices[i] = 0;
+            texcoordsIndices[i] = 0;
+            texcoords2Indices[i] = 0;
+            vertexIndices[i] = 0;
+            facetNormalIndex = 0;
+        }
+    }
+
+    // Destructor.
+    MeshTriangle::~MeshTriangle()
+    {
+    }
+
+    // ------------------------------------------------------------------
     // Mesh VBO class implementation.
 
     Yw3dVertexElement MeshVBO::s_VertexDeclaration[6] =

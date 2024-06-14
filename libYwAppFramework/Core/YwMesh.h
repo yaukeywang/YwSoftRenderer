@@ -68,11 +68,14 @@ namespace yw
     // Mesh index buffer element.
     struct MeshIndexBufferElement
     {
+        // Mesh index buffer of this element.
         Yw3dIndexBuffer* indexBuffer;
+
+        // Total primitive count of this index buffer.
         int32_t primitiveCount;
 
-        MeshIndexBufferElement() : indexBuffer(nullptr), primitiveCount(0) {}
-        MeshIndexBufferElement(Yw3dIndexBuffer* buffer, int32_t count) : indexBuffer(buffer), primitiveCount(count) {}
+        MeshIndexBufferElement();
+        MeshIndexBufferElement(Yw3dIndexBuffer* buffer, int32_t count);
     };
 
     // Mesh triangle.
@@ -96,24 +99,8 @@ namespace yw
         // Facet normal index of triangle.
         uint32_t facetNormalIndex;
 
-        // Constructor.
-        MeshTriangle()
-        {
-            for (int32_t i = 0; i < 3; i++)
-            {
-                positionIndices[i] = 0;
-                normalIndices[i] = 0;
-                texcoordsIndices[i] = 0;
-                texcoords2Indices[i] = 0;
-                vertexIndices[i] = 0;
-                facetNormalIndex = 0;
-            }
-        }
-
-        // Destructor.
-        ~MeshTriangle()
-        {
-        }
+        MeshTriangle();
+        ~MeshTriangle();
     };
 
     // The sub-mesh object in a mesh.
