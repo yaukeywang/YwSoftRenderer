@@ -9,6 +9,68 @@
 
 namespace yw
 {
+    // ------------------------------------------------------------------
+    // Model importer info.
+    namespace MeshImporter
+    {
+        // Bone weight of vertex.
+        struct VertexBoneWeight
+        {
+            int32_t boneIndex;
+            float weight;
+
+            VertexBoneWeight() : 
+                boneIndex(-1),
+                weight(0.0f)
+            {
+            }
+        };
+
+        // Defines properties of each vertex to import.
+        struct Vertex
+        {
+            Vector3 position;
+            Vector3 normal;
+            Vector4 tangent;
+            Vector4 color;
+            Vector2 texcoord;
+            Vector2 texcoord2;
+            Vector2 texcoord3;
+            Vector2 texcoord4;
+            Vector2 texcoord5;
+            Vector2 texcoord6;
+            Vector2 texcoord7;
+            Vector2 texcoord8;
+            std::vector<VertexBoneWeight> boneWeights;
+
+            Vertex()
+            {
+            }
+        };
+
+        // Index info of mesh vertex in cache.
+        struct VertexIndex
+        {
+            uint32_t index;
+            VertexIndex* next;
+
+            VertexIndex() :
+                index(0),
+                next(nullptr)
+            {
+            }
+
+            VertexIndex(uint32_t vertexIndex, VertexIndex* nextNode) : 
+                index(vertexIndex),
+                next(nextNode)
+            {
+            }
+        };
+
+        typedef std::vector<VertexIndex*> VertexIndexCache;
+    }
+
+    // ------------------------------------------------------------------
     // Base model loader class.
     class IModelLoader
     {

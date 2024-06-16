@@ -23,7 +23,11 @@ namespace yw
     // MeshVertexBoneWeight class implementation.
     MeshVertexBoneWeight::MeshVertexBoneWeight()
     {
-        memset(this, 0, sizeof(MeshVertexBoneWeight));
+        for (int32_t i = 0; i < MAX_BONES_PER_VERTEX; i++)
+        {
+            boneIndices[i] = -1;
+            weights[i] = 0.0f;
+        }
     }
 
     // ------------------------------------------------------------------
