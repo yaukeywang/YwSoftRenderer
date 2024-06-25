@@ -68,6 +68,138 @@ namespace yw
         };
 
         typedef std::vector<VertexIndex*> VertexIndexCache;
+
+        // Mesh triangle.
+        struct Triangle
+        {
+            // Vertex index array.
+            uint32_t positionIndices[3];
+
+            // Normal index array.
+            uint32_t normalIndices[3];
+
+            // First layer uv array.
+            uint32_t texcoordsIndices[3];
+
+            // Second layer uv array.
+            uint32_t texcoords2Indices[3];
+
+            // Vertex attribute index array.
+            uint32_t vertexIndices[3];
+
+            // Facet normal index of triangle.
+            uint32_t facetNormalIndex;
+
+            Triangle()
+            {
+                for (int32_t i = 0; i < 3; i++)
+                {
+                    positionIndices[i] = 0;
+                    normalIndices[i] = 0;
+                    texcoordsIndices[i] = 0;
+                    texcoords2Indices[i] = 0;
+                    vertexIndices[i] = 0;
+                    facetNormalIndex = 0;
+                }
+            }
+
+            ~Triangle()
+            {
+            }
+        };
+
+        // The sub-mesh object in a mesh.
+        struct SubMesh
+        {
+            // Name of this sub-mesh.
+            StringA name;
+
+            // All triangle indices.
+            std::vector<uint32_t> triangles;
+
+            // All triangle vertex indices.
+            std::vector<uint32_t> triangleIndices;
+
+            // Used material. (Not Implemented Yet!)
+            void* material;
+
+            // Constructor.
+            SubMesh(StringA subMeshName) :
+                name(subMeshName),
+                material(nullptr)
+            {
+            }
+
+            // Destructor.
+            ~SubMesh()
+            {
+                name.clear();
+                triangles.clear();
+                triangleIndices.clear();
+                YW_SAFE_DELETE(material);
+            }
+        };
+
+        // The mesh class.
+        class Mesh
+        {
+        public:
+            Mesh()
+            {
+            }
+
+            ~Mesh()
+            {
+            }
+
+        public:
+            // Raw data read from file.
+
+            // Material name.
+            StringA m_MaterialName;
+
+            // The root position of the mesh.
+            Vector3 m_RootPosition;
+
+            // All mesh vertex raw positions.
+            std::vector<Vector3> m_Positions;
+
+            // All mesh vertex raw facet normals.
+            std::vector<Vector3> m_FacetNormals;
+
+            // All mesh vertex raw normals.
+            std::vector<Vector3> m_Normals;
+
+            // All mesh vertex raw 1st uv coordinates.
+            std::vector<Vector2> m_Texcoords;
+
+            // All mesh vertex raw 2nd uv coordinates.
+            std::vector<Vector2> m_Texcoord2s;
+
+            // All mesh vertex raw tangents.
+            std::vector<Vector4> m_Tangents;
+
+            // Add mesh vertex raw colors.
+            std::vector<Vector4> m_Colors;
+
+            // All internal geometry and cache data after well organized.
+
+            // All mesh vertices.
+            std::vector<Vertex> m_Vertices;
+
+            // All mesh vertex bone weights.
+            std::vector<VertexBoneWeight> m_BoneWeights;
+
+            // All triangles used for creating gfx buffer.
+            std::vector<Triangle*> m_Triangles;
+
+            // All sub-meshes.
+            std::vector<SubMesh*> m_AllSubMeshes;
+
+            // Internal use only.
+            // All mesh vertex indices cache.(Used for accelerating data parsing only.)
+            std::vector<VertexIndexCache*> m_VertexIndexCache;
+        };
     }
 
     // ------------------------------------------------------------------
