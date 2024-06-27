@@ -19,11 +19,8 @@ namespace yw
             int32_t boneIndex;
             float weight;
 
-            VertexBoneWeight() : 
-                boneIndex(-1),
-                weight(0.0f)
-            {
-            }
+            VertexBoneWeight();
+            ~VertexBoneWeight();
         };
 
         // Defines properties of each vertex to import.
@@ -43,9 +40,8 @@ namespace yw
             Vector2 texcoord8;
             std::vector<VertexBoneWeight> boneWeights;
 
-            Vertex()
-            {
-            }
+            Vertex();
+            ~Vertex();
         };
 
         // Index info of mesh vertex in cache.
@@ -54,17 +50,9 @@ namespace yw
             uint32_t index;
             VertexIndex* next;
 
-            VertexIndex() :
-                index(0),
-                next(nullptr)
-            {
-            }
-
-            VertexIndex(uint32_t vertexIndex, VertexIndex* nextNode) : 
-                index(vertexIndex),
-                next(nextNode)
-            {
-            }
+            // Constructors/Destructors.
+            VertexIndex();
+            VertexIndex(uint32_t vertexIndex, VertexIndex* nextNode);
         };
 
         typedef std::vector<VertexIndex*> VertexIndexCache;
@@ -90,22 +78,9 @@ namespace yw
             // Facet normal index of triangle.
             uint32_t facetNormalIndex;
 
-            Triangle()
-            {
-                for (int32_t i = 0; i < 3; i++)
-                {
-                    positionIndices[i] = 0;
-                    normalIndices[i] = 0;
-                    texcoordsIndices[i] = 0;
-                    texcoords2Indices[i] = 0;
-                    vertexIndices[i] = 0;
-                    facetNormalIndex = 0;
-                }
-            }
-
-            ~Triangle()
-            {
-            }
+            // Constructors/Destructors.
+            Triangle();
+            ~Triangle();
         };
 
         // The sub-mesh object in a mesh.
@@ -123,36 +98,14 @@ namespace yw
             // Used material. (Not Implemented Yet!)
             void* material;
 
-            // Constructor.
-            SubMesh(StringA subMeshName) :
-                name(subMeshName),
-                material(nullptr)
-            {
-            }
-
-            // Destructor.
-            ~SubMesh()
-            {
-                name.clear();
-                triangles.clear();
-                triangleIndices.clear();
-                YW_SAFE_DELETE(material);
-            }
+            // Constructors/Destructors.
+            SubMesh(StringA subMeshName);
+            ~SubMesh();
         };
 
         // The mesh class.
-        class Mesh
+        struct Mesh
         {
-        public:
-            Mesh()
-            {
-            }
-
-            ~Mesh()
-            {
-            }
-
-        public:
             // Raw data read from file.
 
             // Material name.
@@ -199,6 +152,10 @@ namespace yw
             // Internal use only.
             // All mesh vertex indices cache.(Used for accelerating data parsing only.)
             std::vector<VertexIndexCache*> m_VertexIndexCache;
+
+            // Constructors/Destructors.
+            Mesh();
+            ~Mesh();
         };
     }
 
