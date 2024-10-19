@@ -46,10 +46,10 @@ namespace yw
         // Drawing.
 
         // Presents the contents of a given rendertarget's colorbuffer.
-        // @return rect the clear rect.
-        // @return color the clear color for color buffer.
-        // @return depth the clear depth value.
-        // @return stencil the clear stencil value.
+        // @param rect the clear rect.
+        // @param color the clear color for color buffer.
+        // @param depth the clear depth value.
+        // @param stencil the clear stencil value.
         // @return Yw3d_S_OK if clearing succeed.
         Yw3dResult Clear(const Yw3dRect* rect, const Vector4& color, const float depth, const uint32_t stencil);
 
@@ -94,9 +94,9 @@ namespace yw
         // Resource creation.
 
         // Creates a vertex format from a vertex declaration. A vertex format describes the layout of vertex data in the vertex streams.
-        // @param[out] o_ppVertexFormat receives a pointer to the created vertex format.
-        // @param[in] i_pVertexDeclaration pointer to the vertex declaration.
-        // @param[in] i_iVertexDeclSize size of the vertex declaration in bytes.
+        // @param[out] vertexFormat receives a pointer to the created vertex format.
+        // @param[in] vertexDeclaration pointer to the vertex declaration.
+        // @param[in] vertexDeclSize size of the vertex declaration in bytes.
         // @return Yw3d_S_OK if the function succeeds.
         // @return Yw3d_E_InvalidParameters if one or more parameters were invalid.
         // @return Yw3d_E_OutOfMemory if memory allocation failed.
